@@ -50,6 +50,7 @@ import NftWallet from './NftWallet'
 import BeginAccountTransfer from './BeginAccountTransfer'
 import CompleteAccountTransfer from './CompleteAccountTransfer'
 import Debug from './Debug'
+import FeesSummary from './FeesSummary'
 
 import cx from "classnames";
 import { cssTransition } from 'react-toastify'
@@ -448,6 +449,9 @@ function FullApp() {
               <CompleteAccountTransfer
                 setPendingTxns={setPendingTxns}
               />
+            </Route>
+            <Route exact path="/fees_summary">
+              <FeesSummary />
             </Route>
             <Route exact path="/debug">
               <Debug />
