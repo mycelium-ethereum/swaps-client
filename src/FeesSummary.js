@@ -1,10 +1,4 @@
-import React, { useEffect } from 'react'
-import UniPool from './abis/UniPool.json'
-import { useWeb3React } from '@web3-react/core'
-import useSWR from 'swr'
-import {
-  fetcher
-} from './Helpers'
+import React from 'react'
 
 import './FeesSummary.css'
 
@@ -18,25 +12,25 @@ export default function FeesSummary() {
           <div className="App-card-row">
             <div className="label">GLP APR</div>
             <div>
-              92% (40% ETH, 52% esGMX)
+              95% (47% ETH, 48% esGMX)
             </div>
           </div>
           <div className="App-card-row">
             <div className="label">USDG APR</div>
             <div>
-              38% BNB
+              34% BNB
             </div>
           </div>
           <div className="App-card-row">
             <div className="label">GMX APR</div>
             <div>
-              27% (6% ETH, 21% esGMX)
+              28% (8% ETH, 20% esGMX)
             </div>
           </div>
           <div className="App-card-row">
             <div className="label">Floor Price Fund</div>
             <div>
-              + $91,245.63 of ETH
+              + $86,879.71 of ETH
             </div>
           </div>
         </div>
