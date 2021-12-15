@@ -1,9 +1,12 @@
 import React, { useEffect, useCallback, useMemo } from 'react'
 import { ethers } from 'ethers'
 import { Link } from 'react-router-dom'
+import Tooltip from '../../components/Tooltip/Tooltip'
 
 import {
   USD_DECIMALS,
+  MAX_LEVERAGE,
+  BASIS_POINTS_DIVISOR,
 	formatAmount,
 	getExplorerUrl,
 	formatDateTime,
@@ -12,7 +15,8 @@ import {
   bigNumberify
 } from '../../Helpers'
 import {
-  useTrades
+  useTrades,
+  useLiquidationsData
 } from '../../Api'
 import { getContract } from '../../Addresses'
 
@@ -41,6 +45,28 @@ function getOrderActionTitle(action) {
   return `${actionDisplay} Order`
 }
 
+function renderLiquidationTooltip(liquidationData, label) {
+  const minCollateral = liquidationData.size.mul(BASIS_POINTS_DIVISOR).div(MAX_LEVERAGE)
+  const text = liquidationData.type === "full"
+    ? "This position was liquidated as the max leverage of 100x was exceeded"
+    : "Max leverage of 100x was exceeded, the remaining collateral after deducting losses and fees have been sent back to your account"
+  return <Tooltip
+    position="left-top"
+    handle={label}
+    renderContent={() => <>
+      {text}<br/><br/>
+      Initial collateral: ${formatAmount(liquidationData.collateral, USD_DECIMALS, 2, true)}<br />
+      Min required collateral: ${formatAmount(minCollateral, USD_DECIMALS, 2, true)}<br />
+      Borrow fee: ${formatAmount(liquidationData.borrowFee, USD_DECIMALS, 2, true)}<br />
+      PnL: -${formatAmount(liquidationData.loss, USD_DECIMALS, 2, true)}
+    </>}
+  />
+}
+
+function getLiquidationData(liquidationsDataMap, key, timestamp) {
+  return liquidationsDataMap && liquidationsDataMap[`${key}:${timestamp}`]
+}
+
 export default function TradeHistory(props) {
   const {
   	account,
@@ -49,8 +75,19 @@ export default function TradeHistory(props) {
     chainId,
     nativeTokenAddress
   } = props
-
   const { trades, updateTrades } = useTrades(chainId, account)
+
+  const liquidationsData = useLiquidationsData(chainId, account)
+  const liquidationsDataMap = useMemo(() => {
+    if (!liquidationsData) {
+      return null
+    }
+    return liquidationsData.reduce((memo, item) => {
+      const liquidationKey = `${item.key}:${item.timestamp}`
+      memo[liquidationKey] = item
+      return memo
+    }, {})
+  }, [liquidationsData])
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -108,7 +145,7 @@ export default function TradeHistory(props) {
       if (params.flags?.isOrderExecution) {
         return
       }
-      
+
       const indexToken = getTokenInfo(infoTokens, params.indexToken, true, nativeTokenAddress)
       if (!indexToken) {
         return defaultMsg
@@ -116,8 +153,19 @@ export default function TradeHistory(props) {
       if (bigNumberify(params.sizeDelta).eq(0)) {
         return `Withdraw ${formatAmount(params.collateralDelta, USD_DECIMALS, 2, true)} USD from ${indexToken.symbol} ${params.isLong ? "Long" : "Short"}`
       }
+      const isLiquidation = params.flags?.isLiquidation
+      const liquidationData = getLiquidationData(liquidationsDataMap, params.key, tradeData.timestamp)
+
+      if (isLiquidation && liquidationData) {
+        return <>
+          {renderLiquidationTooltip(liquidationData, "Partial Liquidation")} {indexToken.symbol} {params.isLong ? "Long" : "Short"},
+          -{formatAmount(params.sizeDelta, USD_DECIMALS, 2, true)} USD, {indexToken.symbol}&nbsp;
+          Price: ${formatAmount(params.price, USD_DECIMALS, 2, true)} USD
+        </>
+      }
+      const actionDisplay = isLiquidation ? "Partially Liquidated" : "Decreased"
       return `
-        Decrease ${indexToken.symbol} ${params.isLong ? "Long" : "Short"},
+        ${actionDisplay} ${indexToken.symbol} ${params.isLong ? "Long" : "Short"},
         -${formatAmount(params.sizeDelta, USD_DECIMALS, 2, true)} USD,
         ${indexToken.symbol} Price: ${formatAmount(params.price, USD_DECIMALS, 2, true)} USD
       `
@@ -128,9 +176,17 @@ export default function TradeHistory(props) {
       if (!indexToken) {
         return defaultMsg
       }
+      const liquidationData = getLiquidationData(liquidationsDataMap, params.key, tradeData.timestamp)
+      if (liquidationData) {
+        return <>
+          {renderLiquidationTooltip(liquidationData, "Liquidated")} {indexToken.symbol} {params.isLong ? "Long" : "Short"},
+          -{formatAmount(params.size, USD_DECIMALS, 2, true)} USD,&nbsp;
+          {indexToken.symbol} Price: ${formatAmount(params.markPrice, USD_DECIMALS, 2, true)} USD
+        </>
+      }
       return `
         Liquidated ${indexToken.symbol} ${params.isLong ? "Long" : "Short"},
-        ${formatAmount(params.size, USD_DECIMALS, 2, true)} USD,
+        -${formatAmount(params.size, USD_DECIMALS, 2, true)} USD,
         ${indexToken.symbol} Price: ${formatAmount(params.markPrice, USD_DECIMALS, 2, true)} USD
       `
     }
@@ -197,7 +253,7 @@ export default function TradeHistory(props) {
         Swap ${amountInDisplay} ${fromToken?.symbol || ""} for ${minOutDisplay} ${toToken?.symbol || ""},
         Price: ${getExchangeRateDisplay(order.triggerRatio, fromToken, toToken)}`
     }
-  }, [getTokenInfo, infoTokens, nativeTokenAddress, chainId])
+  }, [getTokenInfo, infoTokens, nativeTokenAddress, chainId, liquidationsDataMap])
 
   const tradesWithMessages = useMemo(() => {
     if (!trades) {

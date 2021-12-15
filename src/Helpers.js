@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react'
-import { InjectedConnector } from '@web3-react/injected-connector'
+import { InjectedConnector, UserRejectedRequestError as UserRejectedRequestErrorInjected } from '@web3-react/injected-connector'
+import { WalletConnectConnector, UserRejectedRequestError as UserRejectedRequestErrorWalletConnect } from '@web3-react/walletconnect-connector'
 import { toast } from 'react-toastify'
 import { useWeb3React, UnsupportedChainIdError } from '@web3-react/core'
 import { useLocalStorage } from 'react-use'
@@ -33,12 +34,18 @@ const CHAIN_NAMES_MAP = {
   [ARBITRUM_TESTNET]: "Arbitrum Testnet",
   [ARBITRUM]: "Arbitrum"
 }
+
+const ARBITRUM_RPC_PROVIDERS = [
+  "https://arb1.arbitrum.io/rpc"
+]
+export const WALLET_CONNECT_LOCALSTORAGE_KEY = 'walletconnect'
+
 export function getChainName(chainId) {
   return CHAIN_NAMES_MAP[chainId]
 }
 
 export const USDG_ADDRESS = getContract(CHAIN_ID, "USDG")
-const MAX_LEVERAGE = 50 * 10000
+export const MAX_LEVERAGE = 100 * 10000
 
 export const DEFAULT_GAS_LIMIT = 1 * 1000 * 1000
 export const SECONDS_PER_YEAR = 31536000
@@ -50,7 +57,7 @@ export const DUST_USD = expandDecimals(1, USD_DECIMALS)
 export const PRECISION = expandDecimals(1, 30)
 export const GLP_DECIMALS = 18
 export const GMX_DECIMALS = 18
-export const DEFAULT_MAX_USDG_AMOUNT = expandDecimals(100 * 1000 * 1000, 18)
+export const DEFAULT_MAX_USDG_AMOUNT = expandDecimals(200 * 1000 * 1000, 18)
 
 export const TAX_BASIS_POINTS = 60
 export const STABLE_TAX_BASIS_POINTS = 5
@@ -66,6 +73,8 @@ export const THRESHOLD_REDEMPTION_VALUE = expandDecimals(993, 27) // 0.993
 export const FUNDING_RATE_PRECISION = 1000000
 
 export const SWAP = "Swap"
+export const INCREASE = "Increase"
+export const DECREASE = "Decrease"
 export const LONG = "Long"
 export const SHORT = "Short"
 
@@ -99,9 +108,17 @@ export const PROFIT_THRESHOLD_BASIS_POINTS = 150
 const supportedChainIds = [
   ARBITRUM
 ];
-const injected = new InjectedConnector({
+const injectedConnector = new InjectedConnector({
   supportedChainIds
 })
+
+const getWalletConnectConnector = () => {
+  return new WalletConnectConnector({
+    rpc: { [ARBITRUM]: ARBITRUM_RPC_PROVIDERS[0] },
+    chainId: ARBITRUM,
+    qrcode: true
+  })
+}
 
 export function isSupportedChain(chainId) {
   return supportedChainIds.includes(chainId);
@@ -132,9 +149,9 @@ export function useLocalStorageSerializeKey(key, value, opts) {
   return useLocalStorage(key, value, opts);
 }
 
-function getTriggerPrice(tokenAddress, max, info, orderType, triggerPriceUsd) {
+function getTriggerPrice(tokenAddress, max, info, orderOption, triggerPriceUsd) {
   // Limit/stop orders are executed with price specified by user
-  if (orderType && orderType !== MARKET && triggerPriceUsd) { return triggerPriceUsd; }
+  if (orderOption && orderOption !== MARKET && triggerPriceUsd) { return triggerPriceUsd; }
 
   // Market orders are executed with current market price
   if (!info) { return }
@@ -199,7 +216,7 @@ export function getServerBaseUrl(chainId) {
     // return "https://gambit-server-devnet.uc.r.appspot.com"
   }
   if (document.location.hostname.includes("deploy-preview")) {
-    return "https://gambit-server-devnet.uc.r.appspot.com"
+    return "https://gmx-server-mainnet.uw.r.appspot.com"
   }
   if (chainId === MAINNET) {
     return "https://gambit-server-staging.uc.r.appspot.com"
@@ -210,7 +227,7 @@ export function getServerBaseUrl(chainId) {
   if (chainId === ARBITRUM) {
     return "https://gmx-server-mainnet.uw.r.appspot.com"
   }
-  return "https://gambit-server-devnet.uc.r.appspot.com"
+  return "https://gmx-server-mainnet.uw.r.appspot.com"
 }
 
 export function getServerUrl(chainId, path) {
@@ -237,15 +254,16 @@ export function getExchangeRate(tokenAInfo, tokenBInfo, inverted) {
 export function getMostAbundantStableToken(chainId, infoTokens) {
   const whitelistedTokens = getWhitelistedTokens(chainId)
   let availableAmount
-  let stableToken
+  let stableToken = whitelistedTokens.find(t => t.isStable)
   for (let i = 0; i < whitelistedTokens.length; i++) {
     const info = getTokenInfo(infoTokens, whitelistedTokens[i].address)
-    if (!info.isStable) {
+    if (!info.isStable || !info.availableAmount) {
       continue
     }
 
-    if (!availableAmount || info.availableAmount.gt(availableAmount)) {
-      availableAmount = info.availableAmount
+    const adjustedAvailableAmount = adjustForDecimals(info.availableAmount, info.decimals, USD_DECIMALS)
+    if (!availableAmount || adjustedAvailableAmount.gt(availableAmount)) {
+      availableAmount = adjustedAvailableAmount
       stableToken = info
     }
   }
@@ -812,13 +830,13 @@ export function getLiquidationPrice(data) {
   return liquidationPriceForFees.lt(liquidationPriceForMaxLeverage) ? liquidationPriceForFees : liquidationPriceForMaxLeverage
 }
 
-export function getUsd(amount, tokenAddress, max, infoTokens, orderType, triggerPriceUsd) {
+export function getUsd(amount, tokenAddress, max, infoTokens, orderOption, triggerPriceUsd) {
   if (!amount) { return }
   if (tokenAddress === USDG_ADDRESS) {
     return amount.mul(PRECISION).div(expandDecimals(1, 18))
   }
   const info = getTokenInfo(infoTokens, tokenAddress)
-  const price = getTriggerPrice(tokenAddress, max, info, orderType, triggerPriceUsd);
+  const price = getTriggerPrice(tokenAddress, max, info, orderOption, triggerPriceUsd);
   if (!price) { return }
 
   return amount.mul(price).div(expandDecimals(1, info.decimals))
@@ -861,10 +879,6 @@ export const BSC_RPC_PROVIDERS = [
   "https://bsc-dataseed4.binance.org"
 ]
 
-const ARBITRUM_RPC_PROVIDERS = [
-  "https://arb1.arbitrum.io/rpc"
-]
-
 const RPC_PROVIDERS = {
   [MAINNET]: BSC_RPC_PROVIDERS,
   [ARBITRUM]: ARBITRUM_RPC_PROVIDERS
@@ -896,7 +910,7 @@ export function formatDate(time) {
 }
 
 export function getInjectedConnector() {
-  return injected
+  return injectedConnector
 }
 
 export function useChainId() {
@@ -908,22 +922,58 @@ export function useChainId() {
   return { chainId }
 }
 
-export function useEagerConnect() {
-  const injected = getInjectedConnector()
+export function clearWalletConnectData() {
+  localStorage.removeItem(WALLET_CONNECT_LOCALSTORAGE_KEY)
+}
+
+export function useEagerConnect(setActivatingConnector) {
   const { activate, active } = useWeb3React()
 
   const [tried, setTried] = useState(false)
 
   useEffect(() => {
-    injected.isAuthorized().then((isAuthorized) => {
-      if (isAuthorized) {
-        activate(injected, undefined, true).catch(() => {
-          setTried(true)
-        })
-      } else {
-        setTried(true)
+    (async function () {
+      let shouldTryWalletConnect = false
+      try {
+        // naive validation to not trigger Wallet Connect if data is corrupted
+        const rawData = localStorage.getItem(WALLET_CONNECT_LOCALSTORAGE_KEY)
+        if (rawData) {
+          const data = JSON.parse(rawData)
+          if (data && data.connected) {
+            shouldTryWalletConnect = true
+          }
+        }
+      } catch (ex) {
+        if (ex instanceof SyntaxError) {
+          // rawData is not a valid json
+          clearWalletConnectData()
+        }
       }
-    })
+
+      if (shouldTryWalletConnect) {
+        try {
+          const connector = getWalletConnectConnector()
+          setActivatingConnector(connector)
+          await activate(connector, undefined, true)
+          // in case Wallet Connect is activated no need to check injected wallet
+          return
+        } catch (ex) {
+          // assume data in localstorage is corrupted and delete it to not retry on next page load
+          clearWalletConnectData()
+        }
+      }
+
+      try {
+        const connector = getInjectedConnector()
+        const authorized = await connector.isAuthorized()
+        if (authorized) {
+          setActivatingConnector(connector)
+          await activate(connector, undefined, true)
+        }
+      } catch (ex) {}
+
+      setTried(true)
+    })()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []) // intentionally only running on mount (make sure it's only mounted once :))
 
@@ -937,11 +987,11 @@ export function useEagerConnect() {
   return tried
 }
 
-export function useInactiveListener(suppress: boolean = false) {
+export function useInactiveListener(suppress = false) {
   const injected = getInjectedConnector()
   const { active, error, activate } = useWeb3React()
 
-  useEffect((): any => {
+  useEffect(() => {
     const { ethereum } = window
     if (ethereum && ethereum.on && !active && !error && !suppress) {
       const handleConnect = () => {
@@ -1111,16 +1161,16 @@ function _parseOrdersData(ordersData, account, indexes, extractor, uintPropsLeng
 
 function parseDecreaseOrdersData(chainId, decreaseOrdersData, account, indexes) {
   const extractor = sliced => {
-    const swapOption = sliced[4].toString() === "1" ? LONG : SHORT
+    const isLong = sliced[4].toString() === "1"
     return {
       collateralToken: sliced[0],
       indexToken: sliced[1],
       collateralDelta: sliced[2],
       sizeDelta: sliced[3],
-      swapOption,
+      isLong,
       triggerPrice: sliced[5],
       triggerAboveThreshold: sliced[6].toString() === "1",
-      orderType: STOP
+      type: DECREASE
     }
   }
   return _parseOrdersData(decreaseOrdersData, account, indexes, extractor, 5, 2).filter(order => {
@@ -1130,17 +1180,17 @@ function parseDecreaseOrdersData(chainId, decreaseOrdersData, account, indexes) 
 
 function parseIncreaseOrdersData(chainId, increaseOrdersData, account, indexes) {
   const extractor = sliced => {
-    const swapOption = sliced[5].toString() === "1" ? LONG : SHORT
+    const isLong = sliced[5].toString() === "1"
     return {
       purchaseToken: sliced[0],
       collateralToken: sliced[1],
       indexToken: sliced[2],
       purchaseTokenAmount: sliced[3],
       sizeDelta: sliced[4],
-      swapOption,
+      isLong,
       triggerPrice: sliced[6],
       triggerAboveThreshold: sliced[7].toString() === "1",
-      orderType: LIMIT
+      type: INCREASE
     }
   }
   return _parseOrdersData(increaseOrdersData, account, indexes, extractor, 5, 3).filter(order => {
@@ -1159,22 +1209,20 @@ function parseSwapOrdersData(chainId, swapOrdersData, account, indexes) {
 
   const extractor = sliced => {
     const triggerAboveThreshold = sliced[6].toString() === '1';
-    const shouldUnwrap = sliced[7]?.toString() === '1'
+    const shouldUnwrap = sliced[7].toString() === '1'
 
     return {
-      fromTokenAddress: sliced[0],
-      toTokenAddress: sliced[2] === AddressZero ? sliced[1] : sliced[2],
+      path: [sliced[0], sliced[1], sliced[2]].filter(address => address !== AddressZero),
       amountIn: sliced[3],
       minOut: sliced[4],
       triggerRatio: sliced[5],
       triggerAboveThreshold,
-      swapOption: SWAP,
-      orderType: triggerAboveThreshold ? STOP : LIMIT,
+      type: SWAP,
       shouldUnwrap
     }
   }
   return _parseOrdersData(swapOrdersData, account, indexes, extractor, 5, 3).filter(order => {
-    return isValidToken(chainId, order.fromTokenAddress) && isValidToken(chainId, order.toTokenAddress)
+    return order.path.every(token => isValidToken(chainId, token))
   })
 }
 
@@ -1520,14 +1568,36 @@ export const switchNetwork = async (chainId) => {
   }
 }
 
-export const getConnectWalletHandler = (activate) => {
+export const getWalletConnectHandler = (activate, deactivate, setActivatingConnector) => {
+  const fn = async () => {
+    const walletConnect = getWalletConnectConnector()
+    setActivatingConnector(walletConnect)
+    activate(walletConnect, ex => {
+      if (ex instanceof UnsupportedChainIdError) {
+        helperToast.error("Unsupported chain. Switch to Arbitrum network on your wallet and try again")
+        console.warn(ex)
+      } else if (!(ex instanceof UserRejectedRequestErrorWalletConnect)) {
+        helperToast.error(ex.message)
+        console.warn(ex)
+      }
+      clearWalletConnectData()
+      deactivate()
+    })
+  }
+  return fn
+}
+
+export const getInjectedHandler = (activate) => {
   const fn = async () => {
     activate(getInjectedConnector(), (e) => {
       if (e.message.includes("No Ethereum provider")) {
         helperToast.error(<div>
-          Could not find a wallet to connect to.<br/>
-          <a href="https://metamask.io" target="_blank" rel="noopener noreferrer">Add a wallet</a> to start using the app.
+          MetaMask not yet installed.<br/>
+          <a href="https://metamask.io" target="_blank" rel="noopener noreferrer">Install MetaMask</a> to start using the app.
         </div>)
+        return
+      }
+      if (e instanceof UserRejectedRequestErrorInjected) {
         return
       }
       if (e instanceof UnsupportedChainIdError) {
