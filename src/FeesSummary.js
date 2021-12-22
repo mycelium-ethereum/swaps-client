@@ -10,15 +10,15 @@ export default function FeesSummary() {
         <div className="App-card-divider"></div>
         <div className="App-card-content">
           <div className="App-card-row">
-            <div className="label">GLP APR</div>
-            <div>
-              53% (23% ETH, 30% esGMX)
-            </div>
-          </div>
-          <div className="App-card-row">
             <div className="label">GMX APR</div>
             <div>
               25% (5% ETH, 20% esGMX)
+            </div>
+          </div>
+          <div className="App-card-row">
+            <div className="label">GLP APR</div>
+            <div>
+              53% (23% ETH, 30% esGMX)
             </div>
           </div>
           <div className="App-card-row">
