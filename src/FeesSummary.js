@@ -12,19 +12,25 @@ export default function FeesSummary() {
           <div className="App-card-row">
             <div className="label">GMX APR</div>
             <div>
-              25% (5% ETH, 20% esGMX)
+              29% (11% ETH, 18% esGMX)
             </div>
           </div>
           <div className="App-card-row">
-            <div className="label">GLP APR</div>
+            <div className="label">GLP APR (ARB)</div>
             <div>
-              53% (23% ETH, 30% esGMX)
+              119% (72% ETH, 47% esGMX)
+            </div>
+          </div>
+          <div className="App-card-row">
+            <div className="label">GLP APR (AVAX)</div>
+            <div>
+              132% (58% AVAX, 74% esGMX)
             </div>
           </div>
           <div className="App-card-row">
             <div className="label">Floor Price Fund</div>
             <div>
-              + $34,249.47 of ETH
+              + $158,268.77 of ETH
             </div>
           </div>
         </div>
