@@ -1,0 +1,52 @@
+.Spinner {
+  animation: rotator 1.8s linear infinite;
+}
+
+@keyframes rotator {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(270deg);
+  }
+}
+
+.Spinner-path {
+  stroke-dasharray: 36;
+  stroke-dashoffset: 0;
+  transform-origin: center;
+  animation: dash 1.8s ease-in-out infinite, spinner-colors 1.8s ease-in-out infinite;
+  /* stroke: #4b5cf2; */
+}
+
+@keyframes spinner-colors {
+  0% {
+    stroke: #2e3ed1;
+  }
+  25% {
+    stroke: #3d4ddb;
+  }
+  50% {
+    stroke: #4857e0;
+  }
+  75% {
+    stroke: #5361e6;
+  }
+  100% {
+    stroke: #5867ed;
+  }
+}
+
+@keyframes dash {
+  0% {
+    stroke-dashoffset: 36;
+  }
+  50% {
+    stroke-dashoffset: 2;
+    transform: rotate(135deg);
+  }
+  100% {
+    stroke-dashoffset: 36;
+    transform: rotate(450deg);
+  }
+}
