@@ -15,6 +15,8 @@ function getDotColor(network) {
   switch (network) {
     case "Arbitrum":
       return "#4275a8";
+    case "Testnet":
+      return "#4275a8";
     case "Avalanche":
       return "#E84142";
     default:
@@ -111,7 +113,8 @@ export default function NetworkSelector(props) {
         width: 144,
         height: 36,
         display: "flex",
-        border: "1px solid #FFFFFF29",
+        border: "0.5px solid var(--tracer-blue-light)",
+        color: "var(--tracer-blue-light)",
         borderRadius: 4,
         cursor: "pointer",
         fontSize: "14px",
@@ -141,7 +144,7 @@ export default function NetworkSelector(props) {
     }),
     singleValue: (provided, state) => ({
       ...provided,
-      color: "white",
+      color: "var(--tracer-blue-light)",
       margin: 0,
       fontSize: "14px",
     }),

@@ -39,6 +39,7 @@ import {
   CURRENT_PROVIDER_LOCALSTORAGE_KEY,
   REFERRAL_CODE_KEY,
   REFERRAL_CODE_QUERY_PARAMS,
+  ARBITRUM_TESTNET,
 } from "./Helpers";
 
 import Home from "./views/Home/Home";
@@ -76,8 +77,8 @@ import "./App.css";
 import "./Input.css";
 import "./AppOrder.css";
 
-import logoImg from "./img/logo_GMX.svg";
-import logoSmallImg from "./img/logo_GMX_small.svg";
+import logoImg from "./img/logo_TRS.svg";
+import logoSmallImg from "./img/logo_TRS_small.svg";
 import connectWalletImg from "./img/ic_wallet_24.svg";
 
 // import logoImg from './img/gmx-logo-final-white-small.png'
@@ -123,7 +124,7 @@ function inPreviewMode() {
 }
 
 const arbWsProvider = new ethers.providers.WebSocketProvider("wss://arb1.arbitrum.io/ws");
-
+const arbTestnetWsProvider = new ethers.providers.JsonRpcProvider("https://rinkeby.arbitrum.io/rpc");
 const avaxWsProvider = new ethers.providers.JsonRpcProvider("https://api.avax.network/ext/bc/C/rpc");
 
 function getWsProvider(active, chainId) {
@@ -132,6 +133,10 @@ function getWsProvider(active, chainId) {
   }
   if (chainId === ARBITRUM) {
     return arbWsProvider;
+  }
+
+  if (chainId === ARBITRUM_TESTNET) {
+    return arbTestnetWsProvider;
   }
 
   if (chainId === AVALANCHE) {
@@ -169,7 +174,7 @@ function AppHeaderLinks({ small, openSettings, clickCloseIcon }) {
             <FiX className="App-header-menu-icon" />
           </div>
           <Link className="App-header-link-main" to="/">
-            <img src={logoImg} alt="GMX Logo" />
+            <img src={logoImg} alt="Tracer TRS Logo" />
           </Link>
         </div>
       )}
@@ -235,6 +240,12 @@ function AppHeaderUser({
       color: "#264f79",
     },
     {
+      label: "Testnet",
+      value: ARBITRUM_TESTNET,
+      icon: "ic_arbitrum_24.svg",
+      color: "#264f79",
+    },
+    {
       label: "Avalanche",
       value: AVALANCHE,
       icon: "ic_avalanche_24.svg",
@@ -260,11 +271,13 @@ function AppHeaderUser({
 
   const selectorLabel = getChainName(chainId);
 
+  console.log("sel", selectorLabel);
+
   if (!active) {
     return (
       <div className="App-header-user">
         <div className="App-header-user-link">
-          <NavLink activeClassName="active" className="default-btn" to="/trade">
+          <NavLink activeClassName="active" className="default-btn trade-link" to="/trade">
             Trade
           </NavLink>
         </div>
@@ -292,7 +305,7 @@ function AppHeaderUser({
   return (
     <div className="App-header-user">
       <div className="App-header-user-link">
-        <NavLink activeClassName="active" className="default-btn" to="/trade">
+        <NavLink activeClassName="active" className="default-btn trade-link" to="/trade">
           Trade
         </NavLink>
       </div>
@@ -644,12 +657,12 @@ function FullApp() {
             <div className="App-header large">
               <div className="App-header-container-left">
                 <Link className="App-header-link-main" to="/">
-                  <img src={logoImg} className="big" alt="GMX Logo" />
-                  <img src={logoSmallImg} className="small" alt="GMX Logo" />
+                  <img src={logoImg} className="big" alt="Tracer TRS Logo" />
+                  <img src={logoSmallImg} className="small" alt="Tracer TRS Logo" />
                 </Link>
-                <AppHeaderLinks />
               </div>
               <div className="App-header-container-right">
+                <AppHeaderLinks />
                 <AppHeaderUser
                   disconnectAccountAndCloseSettings={disconnectAccountAndCloseSettings}
                   openSettings={openSettings}
@@ -672,8 +685,8 @@ function FullApp() {
                     {isDrawerVisible && <FaTimes className="App-header-menu-icon" />}
                   </div>
                   <div className="App-header-link-main clickable" onClick={() => setIsDrawerVisible(!isDrawerVisible)}>
-                    <img src={logoImg} className="big" alt="GMX Logo" />
-                    <img src={logoSmallImg} className="small" alt="GMX Logo" />
+                    <img src={logoImg} className="big" alt="Tracer TRS Logo" />
+                    <img src={logoSmallImg} className="small" alt="Tracer TRS Logo" />
                   </div>
                 </div>
                 <div className="App-header-container-right">
@@ -903,7 +916,7 @@ function PreviewApp() {
             <div className="App-header large preview">
               <div className="App-header-container-left">
                 <NavLink exact activeClassName="active" className="App-header-link-main" to="/">
-                  <img src={logoImg} alt="GMX Logo" />
+                  <img src={logoImg} alt="Tracer TRS Logo" />
                   GMX
                 </NavLink>
               </div>
@@ -919,7 +932,7 @@ function PreviewApp() {
               >
                 <div className="App-header-container-left">
                   <div className="App-header-link-main">
-                    <img src={logoImg} alt="GMX Logo" />
+                    <img src={logoImg} alt="Tracer TRS Logo" />
                   </div>
                 </div>
                 <div className="App-header-container-right">

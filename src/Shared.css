@@ -51,12 +51,13 @@ body,
   --arbitrum-blue: #28a0f0;
   --border-radius-sm: 4px;
 
-  --background-primary: #18181B;
+  --background-primary: #040811;
   --background-secondary: rgba(243, 244, 246, 0.05);
   --border-primary: #71717A;
 
   --tracer-blue: #3535DC;
-  --tracer-blue-light: #1C64F2;
+  --tracer-blue-light: #3DA8F5;
+  --tracer-blue-slider: #1C64F2;
 }
 
 a {
