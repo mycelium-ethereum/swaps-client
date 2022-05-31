@@ -30,7 +30,6 @@
   padding-left: 32px;
   padding-right: 32px;
   background: transparent 0% 0% no-repeat padding-box;
-  border-bottom: 1px solid #ffffff10;
 }
 
 .App-header.large::after {
@@ -775,7 +774,8 @@ a.App-cta,
 button.App-cta {
   color: white;
   text-decoration: none;
-  background: linear-gradient(90deg, rgba(45, 66, 252, 1) 0%, rgba(46, 61, 205, 1) 100%);
+  background: var(--tracer-blue);
+  /* linear-gradient(90deg, rgba(45, 66, 252, 1) 0%, rgba(46, 61, 205, 1) 100%); */
   /* box-shadow: 0 0 4px 6px rgba(45,66,252,0.15); */
 }
 
@@ -1234,7 +1234,6 @@ button.App-button {
     padding-left: 16px;
     padding-right: 16px;
     background: transparent 0% 0% no-repeat padding-box;
-    border-bottom: 1px solid #ffffff10;
   }
 
   .App-header.small::after {
