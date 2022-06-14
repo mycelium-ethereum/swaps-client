@@ -59,20 +59,12 @@ function CompoundModal(props) {
     wrappedTokenSymbol,
   } = props;
   const [isCompounding, setIsCompounding] = useState(false);
-  const [shouldClaimGmx, setShouldClaimGmx] = useLocalStorageSerializeKey(
-    [chainId, "StakeV2-compound-should-claim-gmx"],
+  const [shouldClaimTCR, setShouldClaimTCR] = useLocalStorageSerializeKey(
+    [chainId, "StakeV2-compound-should-claim-tcr"],
     true
   );
-  const [shouldStakeGmx, setShouldStakeGmx] = useLocalStorageSerializeKey(
-    [chainId, "StakeV2-compound-should-stake-gmx"],
-    true
-  );
-  const [shouldClaimEsGmx, setShouldClaimEsGmx] = useLocalStorageSerializeKey(
-    [chainId, "StakeV2-compound-should-claim-es-gmx"],
-    true
-  );
-  const [shouldStakeEsGmx, setShouldStakeEsGmx] = useLocalStorageSerializeKey(
-    [chainId, "StakeV2-compound-should-stake-es-gmx"],
+  const [shouldStakeTCR, setShouldStakeTCR] = useLocalStorageSerializeKey(
+    [chainId, "StakeV2-compound-should-stake-tcr"],
     true
   );
   const [shouldStakeMultiplierPoints, setShouldStakeMultiplierPoints] = useLocalStorageSerializeKey(
@@ -85,6 +77,10 @@ function CompoundModal(props) {
   );
   const [shouldConvertWeth, setShouldConvertWeth] = useLocalStorageSerializeKey(
     [chainId, "StakeV2-compound-should-convert-weth"],
+    true
+  );
+  const [shouldBuyTlp, setShouldBuyTlp] = useLocalStorageSerializeKey(
+    [chainId, "StakeV2-compound-should-buy-tlp"],
     true
   );
 
@@ -100,7 +96,7 @@ function CompoundModal(props) {
     }
   );
 
-  const needApproval = shouldStakeGmx && tokenAllowance && totalVesterRewards && totalVesterRewards.gt(tokenAllowance);
+  const needApproval = shouldStakeTCR && tokenAllowance && totalVesterRewards && totalVesterRewards.gt(tokenAllowance);
 
   const isPrimaryEnabled = () => {
     return !isCompounding && !isApproving && !isCompounding;
@@ -108,10 +104,10 @@ function CompoundModal(props) {
 
   const getPrimaryText = () => {
     if (isApproving) {
-      return `Approving GMX...`;
+      return `Approving TCR...`;
     }
     if (needApproval) {
-      return `Approve GMX`;
+      return `Approve TCR`;
     }
     if (isCompounding) {
       return "Compounding...";
@@ -139,10 +135,10 @@ function CompoundModal(props) {
       contract,
       "handleRewards",
       [
-        shouldClaimGmx || shouldStakeGmx,
-        shouldStakeGmx,
-        shouldClaimEsGmx || shouldStakeEsGmx,
-        shouldStakeEsGmx,
+        shouldClaimTCR || shouldStakeTCR,
+        shouldStakeTCR,
+        false, // shouldClaimEsGMX
+        false, // shouldStakeEsGmx,
         shouldStakeMultiplierPoints,
         shouldClaimWeth || shouldConvertWeth,
         shouldConvertWeth,
@@ -162,18 +158,11 @@ function CompoundModal(props) {
       });
   };
 
-  const toggleShouldStakeGmx = (value) => {
+  const toggleShouldStakeTCR = (value) => {
     if (value) {
-      setShouldClaimGmx(true);
+      setShouldClaimTCR(true);
     }
-    setShouldStakeGmx(value);
-  };
-
-  const toggleShouldStakeEsGmx = (value) => {
-    if (value) {
-      setShouldClaimEsGmx(true);
-    }
-    setShouldStakeEsGmx(value);
+    setShouldStakeTCR(value);
   };
 
   const toggleConvertWeth = (value) => {
@@ -193,23 +182,13 @@ function CompoundModal(props) {
             </Checkbox>
           </div>
           <div>
-            <Checkbox isChecked={shouldClaimGmx} setIsChecked={setShouldClaimGmx} disabled={shouldStakeGmx}>
-              Claim GMX Rewards
+            <Checkbox isChecked={shouldClaimTCR} setIsChecked={setShouldClaimTCR} disabled={shouldStakeTCR}>
+              Claim TCR Rewards
             </Checkbox>
           </div>
           <div>
-            <Checkbox isChecked={shouldStakeGmx} setIsChecked={toggleShouldStakeGmx}>
-              Stake GMX Rewards
-            </Checkbox>
-          </div>
-          <div>
-            <Checkbox isChecked={shouldClaimEsGmx} setIsChecked={setShouldClaimEsGmx} disabled={shouldStakeEsGmx}>
-              Claim esGMX Rewards
-            </Checkbox>
-          </div>
-          <div>
-            <Checkbox isChecked={shouldStakeEsGmx} setIsChecked={toggleShouldStakeEsGmx}>
-              Stake esGMX Rewards
+            <Checkbox isChecked={shouldStakeTCR} setIsChecked={toggleShouldStakeTCR}>
+              Stake TCR Rewards
             </Checkbox>
           </div>
           <div>
@@ -220,6 +199,11 @@ function CompoundModal(props) {
           <div>
             <Checkbox isChecked={shouldConvertWeth} setIsChecked={toggleConvertWeth}>
               Convert {wrappedTokenSymbol} to {nativeTokenSymbol}
+            </Checkbox>
+          </div>
+          <div>
+            <Checkbox isChecked={shouldBuyTlp} setIsChecked={setShouldBuyTlp}>
+              Buy TlP
             </Checkbox>
           </div>
         </div>
@@ -245,12 +229,8 @@ function ClaimModal(props) {
     wrappedTokenSymbol,
   } = props;
   const [isClaiming, setIsClaiming] = useState(false);
-  const [shouldClaimGmx, setShouldClaimGmx] = useLocalStorageSerializeKey(
-    [chainId, "StakeV2-claim-should-claim-gmx"],
-    true
-  );
-  const [shouldClaimEsGmx, setShouldClaimEsGmx] = useLocalStorageSerializeKey(
-    [chainId, "StakeV2-claim-should-claim-es-gmx"],
+  const [shouldClaimTCR, setShouldClaimTCR] = useLocalStorageSerializeKey(
+    [chainId, "StakeV2-claim-should-claim-tcr"],
     true
   );
   const [shouldClaimWeth, setShouldClaimWeth] = useLocalStorageSerializeKey(
@@ -261,6 +241,7 @@ function ClaimModal(props) {
     [chainId, "StakeV2-claim-should-convert-weth"],
     true
   );
+
 
   const isPrimaryEnabled = () => {
     return !isClaiming;
@@ -282,9 +263,9 @@ function ClaimModal(props) {
       contract,
       "handleRewards",
       [
-        shouldClaimGmx,
-        false, // shouldStakeGmx
-        shouldClaimEsGmx,
+        shouldClaimTCR,
+        false, // shouldStakeTCR
+        false, // shouldClaimEsGmx,
         false, // shouldStakeEsGmx
         false, // shouldStakeMultiplierPoints
         shouldClaimWeth,
@@ -317,13 +298,8 @@ function ClaimModal(props) {
       <Modal isVisible={isVisible} setIsVisible={setIsVisible} label="Claim Rewards">
         <div className="CompoundModal-menu">
           <div>
-            <Checkbox isChecked={shouldClaimGmx} setIsChecked={setShouldClaimGmx}>
-              Claim GMX Rewards
-            </Checkbox>
-          </div>
-          <div>
-            <Checkbox isChecked={shouldClaimEsGmx} setIsChecked={setShouldClaimEsGmx}>
-              Claim esGMX Rewards
+            <Checkbox isChecked={shouldClaimTCR} setIsChecked={setShouldClaimTCR}>
+              Claim TCR Rewards
             </Checkbox>
           </div>
           <div>
@@ -352,8 +328,6 @@ export default function StakeV2({ setPendingTxns, connectWallet }) {
   const { chainId } = useChainId();
 
   const chainName = getChainName(chainId);
-
-  const hasInsurance = true;
 
   const [isCompoundModalVisible, setIsCompoundModalVisible] = useState(false);
   const [isClaimModalVisible, setIsClaimModalVisible] = useState(false);
@@ -688,16 +662,6 @@ export default function StakeV2({ setPendingTxns, connectWallet }) {
                 <Link className="App-button-option App-card-option" to="/buy_tlp#redeem">
                   Sell TLP
                 </Link>
-                {hasInsurance && (
-                  <a
-                    className="App-button-option App-card-option"
-                    href="https://app.insurace.io/Insurance/Cart?id=124&referrer=545066382753150189457177837072918687520318754040"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    Purchase Insurance
-                  </a>
-                )}
                 {active && (
                   <button
                     className="App-button-option App-card-option"
