@@ -1,0 +1,12 @@
+<svg version="1.2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000" width="24" height="24">
+	<title>TLP Symbol_FA_blue-01-svg</title>
+	<style>
+		.s0 { fill: #0000b0 } 
+		.s1 { fill: #ffffff } 
+	</style>
+	<circle id="Layer" class="s0" cx="500" cy="500" r="495"/>
+	<g id="Layer">
+		<path id="Layer" class="s1" d="m116.7-17.3l768.6 443.8-373.5 215.4-80.7-46.5 292.9-168.9-656.7-378.9 49.4-64.9z"/>
+		<path id="Layer" class="s1" d="m488.2 358.8l81 46.3-293.2 169.1 730.7 421.5-231.8-40.3-660.2-381.2 373.5-215.5z"/>
+	</g>
+</svg>

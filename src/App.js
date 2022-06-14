@@ -50,9 +50,9 @@ import { Exchange } from "./views/Exchange/Exchange";
 import Actions from "./views/Actions/Actions";
 import OrdersOverview from "./views/OrdersOverview/OrdersOverview";
 import PositionsOverview from "./views/PositionsOverview/PositionsOverview";
-import BuyGlp from "./views/BuyGlp/BuyGlp";
 import BuyGMX from "./views/BuyGMX/BuyGMX";
-import SellGlp from "./views/SellGlp/SellGlp";
+import BuyTlp from "./views/BuyTlp/BuyTlp";
+import SellTlp from "./views/SellTlp/SellTlp";
 import Buy from "./views/Buy/Buy";
 import NftWallet from "./views/NftWallet/NftWallet";
 import ClaimEsGmx from "./views/ClaimEsGmx/ClaimEsGmx";
@@ -201,7 +201,7 @@ function AppHeaderLinks({ small, openSettings, clickCloseIcon }) {
         </NavLink>
       </div>
       <div className="App-header-link-container">
-        <NavLink activeClassName="active" to="/buy">
+        <NavLink activeClassName="active" to="/buy_tlp">
           Buy
         </NavLink>
       </div>
@@ -750,15 +750,15 @@ function FullApp() {
                 connectWallet={connectWallet}
               />
             </Route>
-            <Route exact path="/buy_glp">
-              <BuyGlp
+            <Route exact path="/buy_tlp">
+              <BuyTlp
                 savedSlippageAmount={savedSlippageAmount}
                 setPendingTxns={setPendingTxns}
                 connectWallet={connectWallet}
               />
             </Route>
-            <Route exact path="/sell_glp">
-              <SellGlp
+            <Route exact path="/sell_tlp">
+              <SellTlp
                 savedSlippageAmount={savedSlippageAmount}
                 setPendingTxns={setPendingTxns}
                 connectWallet={connectWallet}

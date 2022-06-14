@@ -56,12 +56,9 @@ import Vester from "../../abis/Vester.json";
 import RewardRouter from "../../abis/RewardRouter.json";
 import Token from "../../abis/Token.json";
 
-import glp24Icon from "../../img/ic_glp_24.svg";
-import glp40Icon from "../../img/ic_glp_40.svg";
+import tlp24Icon from "../../img/ic_tlp_24.svg";
+import tlp40Icon from "../../img/ic_tlp_40.svg";
 import arrowIcon from "../../img/ic_convert_down.svg";
-
-import avalanche16Icon from "../../img/ic_avalanche_16.svg";
-import arbitrum16Icon from "../../img/ic_arbitrum_16.svg";
 
 import "./GlpSwap.css";
 import AssetDropdown from "../../views/Dashboard/AssetDropdown";
@@ -675,12 +672,7 @@ export default function GlpSwap(props) {
           <div className="App-card-title">
             <div className="App-card-title-mark">
               <div className="App-card-title-mark-icon">
-                <img src={glp40Icon} alt="glp40Icon" />
-                {chainId === ARBITRUM ? (
-                  <img src={arbitrum16Icon} alt="arbitrum16Icon" className="selected-network-symbol" />
-                ) : (
-                  <img src={avalanche16Icon} alt="avalanche16Icon" className="selected-network-symbol" />
-                )}
+                <img src={tlp40Icon} alt="tlp40Icon" />
               </div>
               <div className="App-card-title-mark-info">
                 <div className="App-card-title-mark-title">TLP</div>
@@ -812,7 +804,7 @@ export default function GlpSwap(props) {
               defaultTokenName={"TLP"}
             >
               <div className="selected-token">
-                TLP <img src={glp24Icon} alt="glp24Icon" />
+                TLP <img src={tlp24Icon} alt="tlp24Icon" />
               </div>
             </BuyInputSection>
           )}
@@ -841,7 +833,7 @@ export default function GlpSwap(props) {
               defaultTokenName={"TLP"}
             >
               <div className="selected-token">
-                TLP <img src={glp24Icon} alt="glp24Icon" />
+                TLP <img src={tlp24Icon} alt="tlp24Icon" />
               </div>
             </BuyInputSection>
           )}

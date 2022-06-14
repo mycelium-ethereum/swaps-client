@@ -12,7 +12,7 @@ export default function BuyGMXGLP(props) {
   }, []);
 
   return (
-    <SEO title={getPageTitle("Buy TLP or GMX")}>
+    <SEO title={getPageTitle("Buy TLP")}>
       <div className="BuyGMXGLP page-layout">
         <div className="BuyGMXGLP-container default-container">
           <div className="section-title-block">
@@ -20,7 +20,7 @@ export default function BuyGMXGLP(props) {
               <img src={buyGMXIcon} alt="buyGMXIcon" />
             </div>
             <div className="section-title-content">
-              <div className="Page-title">Buy TLP or GMX</div>
+              <div className="Page-title">Buy TLP</div>
             </div>
           </div>
           <TokenCard />

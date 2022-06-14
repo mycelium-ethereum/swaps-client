@@ -292,7 +292,7 @@ export default function DashboardV2() {
                   <br />
                   <br />
                   Get lower fees to{" "}
-                  <Link to="/buy_glp" target="_blank" rel="noopener noreferrer">
+                  <Link to="/buy_tlp" target="_blank" rel="noopener noreferrer">
                     buy TLP
                   </Link>{" "}
                   with {tokenInfo.symbol},&nbsp; and to{" "}
