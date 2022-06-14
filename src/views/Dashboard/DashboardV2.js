@@ -8,7 +8,7 @@ import TooltipComponent from "../../components/Tooltip/Tooltip";
 import hexToRgba from "hex-to-rgba";
 import { ethers } from "ethers";
 
-import { getWhitelistedTokens, getTokenBySymbol } from "../../data/Tokens";
+import { getWhitelistedTokens } from "../../data/Tokens";
 import { getFeeHistory } from "../../data/Fees";
 
 import {
@@ -34,7 +34,7 @@ import {
   getPageTitle,
   ARBITRUM_TESTNET,
 } from "../../Helpers";
-import { useTotalGmxInLiquidity, useGmxPrice, useTotalGmxStaked, useTotalGmxSupply, useInfoTokens } from "../../Api";
+import { useTotalGmxInLiquidity, useGmxPrice, useTotalGmxSupply, useInfoTokens } from "../../Api";
 
 import { getContract } from "../../Addresses";
 
@@ -46,7 +46,7 @@ import Footer from "../../Footer";
 import "./DashboardV2.css";
 
 import gmx40Icon from "../../img/ic_gmx_40.svg";
-import glp40Icon from "../../img/ic_glp_40.svg";
+import tlp40Icon from "../../img/ic_tlp_40.svg";
 import avalanche16Icon from "../../img/ic_avalanche_16.svg";
 import arbitrum16Icon from "../../img/ic_arbitrum_16.svg";
 import arbitrum24Icon from "../../img/ic_arbitrum_24.svg";
@@ -178,7 +178,6 @@ export default function DashboardV2() {
 
   const { infoTokens } = useInfoTokens(library, chainId, active, undefined, undefined);
 
-  const eth = infoTokens[getTokenBySymbol(chainId, "ETH").address];
   const currentFeesUsd = getCurrentFeesUsd(whitelistedTokenAddresses, fees, infoTokens);
 
   const feeHistory = getFeeHistory(chainId);
@@ -190,7 +189,7 @@ export default function DashboardV2() {
     totalFeesDistributed += parseFloat(feeHistory[i].feeUsd);
   }
 
-  const { gmxPrice, gmxPriceFromArbitrum, gmxPriceFromAvalanche } = useGmxPrice(
+  const { gmxPrice } = useGmxPrice(
     chainId,
     { arbitrum: chainId === ARBITRUM ? library : undefined },
     active
@@ -198,16 +197,9 @@ export default function DashboardV2() {
 
   let { total: totalGmxInLiquidity } = useTotalGmxInLiquidity(chainId, active);
 
-  let { avax: avaxStakedGmx, arbitrum: arbitrumStakedGmx, total: totalStakedGmx } = useTotalGmxStaked();
-
   let gmxMarketCap;
   if (gmxPrice && totalGmxSupply) {
     gmxMarketCap = gmxPrice.mul(totalGmxSupply).div(expandDecimals(1, GMX_DECIMALS));
-  }
-
-  let stakedGmxSupplyUsd;
-  if (gmxPrice && totalStakedGmx) {
-    stakedGmxSupplyUsd = totalStakedGmx.mul(gmxPrice).div(expandDecimals(1, GMX_DECIMALS));
   }
 
   let aum;
@@ -225,24 +217,6 @@ export default function DashboardV2() {
         ? aum.mul(expandDecimals(1, GLP_DECIMALS)).div(glpSupply)
         : expandDecimals(1, USD_DECIMALS);
     glpMarketCap = glpPrice.mul(glpSupply).div(expandDecimals(1, GLP_DECIMALS));
-  }
-
-  let tvl;
-  if (glpMarketCap && gmxPrice && totalStakedGmx) {
-    tvl = glpMarketCap.add(gmxPrice.mul(totalStakedGmx).div(expandDecimals(1, GMX_DECIMALS)));
-  }
-
-  const ethFloorPriceFund = expandDecimals(350 + 148 + 384, 18);
-  const glpFloorPriceFund = expandDecimals(660001, 18);
-  const usdcFloorPriceFund = expandDecimals(784598 + 200000, 30);
-
-  let totalFloorPriceFundUsd;
-
-  if (eth && eth.contractMinPrice && glpPrice) {
-    const ethFloorPriceFundUsd = ethFloorPriceFund.mul(eth.contractMinPrice).div(expandDecimals(1, eth.decimals));
-    const glpFloorPriceFundUsd = glpFloorPriceFund.mul(glpPrice).div(expandDecimals(1, 18));
-
-    totalFloorPriceFundUsd = ethFloorPriceFundUsd.add(glpFloorPriceFundUsd).add(usdcFloorPriceFund);
   }
 
   let adjustedUsdgSupply = bigNumberify(0);
@@ -327,33 +301,31 @@ export default function DashboardV2() {
     );
   };
 
-  let stakedPercent = 0;
-
-  if (totalGmxSupply && !totalGmxSupply.isZero() && !totalStakedGmx.isZero()) {
-    stakedPercent = totalStakedGmx.mul(100).div(totalGmxSupply).toNumber();
-  }
+  // TODO change this to TCR liquidity
+  // let stakedPercent = 0;
+  // if (totalGmxSupply && !totalGmxSupply.isZero() && !totalStakedGmx.isZero()) {
+    // stakedPercent = totalStakedGmx.mul(100).div(totalGmxSupply).toNumber();
+  // }
 
   let liquidityPercent = 0;
-
   if (totalGmxSupply && !totalGmxSupply.isZero() && totalGmxInLiquidity) {
     liquidityPercent = totalGmxInLiquidity.mul(100).div(totalGmxSupply).toNumber();
   }
 
-  let notStakedPercent = 100 - stakedPercent - liquidityPercent;
-
+  let notStakedPercent = 100 - liquidityPercent; // - stakedPercent;
   let gmxDistributionData = [
-    {
-      name: "staked",
-      value: stakedPercent,
-      color: "#4353fa",
-    },
+    // {
+      // name: "staked",
+      // value: stakedPercent,
+      // color: "#4353fa",
+    // },
     {
       name: "in liquidity",
       value: liquidityPercent,
       color: "#0598fa",
     },
     {
-      name: "not staked",
+      name: "in wallets",
       value: notStakedPercent,
       color: "#5c0af5",
     },
@@ -440,18 +412,7 @@ export default function DashboardV2() {
               {(chainId === ARBITRUM || chainId === ARBITRUM_TESTNET) && <img src={arbitrum24Icon} alt="arbitrum24Icon" />}
             </div>
             <div className="Page-description">
-              {chainName} Total Stats start from {totalStatsStartDate}.<br /> For detailed stats:{" "}
-              {(chainId === ARBITRUM || chainId === ARBITRUM_TESTNET) && (
-                <a href="https://stats.gmx.io" target="_blank" rel="noopener noreferrer">
-                  https://stats.gmx.io
-                </a>
-              )}
-              {chainId === AVALANCHE && (
-                <a href="https://stats.gmx.io/avalanche" target="_blank" rel="noopener noreferrer">
-                  https://stats.gmx.io/avalanche
-                </a>
-              )}
-              .
+              {chainName} Total Stats start from {totalStatsStartDate}.<br />
             </div>
           </div>
         </div>
@@ -461,7 +422,7 @@ export default function DashboardV2() {
               <div className="App-card-title">Overview</div>
               <div className="App-card-divider"></div>
               <div className="App-card-content">
-                <div className="App-card-row">
+                {/*<div className="App-card-row">
                   <div className="label">AUM</div>
                   <div>
                     <TooltipComponent
@@ -471,6 +432,7 @@ export default function DashboardV2() {
                     />
                   </div>
                 </div>
+                */}
                 <div className="App-card-row">
                   <div className="label">TLP Pool</div>
                   <div>
@@ -513,10 +475,6 @@ export default function DashboardV2() {
                   <div className="label">Total Volume</div>
                   <div>${formatAmount(totalVolumeSum, USD_DECIMALS, 0, true)}</div>
                 </div>
-                <div className="App-card-row">
-                  <div className="label">Floor Price Fund</div>
-                  <div>${formatAmount(totalFloorPriceFundUsd, 30, 0, true)}</div>
-                </div>
               </div>
             </div>
           </div>
@@ -541,7 +499,7 @@ export default function DashboardV2() {
                         <div className="App-card-title-mark-subtitle">TCR</div>
                       </div>
                       <div>
-                        <AssetDropdown assetSymbol="GMX" />
+                        <AssetDropdown assetSymbol="TCR" />
                       </div>
                     </div>
                   </div>
@@ -551,27 +509,14 @@ export default function DashboardV2() {
                       <div className="label">Price</div>
                       <div>
                         {!gmxPrice && "..."}
-                        {gmxPrice && (
-                          <TooltipComponent
-                            position="right-bottom"
-                            className="nowrap"
-                            handle={"$" + formatAmount(gmxPrice, USD_DECIMALS, 2, true)}
-                            renderContent={() => (
-                              <>
-                                Price on Arbitrum: ${formatAmount(gmxPriceFromArbitrum, USD_DECIMALS, 2, true)}
-                                <br />
-                                Price on Avalanche: ${formatAmount(gmxPriceFromAvalanche, USD_DECIMALS, 2, true)}
-                              </>
-                            )}
-                          />
-                        )}
+                        {gmxPrice && `$${formatAmount(gmxPrice, USD_DECIMALS, 2, true)}`}
                       </div>
                     </div>
                     <div className="App-card-row">
                       <div className="label">Supply</div>
                       <div>{formatAmount(totalGmxSupply, GMX_DECIMALS, 0, true)} TCR</div>
                     </div>
-                    <div className="App-card-row">
+                    {/*<div className="App-card-row">
                       <div className="label">Total Staked</div>
                       <div>
                         {
@@ -589,7 +534,7 @@ export default function DashboardV2() {
                           />
                         }
                       </div>
-                    </div>
+                    </div>*/}
                     <div className="App-card-row">
                       <div className="label">Market Cap</div>
                       <div>${formatAmount(gmxMarketCap, USD_DECIMALS, 0, true)}</div>
@@ -643,19 +588,14 @@ export default function DashboardV2() {
                   <div className="App-card-title">
                     <div className="App-card-title-mark">
                       <div className="App-card-title-mark-icon">
-                        <img src={glp40Icon} alt="glp40Icon" />
-                        {chainId === ARBITRUM ? (
-                          <img src={arbitrum16Icon} alt="arbitrum16Icon" className="selected-network-symbol" />
-                        ) : (
-                          <img src={avalanche16Icon} alt="avalanche16Icon" className="selected-network-symbol" />
-                        )}
+                        <img src={tlp40Icon} alt="tlp40Icon" />
                       </div>
                       <div className="App-card-title-mark-info">
                         <div className="App-card-title-mark-title">TLP</div>
                         <div className="App-card-title-mark-subtitle">TLP</div>
                       </div>
                       <div>
-                        <AssetDropdown assetSymbol="GLP" />
+                        <AssetDropdown assetSymbol="TLP" />
                       </div>
                     </div>
                   </div>

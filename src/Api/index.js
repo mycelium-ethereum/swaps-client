@@ -527,32 +527,25 @@ export function useTotalGmxStaked() {
 
 export function useTotalGmxInLiquidity() {
   let poolAddressArbitrum = getContract(ARBITRUM, "UniswapGmxEthPool");
-  let poolAddressAvax = getContract(AVALANCHE, "TraderJoeGmxAvaxPool");
   let totalGMX = useRef(bigNumberify(0));
 
+  // TODO get TCR pool on arbitrum
   const { data: gmxInLiquidityOnArbitrum, mutate: mutateGMXInLiquidityOnArbitrum } = useSWR(
     [`StakeV2:gmxInLiquidity:${ARBITRUM}`, ARBITRUM, getContract(ARBITRUM, "GMX"), "balanceOf", poolAddressArbitrum],
     {
       fetcher: fetcher(undefined, Token),
     }
   );
-  const { data: gmxInLiquidityOnAvax, mutate: mutateGMXInLiquidityOnAvax } = useSWR(
-    [`StakeV2:gmxInLiquidity:${AVALANCHE}`, AVALANCHE, getContract(AVALANCHE, "GMX"), "balanceOf", poolAddressAvax],
-    {
-      fetcher: fetcher(undefined, Token),
-    }
-  );
   const mutate = useCallback(() => {
     mutateGMXInLiquidityOnArbitrum();
-    mutateGMXInLiquidityOnAvax();
-  }, [mutateGMXInLiquidityOnArbitrum, mutateGMXInLiquidityOnAvax]);
+  }, [mutateGMXInLiquidityOnArbitrum]);
 
-  if (gmxInLiquidityOnAvax && gmxInLiquidityOnArbitrum) {
-    let total = bigNumberify(gmxInLiquidityOnArbitrum).add(gmxInLiquidityOnAvax);
+  if (gmxInLiquidityOnArbitrum) {
+    let total = bigNumberify(gmxInLiquidityOnArbitrum);
     totalGMX.current = total;
   }
   return {
-    avax: gmxInLiquidityOnAvax,
+    avax: bigNumberify(0),
     arbitrum: gmxInLiquidityOnArbitrum,
     total: totalGMX.current,
     mutate,
