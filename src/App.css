@@ -152,7 +152,7 @@
   position: relative;
   border: 1px solid var(--border-primary);
   border-radius: 4px;
-  background: rgba(39, 39, 42, 0.2);
+  background: rgba(34, 39, 74, 0.2);
 }
 
 .App-card-bottom-placeholder {
