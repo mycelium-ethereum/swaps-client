@@ -2414,6 +2414,7 @@ export function getInfoTokens(
 
   for (let i = 0; i < whitelistedTokens.length; i++) {
     const token = JSON.parse(JSON.stringify(whitelistedTokens[i]));
+    console.log("vaultTokenInfo", vaultTokenInfo)
     if (vaultTokenInfo) {
       token.poolAmount = vaultTokenInfo[i * vaultPropsLength];
       token.reservedAmount = vaultTokenInfo[i * vaultPropsLength + 1];
