@@ -87,7 +87,8 @@ const CONTRACTS = {
     RewardReader: "0xEf543e306A0c495696e35Ac11a74fE9eF7676Fd4",
     // RewardReader: "0x8BFb8e82Ee4569aee78D03235ff465Bd436D40E0",
     
-    NATIVE_TOKEN: "0xB47e6A5f8b33b3F17603C83a0535A9dcD7E32681",
+    // https://github.com/OffchainLabs/arbitrum/blob/950c2f91b2e951cd3764394e0a73eac3797aecf3/packages/arb-ts/src/lib/networks.ts#L65 
+    NATIVE_TOKEN: "0xB47e6A5f8b33b3F17603C83a0535A9dcD7E32681", 
     // NATIVE_TOKEN: "0x82aF49447D8a07e3bd95BD0d56f35241523fBab1",
 
     GLP: "0xB9bA37f1aa73DbeD7BA641CEaBCb35065edd262F",
@@ -135,7 +136,8 @@ const CONTRACTS = {
     OrderBookReader: "0x00DdC983C786037f933EE4EB264BBBec5298a850",
     // OrderBookReader: "0xa27C20A7CF0e1C68C0460706bB674f98F362Bc21",
 
-    PositionRouter: "0xcaF2a9e64a765c4fF87bEB929eE767DcD48eef28",
+    PositionRouter: "0x88A33E49FE21452Cf98CF48959A9FeEE2f6B152E",
+    // PositionRouter: "0xcaF2a9e64a765c4fF87bEB929eE767DcD48eef28",
     // PositionRouter: "0x3D6bA331e3D9702C5e8A8d254e5d8a285F223aba",
     PositionManager: "0x34c47C2bea289815dd1De3Aac0bdcA567219CFfA",
     // PositionManager: "0x87a4088Bd721F83b6c2E5102e2FA47022Cb1c831",
