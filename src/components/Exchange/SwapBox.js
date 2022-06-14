@@ -2298,13 +2298,6 @@ export default function SwapBox(props) {
             </a>
           </div>
         </div>
-        <div className="Exchange-info-row">
-          <div className="Exchange-info-label-button">
-            <a href="https://gmxio.gitbook.io/gmx/trading#backup-rpc-urls" target="_blank" rel="noopener noreferrer">
-              Speed up page loading
-            </a>
-          </div>
-        </div>
       </div>
       {renderErrorModal()}
       {renderOrdersToa()}
