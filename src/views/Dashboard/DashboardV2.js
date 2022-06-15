@@ -189,13 +189,13 @@ export default function DashboardV2() {
     totalFeesDistributed += parseFloat(feeHistory[i].feeUsd);
   }
 
-  const { tcrPrice } = useTCRPrice(
+  const { tcrPrice, tcrPriceFromMainnet, tcrPriceFromArbitrum } = useTCRPrice(
     chainId,
     { arbitrum: chainId === ARBITRUM ? library : undefined },
     active
   );
 
-  let { total: totalTCRInLiquidity } = useTotalTCRInLiquidity(chainId, active);
+  let { mainnet: totalTCRInLiquidityMainnet, arbitrum: totalTCRInLiquidityArbitrum } = useTotalTCRInLiquidity(chainId, active);
 
   let gmxMarketCap;
   if (tcrPrice && totalTCRSupply) {
@@ -307,12 +307,17 @@ export default function DashboardV2() {
     // stakedPercent = totalStakedGmx.mul(100).div(totalTCRSupply).toNumber();
   // }
 
-  let liquidityPercent = 0;
-  if (totalTCRSupply && !totalTCRSupply.isZero() && totalTCRInLiquidity) {
-    liquidityPercent = totalTCRInLiquidity.mul(100).div(totalTCRSupply).toNumber();
+  let arbitrumLiquidityPercent = 0;
+  if (totalTCRSupply && !totalTCRSupply.isZero() && totalTCRInLiquidityArbitrum) {
+    arbitrumLiquidityPercent = totalTCRInLiquidityArbitrum.mul(100).div(totalTCRSupply).toNumber();
   }
 
-  let notStakedPercent = 100 - liquidityPercent; // - stakedPercent;
+  let mainnetLiquidityPercent = 0;
+  if (totalTCRSupply && !totalTCRSupply.isZero() && totalTCRInLiquidityMainnet) {
+    mainnetLiquidityPercent = totalTCRInLiquidityMainnet.mul(100).div(totalTCRSupply).toNumber();
+  }
+
+  let notStakedPercent = 100 - arbitrumLiquidityPercent - mainnetLiquidityPercent; // - stakedPercent;
   let gmxDistributionData = [
     // {
       // name: "staked",
@@ -320,9 +325,14 @@ export default function DashboardV2() {
       // color: "#4353fa",
     // },
     {
-      name: "in liquidity",
-      value: liquidityPercent,
+      name: "in Arbitrum liquidity",
+      value: arbitrumLiquidityPercent,
       color: "#0598fa",
+    },
+    {
+      name: "in Mainnet liquidity",
+      value: mainnetLiquidityPercent,
+      color: "#4353fa",
     },
     {
       name: "in wallets",
@@ -509,7 +519,20 @@ export default function DashboardV2() {
                       <div className="label">Price</div>
                       <div>
                         {!tcrPrice && "..."}
-                        {tcrPrice && `$${formatAmount(tcrPrice, USD_DECIMALS, 2, true)}`}
+                        {tcrPrice && 
+                          <TooltipComponent
+                            position="right-bottom"
+                            className="nowrap"
+                            handle={`$${formatAmount(tcrPrice, USD_DECIMALS, 3, true)}`}
+                            renderContent={() => (
+                              <>
+                                Price on Arbitrum: ${formatAmount(tcrPriceFromArbitrum, USD_DECIMALS, 4, true)}
+                                <br />
+                                Price on Mainnet: ${formatAmount(tcrPriceFromMainnet, USD_DECIMALS, 4, true)} 
+                              </>
+                            )}
+                          />
+                        }
                       </div>
                     </div>
                     <div className="App-card-row">
@@ -537,7 +560,10 @@ export default function DashboardV2() {
                     </div>*/}
                     <div className="App-card-row">
                       <div className="label">Market Cap</div>
-                      <div>${formatAmount(gmxMarketCap, USD_DECIMALS, 0, true)}</div>
+                      <div>
+
+                      ${formatAmount(gmxMarketCap, USD_DECIMALS, 0, true)}
+                      </div>
                     </div>
                   </div>
                 </div>

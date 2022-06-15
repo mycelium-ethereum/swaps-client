@@ -195,7 +195,7 @@ const CONTRACTS = {
 
     UniswapGmxEthPool: "0x80A9ae39310abf666A87C743d6ebBD0E8C42158E",
     UniswapTcrEthPool: "0xe8bfb2918853576f0965e29bb86001ea93019003",
-    SushiTcrEthPool: "0xe55c3e83852429334a986b265d03b879a3d188ac",
+    BalancerTcrEthPool: "0xBA12222222228d8Ba445958a75a0704d566BF2C8",
 
     ReferralStorage: "0xe6fab3f0c7199b0d34d7fbe83394fc0e0d06e99d",
     ReferralReader: "0x8Aa382760BCdCe8644C33e6C2D52f6304A76F5c8",

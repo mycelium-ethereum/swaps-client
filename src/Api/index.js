@@ -531,7 +531,10 @@ export function useTotalGmxStaked() {
 }
 
 export function useTotalTCRInLiquidity() {
-  let poolAddressArbitrum = getContract(ARBITRUM, "UniswapTcrEthPool");
+  let poolAddressArbitrum = {
+    uniswap: getContract(ARBITRUM, "UniswapTcrEthPool"),
+    balancer: getContract(ARBITRUM, "BalancerTcrEthPool"),
+  }
   let poolAddressMainnet = {
     uniswap: getContract(ETHEREUM, "UniswapTcrEthPool"),
     sushiswap: getContract(ETHEREUM, "SushiswapTcrEthPool"),
@@ -539,8 +542,15 @@ export function useTotalTCRInLiquidity() {
   let totalTCRArbitrum = useRef(bigNumberify(0));
   let totalTCRMainnet = useRef(bigNumberify(0));
 
-  const { data: tcrInLiquidityOnArbitrum, mutate: mutateTCRInLiquidityOnArbitrum } = useSWR(
-    [`StakeV2:tcrInLiquidity:${ARBITRUM}`, ARBITRUM, getContract(ARBITRUM, "TCR"), "balanceOf", poolAddressArbitrum],
+  const { data: tcrInUniswapLiquidityOnArbitrum, mutate: mutateTCRInUniswapLiquidityOnArbitrum } = useSWR(
+    [`StakeV2:tcrInLiquidity:${ARBITRUM}`, ARBITRUM, getContract(ARBITRUM, "TCR"), "balanceOf", poolAddressArbitrum.uniswap],
+    {
+      fetcher: fetcher(undefined, Token),
+    }
+  );
+
+  const { data: tcrInBalancerLiquidityOnArbitrum, mutate: mutateTCRInBalancerLiquidityOnArbitrum } = useSWR(
+    [`StakeV2:tcrBalancerLiquidity:${ARBITRUM}`, ARBITRUM, getContract(ARBITRUM, "TCR"), "balanceOf", poolAddressArbitrum.balancer],
     {
       fetcher: fetcher(undefined, Token),
     }
@@ -552,6 +562,7 @@ export function useTotalTCRInLiquidity() {
       fetcher: fetcher(undefined, Token),
     }
   );
+
   const { data: tcrInSushiswapLiquidityOnMainnet, mutate: mutateTCRInSushiSwapLiquidityOnMainnet} = useSWR(
     [`StakeV2:tcrInSushiswapLiquidity:${ETHEREUM}`, ETHEREUM, getContract(ETHEREUM, "TCR"), "balanceOf", poolAddressMainnet.sushiswap],
     {
@@ -559,21 +570,20 @@ export function useTotalTCRInLiquidity() {
     }
   );
 
-  // TODO get liquidity in from arbitrum balancer pool
-
   const mutate = useCallback(() => {
-    mutateTCRInLiquidityOnArbitrum();
+    mutateTCRInUniswapLiquidityOnArbitrum();
+    mutateTCRInBalancerLiquidityOnArbitrum();
     mutateTCRInUniswapLiquidityOnMainnet();
     mutateTCRInSushiSwapLiquidityOnMainnet();
-  }, [mutateTCRInLiquidityOnArbitrum, mutateTCRInUniswapLiquidityOnMainnet, mutateTCRInSushiSwapLiquidityOnMainnet]);
+  }, [mutateTCRInUniswapLiquidityOnArbitrum, mutateTCRInBalancerLiquidityOnArbitrum, mutateTCRInUniswapLiquidityOnMainnet, mutateTCRInSushiSwapLiquidityOnMainnet]);
 
   if (tcrInSushiswapLiquidityOnMainnet && tcrInUniswapLiquidityOnMainnet) {
     let total = bigNumberify(tcrInSushiswapLiquidityOnMainnet).add(tcrInUniswapLiquidityOnMainnet);
     totalTCRMainnet.current = total;
   }
 
-  if (tcrInLiquidityOnArbitrum) {
-    let total = bigNumberify(tcrInLiquidityOnArbitrum);
+  if (tcrInUniswapLiquidityOnArbitrum && tcrInBalancerLiquidityOnArbitrum) {
+    let total = bigNumberify(tcrInUniswapLiquidityOnArbitrum).add(tcrInBalancerLiquidityOnArbitrum);
     totalTCRArbitrum.current = total;
   }
 
