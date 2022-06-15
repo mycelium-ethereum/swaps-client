@@ -468,17 +468,12 @@ export function useTCRPrice(chainId, libraries, active) {
 export function useTotalTCRSupply() {
   const tcrSupplyUrl = "https://stats.tracer.finance/supply"
 
-  const { data: _tcrSupply, mutate: updateTCRSupply } = useSWR([tcrSupplyUrl], {
-    fetcher: (...args) => fetch(...args).then((res) => res.json()),
+  const { data: tcrSupply, mutate: updateTCRSupply } = useSWR([tcrSupplyUrl], {
+    fetcher: (...args) => fetch(...args, { headers: { 'Content-Type': 'application/json' }}).then((res) => res.json()),
   });
 
-  // TODO temporary set since getting cors on supply request
-  const tcrSupply = {
-    supply: '252731768331576706706109488'
-  }
-
   return {
-    total: tcrSupply.supply ? bigNumberify(tcrSupply.supply) : undefined,
+    total: tcrSupply?.totalSupply ? bigNumberify(tcrSupply.totalSupply) : undefined,
     mutate: updateTCRSupply,
   };
 }
