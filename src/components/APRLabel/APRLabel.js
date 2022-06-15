@@ -22,7 +22,7 @@ import GlpManager from "../../abis/GlpManager.json";
 
 import { useWeb3React } from "@web3-react/core";
 
-import { useGmxPrice } from "../../Api";
+import { useTCRPrice } from "../../Api";
 
 import { getContract } from "../../Addresses";
 
@@ -124,7 +124,7 @@ export default function APRLabel({ chainId, label }) {
     }
   );
 
-  const { gmxPrice } = useGmxPrice(chainId, {}, active);
+  const { tcrPrice } = useTCRPrice(chainId, {}, active);
 
   const gmxSupplyUrl = getServerUrl(chainId, "/gmx_supply");
   const { data: gmxSupply } = useSWR([gmxSupplyUrl], {
@@ -150,7 +150,7 @@ export default function APRLabel({ chainId, label }) {
     aum,
     nativeTokenPrice,
     stakedGmxSupply,
-    gmxPrice,
+    tcrPrice,
     gmxSupply
   );
 

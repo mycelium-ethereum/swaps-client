@@ -34,7 +34,7 @@ import {
   getPageTitle,
   ARBITRUM_TESTNET,
 } from "../../Helpers";
-import { useTotalGmxInLiquidity, useGmxPrice, useTotalGmxSupply, useInfoTokens } from "../../Api";
+import { useTotalTCRInLiquidity, useTCRPrice, useTotalTCRSupply, useInfoTokens } from "../../Api";
 
 import { getContract } from "../../Addresses";
 
@@ -127,7 +127,7 @@ export default function DashboardV2() {
     fetcher: (...args) => fetch(...args).then((res) => res.json()),
   });
 
-  let { total: totalGmxSupply } = useTotalGmxSupply();
+  let { total: totalTCRSupply } = useTotalTCRSupply();
 
   let totalLongPositionSizes;
   let totalShortPositionSizes;
@@ -148,11 +148,11 @@ export default function DashboardV2() {
   const vaultAddress = getContract(chainId, "Vault");
   const glpManagerAddress = getContract(chainId, "GlpManager");
 
-  const gmxAddress = getContract(chainId, "GMX");
+  const tcrAddress = getContract(chainId, "TCR");
   const glpAddress = getContract(chainId, "GLP");
   const usdgAddress = getContract(chainId, "USDG");
 
-  const tokensForSupplyQuery = [gmxAddress, glpAddress, usdgAddress];
+  const tokensForSupplyQuery = [tcrAddress, glpAddress, usdgAddress];
 
   const { data: aums } = useSWR([`Dashboard:getAums:${active}`, chainId, glpManagerAddress, "getAums"], {
     fetcher: fetcher(library, GlpManager),
@@ -189,17 +189,17 @@ export default function DashboardV2() {
     totalFeesDistributed += parseFloat(feeHistory[i].feeUsd);
   }
 
-  const { gmxPrice } = useGmxPrice(
+  const { tcrPrice } = useTCRPrice(
     chainId,
     { arbitrum: chainId === ARBITRUM ? library : undefined },
     active
   );
 
-  let { total: totalGmxInLiquidity } = useTotalGmxInLiquidity(chainId, active);
+  let { total: totalTCRInLiquidity } = useTotalTCRInLiquidity(chainId, active);
 
   let gmxMarketCap;
-  if (gmxPrice && totalGmxSupply) {
-    gmxMarketCap = gmxPrice.mul(totalGmxSupply).div(expandDecimals(1, GMX_DECIMALS));
+  if (tcrPrice && totalTCRSupply) {
+    gmxMarketCap = tcrPrice.mul(totalTCRSupply).div(expandDecimals(1, GMX_DECIMALS));
   }
 
   let aum;
@@ -303,13 +303,13 @@ export default function DashboardV2() {
 
   // TODO change this to TCR liquidity
   // let stakedPercent = 0;
-  // if (totalGmxSupply && !totalGmxSupply.isZero() && !totalStakedGmx.isZero()) {
-    // stakedPercent = totalStakedGmx.mul(100).div(totalGmxSupply).toNumber();
+  // if (totalTCRSupply && !totalTCRSupply.isZero() && !totalStakedGmx.isZero()) {
+    // stakedPercent = totalStakedGmx.mul(100).div(totalTCRSupply).toNumber();
   // }
 
   let liquidityPercent = 0;
-  if (totalGmxSupply && !totalGmxSupply.isZero() && totalGmxInLiquidity) {
-    liquidityPercent = totalGmxInLiquidity.mul(100).div(totalGmxSupply).toNumber();
+  if (totalTCRSupply && !totalTCRSupply.isZero() && totalTCRInLiquidity) {
+    liquidityPercent = totalTCRInLiquidity.mul(100).div(totalTCRSupply).toNumber();
   }
 
   let notStakedPercent = 100 - liquidityPercent; // - stakedPercent;
@@ -508,13 +508,13 @@ export default function DashboardV2() {
                     <div className="App-card-row">
                       <div className="label">Price</div>
                       <div>
-                        {!gmxPrice && "..."}
-                        {gmxPrice && `$${formatAmount(gmxPrice, USD_DECIMALS, 2, true)}`}
+                        {!tcrPrice && "..."}
+                        {tcrPrice && `$${formatAmount(tcrPrice, USD_DECIMALS, 2, true)}`}
                       </div>
                     </div>
                     <div className="App-card-row">
                       <div className="label">Supply</div>
-                      <div>{formatAmount(totalGmxSupply, GMX_DECIMALS, 0, true)} TCR</div>
+                      <div>{formatAmount(totalTCRSupply, GMX_DECIMALS, 0, true)} TCR</div>
                     </div>
                     {/*<div className="App-card-row">
                       <div className="label">Total Staked</div>

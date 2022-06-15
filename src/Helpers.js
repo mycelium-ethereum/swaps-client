@@ -29,6 +29,7 @@ export const PLACEHOLDER_ACCOUNT = ethers.Wallet.createRandom().address;
 export const MAINNET = 56;
 export const AVALANCHE = 43114;
 export const TESTNET = 97;
+export const ETHEREUM = 1;
 export const ARBITRUM_TESTNET = 421611;
 export const ARBITRUM = 42161;
 // TODO take it from web3
@@ -56,6 +57,7 @@ const MAX_GAS_PRICE_MAP = {
   [AVALANCHE]: "200000000000", // 200 gwei
 };
 
+const ETHEREUM_RPC_PROVIDERS = ["https://cloudflare-eth.com"];
 const ARBITRUM_RPC_PROVIDERS = ["https://arb1.arbitrum.io/rpc"];
 const ARBITRUM_TESTNET_RPC_PROVIDERS = ["https://rinkeby.arbitrum.io/rpc"];
 const AVALANCHE_RPC_PROVIDERS = ["https://avax-mainnet.gateway.pokt.network/v1/lb/626f37766c499d003aada23b"];
@@ -376,6 +378,7 @@ const getWalletConnectConnector = () => {
   const chainId = localStorage.getItem(SELECTED_NETWORK_LOCAL_STORAGE_KEY) || DEFAULT_CHAIN_ID;
   return new WalletConnectConnector({
     rpc: {
+      [ETHEREUM]: ETHEREUM_RPC_PROVIDERS[0],
       [AVALANCHE]: AVALANCHE_RPC_PROVIDERS[0],
       [ARBITRUM]: ARBITRUM_RPC_PROVIDERS[0],
       [ARBITRUM_TESTNET]: ARBITRUM_TESTNET_RPC_PROVIDERS[0],
@@ -1377,6 +1380,7 @@ export const BSC_RPC_PROVIDERS = [
 ];
 
 const RPC_PROVIDERS = {
+  [ETHEREUM]: ETHEREUM_RPC_PROVIDERS,
   [MAINNET]: BSC_RPC_PROVIDERS,
   [ARBITRUM]: ARBITRUM_RPC_PROVIDERS,
   [ARBITRUM_TESTNET]: ARBITRUM_TESTNET_RPC_PROVIDERS,
@@ -2414,7 +2418,6 @@ export function getInfoTokens(
 
   for (let i = 0; i < whitelistedTokens.length; i++) {
     const token = JSON.parse(JSON.stringify(whitelistedTokens[i]));
-    console.log("vaultTokenInfo", vaultTokenInfo)
     if (vaultTokenInfo) {
       token.poolAmount = vaultTokenInfo[i * vaultPropsLength];
       token.reservedAmount = vaultTokenInfo[i * vaultPropsLength + 1];

@@ -10,7 +10,6 @@ import PositionManager from "../abis/PositionManager.json";
 import Vault from "../abis/Vault.json";
 import Router from "../abis/Router.json";
 import UniPool from "../abis/UniPool.json";
-import UniswapV2 from "../abis/UniswapV2.json";
 import Token from "../abis/Token.json";
 import VaultReader from "../abis/VaultReader.json";
 import ReferralStorage from "../abis/ReferralStorage.json";
@@ -21,6 +20,8 @@ import {
   UI_VERSION,
   ARBITRUM,
   AVALANCHE,
+  ARBITRUM_TESTNET,
+  ETHEREUM,
   // DEFAULT_GAS_LIMIT,
   bigNumberify,
   getExplorerUrl,
@@ -37,7 +38,6 @@ import {
   getInfoTokens,
   isAddressZero,
   helperToast,
-  ARBITRUM_TESTNET,
 } from "../Helpers";
 import { getTokens, getTokenBySymbol, getWhitelistedTokens } from "../data/Tokens";
 
@@ -445,36 +445,41 @@ export function useHasOutdatedUi() {
   return { data: hasOutdatedUi, mutate };
 }
 
-export function useGmxPrice(chainId, libraries, active) {
+export function useTCRPrice(chainId, libraries, active) {
   const arbitrumLibrary = libraries && libraries.arbitrum ? libraries.arbitrum : undefined;
-  const { data: gmxPriceFromArbitrum, mutate: mutateFromArbitrum } = useGmxPriceFromArbitrum(arbitrumLibrary, active);
-  const { data: gmxPriceFromAvalanche, mutate: mutateFromAvalanche } = useGmxPriceFromAvalanche();
+  const { data: tcrPriceFromArbitrum, mutate: mutateFromArbitrum } = useTCRPriceFromArbitrum(arbitrumLibrary, active);
+  const { data: tcrPriceFromMainnet, mutate: mutateFromMainnet} = useTCRPriceFromMainnet(active);
 
-  const gmxPrice = chainId === ARBITRUM ? gmxPriceFromArbitrum : gmxPriceFromAvalanche;
+  const tcrPrice = chainId === ARBITRUM ? tcrPriceFromArbitrum : tcrPriceFromMainnet;
+
   const mutate = useCallback(() => {
-    mutateFromAvalanche();
+    mutateFromMainnet();
     mutateFromArbitrum();
-  }, [mutateFromAvalanche, mutateFromArbitrum]);
+  }, [mutateFromMainnet, mutateFromArbitrum]);
 
   return {
-    gmxPrice,
-    gmxPriceFromArbitrum,
-    gmxPriceFromAvalanche,
+    tcrPrice,
+    tcrPriceFromArbitrum,
+    tcrPriceFromMainnet,
     mutate,
   };
 }
 
-// use only the supply endpoint on arbitrum, it includes the supply on avalanche
-export function useTotalGmxSupply() {
-  const gmxSupplyUrlArbitrum = getServerUrl(ARBITRUM, "/gmx_supply");
+export function useTotalTCRSupply() {
+  const tcrSupplyUrl = "https://stats.tracer.finance/supply"
 
-  const { data: gmxSupply, mutate: updateGmxSupply } = useSWR([gmxSupplyUrlArbitrum], {
-    fetcher: (...args) => fetch(...args).then((res) => res.text()),
+  const { data: _tcrSupply, mutate: updateTCRSupply } = useSWR([tcrSupplyUrl], {
+    fetcher: (...args) => fetch(...args).then((res) => res.json()),
   });
 
+  // TODO temporary set since getting cors on supply request
+  const tcrSupply = {
+    supply: '252731768331576706706109488'
+  }
+
   return {
-    total: gmxSupply ? bigNumberify(gmxSupply) : undefined,
-    mutate: updateGmxSupply,
+    total: tcrSupply.supply ? bigNumberify(tcrSupply.supply) : undefined,
+    mutate: updateTCRSupply,
   };
 }
 
@@ -525,29 +530,57 @@ export function useTotalGmxStaked() {
   };
 }
 
-export function useTotalGmxInLiquidity() {
-  let poolAddressArbitrum = getContract(ARBITRUM, "UniswapGmxEthPool");
-  let totalGMX = useRef(bigNumberify(0));
+export function useTotalTCRInLiquidity() {
+  let poolAddressArbitrum = getContract(ARBITRUM, "UniswapTcrEthPool");
+  let poolAddressMainnet = {
+    uniswap: getContract(ETHEREUM, "UniswapTcrEthPool"),
+    sushiswap: getContract(ETHEREUM, "SushiswapTcrEthPool"),
+  }
+  let totalTCRArbitrum = useRef(bigNumberify(0));
+  let totalTCRMainnet = useRef(bigNumberify(0));
 
-  // TODO get TCR pool on arbitrum
-  const { data: gmxInLiquidityOnArbitrum, mutate: mutateGMXInLiquidityOnArbitrum } = useSWR(
-    [`StakeV2:gmxInLiquidity:${ARBITRUM}`, ARBITRUM, getContract(ARBITRUM, "GMX"), "balanceOf", poolAddressArbitrum],
+  const { data: tcrInLiquidityOnArbitrum, mutate: mutateTCRInLiquidityOnArbitrum } = useSWR(
+    [`StakeV2:tcrInLiquidity:${ARBITRUM}`, ARBITRUM, getContract(ARBITRUM, "TCR"), "balanceOf", poolAddressArbitrum],
     {
       fetcher: fetcher(undefined, Token),
     }
   );
-  const mutate = useCallback(() => {
-    mutateGMXInLiquidityOnArbitrum();
-  }, [mutateGMXInLiquidityOnArbitrum]);
 
-  if (gmxInLiquidityOnArbitrum) {
-    let total = bigNumberify(gmxInLiquidityOnArbitrum);
-    totalGMX.current = total;
+  const { data: tcrInUniswapLiquidityOnMainnet, mutate: mutateTCRInUniswapLiquidityOnMainnet} = useSWR(
+    [`StakeV2:tcrInUniswapLiquidity:${ETHEREUM}`, ETHEREUM, getContract(ETHEREUM, "TCR"), "balanceOf", poolAddressMainnet.uniswap],
+    {
+      fetcher: fetcher(undefined, Token),
+    }
+  );
+  const { data: tcrInSushiswapLiquidityOnMainnet, mutate: mutateTCRInSushiSwapLiquidityOnMainnet} = useSWR(
+    [`StakeV2:tcrInSushiswapLiquidity:${ETHEREUM}`, ETHEREUM, getContract(ETHEREUM, "TCR"), "balanceOf", poolAddressMainnet.sushiswap],
+    {
+      fetcher: fetcher(undefined, Token),
+    }
+  );
+
+  // TODO get liquidity in from arbitrum balancer pool
+
+  const mutate = useCallback(() => {
+    mutateTCRInLiquidityOnArbitrum();
+    mutateTCRInUniswapLiquidityOnMainnet();
+    mutateTCRInSushiSwapLiquidityOnMainnet();
+  }, [mutateTCRInLiquidityOnArbitrum, mutateTCRInUniswapLiquidityOnMainnet, mutateTCRInSushiSwapLiquidityOnMainnet]);
+
+  if (tcrInSushiswapLiquidityOnMainnet && tcrInUniswapLiquidityOnMainnet) {
+    let total = bigNumberify(tcrInSushiswapLiquidityOnMainnet).add(tcrInUniswapLiquidityOnMainnet);
+    totalTCRMainnet.current = total;
   }
+
+  if (tcrInLiquidityOnArbitrum) {
+    let total = bigNumberify(tcrInLiquidityOnArbitrum);
+    totalTCRArbitrum.current = total;
+  }
+
   return {
-    avax: bigNumberify(0),
-    arbitrum: gmxInLiquidityOnArbitrum,
-    total: totalGMX.current,
+    mainnet: totalTCRMainnet.current,
+    arbitrum: totalTCRArbitrum.current,
+    total: totalTCRArbitrum.current.add(totalTCRMainnet.current),
     mutate,
   };
 }
@@ -592,39 +625,73 @@ export function useCodeOwner(library, chainId, account, code) {
   };
 }
 
-function useGmxPriceFromAvalanche() {
-  const poolAddress = getContract(AVALANCHE, "TraderJoeGmxAvaxPool");
-
-  const { data, mutate: updateReserves } = useSWR(["TraderJoeGmxAvaxReserves", AVALANCHE, poolAddress, "getReserves"], {
-    fetcher: fetcher(undefined, UniswapV2),
-  });
-  const { _reserve0: gmxReserve, _reserve1: avaxReserve } = data || {};
-
-  const vaultAddress = getContract(AVALANCHE, "Vault");
-  const avaxAddress = getTokenBySymbol(AVALANCHE, "WAVAX").address;
-  const { data: avaxPrice, mutate: updateAvaxPrice } = useSWR(
-    [`StakeV2:avaxPrice`, AVALANCHE, vaultAddress, "getMinPrice", avaxAddress],
+function useTCRPriceFromMainnet(active) {
+  const poolAddress = getContract(ETHEREUM, "UniswapTcrEthPool");
+  const { data: tcrEthUniPoolSlot0, mutate: updateTcrEthUniPoolSlot0 } = useSWR(
+    [`StakeV2:mainnetUniPoolSlot0:${active}`, ETHEREUM, poolAddress, "slot0"],
     {
-      fetcher: fetcher(undefined, Vault),
+      fetcher: fetcher(undefined, UniPool),
     }
   );
 
-  const PRECISION = bigNumberify(10).pow(18);
-  let gmxPrice;
-  if (avaxReserve && gmxReserve && avaxPrice) {
-    gmxPrice = avaxReserve.mul(PRECISION).div(gmxReserve).mul(avaxPrice).div(PRECISION);
-  }
+  const ethPoolAddress = getContract(ETHEREUM, "UniswapEthUsdcPool");
+  const { data: ethUsdcUniPoolSlot0, mutate: updateEthUsdcUniPoolSlot0 } = useSWR(
+    [`StakeV2:mainnetEthPrice:${active}`, ETHEREUM, ethPoolAddress, "slot0"],
+    {
+      fetcher: fetcher(undefined, UniPool),
+    }
+  );
+
+  const gmxPrice = useMemo(() => {
+    if (tcrEthUniPoolSlot0 && ethUsdcUniPoolSlot0) {
+      const ethAddress = getContract(ETHEREUM, "WETH");
+      const ETH = new UniToken(ETHEREUM, ethAddress, 18, "SYMBOL", "NAME");
+
+      const usdcAddress = getContract(ETHEREUM, "USDC");
+      const USDC = new UniToken(ETHEREUM, usdcAddress, 18, "SYMBOL", "NAME");
+
+      const ethUsdcPool = new Pool(
+        ETH,
+        USDC,
+        0,
+        ethUsdcUniPoolSlot0.sqrtPriceX96,
+        1,
+        ethUsdcUniPoolSlot0.tick
+      )
+
+      const tcrAddress = getContract(ETHEREUM, "TCR");
+      const TCR = new UniToken(ETHEREUM, tcrAddress, 18, "SYMBOL", "NAME");
+
+      const tcrEthPool = new Pool(
+        ETH, // tokenA
+        TCR, // tokenB
+        10000, // fee
+        tcrEthUniPoolSlot0.sqrtPriceX96, // sqrtRatioX96
+        1, // liquidity
+        tcrEthUniPoolSlot0.tick, // tickCurrent
+        []
+      );
+
+      const ethPrice = ethUsdcPool.priceOf(ETH).toSignificant(6);
+      // USDC is 6 decimals need to parse into 18 + 6 decimal places
+      const ethPriceAmount = parseValue(ethPrice, 24);
+      const poolTokenPrice = tcrEthPool.priceOf(TCR).toSignificant(6);
+      const poolTokenPriceAmount = parseValue(poolTokenPrice, 18);
+      // here everything is in 10 ** 24 precision
+      return poolTokenPriceAmount.mul(ethPriceAmount)
+    }
+  }, [ethUsdcUniPoolSlot0, tcrEthUniPoolSlot0]);
 
   const mutate = useCallback(() => {
-    updateReserves(undefined, true);
-    updateAvaxPrice(undefined, true);
-  }, [updateReserves, updateAvaxPrice]);
+    updateTcrEthUniPoolSlot0(undefined, true);
+    updateEthUsdcUniPoolSlot0(undefined, true);
+  }, [updateEthUsdcUniPoolSlot0, updateTcrEthUniPoolSlot0]);
 
   return { data: gmxPrice, mutate };
 }
 
-function useGmxPriceFromArbitrum(library, active) {
-  const poolAddress = getContract(ARBITRUM, "UniswapGmxEthPool");
+function useTCRPriceFromArbitrum(library, active) {
+  const poolAddress = getContract(ARBITRUM, "UniswapTcrEthPool");
   const { data: uniPoolSlot0, mutate: updateUniPoolSlot0 } = useSWR(
     [`StakeV2:uniPoolSlot0:${active}`, ARBITRUM, poolAddress, "slot0"],
     {
@@ -645,8 +712,8 @@ function useGmxPriceFromArbitrum(library, active) {
     if (uniPoolSlot0 && ethPrice) {
       const tokenA = new UniToken(ARBITRUM, ethAddress, 18, "SYMBOL", "NAME");
 
-      const gmxAddress = getContract(ARBITRUM, "GMX");
-      const tokenB = new UniToken(ARBITRUM, gmxAddress, 18, "SYMBOL", "NAME");
+      const tcrAddress = getContract(ARBITRUM, "TCR");
+      const tokenB = new UniToken(ARBITRUM, tcrAddress, 18, "SYMBOL", "NAME");
 
       const pool = new Pool(
         tokenA, // tokenA

@@ -245,12 +245,12 @@ function AppHeaderUser({
       icon: "ic_arbitrum_24.svg",
       color: "#264f79",
     },
-    {
-      label: "Avalanche",
-      value: AVALANCHE,
-      icon: "ic_avalanche_24.svg",
-      color: "#E841424D",
-    },
+    // {
+      // label: "Avalanche",
+      // value: AVALANCHE,
+      // icon: "ic_avalanche_24.svg",
+      // color: "#E841424D",
+    // },
   ];
 
   useEffect(() => {

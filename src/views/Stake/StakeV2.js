@@ -34,7 +34,7 @@ import {
   getStakingData,
   getProcessedData,
 } from "../../Helpers";
-import { callContract, useGmxPrice } from "../../Api";
+import { callContract, useTCRPrice } from "../../Api";
 import { getConstant } from "../../Constants";
 
 import useSWR from "swr";
@@ -443,7 +443,7 @@ export default function StakeV2({ setPendingTxns, connectWallet }) {
     }
   );
 
-  const { gmxPrice } = useGmxPrice(
+  const { tcrPrice } = useTCRPrice(
     chainId,
     { arbitrum: chainId === ARBITRUM ? library : undefined },
     active
@@ -473,7 +473,7 @@ export default function StakeV2({ setPendingTxns, connectWallet }) {
     aum,
     nativeTokenPrice,
     stakedGmxSupply,
-    gmxPrice,
+    tcrPrice,
     gmxSupply
   );
 

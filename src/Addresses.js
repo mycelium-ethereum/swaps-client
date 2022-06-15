@@ -1,4 +1,12 @@
 const CONTRACTS = {
+  1: {
+    UniswapTcrEthPool: "0x10b5c63a0a94ec3036238190bc88608a02e91e2c",
+    UniswapEthUsdcPool: "0x88e6a0c2ddd26feeb64f039a2c41296fcb3f5640",
+    SushiswapTcrEthPool: "0xe55c3e83852429334a986b265d03b879a3d188ac",
+    TCR: "0x9c4a4204b79dd291d6b6571c5be8bbcd0622f050",
+    WETH: "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2",
+    USDC: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48"
+  },
   56: {
     // bsc mainnet
     Treasury: "0xa44E7252a0C137748F523F112644042E5987FfC7",
@@ -186,6 +194,9 @@ const CONTRACTS = {
     PositionManager: "0x87a4088Bd721F83b6c2E5102e2FA47022Cb1c831",
 
     UniswapGmxEthPool: "0x80A9ae39310abf666A87C743d6ebBD0E8C42158E",
+    UniswapTcrEthPool: "0xe8bfb2918853576f0965e29bb86001ea93019003",
+    SushiTcrEthPool: "0xe55c3e83852429334a986b265d03b879a3d188ac",
+
     ReferralStorage: "0xe6fab3f0c7199b0d34d7fbe83394fc0e0d06e99d",
     ReferralReader: "0x8Aa382760BCdCe8644C33e6C2D52f6304A76F5c8",
   },
