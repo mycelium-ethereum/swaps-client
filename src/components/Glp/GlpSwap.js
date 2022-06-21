@@ -918,7 +918,7 @@ export default function GlpSwap(props) {
           </div>
         )}
       </div>
-      <div className="GlpSwap-token-list">
+      <div className="App-card GlpSwap-token-list">
         {/* <div className="GlpSwap-token-list-content"> */}
         <table className="token-table">
           <thead>
