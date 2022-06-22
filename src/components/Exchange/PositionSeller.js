@@ -36,6 +36,7 @@ import {
   getProfitPrice,
   formatDateTime,
   getTimeRemaining,
+  LIMIT,
 } from "../../Helpers";
 import { getConstant } from "../../Constants";
 import { createDecreaseOrder, callContract, useHasOutdatedUi } from "../../Api";
@@ -46,6 +47,7 @@ import Tab from "../Tab/Tab";
 import Modal from "../Modal/Modal";
 import ExchangeInfoRow from "./ExchangeInfoRow";
 import Tooltip from "../Tooltip/Tooltip";
+import ComingSoonTooltip from "../Tooltip/ComingSoon";
 
 const { AddressZero } = ethers.constants;
 
@@ -123,7 +125,8 @@ export default function PositionSeller(props) {
     fetcher: fetcher(library, PositionRouter),
   });
 
-  const orderOptions = [MARKET, STOP];
+  const orderOptions = [MARKET, <ComingSoonTooltip handle={STOP} /> ];
+
   let [orderOption, setOrderOption] = useState(MARKET);
 
   if (!flagOrdersEnabled) {
@@ -133,7 +136,10 @@ export default function PositionSeller(props) {
   const needPositionRouterApproval = !positionRouterApproved && orderOption === MARKET;
 
   const onOrderOptionChange = (option) => {
-    setOrderOption(option);
+    // disabled limit close
+    if (typeof option === 'string' && option !== LIMIT) {
+      setOrderOption(option);
+    }
   };
 
   const onTriggerPriceChange = (evt) => {

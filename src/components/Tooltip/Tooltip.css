@@ -93,3 +93,7 @@
     min-width: 200px;
   }
 }
+
+.Tooltip-coming-soon .Tooltip-popup {
+  color: var(--text-primary);
+}
