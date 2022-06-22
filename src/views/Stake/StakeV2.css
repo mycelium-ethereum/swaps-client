@@ -3,6 +3,10 @@
   padding-right: 1rem;
 }
 
+.StakeV2.Page {
+  max-width: 45rem;
+}
+
 .StakeV2 .Page-title-section {
   position: relative;
   z-index: 2;
@@ -70,7 +74,16 @@
   padding-top: 1rem;
 }
 
-.StakeV2-gmx-card .App-card-row .label {
+.StakeV2-cards .App-card-title {
+  gap: 8px;
+  justify-content: start;
+}
+
+.StakeV2-gmx-card .App-card-row a.label{
+  color: var(--text-secondary);
+}
+
+.StakeV2-cards .App-card-row .label{
   color: var(--text-secondary);
 }
 

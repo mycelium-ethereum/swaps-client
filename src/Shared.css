@@ -61,6 +61,8 @@ body,
 
   --text-primary: #fff;
   --text-secondary: #8BB0EF;
+
+  --button-primary: #1C64F2;
 }
 
 a {

@@ -234,7 +234,10 @@ export default function SwapBox(props) {
   }
 
   const onOrderOptionChange = (option) => {
-    setOrderOption(option);
+    // limits disabled
+    if (typeof option === 'string' && option !== LIMIT) {
+      setOrderOption(option);
+    }
   };
 
   const [sellValue, setSellValue] = useState("");

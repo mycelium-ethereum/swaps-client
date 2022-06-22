@@ -41,6 +41,9 @@ import useSWR from "swr";
 
 import { getContract } from "../../Addresses";
 
+import tlp40Icon from "../../img/ic_tlp_40.svg";
+import * as StakeV2Styled from './StakeV2Styles';
+
 import "./StakeV2.css";
 
 
@@ -561,31 +564,43 @@ export default function StakeV2({ setPendingTxns, connectWallet }) {
       <div className="StakeV2-content">
         <div className="StakeV2-cards">
           <div className="App-card">
-            <div className="App-card-title">TLP ({chainName})</div>
-            <div className="App-card-divider"></div>
-            <div className="App-card-content">
-              <div className="App-card-row">
-                <div className="label">Price</div>
-                <div>${formatKeyAmount(processedData, "glpPrice", USD_DECIMALS, 3, true)}</div>
-              </div>
-              <div className="App-card-row">
-                <div className="label">Wallet</div>
+            <div className="App-card-title">
+              <img src={tlp40Icon} alt="tlp40Icon" />
+              TLP ({chainName})
+            </div>
+            <StakeV2Styled.RewardsBanner>
+              <StakeV2Styled.RewardsBannerRow>
+                <StakeV2Styled.RewardsBannerText secondary>
+                  Rewards
+                </StakeV2Styled.RewardsBannerText>
                 <div>
-                  {formatKeyAmount(processedData, "glpBalance", GLP_DECIMALS, 2, true)} TLP ($
-                  {formatKeyAmount(processedData, "glpBalanceUsd", USD_DECIMALS, 2, true)})
+                  <StakeV2Styled.RewardsBannerTextWrap>
+                    <StakeV2Styled.RewardsBannerText large inline>
+                      {formatKeyAmount(processedData, "feeGlpTrackerRewards", 18, 4)} {nativeTokenSymbol} ({wrappedTokenSymbol})
+                    </StakeV2Styled.RewardsBannerText>
+                    {' '}
+                    <StakeV2Styled.RewardsBannerText inline>
+                      ($
+                      {formatKeyAmount(processedData, "feeGlpTrackerRewardsUsd", USD_DECIMALS, 2, true)})
+                    </StakeV2Styled.RewardsBannerText>
+                  </StakeV2Styled.RewardsBannerTextWrap>
+                  <StakeV2Styled.RewardsBannerTextWrap>
+                    <StakeV2Styled.RewardsBannerText large inline>
+                      {formatKeyAmount(processedData, "stakedGlpTrackerRewards", 18, 4)} TCR
+                    </StakeV2Styled.RewardsBannerText>
+                    {' '}
+                    <StakeV2Styled.RewardsBannerText inline>
+                      ($
+                      {formatKeyAmount(processedData, "stakedGlpTrackerRewardsUsd", USD_DECIMALS, 2, true)})
+                    </StakeV2Styled.RewardsBannerText>
+                  </StakeV2Styled.RewardsBannerTextWrap>
                 </div>
-              </div>
-              <div className="App-card-row">
-                <div className="label">Staked</div>
-                <div>
-                  {formatKeyAmount(processedData, "glpBalance", GLP_DECIMALS, 2, true)} TLP ($
-                  {formatKeyAmount(processedData, "glpBalanceUsd", USD_DECIMALS, 2, true)})
-                </div>
-              </div>
-              <div className="App-card-divider"></div>
-              <div className="App-card-row">
-                <div className="label">APR</div>
-                <div>
+              </StakeV2Styled.RewardsBannerRow>
+              <StakeV2Styled.RewardsBannerRow>
+                <StakeV2Styled.RewardsBannerText secondary>
+                  APR
+                </StakeV2Styled.RewardsBannerText>
+                <StakeV2Styled.RewardsBannerText large inline>
                   <Tooltip
                     handle={`${formatKeyAmount(processedData, "glpAprTotal", 2, 2, true)}%`}
                     position="right-bottom"
@@ -606,37 +621,26 @@ export default function StakeV2({ setPendingTxns, connectWallet }) {
                       );
                     }}
                   />
+                </StakeV2Styled.RewardsBannerText>
+              </StakeV2Styled.RewardsBannerRow>
+            </StakeV2Styled.RewardsBanner>
+            <div className="App-card-content">
+              <div className="App-card-row">
+                <div className="label">Price</div>
+                <div>${formatKeyAmount(processedData, "glpPrice", USD_DECIMALS, 3, true)}</div>
+              </div>
+              <div className="App-card-row">
+                <div className="label">Wallet</div>
+                <div>
+                  {formatKeyAmount(processedData, "glpBalance", GLP_DECIMALS, 2, true)} TLP ($
+                  {formatKeyAmount(processedData, "glpBalanceUsd", USD_DECIMALS, 2, true)})
                 </div>
               </div>
               <div className="App-card-row">
-                <div className="label">Rewards</div>
+                <div className="label">Staked</div>
                 <div>
-                  <Tooltip
-                    handle={`$${formatKeyAmount(processedData, "totalGlpRewardsUsd", USD_DECIMALS, 2, true)}`}
-                    position="right-bottom"
-                    renderContent={() => {
-                      return (
-                        <>
-                          <div className="Tooltip-row">
-                            <span className="label">
-                              {nativeTokenSymbol} ({wrappedTokenSymbol})
-                            </span>
-                            <span>
-                              {formatKeyAmount(processedData, "feeGlpTrackerRewards", 18, 4)} ($
-                              {formatKeyAmount(processedData, "feeGlpTrackerRewardsUsd", USD_DECIMALS, 2, true)})
-                            </span>
-                          </div>
-                          <div className="Tooltip-row">
-                            <span className="label">TCR</span>
-                            <span>
-                              {formatKeyAmount(processedData, "stakedGlpTrackerRewards", 18, 4)} ($
-                              {formatKeyAmount(processedData, "stakedGlpTrackerRewardsUsd", USD_DECIMALS, 2, true)})
-                            </span>
-                          </div>
-                        </>
-                      );
-                    }}
-                  />
+                  {formatKeyAmount(processedData, "glpBalance", GLP_DECIMALS, 2, true)} TLP ($
+                  {formatKeyAmount(processedData, "glpBalanceUsd", USD_DECIMALS, 2, true)})
                 </div>
               </div>
               <div className="App-card-divider"></div>
