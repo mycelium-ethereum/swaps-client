@@ -96,4 +96,6 @@
 
 .Tooltip-coming-soon .Tooltip-popup {
   color: var(--text-primary);
+  white-space: nowrap;
+  min-width: fit-content;
 }
