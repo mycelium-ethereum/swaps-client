@@ -3,6 +3,10 @@
   padding-right: 1rem;
 }
 
+.StakeV2.Page {
+  max-width: 45rem;
+}
+
 .StakeV2 .Page-title-section {
   position: relative;
   z-index: 2;
@@ -68,6 +72,11 @@
   grid-gap: 1rem;
   margin-top: 0.5rem;
   padding-top: 1rem;
+}
+
+.StakeV2-cards .App-card-title {
+  gap: 8px;
+  justify-content: start;
 }
 
 .StakeV2-gmx-card .App-card-row .label {

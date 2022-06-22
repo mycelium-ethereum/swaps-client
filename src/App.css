@@ -821,7 +821,7 @@ button.App-button-option {
   text-decoration: none;
   border: none;
   font-size: 1rem;
-  background: rgba(43, 55, 94, 1);
+  background: var(--button-primary);
 }
 
 a.App-button-option:hover,
