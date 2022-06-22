@@ -26,5 +26,6 @@ export const RewardsBannerTextWrap = styled.div`
 export const RewardsBannerText = styled.div`
   color: ${({ secondary }) => secondary ? `var(--text-secondary)` : 'var(--text-primary)'};
   font-size: ${({ large }) => large ? `24px` : '16px'};
+  font-weight: ${({ large }) => large ? 600 : 400};
   display: ${({ inline }) => inline ? `inline` : 'block'};
 `

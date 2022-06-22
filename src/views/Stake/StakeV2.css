@@ -79,7 +79,11 @@
   justify-content: start;
 }
 
-.StakeV2-gmx-card .App-card-row .label {
+.StakeV2-gmx-card .App-card-row a.label{
+  color: var(--text-secondary);
+}
+
+.StakeV2-cards .App-card-row .label{
   color: var(--text-secondary);
 }
 
