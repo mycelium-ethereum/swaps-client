@@ -1,5 +1,6 @@
 .Exchange {
-  /* max-width: 100rem; */
+  /* max-width: 155rem */
+  max-width: 1550px;
   margin: auto;
   justify-content: space-between;
 }
