@@ -407,6 +407,7 @@
 
 .PositionEditor .Tab {
   margin-bottom: 0.7rem;
+  overflow: visible;
 }
 
 .PositionEditor-token-symbol {
