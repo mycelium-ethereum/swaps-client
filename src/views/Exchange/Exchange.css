@@ -50,7 +50,7 @@
   color: var(--text-secondary);
 }
 
-.Exchange .footer {
+.Exchange.page-layout .footer {
   padding: 1rem 2rem;
 }
 
@@ -1052,7 +1052,7 @@ table.Exchange-list-small td {
     margin: 0 1rem;
   }
 
-  .Exchange .footer {
+  .Exchange.page-layout .footer {
     padding: 1rem;
   }
 }
