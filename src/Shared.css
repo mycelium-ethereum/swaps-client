@@ -372,7 +372,11 @@ button.btn-link:hover .logout-icon {
   min-height: calc(100vh - 62px);
   display: flex;
   flex-direction: column;
-  padding-bottom: calc(3rem + 200px);
+}
+
+.page-layout .footer {
+  padding: 1rem 0;
+  margin-bottom: 0;
 }
 
 .d-flex {
