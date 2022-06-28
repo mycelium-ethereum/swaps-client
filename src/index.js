@@ -9,7 +9,7 @@ import reportWebVitals from "./reportWebVitals";
 ReactDOM.render(
   <React.StrictMode>
     <Router>
-      <Partytown debug={true} forward={['dataLayer.push']} />
+      <Partytown debug={true} forward={['analytics.page']} />
       <App />
     </Router>
   </React.StrictMode>,

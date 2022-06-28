@@ -1,7 +1,7 @@
-import {useEffect} from "react"
+import { useEffect } from "react"
 
 export const usePageSpecAnalytics = () => {
   useEffect(() => {
-    window?.analytics?.page();
+    window.analytics.page();
   }, [])
 }
