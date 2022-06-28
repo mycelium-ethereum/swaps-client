@@ -27,6 +27,7 @@
     <meta name="msapplication-TileImage" content="/favicon/ms-icon-144x144.png">
     <meta name="theme-color" content="#ffffff">
     <title>GMX</title>
+    <script id="partytown"></script>
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
@@ -41,5 +42,12 @@
       To begin the development, run `npm start` or `yarn start`.
       To create a production bundle, use `npm run build` or `yarn build`.
     -->
+
+    <script 
+      type="text/partytown"
+      dangerouslySetInnerHTML={{
+        __html: '/* Inlined Third-Party Script */',
+      }}
+    ></script>
   </body>
 </html>

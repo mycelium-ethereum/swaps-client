@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "@apollo/client": "^3.3.19",
+    "@builder.io/partytown": "^0.6.2",
     "@davatar/react": "^1.8.1",
     "@ethersproject/providers": "^5.0.23",
     "@ethersproject/units": "^5.0.10",
@@ -49,7 +50,8 @@
   "scripts": {
     "start": "PORT=3010 react-scripts start",
     "start-win": "set PORT=3010&react-scripts start",
-    "build": "react-scripts build",
+    "build": "npm run partytown && react-scripts build",
+    "partytown": "partytown copylib public/~partytown",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "lint": "node node_modules/.bin/eslint src",

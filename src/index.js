@@ -3,16 +3,25 @@ import ReactDOM from "react-dom";
 import { BrowserRouter as Router } from "react-router-dom";
 import "./index.css";
 import App from "./App";
+import { Partytown } from '@builder.io/partytown/react';
 import reportWebVitals from "./reportWebVitals";
 
 ReactDOM.render(
   <React.StrictMode>
     <Router>
+      <Partytown debug={true} forward={['dataLayer.push']} />
       <App />
     </Router>
   </React.StrictMode>,
   document.getElementById("root")
 );
+
+ReactDOM.render(
+    <Partytown debug={true} forward={['dataLayer.push']} />,
+  document.getElementById("partytown")
+);
+
+
 
 // If you want to start measuring performance in your app, pass a function
 // to log results (for example: reportWebVitals(console.info))
