@@ -45,6 +45,7 @@ import tlp40Icon from "../../img/ic_tlp_40.svg";
 import * as StakeV2Styled from './StakeV2Styles';
 
 import "./StakeV2.css";
+import {usePageSpecAnalytics} from "../../segmentAnalytics";
 
 
 function CompoundModal(props) {
@@ -327,6 +328,7 @@ function ClaimModal(props) {
 }
 
 export default function StakeV2({ setPendingTxns, connectWallet }) {
+  usePageSpecAnalytics();
   const { active, library, account } = useWeb3React();
   const { chainId } = useChainId();
 

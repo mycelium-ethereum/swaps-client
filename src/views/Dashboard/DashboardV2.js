@@ -54,6 +54,7 @@ import avalanche24Icon from "../../img/ic_avalanche_24.svg";
 
 import AssetDropdown from "./AssetDropdown";
 import SEO from "../../components/Common/SEO";
+import {usePageSpecAnalytics} from "../../segmentAnalytics";
 
 const { AddressZero } = ethers.constants;
 
@@ -107,6 +108,7 @@ function getCurrentFeesUsd(tokenAddresses, fees, infoTokens) {
 }
 
 export default function DashboardV2() {
+  usePageSpecAnalytics();
   const { active, library } = useWeb3React();
   const { chainId } = useChainId();
 
