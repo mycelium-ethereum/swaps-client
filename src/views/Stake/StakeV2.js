@@ -552,18 +552,18 @@ export default function StakeV2({ setPendingTxns, connectWallet }) {
         library={library}
         chainId={chainId}
       />
-      <div className="Page-title-section mt-0">
-        <div className="Page-title">Earn</div>
-        <div className="Page-description">
-          Stake{" "}
-          <a href="https://gmxio.gitbook.io/gmx/glp" target="_blank" rel="noopener noreferrer">
-            TLP
-          </a>{" "}
-          to earn rewards.
-        </div>
-        {earnMsg && <div className="Page-description">{earnMsg}</div>}
-      </div>
       <div className="StakeV2-content">
+        <div className="Page-title-section mt-0">
+          <div className="Page-title">Earn</div>
+          <div className="Page-description">
+            Stake{" "}
+            <a href="https://gmxio.gitbook.io/gmx/glp" target="_blank" rel="noopener noreferrer">
+              TLP
+            </a>{" "}
+            to earn rewards.
+          </div>
+          {earnMsg && <div className="Page-description">{earnMsg}</div>}
+        </div>
         <div className="StakeV2-cards">
           <div className="App-card">
             <div className="App-card-title">

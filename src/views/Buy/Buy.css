@@ -11,9 +11,14 @@
     justify-content: flex-start;
 }
 
+.BuyGMXGLP.page-layout .footer {
+    padding: 1rem 2rem;
+}
+
 @media (max-width: 400px) {
     .BuyGMXGLP-container {
         padding-left: 16px!important;
         padding-right: 16px!important;
     }
 }
+
