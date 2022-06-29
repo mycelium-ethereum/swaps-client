@@ -11,7 +11,7 @@ ReactDOM.render(
     <Router>
       <Partytown 
         debug={true}
-        forward={['analytics.page', 'analytics.push']}
+        forward={['analytics.page']}
       />
       <App />
     </Router>
