@@ -11,6 +11,7 @@
     "@testing-library/jest-dom": "^5.11.4",
     "@testing-library/react": "^11.1.0",
     "@testing-library/user-event": "^12.1.10",
+    "@tracer-protocol/tracer-ui": "latest",
     "@uniswap/sdk-core": "^3.0.1",
     "@uniswap/v3-sdk": "^3.3.2",
     "@web3-react/core": "^6.1.9",

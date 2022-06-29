@@ -50,6 +50,10 @@
   color: var(--text-secondary);
 }
 
+.Exchange.page-layout .footer {
+  padding: 1rem 2rem;
+}
+
 .Exchange-position-list-orders {
   white-space: nowrap;
 }
@@ -1043,7 +1047,13 @@ table.Exchange-list-small td {
     padding: 1rem;
     padding-top: 1rem;
   }
+
   .Exchange-swap-box .TokenSelector .Modal {
     margin: 0 1rem;
   }
+
+  .Exchange.page-layout .footer {
+    padding: 1rem;
+  }
 }
+

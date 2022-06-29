@@ -9,6 +9,8 @@ import { Web3Provider } from "@ethersproject/providers";
 
 import { Switch, Route, NavLink } from "react-router-dom";
 
+import { ThemeProvider } from "@tracer-protocol/tracer-ui";
+
 import {
   ARBITRUM,
   AVALANCHE,
@@ -975,7 +977,9 @@ function App() {
   if (inPreviewMode()) {
     return (
       <Web3ReactProvider getLibrary={getLibrary}>
-        <PreviewApp />
+        <ThemeProvider>
+          <PreviewApp />
+        </ThemeProvider>
       </Web3ReactProvider>
     );
   }
@@ -984,7 +988,9 @@ function App() {
     <SWRConfig value={{ refreshInterval: 5000 }}>
       <Web3ReactProvider getLibrary={getLibrary}>
         <SEO>
-          <FullApp />
+          <ThemeProvider>
+            <FullApp />
+          </ThemeProvider>
         </SEO>
       </Web3ReactProvider>
     </SWRConfig>
