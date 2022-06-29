@@ -7,8 +7,10 @@ import "./BuyTlp.css";
 
 import { useChainId } from "../../Helpers";
 import { getNativeToken } from "../../data/Tokens";
+import {usePageSpecAnalytics} from "../../segmentAnalytics";
 
 export default function BuyGlp(props) {
+  usePageSpecAnalytics();
   const { chainId } = useChainId();
   const history = useHistory();
   const [isBuying, setIsBuying] = useState(true);
