@@ -88,7 +88,6 @@ export const RewardsDataBox = styled.div`
 
 `
 
-
 export const LargeText = styled.span`
   font-size: 24px;
 `
