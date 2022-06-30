@@ -35,6 +35,10 @@ export const AccountBanner = styled.div`
   gap: 1rem;
   padding-bottom: 2rem;
 
+  > .App-button-option {
+    width: 50%;
+  }
+
   @media (max-width: 910px) {
     flex-wrap: wrap;
     ${AccountBannerAddresses} {

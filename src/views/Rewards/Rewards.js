@@ -49,7 +49,7 @@ export default function Rewards(props) {
           </Styles.AccountBannerAddresses>
         }
         {!active &&
-          <button className="App-button-option App-card-option" onClick={() => connectWallet()}>
+          <button className="App-button-option" onClick={() => connectWallet()}>
             Connect Wallet
           </button>
         }
