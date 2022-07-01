@@ -35,7 +35,13 @@ export default function Rewards(props) {
   const [rewardsWeek, setRewardsWeek] = useState(REWARD_WEEKS[0].key);
 
   return (
-    <Styles.StyledRewardsPage className="default-container buy-tlp-content page-layout">
+    <Styles.StyledRewardsPage className="default-container page-layout">
+      <div className="Page-title-section mt-0">
+        <div className="Page-title">Trader Rewards</div>
+        <div className="Page-description">
+          Be in the top 50% of traders to earn weekly rewards.
+        </div>
+      </div>
       <Styles.AccountBanner className="App-card"> 
         {active &&
           <Styles.AccountBannerAddresses>
