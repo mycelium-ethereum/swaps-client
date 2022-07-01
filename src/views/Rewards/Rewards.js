@@ -5,7 +5,7 @@ import Footer from "../../Footer";
 import { shortenAddress, useENS } from "../../Helpers";
 import {usePageSpecAnalytics} from "../../segmentAnalytics";
 import * as Styles from "./Rewards.styles";
-import {createBreakpoint} from "react-use";
+// import {createBreakpoint} from "react-use";
 import {useWeb3React} from "@web3-react/core";
 import Davatar from "@davatar/react";
 import {Menu} from "@headlessui/react";
@@ -29,29 +29,34 @@ export default function Rewards(props) {
 
   const { ensName } = useENS();
   const { active, account } = useWeb3React();
-  const useBreakpoint = createBreakpoint({ L: 600, M: 550, S: 400 });
-  const breakpoint = useBreakpoint();
+  // const useBreakpoint = createBreakpoint({ L: 600, M: 550, S: 400 });
+  // const breakpoint = useBreakpoint();
 
   const [rewardsWeek, setRewardsWeek] = useState(REWARD_WEEKS[0].key);
 
   return (
-    <div className="default-container buy-tlp-content page-layout">
+    <Styles.StyledRewardsPage className="default-container buy-tlp-content page-layout">
       <Styles.AccountBanner className="App-card"> 
         {active &&
           <Styles.AccountBannerAddresses>
             <Davatar size={40} address={account} />
             <Styles.AppCardTitle>
-              {ensName || account}
+              {ensName || shortenAddress(account, 13)}
             </Styles.AppCardTitle>
             <Styles.AccountBannerShortenedAddress>
-              {shortenAddress(account, breakpoint === "S" ? 9 : 13)}
+              Wallet address
             </Styles.AccountBannerShortenedAddress>
           </Styles.AccountBannerAddresses>
         }
         {!active &&
-          <button className="App-button-option" onClick={() => connectWallet()}>
-            Connect Wallet
-          </button>
+          <Styles.AccountBannerAddresses>
+            <Styles.AppCardTitle>
+              Connect Wallet
+            </Styles.AppCardTitle>
+            <Styles.AccountBannerShortenedAddress>
+              Wallet not connected
+            </Styles.AccountBannerShortenedAddress>
+          </Styles.AccountBannerAddresses>
         }
         <Styles.AccountBannerRewards>
           <div className="App-card-row">
@@ -121,11 +126,18 @@ export default function Rewards(props) {
             </div>
           </Styles.RewardsDataBox>
         </Styles.RewardsDataBoxes>
-        <Styles.RewardsClaimButton className="App-cta large">
-          Claim TCR
-        </Styles.RewardsClaimButton>
+        {active &&
+          <Styles.RewardsButton className="App-cta large">
+            Claim TCR
+          </Styles.RewardsButton>
+        }
+        {!active &&
+          <Styles.RewardsButton className="App-cta large" onClick={() => connectWallet()}>
+            Connect Wallet
+          </Styles.RewardsButton>
+        }
       </Styles.RewardsData>
       <Footer />
-    </div>
+    </Styles.StyledRewardsPage>
   );
 }

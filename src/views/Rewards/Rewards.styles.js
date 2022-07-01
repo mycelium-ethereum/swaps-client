@@ -140,7 +140,7 @@ export const WeekSelectButton = styled.button`
   }
 `
 
-export const RewardsClaimButton = styled.button`
+export const RewardsButton = styled.button`
   display: flex;
   margin: 1.5rem auto 0 auto;
   justify-content: center;
@@ -153,9 +153,17 @@ export const RewardsData = styled.div`
   margin-top: 1rem;
 
   @media (max-width: 600px) {
-
     ${RewardsDataBox} {
       width: 100%;
     }
   }
 `
+
+export const StyledRewardsPage = styled.div`
+  align-items: center;
+  ${RewardsData}, ${AccountBanner} {
+    max-width: 900px;
+    width: 100%;
+  }
+`
+
