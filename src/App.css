@@ -44,7 +44,13 @@
 }
 
 .App-header.large .App-header-links {
+  gap: 1.5rem;
+  margin-right: 1.5rem;
   display: flex;
+}
+
+.App-header.large .App-header-links a {
+  padding: 0;
 }
 
 .App-header.small {
@@ -1166,7 +1172,7 @@ button.App-button {
   width: 100%;
 }
 
-@media (max-width: 1033px) {
+@media (max-width: 1112px) {
   .long-connect-btn {
     display: none !important;
   }
@@ -1291,7 +1297,7 @@ button.App-button {
   }
 }
 
-@media (max-width: 600px) {
+@media (max-width: 670px) {
   .App-header-link-main img.big {
     display: none;
   }
