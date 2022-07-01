@@ -5,7 +5,8 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  color: var(--tracer-blue-light)!important;
+  color: var(--text-navigation)!important;
+  background: var(--background-navigation)!important;
 }
 
 .user-address {

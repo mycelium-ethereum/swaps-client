@@ -53,6 +53,8 @@ body,
 
   --background-primary: #040811;
   --background-secondary: rgba(34, 39, 74, 0.2);
+  --background-navigation: linear-gradient(83.12deg, rgba(27, 101, 234, 0.5) -208.54%, rgba(27, 101, 234, 0) 159.09%);
+
   --border-primary: #8BB0EF;
 
   --tracer-blue: #1C64F2;
@@ -61,6 +63,10 @@ body,
 
   --text-primary: #fff;
   --text-secondary: #7889A5;
+
+
+  --text-navigation: #1B65EA
+;
 
   --button-primary: #1C64F2;
 }

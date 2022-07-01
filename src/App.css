@@ -382,18 +382,17 @@ button.App-connect-wallet:hover {
 }
 
 .App-header-user-link .trade-link {
-  background: rgba(28, 100, 242, 0.3);
-  border: 0.5px solid var(--tracer-blue-light);
+  background: var(--background-navigation);
+  border: 0.5px solid var(--text-navigation);
 }
 
 .App-header-user-address {
-  border: 0.5px solid var(--tracer-blue-light);
-  color: var(--tracer-blue-light);
+  border: 0.5px solid var(--text-navigation);
+  color: var(--text-navigation);
   height: 36px;
   border-radius: 4px;
   display: inline-flex;
   align-items: center;
-  color: white;
   position: relative;
 }
 
@@ -626,7 +625,7 @@ button.App-connect-wallet:hover {
 .App-header-links a {
   padding: 18px 17px;
   display: block;
-  color: #3DA8F5;
+  color: var(--text-navigation);
   font-size: 15px;
   line-height: 1.2rem;
   font-weight: normal;
