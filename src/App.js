@@ -362,6 +362,7 @@ function FullApp() {
 
   useEffect(() => {
     recordPageVisit(account);
+    // eslint-disable-next-line
   }, [location.pathname]);
 
   useEffect(() => {

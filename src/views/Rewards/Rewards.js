@@ -3,7 +3,6 @@ import React, { useState } from "react";
 import Footer from "../../Footer";
 
 import { shortenAddress, useENS } from "../../Helpers";
-import {usePageSpecAnalytics} from "../../segmentAnalytics";
 import * as Styles from "./Rewards.styles";
 // import {createBreakpoint} from "react-use";
 import {useWeb3React} from "@web3-react/core";
@@ -24,7 +23,6 @@ const REWARD_WEEKS = [
 ]
 
 export default function Rewards(props) {
-  usePageSpecAnalytics();
   const { connectWallet } = props;
 
   const { ensName } = useENS();
