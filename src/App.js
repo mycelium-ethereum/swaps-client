@@ -56,6 +56,7 @@ import BuyGMX from "./views/BuyGMX/BuyGMX";
 import BuyTlp from "./views/BuyTlp/BuyTlp";
 import SellTlp from "./views/SellTlp/SellTlp";
 import Buy from "./views/Buy/Buy";
+import Rewards from "./views/Rewards/Rewards";
 import NftWallet from "./views/NftWallet/NftWallet";
 import ClaimEsGmx from "./views/ClaimEsGmx/ClaimEsGmx";
 import BeginAccountTransfer from "./views/BeginAccountTransfer/BeginAccountTransfer";
@@ -210,6 +211,11 @@ function AppHeaderLinks({ small, openSettings, clickCloseIcon }) {
         </NavLink>
       </div>
       <div className="App-header-link-container">
+        <NavLink activeClassName="active" to="/rewards">
+          Rewards
+        </NavLink>
+      </div>
+      <div className="App-header-link-container">
         <a href="https://gmxio.gitbook.io/gmx/" target="_blank" rel="noopener noreferrer">
           About
         </a>
@@ -356,6 +362,7 @@ function FullApp() {
 
   useEffect(() => {
     recordPageVisit(account);
+    // eslint-disable-next-line
   }, [location.pathname]);
 
   useEffect(() => {
@@ -780,6 +787,12 @@ function FullApp() {
             </Route>
             <Route exact path="/buy_gmx">
               <BuyGMX />
+            </Route>
+            <Route exact path="/rewards">
+              <Rewards
+                setPendingTxns={setPendingTxns}
+                connectWallet={connectWallet}
+              />
             </Route>
             <Route exact path="/about">
               <Home />
