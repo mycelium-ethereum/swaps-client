@@ -102,6 +102,8 @@ import VaultV2b from "./abis/VaultV2b.json";
 import PositionRouter from "./abis/PositionRouter.json";
 import PageNotFound from "./views/PageNotFound/PageNotFound";
 import ReferralTerms from "./views/ReferralTerms/ReferralTerms";
+import { identifyUser, recordPageVisit } from "./segmentAnalytics";
+import { useLocation } from "react-router-dom";
 
 if ("ethereum" in window) {
   window.ethereum.autoRefreshOnNetworkChange = false;
@@ -336,7 +338,7 @@ function AppHeaderUser({
 
 function FullApp() {
   const exchangeRef = useRef();
-  const { connector, library, deactivate, activate, active } = useWeb3React();
+  const { connector, library, deactivate, activate, active, account } = useWeb3React();
   const { chainId } = useChainId();
   useEventToast();
   const [activatingConnector, setActivatingConnector] = useState();
@@ -349,6 +351,16 @@ function FullApp() {
   useInactiveListener(!triedEager || !!activatingConnector);
 
   const query = useRouteQuery();
+
+  const location = useLocation();
+
+  useEffect(() => {
+    recordPageVisit(account);
+  }, [location.pathname]);
+
+  useEffect(() => {
+    if (account) identifyUser(account);
+  }, [account]);
 
   useEffect(() => {
     let referralCode = query.get(REFERRAL_CODE_QUERY_PARAMS);
