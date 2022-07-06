@@ -1,14 +1,17 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
+
+import useSWR from "swr";
 
 import Footer from "../../Footer";
 
 import { shortenAddress, useENS } from "../../Helpers";
 import * as Styles from "./Rewards.styles";
-// import {createBreakpoint} from "react-use";
-import {useWeb3React} from "@web3-react/core";
+
+import { useWeb3React } from "@web3-react/core";
 import Davatar from "@davatar/react";
-import {Menu} from "@headlessui/react";
-import {FaChevronDown} from "react-icons/fa";
+import { Menu } from "@headlessui/react";
+import { FaChevronDown } from "react-icons/fa";
+import { generateProof } from "../../helpers/merkle";
 
 
 const REWARD_WEEKS = [
@@ -27,8 +30,16 @@ export default function Rewards(props) {
 
   const { ensName } = useENS();
   const { active, account } = useWeb3React();
-  // const useBreakpoint = createBreakpoint({ L: 600, M: 550, S: 400 });
-  // const breakpoint = useBreakpoint();
+
+  // const ethRewardsUrl = getServerUrl(chainId, "/gmx_supply");
+  const ethRewardsUrl = "https://ipfs.io/ipfs/QmXcaF11fuXnUsCXez79JGgvcg5i4ZjT1v6Uf6FDFH1SuL"
+  const { data: dataLeaves } = useSWR([ethRewardsUrl], {
+    fetcher: (...args) => fetch(...args).then((res) => res.json()),
+  });
+
+  console.log(dataLeaves);
+  const merkleProof = useMemo(() => generateProof(dataLeaves.accounts, account), [account, dataLeaves]) 
+  console.log(merkleProof);
 
   const [rewardsWeek, setRewardsWeek] = useState(REWARD_WEEKS[0].key);
 
