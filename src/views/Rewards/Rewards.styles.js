@@ -34,6 +34,7 @@ export const AccountBanner = styled.div`
   justify-content: space-between;
   gap: 1rem;
   padding-bottom: 2rem;
+  margin-top: 1rem;
 
   > .App-button-option {
     width: 50%;
@@ -161,9 +162,14 @@ export const RewardsData = styled.div`
 
 export const StyledRewardsPage = styled.div`
   align-items: center;
-  ${RewardsData}, ${AccountBanner} {
+  padding-top: 3rem;
+  ${RewardsData}, ${AccountBanner}, .Page-title-section {
     max-width: 900px;
     width: 100%;
+  }
+
+  .Page-title-section:first-child {
+    padding-left: 0;
   }
 `
 
