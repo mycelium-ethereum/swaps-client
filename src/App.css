@@ -484,16 +484,18 @@ button.App-connect-wallet:hover {
 }
 
 .Page-title {
-  font-size: 2.2rem;
-  font-weight: 500;
+  font-size: 1.5rem;
+  font-weight: 600;
   margin-bottom: 0.5rem;
-  font-family: "Relative Bold";
+  font-family: Inter;
+  /*font-family: "Relative Bold";*/
 }
 
 .Page-description {
-  /* opacity: 0.7; */
   color: var(--text-secondary);
-  line-height: 1.4rem;
+  font-weight: 400;
+  font-size: 0.8rem;
+  line-height: 150%;
 }
 
 .Page-description span,
@@ -1011,7 +1013,7 @@ button.App-button {
   background: #ffffff47 0% 0% no-repeat padding-box;
 }
 .Toastify__toast-body {
-  font: normal normal normal 14px/16px Relative;
+  font: normal normal normal 14px/16px Inter;
   line-height: 1.3rem;
 }
 

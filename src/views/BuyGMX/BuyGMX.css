@@ -148,7 +148,8 @@
   font-size: 2.2rem;
   font-weight: 500;
   margin-bottom: 1rem;
-  font-family: "Relative Bold";
+  font-family: "Inter";
+  /*font-family: "Relative Bold";*/
 }
 
 @media (max-width: 800px) {

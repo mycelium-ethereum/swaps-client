@@ -15,7 +15,8 @@
   color: #ffffff;
   font-size: 2.2rem;
   font-weight: 500;
-  font-family: 'Relative Bold';
+  font-family: 'Inter';
+  /* font-family: 'Relative Bold'; */
 }
 
 .Tab-description {
