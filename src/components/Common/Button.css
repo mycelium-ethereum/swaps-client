@@ -86,7 +86,9 @@ a.btn {
 }
 
 .connect-wallet {
-    color: var(--tracer-blue-light);
+    color: var(--text-navigation);
+    border-color: var(--text-navigation);
+    background: var(--background-navigation)
 }
 
 .connect-wallet .btn-label {

@@ -18,7 +18,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  border: 0.5px solid var(--tracer-blue-light);
+  border: 0.5px solid var(--text-navigation);
   border-radius: 4px;
   cursor: pointer;
   font-size: 14px;
@@ -149,7 +149,7 @@
 }
 
 .network-select {
-  background: transparent;
+  background: var(--background-navigation);
 }
 .network-select:hover {
   background: #808aff14;

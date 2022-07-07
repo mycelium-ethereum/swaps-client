@@ -1,4 +1,10 @@
 /* Tracer footer styles */
 .footer {
   min-width: 100%;
+  color: var(--text-navigation)!important;
 }
+
+.footer .footer-copyright {
+  color: var(--text-navigation);
+}
+

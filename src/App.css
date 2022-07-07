@@ -44,7 +44,13 @@
 }
 
 .App-header.large .App-header-links {
+  gap: 1.5rem;
+  margin-right: 1.5rem;
   display: flex;
+}
+
+.App-header.large .App-header-links a {
+  padding: 0;
 }
 
 .App-header.small {
@@ -382,18 +388,17 @@ button.App-connect-wallet:hover {
 }
 
 .App-header-user-link .trade-link {
-  background: rgba(28, 100, 242, 0.3);
-  border: 0.5px solid var(--tracer-blue-light);
+  background: var(--background-navigation);
+  border: 0.5px solid var(--text-navigation);
 }
 
 .App-header-user-address {
-  border: 0.5px solid var(--tracer-blue-light);
-  color: var(--tracer-blue-light);
+  border: 0.5px solid var(--text-navigation);
+  color: var(--text-navigation);
   height: 36px;
   border-radius: 4px;
   display: inline-flex;
   align-items: center;
-  color: white;
   position: relative;
 }
 
@@ -479,16 +484,17 @@ button.App-connect-wallet:hover {
 }
 
 .Page-title {
-  font-size: 2.2rem;
-  font-weight: 500;
+  font-size: 1.5rem;
+  font-weight: 600;
   margin-bottom: 0.5rem;
-  font-family: "Relative Bold";
+  font-family: Inter;
+  /*font-family: "Relative Bold";*/
 }
 
 .Page-description {
-  /* opacity: 0.7; */
   color: var(--text-secondary);
-  line-height: 1.4rem;
+  font-size: 0.75rem;
+  line-height: 150%;
 }
 
 .Page-description span,
@@ -553,6 +559,7 @@ button.App-connect-wallet:hover {
 }
 
 .App-card-row {
+  font-size: 12px;
   display: grid;
   grid-template-columns: 1fr auto;
   grid-column-gap: 1rem;
@@ -626,8 +633,8 @@ button.App-connect-wallet:hover {
 .App-header-links a {
   padding: 18px 17px;
   display: block;
-  color: #3DA8F5;
-  font-size: 15px;
+  color: var(--text-navigation);
+  font-size: 14px;
   line-height: 1.2rem;
   font-weight: normal;
 }
@@ -1006,7 +1013,7 @@ button.App-button {
   background: #ffffff47 0% 0% no-repeat padding-box;
 }
 .Toastify__toast-body {
-  font: normal normal normal 14px/16px Relative;
+  font: normal normal normal 14px/16px Inter;
   line-height: 1.3rem;
 }
 
@@ -1167,7 +1174,7 @@ button.App-button {
   width: 100%;
 }
 
-@media (max-width: 1033px) {
+@media (max-width: 1112px) {
   .long-connect-btn {
     display: none !important;
   }
@@ -1292,7 +1299,7 @@ button.App-button {
   }
 }
 
-@media (max-width: 600px) {
+@media (max-width: 670px) {
   .App-header-link-main img.big {
     display: none;
   }
