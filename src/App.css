@@ -493,8 +493,7 @@ button.App-connect-wallet:hover {
 
 .Page-description {
   color: var(--text-secondary);
-  font-weight: 400;
-  font-size: 0.8rem;
+  font-size: 0.75rem;
   line-height: 150%;
 }
 
@@ -560,6 +559,7 @@ button.App-connect-wallet:hover {
 }
 
 .App-card-row {
+  font-size: 12px;
   display: grid;
   grid-template-columns: 1fr auto;
   grid-column-gap: 1rem;
@@ -634,7 +634,7 @@ button.App-connect-wallet:hover {
   padding: 18px 17px;
   display: block;
   color: var(--text-navigation);
-  font-size: 15px;
+  font-size: 14px;
   line-height: 1.2rem;
   font-weight: normal;
 }
