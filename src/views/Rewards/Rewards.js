@@ -4,44 +4,108 @@ import useSWR from "swr";
 
 import Footer from "../../Footer";
 
-import { shortenAddress, useENS } from "../../Helpers";
+import { ETH_DECIMALS, formatAmount, getTokenInfo, shortenAddress, USD_DECIMALS, useChainId, useENS } from "../../Helpers";
 import * as Styles from "./Rewards.styles";
 
 import { useWeb3React } from "@web3-react/core";
 import Davatar from "@davatar/react";
 import { Menu } from "@headlessui/react";
 import { FaChevronDown } from "react-icons/fa";
-import { generateProof } from "../../helpers/merkle";
-
-
-const REWARD_WEEKS = [
-  {
-    label: 'Week 1',
-    key: 0,
-  },
-  {
-    label: 'Week 2',
-    key: 1,
-  },
-]
+import { getTracerServerUrl } from "../../Api/rewards";
+import { useInfoTokens } from "../../Api";
+import { ethers } from "ethers";
 
 export default function Rewards(props) {
   const { connectWallet } = props;
 
   const { ensName } = useENS();
-  const { active, account } = useWeb3React();
+  const { chainId } = useChainId();
+  const { active, account, library } = useWeb3React();
 
-  // const ethRewardsUrl = getServerUrl(chainId, "/gmx_supply");
-  const ethRewardsUrl = "https://ipfs.io/ipfs/QmXcaF11fuXnUsCXez79JGgvcg5i4ZjT1v6Uf6FDFH1SuL"
-  const { data: dataLeaves } = useSWR([ethRewardsUrl], {
+  const [selectedWeek, setSelectedWeek] = useState(undefined);
+
+  const { infoTokens } = useInfoTokens(library, chainId, active, undefined, undefined);
+  
+  // const { data: rewardProof } = useSWR([getTracerServerUrl(chainId, "/user_reward_proof"), account, selectedWeek, chainId], {
+    // fetcher: (url, account, week) => fetch(`${url}&userAddress=${account}&week=${week}`).then((res) => res.json())
+  // });
+
+  const { data: rewardWeeks, error: failedFetchingRewards } = useSWR([getTracerServerUrl(chainId, "/rewards")], {
     fetcher: (...args) => fetch(...args).then((res) => res.json()),
   });
 
-  console.log(dataLeaves);
-  const merkleProof = useMemo(() => generateProof(dataLeaves.accounts, account), [account, dataLeaves]) 
-  console.log(merkleProof);
+  const userData = useMemo(() => rewardWeeks?.reduce((totals, week) => {
+    const trader = week.traders.find((trader) => trader.user_address === account);
+    if (!trader) {
+      return totals;
+    }
+    return ({
+      totalTradingVolume: totals.totalTradingVolume.add(trader.volume),
+      totalRewards: totals.totalRewards.add(trader.reward),
+      unclaimedRewards: totals.unclaimedRewards.add(trader?.claimed ? trader.amount : 0),
+    })
+  }, {
+      totalTradingVolume: ethers.BigNumber.from(0),
+      totalRewards: ethers.BigNumber.from(0),
+      unclaimedRewards: ethers.BigNumber.from(0),
+  }), [rewardWeeks, account])
 
-  const [rewardsWeek, setRewardsWeek] = useState(REWARD_WEEKS[0].key);
+  const userWeekData = useMemo(() => {
+    if (!rewardWeeks) {
+      return undefined
+    } 
+    if (!!rewardWeeks?.message) {
+      return undefined;
+    }
+    const weekData = rewardWeeks?.find((week) => week.week === selectedWeek?.toString())
+    if (!weekData) { 
+      return undefined
+    }
+    const tradersData = weekData.traders?.find((trader) => trader.user_address === account);
+    // traders data found
+    if (tradersData) {
+      return tradersData;
+    } else {
+      // trader not found but data exists so user has no rewards
+      return ({
+        volume: ethers.BigNumber.from(0),
+        reward: ethers.BigNumber.from(0)
+      })
+    }
+  }, [rewardWeeks, selectedWeek, account])
+
+  const eth = getTokenInfo(infoTokens, ethers.constants.AddressZero)
+  const ethPrice = eth?.maxPrimaryPrice;
+
+  let rewardAmountEth = 0;
+  if (ethPrice && userWeekData) {
+    rewardAmountEth = ethPrice.mul(userWeekData.reward);
+  }
+
+  let unclaimedRewardsEth, totalRewardAmountEth;
+  if (ethPrice && userData) {
+    unclaimedRewardsEth = ethPrice.mul(userData.unclaimedRewards);
+    totalRewardAmountEth = ethPrice.mul(userData.totalRewards);
+  }
+
+  if (!rewardWeeks && selectedWeek !== undefined) {
+    setSelectedWeek(undefined)
+  } else if (selectedWeek === undefined && !!rewardWeeks) {
+    setSelectedWeek(0)
+  }
+
+  let rewardsMessage = "";
+  if (!rewardWeeks) {
+    rewardsMessage = "Fetching rewards"
+  } else if (!!failedFetchingRewards) {
+    rewardsMessage = "Failed fetching rewards"
+  } else {
+    if (rewardWeeks?.length === 0) {
+      rewardsMessage = "No rewards for network"
+    } else {
+      rewardsMessage = `Week ${selectedWeek}`
+    }
+  } 
 
   return (
     <Styles.StyledRewardsPage className="default-container page-layout">
@@ -77,19 +141,19 @@ export default function Rewards(props) {
           <div className="App-card-row">
             <div className="label">Total Volume Traded</div>
             <div>
-              $67.00
+              ${formatAmount(userData?.totalTradingVolume, 0, 2, true)}
             </div>
           </div>
           <div className="App-card-row">
             <div className="label">Total Rewards</div>
             <div>
-              1050.00 ETH ($36.75)
+              {formatAmount(userData?.totalRewards, ETH_DECIMALS, 2, true)} ETH (${formatAmount(totalRewardAmountEth, USD_DECIMALS + ETH_DECIMALS, 2, true)})
             </div>
           </div>
           <div className="App-card-row">
             <div className="label">Unclaimed Rewards</div>
             <div>
-              1050.00 ETH ($36.75)
+              {formatAmount(userData?.unclaimedRewards, ETH_DECIMALS, 2, true)} ETH (${formatAmount(unclaimedRewardsEth, USD_DECIMALS + ETH_DECIMALS, 2, true)})
             </div>
           </div>
         </Styles.AccountBannerRewards>
@@ -103,16 +167,16 @@ export default function Rewards(props) {
             <Menu>
               <Menu.Button as="div">
                 <Styles.WeekSelectButton className="App-cta transparent">
-                  <span>{REWARD_WEEKS[rewardsWeek].label}</span>
+                  {rewardsMessage}
                   <FaChevronDown />
                 </Styles.WeekSelectButton>
               </Menu.Button>
               <div>
                 <Menu.Items as="div" className="menu-items">
-                  {REWARD_WEEKS.map((week) => (
+                  {!!rewardWeeks && rewardWeeks.map((rewardWeek) => (
                     <Menu.Item>
-                      <div className="menu-item" onClick={() => setRewardsWeek(week.key)}>
-                        {week.label}
+                      <div className="menu-item" onClick={() => setSelectedWeek(rewardWeek.week)}>
+                        Week {rewardWeek.week}
                       </div>
                     </Menu.Item>
                   ))}
@@ -128,16 +192,18 @@ export default function Rewards(props) {
           <Styles.RewardsDataBox>
             <Styles.RewardsDataBoxTitle>Volume Traded</Styles.RewardsDataBoxTitle>
             <Styles.LargeText>
-              $1.00
+              {`$${formatAmount(userWeekData?.volume, 0, 2, true)}`}
             </Styles.LargeText>
           </Styles.RewardsDataBox>
           <Styles.RewardsDataBox className="claimable">
             <Styles.RewardsDataBoxTitle>Claimable Rewards</Styles.RewardsDataBoxTitle>
             <div>
               <Styles.LargeText>
-                107.14 ETH 
+                {`${formatAmount(userWeekData?.reward, ETH_DECIMALS, 4, true)} ETH`}
               </Styles.LargeText>
-              <span>($3.75)</span>
+              <span>
+                {` ($${formatAmount(rewardAmountEth, USD_DECIMALS + ETH_DECIMALS, 2, true)})`}
+              </span>
             </div>
           </Styles.RewardsDataBox>
         </Styles.RewardsDataBoxes>

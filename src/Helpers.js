@@ -84,6 +84,7 @@ export const DEPOSIT_FEE = 30;
 export const DUST_BNB = "2000000000000000";
 export const DUST_USD = expandDecimals(1, USD_DECIMALS);
 export const PRECISION = expandDecimals(1, 30);
+export const ETH_DECIMALS = 18;
 export const GLP_DECIMALS = 18;
 export const GMX_DECIMALS = 18;
 export const DEFAULT_MAX_USDG_AMOUNT = expandDecimals(200 * 1000 * 1000, 18);
@@ -1771,7 +1772,7 @@ export const padDecimals = (amount, minDecimals) => {
       amountStr = amountStr.padEnd(amountStr.length + (minDecimals - decimals), "0");
     }
   } else {
-    amountStr = amountStr + ".0000";
+    amountStr = amountStr + Number(0).toFixed(minDecimals).slice(1);
   }
   return amountStr;
 };
