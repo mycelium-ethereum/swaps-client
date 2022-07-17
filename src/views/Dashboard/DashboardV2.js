@@ -348,7 +348,7 @@ export default function DashboardV2() {
 
   let glpPool = tokenList.map((token) => {
     const tokenInfo = infoTokens[token.address];
-    if (tokenInfo.usdgAmount && adjustedUsdgSupply) {
+    if (tokenInfo.usdgAmount && adjustedUsdgSupply && !adjustedUsdgSupply.eq(0)) {
       const currentWeightBps = tokenInfo.usdgAmount.mul(BASIS_POINTS_DIVISOR).div(adjustedUsdgSupply);
       if (tokenInfo.isStable) {
         stableGlp += parseFloat(`${formatAmount(currentWeightBps, 2, 2, false)}`);

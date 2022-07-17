@@ -131,6 +131,7 @@ const TOKENS = {
       symbol: "ETH",
       decimals: 18,
       address: ethers.constants.AddressZero,
+      isShortable: true,
       isNative: true,
     },
     // https://github.com/OffchainLabs/arbitrum/blob/950c2f91b2e951cd3764394e0a73eac3797aecf3/packages/arb-ts/src/lib/networks.ts#L65
@@ -141,6 +142,20 @@ const TOKENS = {
       address: "0xB47e6A5f8b33b3F17603C83a0535A9dcD7E32681",
       isWrapped: true,
       baseSymbol: "ETH",
+    },
+    // {
+      // name: "Custom Token",
+      // symbol: "CTM",
+      // decimals: 18,
+      // address: "0xaC6101824E8BCdc7Fb399e62aFDf2b3b720DeFEf",
+      // isStable: true,
+    // },
+    {
+      name: "Testnet stable coin",
+      symbol: "PPUSD",
+      decimals: 18,
+      address: "0x9e062eee2c0Ab96e1E1c8cE38bF14bA3fa0a35F6",
+      isStable: true,
     },
     {
       name: "USD Coin",
