@@ -134,6 +134,7 @@ export const GLPPOOLCOLORS = {
   ETH: "#6062a6",
   BTC: "#F7931A",
   USDC: "#2775CA",
+  PPUSD: "#2A5ADA",
   "USDC.e": "#2A5ADA",
   USDT: "#67B18A",
   MIM: "#9695F8",
@@ -178,6 +179,9 @@ export const ICONLINKS = {
     USDC: {
       coingecko: "https://www.coingecko.com/en/coins/usd-coin",
       arbitrum: "https://arbiscan.io/address/0xff970a61a04b1ca14834a43f5de4533ebddb5cc8",
+    },
+    PPUSD: {
+      arbitrum: "https://testnet.arbiscan.io/address/0x9e062eee2c0Ab96e1E1c8cE38bF14bA3fa0a35F6",
     },
     USDT: {
       coingecko: "https://www.coingecko.com/en/coins/tether",
