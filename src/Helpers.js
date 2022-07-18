@@ -180,8 +180,7 @@ export const ICONLINKS = {
       arbitrum: "https://arbiscan.io/address/0xff970a61a04b1ca14834a43f5de4533ebddb5cc8",
     },
     PPUSD: {
-      coingecko: "https://www.coingecko.com/en/coins/dai",
-      arbitrum: "https://arbiscan.io/address/0xff970a61a04b1ca14834a43f5de4533ebddb5cc8",
+      arbitrum: "https://testnet.arbiscan.io/address/0x9e062eee2c0Ab96e1E1c8cE38bF14bA3fa0a35F6",
     },
     USDT: {
       coingecko: "https://www.coingecko.com/en/coins/tether",
