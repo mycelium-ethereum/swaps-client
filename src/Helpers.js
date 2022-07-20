@@ -149,7 +149,7 @@ export const ICONLINKS = {
   421611: {
     TCR: {
       coingecko: "https://www.coingecko.com/en/coins/tracer-dao",
-      arbitrum: `https://arbiscan.io/address/${getContract(ARBITRUM_TESTNET, 'TCR')}`,
+      arbitrum: `https://arbiscan.io/address/${getContract(ARBITRUM_TESTNET, "TCR")}`,
     },
     TLP: {
       arbitrum: `https://arbiscan.io/address/${getContract(ARBITRUM_TESTNET, "StakedGlpTracker")}`,
@@ -203,7 +203,7 @@ export const ICONLINKS = {
   42161: {
     TCR: {
       coingecko: "https://www.coingecko.com/en/coins/tracer-dao",
-      arbitrum: `https://arbiscan.io/address/${getContract(ARBITRUM, 'TCR')}`,
+      arbitrum: `https://arbiscan.io/address/${getContract(ARBITRUM, "TCR")}`,
     },
     TLP: {
       arbitrum: `https://arbiscan.io/address/${getContract(ARBITRUM, "StakedGlpTracker")}`,
@@ -254,7 +254,7 @@ export const ICONLINKS = {
   43114: {
     TCR: {
       coingecko: "https://www.coingecko.com/en/coins/tracer-dao",
-      arbitrum: `https://arbiscan.io/address/${getContract(ARBITRUM_TESTNET, 'TCR')}`,
+      arbitrum: `https://arbiscan.io/address/${getContract(ARBITRUM_TESTNET, "TCR")}`,
     },
     TLP: {
       arbitrum: `https://arbiscan.io/address/${getContract(ARBITRUM_TESTNET, "StakedGlpTracker")}`,
@@ -2772,8 +2772,7 @@ export function sleep(ms) {
 }
 
 export function getPageTitle(data) {
-  return `${data} | Decentralized
-  Perpetual Exchange | GMX`;
+  return `${data} | Tracer Perpetual Swaps`;
 }
 
 export function isHashZero(value) {
