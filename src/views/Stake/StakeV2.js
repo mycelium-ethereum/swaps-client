@@ -42,10 +42,9 @@ import useSWR from "swr";
 import { getContract } from "../../Addresses";
 
 import tlp40Icon from "../../img/ic_tlp_40.svg";
-import * as StakeV2Styled from './StakeV2Styles';
+import * as StakeV2Styled from "./StakeV2Styles";
 
 import "./StakeV2.css";
-
 
 function CompoundModal(props) {
   const {
@@ -244,7 +243,6 @@ function ClaimModal(props) {
     [chainId, "StakeV2-claim-should-convert-weth"],
     true
   );
-
 
   const isPrimaryEnabled = () => {
     return !isClaiming;
@@ -446,11 +444,7 @@ export default function StakeV2({ setPendingTxns, connectWallet }) {
     }
   );
 
-  const { tcrPrice } = useTCRPrice(
-    chainId,
-    { arbitrum: chainId === ARBITRUM ? library : undefined },
-    active
-  );
+  const { tcrPrice } = useTCRPrice(chainId, { arbitrum: chainId === ARBITRUM ? library : undefined }, active);
 
   const gmxSupplyUrl = getServerUrl(chainId, "/gmx_supply");
   const { data: gmxSupply } = useSWR([gmxSupplyUrl], {
@@ -555,7 +549,11 @@ export default function StakeV2({ setPendingTxns, connectWallet }) {
           <div className="Page-title">Earn</div>
           <div className="Page-description">
             Stake{" "}
-            <a href="https://gmxio.gitbook.io/gmx/glp" target="_blank" rel="noopener noreferrer">
+            <a
+              href="https://tracer-1.gitbook.io/tracer-perpetual-swaps/6VOYVKGbCCw0I8cj7vdF/protocol-design/shared-liquidity-pool/tlp-token-pricing"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
               TLP
             </a>{" "}
             to earn rewards.
@@ -570,15 +568,13 @@ export default function StakeV2({ setPendingTxns, connectWallet }) {
             </div>
             <StakeV2Styled.RewardsBanner>
               <StakeV2Styled.RewardsBannerRow>
-                <StakeV2Styled.RewardsBannerText secondary>
-                  Rewards
-                </StakeV2Styled.RewardsBannerText>
+                <StakeV2Styled.RewardsBannerText secondary>Rewards</StakeV2Styled.RewardsBannerText>
                 <div>
                   <StakeV2Styled.RewardsBannerTextWrap>
                     <StakeV2Styled.RewardsBannerText large inline>
-                      {formatKeyAmount(processedData, "feeGlpTrackerRewards", 18, 4)} {nativeTokenSymbol} ({wrappedTokenSymbol})
-                    </StakeV2Styled.RewardsBannerText>
-                    {' '}
+                      {formatKeyAmount(processedData, "feeGlpTrackerRewards", 18, 4)} {nativeTokenSymbol} (
+                      {wrappedTokenSymbol})
+                    </StakeV2Styled.RewardsBannerText>{" "}
                     <StakeV2Styled.RewardsBannerText inline>
                       ($
                       {formatKeyAmount(processedData, "feeGlpTrackerRewardsUsd", USD_DECIMALS, 2, true)})
@@ -587,8 +583,7 @@ export default function StakeV2({ setPendingTxns, connectWallet }) {
                   <StakeV2Styled.RewardsBannerTextWrap>
                     <StakeV2Styled.RewardsBannerText large inline>
                       {formatKeyAmount(processedData, "stakedGlpTrackerRewards", 18, 4)} TCR
-                    </StakeV2Styled.RewardsBannerText>
-                    {' '}
+                    </StakeV2Styled.RewardsBannerText>{" "}
                     <StakeV2Styled.RewardsBannerText inline>
                       ($
                       {formatKeyAmount(processedData, "stakedGlpTrackerRewardsUsd", USD_DECIMALS, 2, true)})
@@ -597,9 +592,7 @@ export default function StakeV2({ setPendingTxns, connectWallet }) {
                 </div>
               </StakeV2Styled.RewardsBannerRow>
               <StakeV2Styled.RewardsBannerRow>
-                <StakeV2Styled.RewardsBannerText secondary>
-                  APR
-                </StakeV2Styled.RewardsBannerText>
+                <StakeV2Styled.RewardsBannerText secondary>APR</StakeV2Styled.RewardsBannerText>
                 <StakeV2Styled.RewardsBannerText large inline>
                   <Tooltip
                     handle={`${formatKeyAmount(processedData, "glpAprTotal", 2, 2, true)}%`}
@@ -667,10 +660,7 @@ export default function StakeV2({ setPendingTxns, connectWallet }) {
                   Sell TLP
                 </Link>
                 {active && (
-                  <button
-                    className="App-button-option App-card-option"
-                    onClick={() => setIsCompoundModalVisible(true)}
-                  >
+                  <button className="App-button-option App-card-option" onClick={() => setIsCompoundModalVisible(true)}>
                     Compound
                   </button>
                 )}

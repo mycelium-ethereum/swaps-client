@@ -235,7 +235,7 @@ export default function SwapBox(props) {
 
   const onOrderOptionChange = (option) => {
     // limits disabled
-    if (typeof option === 'string' && option !== LIMIT) {
+    if (typeof option === "string" && option !== LIMIT) {
       setOrderOption(option);
     }
   };
@@ -2177,7 +2177,7 @@ export default function SwapBox(props) {
                       <br />
                       <br />
                       <a
-                        href="https://gmxio.gitbook.io/gmx/trading#opening-a-position"
+                        href="https://tracer-1.gitbook.io/tracer-perpetual-swaps/6VOYVKGbCCw0I8cj7vdF/protocol-design/trading/fees"
                         target="_blank"
                         rel="noopener noreferrer"
                       >
@@ -2206,7 +2206,7 @@ export default function SwapBox(props) {
                       <br />
                       <br />
                       <a
-                        href="https://gmxio.gitbook.io/gmx/trading#opening-a-position"
+                        href="https://tracer-1.gitbook.io/tracer-perpetual-swaps/6VOYVKGbCCw0I8cj7vdF/protocol-design/trading/fees"
                         target="_blank"
                         rel="noopener noreferrer"
                       >
@@ -2243,7 +2243,7 @@ export default function SwapBox(props) {
                       )}
                       <br />
                       <a
-                        href="https://gmxio.gitbook.io/gmx/trading#opening-a-position"
+                        href="https://tracer-1.gitbook.io/tracer-perpetual-swaps/6VOYVKGbCCw0I8cj7vdF/protocol-design/trading/fees"
                         target="_blank"
                         rel="noopener noreferrer"
                       >
@@ -2289,15 +2289,12 @@ export default function SwapBox(props) {
         <div className="App-card-divider"></div>
         <div className="Exchange-info-row">
           <div className="Exchange-info-label-button">
-            <a href="https://gmxio.gitbook.io/gmx/trading" target="_blank" rel="noopener noreferrer">
+            <a
+              href="https://tracer-1.gitbook.io/tracer-perpetual-swaps/6VOYVKGbCCw0I8cj7vdF/quick-start-guide/3.-trading"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
               Trading guide
-            </a>
-          </div>
-        </div>
-        <div className="Exchange-info-row">
-          <div className="Exchange-info-label-button">
-            <a href={getLeaderboardLink()} target="_blank" rel="noopener noreferrer">
-              Leaderboard
             </a>
           </div>
         </div>

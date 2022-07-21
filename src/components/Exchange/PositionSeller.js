@@ -125,7 +125,7 @@ export default function PositionSeller(props) {
     fetcher: fetcher(library, PositionRouter),
   });
 
-  const orderOptions = [MARKET, <ComingSoonTooltip position="right-bottom" handle={orderOptionLabels[STOP]} /> ];
+  const orderOptions = [MARKET, <ComingSoonTooltip position="right-bottom" handle={orderOptionLabels[STOP]} />];
 
   let [orderOption, setOrderOption] = useState(MARKET);
 
@@ -137,7 +137,7 @@ export default function PositionSeller(props) {
 
   const onOrderOptionChange = (option) => {
     // disabled limit close
-    if (typeof option === 'string' && option !== LIMIT) {
+    if (typeof option === "string" && option !== LIMIT) {
       setOrderOption(option);
     }
   };
@@ -638,15 +638,7 @@ export default function PositionSeller(props) {
       if (orderOption === MARKET) {
         return (
           <div className="Confirmation-box-warning">
-            Reducing the position at the current price will forfeit a&nbsp;
-            <a
-              href="https://gmxio.gitbook.io/gmx/trading#minimum-price-change"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              pending profit
-            </a>{" "}
-            of {deltaStr}. <br />
+            Reducing the position at the current price will forfeit a pending profit of {deltaStr}. <br />
             <br />
             Profit price: {position.isLong ? ">" : "<"} ${formatAmount(profitPrice, USD_DECIMALS, 2, true)}. This rule
             applies for the next {getTimeRemaining(minProfitExpiration)}, until {formatDateTime(minProfitExpiration)}.
@@ -655,11 +647,7 @@ export default function PositionSeller(props) {
       }
       return (
         <div className="Confirmation-box-warning">
-          This order will forfeit a&nbsp;
-          <a href="https://gmxio.gitbook.io/gmx/trading#minimum-price-change" target="_blank" rel="noopener noreferrer">
-            profit
-          </a>{" "}
-          of {deltaStr}. <br />
+          This order will forfeit a profit of {deltaStr}. <br />
           Profit price: {position.isLong ? ">" : "<"} ${formatAmount(profitPrice, USD_DECIMALS, 2, true)}. This rule
           applies for the next {getTimeRemaining(minProfitExpiration)}, until {formatDateTime(minProfitExpiration)}.
         </div>
