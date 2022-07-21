@@ -50,7 +50,7 @@ export default function TokenCard() {
               </Link>
             </div>
             <a
-              href="https://gmxio.gitbook.io/gmx/tokenomics"
+              href="https://tracer-1.gitbook.io/tracer-perpetual-swaps/6VOYVKGbCCw0I8cj7vdF/perpetual-swaps/information-for-lps"
               target="_blank"
               rel="noreferrer"
               className="default-btn read-more"
@@ -78,7 +78,7 @@ export default function TokenCard() {
               </Link>
             </div>
             <a
-              href="https://gmxio.gitbook.io/gmx/glp"
+              href="https://tracer-1.gitbook.io/tracer-perpetual-swaps/6VOYVKGbCCw0I8cj7vdF/protocol-design/shared-liquidity-pool/tlp-token-pricing"
               target="_blank"
               rel="noreferrer"
               className="default-btn read-more"

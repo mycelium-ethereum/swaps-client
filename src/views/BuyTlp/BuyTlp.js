@@ -32,7 +32,11 @@ export default function BuyGlp(props) {
           <div className="Page-title">Buy / Sell TLP</div>
           <div className="Page-description">
             Purchase{" "}
-            <a href="https://gmxio.gitbook.io/gmx/glp" target="_blank" rel="noopener noreferrer">
+            <a
+              href="https://tracer-1.gitbook.io/tracer-perpetual-swaps/6VOYVKGbCCw0I8cj7vdF/protocol-design/shared-liquidity-pool/tlp-token-pricing"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
               TLP tokens
             </a>{" "}
             to earn {nativeTokenSymbol} fees from swaps and leverages trading.

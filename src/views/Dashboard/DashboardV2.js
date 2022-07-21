@@ -195,7 +195,10 @@ export default function DashboardV2() {
     active
   );
 
-  let { mainnet: totalTCRInLiquidityMainnet, arbitrum: totalTCRInLiquidityArbitrum } = useTotalTCRInLiquidity(chainId, active);
+  let { mainnet: totalTCRInLiquidityMainnet, arbitrum: totalTCRInLiquidityArbitrum } = useTotalTCRInLiquidity(
+    chainId,
+    active
+  );
 
   let gmxMarketCap;
   if (tcrPrice && totalTCRSupply) {
@@ -290,7 +293,11 @@ export default function DashboardV2() {
               )}
               <br />
               <div>
-                <a href="https://gmxio.gitbook.io/gmx/glp" target="_blank" rel="noopener noreferrer">
+                <a
+                  href="https://tracer-1.gitbook.io/tracer-perpetual-swaps/6VOYVKGbCCw0I8cj7vdF/protocol-design/shared-liquidity-pool/tlp-token-pricing"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
                   More Info
                 </a>
               </div>
@@ -304,7 +311,7 @@ export default function DashboardV2() {
   // TODO change this to TCR liquidity
   // let stakedPercent = 0;
   // if (totalTCRSupply && !totalTCRSupply.isZero() && !totalStakedGmx.isZero()) {
-    // stakedPercent = totalStakedGmx.mul(100).div(totalTCRSupply).toNumber();
+  // stakedPercent = totalStakedGmx.mul(100).div(totalTCRSupply).toNumber();
   // }
 
   let arbitrumLiquidityPercent = 0;
@@ -320,9 +327,9 @@ export default function DashboardV2() {
   let notStakedPercent = 100 - arbitrumLiquidityPercent - mainnetLiquidityPercent; // - stakedPercent;
   let gmxDistributionData = [
     // {
-      // name: "staked",
-      // value: stakedPercent,
-      // color: "#4353fa",
+    // name: "staked",
+    // value: stakedPercent,
+    // color: "#4353fa",
     // },
     {
       name: "in Arbitrum liquidity",
@@ -419,7 +426,9 @@ export default function DashboardV2() {
           <div className="section-title-content">
             <div className="Page-title">
               Stats {chainId === AVALANCHE && <img src={avalanche24Icon} alt="avalanche24Icon" />}
-              {(chainId === ARBITRUM || chainId === ARBITRUM_TESTNET) && <img src={arbitrum24Icon} alt="arbitrum24Icon" />}
+              {(chainId === ARBITRUM || chainId === ARBITRUM_TESTNET) && (
+                <img src={arbitrum24Icon} alt="arbitrum24Icon" />
+              )}
             </div>
             <div className="Page-description">
               {chainName} Total Stats start from {totalStatsStartDate}.<br />
@@ -519,7 +528,7 @@ export default function DashboardV2() {
                       <div className="label">Price</div>
                       <div>
                         {!tcrPrice && "..."}
-                        {tcrPrice && 
+                        {tcrPrice && (
                           <TooltipComponent
                             position="right-bottom"
                             className="nowrap"
@@ -528,11 +537,11 @@ export default function DashboardV2() {
                               <>
                                 Price on Arbitrum: ${formatAmount(tcrPriceFromArbitrum, USD_DECIMALS, 4, true)}
                                 <br />
-                                Price on Mainnet: ${formatAmount(tcrPriceFromMainnet, USD_DECIMALS, 4, true)} 
+                                Price on Mainnet: ${formatAmount(tcrPriceFromMainnet, USD_DECIMALS, 4, true)}
                               </>
                             )}
                           />
-                        }
+                        )}
                       </div>
                     </div>
                     <div className="App-card-row">
@@ -560,10 +569,7 @@ export default function DashboardV2() {
                     </div>*/}
                     <div className="App-card-row">
                       <div className="label">Market Cap</div>
-                      <div>
-
-                      ${formatAmount(gmxMarketCap, USD_DECIMALS, 0, true)}
-                      </div>
+                      <div>${formatAmount(gmxMarketCap, USD_DECIMALS, 0, true)}</div>
                     </div>
                   </div>
                 </div>

@@ -129,7 +129,9 @@ function inPreviewMode() {
 }
 
 const arbWsProvider = new ethers.providers.WebSocketProvider("wss://arb1.arbitrum.io/ws");
-const arbTestnetWsProvider = new ethers.providers.WebSocketProvider("wss://arb-rinkeby.g.alchemy.com/v2/4TO9yKJtxrTsGrVksRe6JrPO3AEj2pgn");
+const arbTestnetWsProvider = new ethers.providers.WebSocketProvider(
+  "wss://arb-rinkeby.g.alchemy.com/v2/4TO9yKJtxrTsGrVksRe6JrPO3AEj2pgn"
+);
 const avaxWsProvider = new ethers.providers.JsonRpcProvider("https://api.avax.network/ext/bc/C/rpc");
 
 function getWsProvider(active, chainId) {
@@ -164,7 +166,11 @@ function AppHeaderLinks({ small, openSettings, clickCloseIcon }) {
           </NavLink>
         </div>
         <div className="App-header-link-container">
-          <a href="https://gmxio.gitbook.io/gmx/" target="_blank" rel="noopener noreferrer">
+          <a
+            href="https://tracer-1.gitbook.io/tracer-perpetual-swaps/6VOYVKGbCCw0I8cj7vdF/perpetual-swaps/tracers-perpetual-swaps"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
             ABOUT
           </a>
         </div>
@@ -216,7 +222,11 @@ function AppHeaderLinks({ small, openSettings, clickCloseIcon }) {
         </NavLink>
       </div>
       <div className="App-header-link-container">
-        <a href="https://gmxio.gitbook.io/gmx/" target="_blank" rel="noopener noreferrer">
+        <a
+          href="https://tracer-1.gitbook.io/tracer-perpetual-swaps/6VOYVKGbCCw0I8cj7vdF/perpetual-swaps/tracers-perpetual-swaps"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
           About
         </a>
       </div>
@@ -256,10 +266,10 @@ function AppHeaderUser({
       color: "#264f79",
     },
     // {
-      // label: "Avalanche",
-      // value: AVALANCHE,
-      // icon: "ic_avalanche_24.svg",
-      // color: "#E841424D",
+    // label: "Avalanche",
+    // value: AVALANCHE,
+    // icon: "ic_avalanche_24.svg",
+    // color: "#E841424D",
     // },
   ];
 
@@ -789,10 +799,7 @@ function FullApp() {
               <BuyGMX />
             </Route>
             <Route exact path="/rewards">
-              <Rewards
-                setPendingTxns={setPendingTxns}
-                connectWallet={connectWallet}
-              />
+              <Rewards setPendingTxns={setPendingTxns} connectWallet={connectWallet} />
             </Route>
             <Route exact path="/about">
               <Home />
@@ -824,9 +831,9 @@ function FullApp() {
             <Route exact path="/debug">
               <Debug />
             </Route>
-            <Route exact path="/referral-terms">
+            {/* <Route exact path="/referral-terms">
               <ReferralTerms />
-            </Route>
+            </Route> */}
             <Route path="*">
               <PageNotFound />
             </Route>

@@ -288,12 +288,12 @@ function Referrals({ connectWallet, setPendingTxns, pendingTxns }) {
             <div className="Page-title">Referrals</div>
             <div className="Page-description">
               Get fee discounts and earn rebates through the GMX referral program.
-              <br />
+              {/* <br />
               For more information, please read the{" "}
               <a target="_blank" rel="noopener noreferrer" href="https://gmxio.gitbook.io/gmx/referrals">
                 referral program details
               </a>
-              .
+              . */}
             </div>
           </div>
         </div>

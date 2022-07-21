@@ -257,15 +257,8 @@ export default function ConfirmationBox(props) {
           const profitPrice = getProfitPrice(existingPosition.markPrice, existingPosition);
           return (
             <div className="Confirmation-box-warning">
-              Increasing this position at the current price will forfeit a&nbsp;
-              <a
-                href="https://gmxio.gitbook.io/gmx/trading#minimum-price-change"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                pending profit
-              </a>{" "}
-              of {existingPosition.deltaStr}.<br />
+              Increasing this position at the current price will forfeit a pending profit of {existingPosition.deltaStr}
+              .<br />
               <br />
               Profit price: {existingPosition.isLong ? ">" : "<"} ${formatAmount(profitPrice, USD_DECIMALS, 2, true)}.
               This rule only applies for the next {getTimeRemaining(minProfitExpiration)}, until{" "}
@@ -279,15 +272,7 @@ export default function ConfirmationBox(props) {
             const profitPrice = getProfitPrice(existingPosition.markPrice, existingPosition);
             return (
               <div className="Confirmation-box-warning">
-                This order will forfeit a&nbsp;
-                <a
-                  href="https://gmxio.gitbook.io/gmx/trading#minimum-price-change"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  profit
-                </a>{" "}
-                of {existingPosition.deltaStr}.<br />
+                This order will forfeit a profit of {existingPosition.deltaStr}.<br />
                 Profit price: {existingPosition.isLong ? ">" : "<"} ${formatAmount(profitPrice, USD_DECIMALS, 2, true)}.
                 This rule only applies for the next {getTimeRemaining(minProfitExpiration)}, until{" "}
                 {formatDateTime(minProfitExpiration)}.
@@ -299,12 +284,8 @@ export default function ConfirmationBox(props) {
 
       return (
         <div className="Confirmation-box-warning">
-          A minimum price change of&nbsp;
-          <a href="https://gmxio.gitbook.io/gmx/trading#minimum-price-change" target="_blank" rel="noopener noreferrer">
-            1.5%
-          </a>{" "}
-          is required for a position to be in profit. This only applies for the first {MIN_PROFIT_TIME / 60 / 60} hours
-          after increasing a position.
+          A minimum price change of 1.5% is required for a position to be in profit. This only applies for the first{" "}
+          {MIN_PROFIT_TIME / 60 / 60} hours after increasing a position.
         </div>
       );
     }
