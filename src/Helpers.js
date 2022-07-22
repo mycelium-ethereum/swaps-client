@@ -307,7 +307,7 @@ export const platformTokens = {
       symbol: "TLP",
       decimals: 18,
       address: getContract(ARBITRUM_TESTNET, "StakedGlpTracker"), // address of fsGLP token because user only holds fsGLP
-      imageUrl: "https://github.com/gmx-io/gmx-assets/blob/main/GMX-Assets/PNG/GLP_LOGO%20ONLY.png?raw=true",
+      imageUrl: "https://i.imgur.com/1xbBwPe.png",
     },
   },
   42161: {
