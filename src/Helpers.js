@@ -535,6 +535,20 @@ export function getServerBaseUrl(chainId) {
   return "https://gmx-server-mainnet.uw.r.appspot.com";
 }
 
+
+const BASE_TRACER_SERVER_URL = "https://dev.api.tracer.finance/trs";
+export function getTracerServerUrl(chainId, path) {
+  if (!chainId) {
+    throw new Error("chainId is not provided");
+  }
+  // TODO remove when API supports ARBITRUM_TESTNET
+  if (chainId === ARBITRUM_TESTNET) {
+    // temp fix as ARBITRUM_TESTNET not supported in API
+    chainId = ARBITRUM;
+  }
+  return `${BASE_TRACER_SERVER_URL}${path}?network=${chainId}`
+}
+
 export function getServerUrl(chainId, path) {
   return `${getServerBaseUrl(chainId)}${path}`;
 }
