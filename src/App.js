@@ -20,6 +20,7 @@ import {
   SHOW_PNL_AFTER_FEES_KEY,
   BASIS_POINTS_DIVISOR,
   SHOULD_SHOW_POSITION_LINES_KEY,
+  fetcher,
   clearWalletConnectData,
   switchNetwork,
   helperToast,
@@ -37,12 +38,15 @@ import {
   hasCoinBaseWalletExtension,
   isMobileDevice,
   clearWalletLinkData,
+  getBalanceAndSupplyData,
   SHOULD_EAGER_CONNECT_LOCALSTORAGE_KEY,
   CURRENT_PROVIDER_LOCALSTORAGE_KEY,
   REFERRAL_CODE_KEY,
   REFERRAL_CODE_QUERY_PARAMS,
   ARBITRUM_TESTNET,
+  PLACEHOLDER_ACCOUNT,
 } from "./Helpers";
+import ReaderV2 from "./abis/ReaderV2.json";
 
 import Home from "./views/Home/Home";
 import Presale from "./views/Presale/Presale";
@@ -62,6 +66,7 @@ import ClaimEsGmx from "./views/ClaimEsGmx/ClaimEsGmx";
 import BeginAccountTransfer from "./views/BeginAccountTransfer/BeginAccountTransfer";
 import CompleteAccountTransfer from "./views/CompleteAccountTransfer/CompleteAccountTransfer";
 import Debug from "./views/Debug/Debug";
+import ConsentModal from "./components/ConsentModal/ConsentModal";
 
 import cx from "classnames";
 import { cssTransition, ToastContainer } from "react-toastify";
@@ -102,9 +107,9 @@ import VaultV2 from "./abis/VaultV2.json";
 import VaultV2b from "./abis/VaultV2b.json";
 import PositionRouter from "./abis/PositionRouter.json";
 import PageNotFound from "./views/PageNotFound/PageNotFound";
-import ReferralTerms from "./views/ReferralTerms/ReferralTerms";
-import { identifyUser, recordPageVisit } from "./segmentAnalytics";
+import { identifyUser, recordLogin, recordPageVisit } from "./segmentAnalytics";
 import { useLocation } from "react-router-dom";
+import useSWR from "swr";
 
 if ("ethereum" in window) {
   window.ethereum.autoRefreshOnNetworkChange = false;
@@ -356,6 +361,18 @@ function FullApp() {
   const exchangeRef = useRef();
   const { connector, library, deactivate, activate, active, account } = useWeb3React();
   const { chainId } = useChainId();
+  const readerAddress = getContract(chainId, "Reader");
+  const gmxAddress = getContract(chainId, "GMX");
+  const esGmxAddress = getContract(chainId, "ES_GMX");
+  const glpAddress = getContract(chainId, "GLP");
+  const stakedGmxTrackerAddress = getContract(chainId, "StakedGmxTracker");
+  const walletTokens = [gmxAddress, esGmxAddress, glpAddress, stakedGmxTrackerAddress];
+  const { data: walletBalances } = useSWR(
+    [`StakeV2:walletBalances:${active}`, chainId, readerAddress, "getTokenBalancesWithSupplies", PLACEHOLDER_ACCOUNT],
+    {
+      fetcher: fetcher(undefined, ReaderV2, [walletTokens]),
+    }
+  );
   useEventToast();
   const [activatingConnector, setActivatingConnector] = useState();
   useEffect(() => {
@@ -376,8 +393,12 @@ function FullApp() {
   }, [location.pathname]);
 
   useEffect(() => {
-    if (account) identifyUser(account);
-  }, [account]);
+    if (account) {
+      const { balanceData } = getBalanceAndSupplyData(walletBalances);
+      identifyUser(account);
+      recordLogin(account, balanceData);
+    }
+  }, [account, walletBalances]);
 
   useEffect(() => {
     let referralCode = query.get(REFERRAL_CODE_QUERY_PARAMS);
@@ -1006,6 +1027,13 @@ function PreviewApp() {
 }
 
 function App() {
+  const [hasConsented, setConsented] = useState(false);
+
+  useEffect(() => {
+    const consentAcknowledged = localStorage.getItem("consentAcknowledged") === "true";
+    setConsented(consentAcknowledged);
+  }, []);
+
   if (inPreviewMode()) {
     return (
       <Web3ReactProvider getLibrary={getLibrary}>
@@ -1022,6 +1050,7 @@ function App() {
         <SEO>
           <ThemeProvider>
             <FullApp />
+            <ConsentModal hasConsented={hasConsented} setConsented={setConsented} />
           </ThemeProvider>
         </SEO>
       </Web3ReactProvider>

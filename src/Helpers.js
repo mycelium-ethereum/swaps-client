@@ -2802,3 +2802,7 @@ export function useDebounce(value, delay) {
   );
   return debouncedValue;
 }
+
+export function hasConsented() {
+  return localStorage.getItem("consentAcknowledged") === "true";
+}
