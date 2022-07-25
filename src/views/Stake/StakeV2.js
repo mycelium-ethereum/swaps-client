@@ -81,18 +81,18 @@ function CompoundModal(props) {
     [chainId, "StakeV2-compound-should-convert-weth"],
     true
   );
-  const [shouldBuyTlp, setShouldBuyTlp] = useLocalStorageSerializeKey(
+  const [shouldBuyTlpWithEth, setShouldBuyTlpWithEth] = useLocalStorageSerializeKey(
     [chainId, "StakeV2-compound-should-buy-tlp"],
     true
   );
 
   const gmxAddress = getContract(chainId, "GMX");
-  const stakedGmxTrackerAddress = getContract(chainId, "StakedGmxTracker");
+  const stakedGlpTrackerAddress = getContract(chainId, "StakedGlpTracker");
 
   const [isApproving, setIsApproving] = useState(false);
 
   const { data: tokenAllowance } = useSWR(
-    active && [active, chainId, gmxAddress, "allowance", account, stakedGmxTrackerAddress],
+    active && [active, chainId, gmxAddress, "allowance", account, stakedGlpTrackerAddress],
     {
       fetcher: fetcher(library, Token),
     }
@@ -123,7 +123,7 @@ function CompoundModal(props) {
         setIsApproving,
         library,
         tokenAddress: gmxAddress,
-        spender: stakedGmxTrackerAddress,
+        spender: stakedGlpTrackerAddress,
         chainId,
       });
       return;
@@ -132,6 +132,9 @@ function CompoundModal(props) {
     setIsCompounding(true);
 
     const contract = new ethers.Contract(rewardRouterAddress, RewardRouter.abi, library.getSigner());
+    contract.feeGmxTracker().then((res) => {
+      console.log(res);
+    })
     callContract(
       chainId,
       contract,
@@ -142,8 +145,9 @@ function CompoundModal(props) {
         false, // shouldClaimEsGMX
         false, // shouldStakeEsGmx,
         shouldStakeMultiplierPoints,
-        shouldClaimWeth || shouldConvertWeth,
+        shouldClaimWeth || shouldConvertWeth || shouldBuyTlpWithEth,
         shouldConvertWeth,
+        shouldBuyTlpWithEth,
       ],
       {
         sentMsg: "Compound submitted!",
@@ -170,8 +174,17 @@ function CompoundModal(props) {
   const toggleConvertWeth = (value) => {
     if (value) {
       setShouldClaimWeth(true);
+      setShouldBuyTlpWithEth(false);
     }
     setShouldConvertWeth(value);
+  };
+
+  const toggleBuyTlp = (value) => {
+    if (value) {
+      setShouldClaimWeth(true);
+      setShouldConvertWeth(false);
+    } 
+    setShouldBuyTlpWithEth(value);
   };
 
   return (
@@ -194,7 +207,7 @@ function CompoundModal(props) {
             </Checkbox>
           </div>
           <div>
-            <Checkbox isChecked={shouldClaimWeth} setIsChecked={setShouldClaimWeth} disabled={shouldConvertWeth}>
+            <Checkbox isChecked={shouldClaimWeth} setIsChecked={setShouldClaimWeth} disabled={shouldConvertWeth || shouldBuyTlpWithEth}>
               Claim {wrappedTokenSymbol} Rewards
             </Checkbox>
           </div>
@@ -204,8 +217,8 @@ function CompoundModal(props) {
             </Checkbox>
           </div>
           <div>
-            <Checkbox isChecked={shouldBuyTlp} setIsChecked={setShouldBuyTlp}>
-              Buy TlP
+            <Checkbox isChecked={shouldBuyTlpWithEth} setIsChecked={toggleBuyTlp}>
+              Buy TLP with {wrappedTokenSymbol}
             </Checkbox>
           </div>
         </div>
@@ -271,6 +284,7 @@ function ClaimModal(props) {
         false, // shouldStakeMultiplierPoints
         shouldClaimWeth,
         shouldConvertWeth,
+        false, // shouldBuyTlpWithEth
       ],
       {
         sentMsg: "Claim submitted.",
