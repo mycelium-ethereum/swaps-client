@@ -143,13 +143,13 @@ const TOKENS = {
       isWrapped: true,
       baseSymbol: "ETH",
     },
-    // {
-    // name: "Custom Token",
-    // symbol: "CTM",
-    // decimals: 18,
-    // address: "0xaC6101824E8BCdc7Fb399e62aFDf2b3b720DeFEf",
-    // isStable: true,
-    // },
+    {
+      name: "Custom Test Token",
+      symbol: "CTM",
+      decimals: 18,
+      address: "0xaC6101824E8BCdc7Fb399e62aFDf2b3b720DeFEf",
+      isStable: false,
+    },
     {
       name: "Testnet stable coin",
       symbol: "PPUSD",
