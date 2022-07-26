@@ -6,14 +6,9 @@ import { useWeb3React } from "@web3-react/core";
 
 const writeKey = process.env.REACT_APP_SEGMENT_WRITE_KEY;
 
-// Helper functions
-// const convertBNToFloat = (bn: BigNumber) => {
-//   return parseFloat(BigNumber.max(bn).toString());
-// };
-
 const networkName = {
   [ARBITRUM]: "Arbitrum",
-  [ARBITRUM_TESTNET]: "Arbitrum Testnet",
+  [ARBITRUM_TESTNET]: "Rinkeby",
   [AVALANCHE]: "Avalanche",
 };
 
@@ -37,7 +32,7 @@ const useValues = () => {
     }
   };
 
-  // Identify
+  // Identify call
   useEffect(() => {
     try {
       if (account && hasConsented()) {
@@ -50,7 +45,7 @@ const useValues = () => {
     }
   }, [analytics, account]);
 
-  // Page
+  // Page call
   useEffect(() => {
     analytics?.page();
   }, [analytics, location.pathname]);

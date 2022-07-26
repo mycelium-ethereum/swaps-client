@@ -398,22 +398,21 @@ function FullApp() {
     if (account && tokenBalances) {
       const MAX_DECIMALS = 16;
       const { balanceData } = getBalanceAndSupplyData(tokenBalances);
-      const ethBalance = formatAmount(nativeToken.balance, nativeToken.decimals, 4, true);
+      const ethBalance = parseFloat(formatAmount(nativeToken.balance, nativeToken.decimals, 4, true));
 
       let gmxBalances = Object.keys(balanceData).map((token) => {
         if (balanceData[token]) {
           return {
-            [token]: formatAmount(balanceData[token], MAX_DECIMALS, 4, true),
+            [token]: parseFloat(formatAmount(balanceData[token], MAX_DECIMALS, 4, true)),
           };
         } else {
           return null;
         }
       });
       gmxBalances = gmxBalances.filter((balance) => balance);
-
-      trackLogin(account, gmxBalances, ethBalance);
+      trackLogin(chainId, gmxBalances, ethBalance);
     }
-  }, [account, tokenBalances, trackLogin, nativeToken.balance, nativeToken.decimals]);
+  }, [account, chainId, tokenBalances, trackLogin, nativeToken.balance, nativeToken.decimals]);
 
   useEffect(() => {
     let referralCode = query.get(REFERRAL_CODE_QUERY_PARAMS);
