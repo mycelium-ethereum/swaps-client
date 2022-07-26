@@ -3,6 +3,7 @@ import { AnalyticsBrowser } from "@segment/analytics-next";
 import { useLocation } from "react-router-dom";
 import { ARBITRUM, ARBITRUM_TESTNET, AVALANCHE, hasConsented } from "./Helpers";
 import { useWeb3React } from "@web3-react/core";
+import { CURRENT_PROVIDER_LOCALSTORAGE_KEY } from "./Helpers";
 
 const writeKey = process.env.REACT_APP_SEGMENT_WRITE_KEY;
 
@@ -20,7 +21,9 @@ const useValues = () => {
   const trackLogin = (chainId, gmxBalances, ethBalance) => {
     try {
       if (account && hasConsented()) {
+        const provider = localStorage.getItem(CURRENT_PROVIDER_LOCALSTORAGE_KEY);
         analytics?.track("userLoggedIn", {
+          walletProvider: provider,
           walletAddress: account,
           network: networkName[chainId],
           ethBalance: ethBalance,

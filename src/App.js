@@ -363,6 +363,7 @@ function AppHeaderUser({
 }
 
 function FullApp() {
+  const [loggedInTracked, setLoggedInTracked] = useState(false);
   const { trackLogin } = useContext(AnalyticsContext);
 
   const exchangeRef = useRef();
@@ -395,7 +396,7 @@ function FullApp() {
   const query = useRouteQuery();
 
   useEffect(() => {
-    if (account && tokenBalances) {
+    if (account && tokenBalances && !loggedInTracked) {
       const MAX_DECIMALS = 16;
       const { balanceData } = getBalanceAndSupplyData(tokenBalances);
       const ethBalance = parseFloat(formatAmount(nativeToken.balance, nativeToken.decimals, 4, true));
@@ -411,8 +412,9 @@ function FullApp() {
       });
       gmxBalances = gmxBalances.filter((balance) => balance);
       trackLogin(chainId, gmxBalances, ethBalance);
+      setLoggedInTracked(true); // Only track once
     }
-  }, [account, chainId, tokenBalances, trackLogin, nativeToken.balance, nativeToken.decimals]);
+  }, [account, chainId, tokenBalances, trackLogin, nativeToken.balance, nativeToken.decimals, loggedInTracked]);
 
   useEffect(() => {
     let referralCode = query.get(REFERRAL_CODE_QUERY_PARAMS);
