@@ -14,7 +14,7 @@
   pointer-events: none;
   opacity: 0;
   transition: opacity 0.3s ease;
-  font-size: 1.161rem;
+  font-size: 14px;
   line-height: 1.484rem;
 }
 .ConsentModal.visible {
