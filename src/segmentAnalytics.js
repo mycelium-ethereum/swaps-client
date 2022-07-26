@@ -18,6 +18,10 @@ const useValues = () => {
   const location = useLocation();
   const [analytics, setAnalytics] = useState(undefined);
 
+  const trackPageWithTraits = (traits = {}) => {
+    analytics?.page({ ...traits });
+  };
+
   const trackLogin = (chainId, gmxBalances, ethBalance) => {
     try {
       if (account && hasConsented()) {
@@ -67,6 +71,7 @@ const useValues = () => {
 
   return {
     trackLogin,
+    trackPageWithTraits,
   };
 };
 

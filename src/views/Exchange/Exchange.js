@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo, useCallback, forwardRef, useImperativeHandle } from "react";
+import React, { useEffect, useState, useMemo, useCallback, useContext, forwardRef, useImperativeHandle } from "react";
 
 import { useWeb3React } from "@web3-react/core";
 import useSWR from "swr";
@@ -30,6 +30,7 @@ import {
 } from "../../Helpers";
 import { getConstant } from "../../Constants";
 import { approvePlugin, useInfoTokens } from "../../Api";
+import { AnalyticsContext } from "../../segmentAnalytics";
 
 import { getContract } from "../../Addresses";
 import { getTokens, getToken, getWhitelistedTokens, getTokenBySymbol } from "../../data/Tokens";
@@ -365,6 +366,7 @@ export const Exchange = forwardRef((props, ref) => {
   } = props;
   const [showBanner, setShowBanner] = useLocalStorageSerializeKey("showBanner", true);
   const [bannerHidden, setBannerHidden] = useLocalStorageSerializeKey("bannerHidden", null);
+  const { trackPageWithTraits } = useContext(AnalyticsContext);
 
   const [pendingPositions, setPendingPositions] = useState({});
   const [updatedPositions, setUpdatedPositions] = useState({});
@@ -740,6 +742,46 @@ export const Exchange = forwardRef((props, ref) => {
         setIsPositionRouterApproving(false);
       });
   };
+
+  const [pageTracked, setPageTracked] = useState(false);
+
+  //   <BuyInputSection
+  //   topLeftLabel={receiveLabel}
+  //   topRightLabel={`Balance: `}
+  //   tokenBalance={`${formatAmount(swapTokenBalance, swapToken.decimals, 4, true)}`}
+  //   inputValue={swapValue}
+  //   onInputValueChange={onSwapValueChange}
+  //   balance={receiveBalance}
+  //   selectedToken={swapToken}
+  // >
+  //   <TokenSelector
+  //     label="Receive"
+  //     chainId={chainId}
+  //     tokenAddress={swapTokenAddress}
+  //     onSelectToken={onSelectSwapToken}
+  //     tokens={whitelistedTokens}
+  //     infoTokens={infoTokens}
+  //     className="GlpSwap-from-token"
+  //     showSymbolImage={true}
+  //     showTokenImgInDropdown={true}
+  //   />
+  // </BuyInputSection>
+
+  useEffect(() => {
+    console.log(tokenSelection);
+    if (!pageTracked) {
+      const traits = {
+        action: "Sell GLP",
+      };
+      trackPageWithTraits(traits);
+      setPageTracked(true);
+    }
+    // Pay Currency: BTC, ETH, WETH, etc
+    // Pay Currency Modal
+    // Receive Currency: BTC, ETH, etc
+    // Receive Currency Modal
+    // Buy with: BTC, ETH, etc.
+  }, [tokenSelection, pageTracked, trackPageWithTraits]);
 
   const LIST_SECTIONS = ["Positions", flagOrdersEnabled ? "Orders" : undefined, "Trades"].filter(Boolean);
   let [listSection, setListSection] = useLocalStorageByChainId(chainId, "List-section-v2", LIST_SECTIONS[0]);
