@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useRef } from "react";
+import React, { useState, useEffect, useCallback, useRef, useContext } from "react";
 import { SWRConfig } from "swr";
 import { ethers } from "ethers";
 
@@ -10,6 +10,8 @@ import { Web3Provider } from "@ethersproject/providers";
 import { Switch, Route, NavLink } from "react-router-dom";
 
 import { ThemeProvider } from "@tracer-protocol/tracer-ui";
+import { AnalyticsContext, AnalyticsProvider } from "./segmentAnalytics";
+import { getTokens } from "./data/Tokens";
 
 import {
   ARBITRUM,
@@ -39,6 +41,8 @@ import {
   isMobileDevice,
   clearWalletLinkData,
   getBalanceAndSupplyData,
+  getTokenInfo,
+  formatAmount,
   SHOULD_EAGER_CONNECT_LOCALSTORAGE_KEY,
   CURRENT_PROVIDER_LOCALSTORAGE_KEY,
   REFERRAL_CODE_KEY,
@@ -103,13 +107,14 @@ import useRouteQuery from "./hooks/useRouteQuery";
 import { encodeReferralCode } from "./Api/referrals";
 
 import { getContract } from "./Addresses";
+import { useInfoTokens } from "./Api";
 import VaultV2 from "./abis/VaultV2.json";
 import VaultV2b from "./abis/VaultV2b.json";
 import PositionRouter from "./abis/PositionRouter.json";
 import PageNotFound from "./views/PageNotFound/PageNotFound";
-import { identifyUser, recordLogin, recordPageVisit } from "./segmentAnalytics";
-import { useLocation } from "react-router-dom";
 import useSWR from "swr";
+
+const { AddressZero } = ethers.constants;
 
 if ("ethereum" in window) {
   window.ethereum.autoRefreshOnNetworkChange = false;
@@ -358,21 +363,25 @@ function AppHeaderUser({
 }
 
 function FullApp() {
+  const { trackLogin } = useContext(AnalyticsContext);
+
   const exchangeRef = useRef();
   const { connector, library, deactivate, activate, active, account } = useWeb3React();
   const { chainId } = useChainId();
   const readerAddress = getContract(chainId, "Reader");
-  const gmxAddress = getContract(chainId, "GMX");
-  const esGmxAddress = getContract(chainId, "ES_GMX");
-  const glpAddress = getContract(chainId, "GLP");
-  const stakedGmxTrackerAddress = getContract(chainId, "StakedGmxTracker");
-  const walletTokens = [gmxAddress, esGmxAddress, glpAddress, stakedGmxTrackerAddress];
-  const { data: walletBalances } = useSWR(
-    [`StakeV2:walletBalances:${active}`, chainId, readerAddress, "getTokenBalancesWithSupplies", PLACEHOLDER_ACCOUNT],
+  const tokens = getTokens(chainId);
+  const tokenAddresses = tokens.map((token) => token.address);
+
+  const { data: tokenBalances } = useSWR(
+    [`GlpSwap:getTokenBalances:${active}`, chainId, readerAddress, "getTokenBalances", account || PLACEHOLDER_ACCOUNT],
     {
-      fetcher: fetcher(undefined, ReaderV2, [walletTokens]),
+      fetcher: fetcher(library, ReaderV2, [tokenAddresses]),
     }
   );
+  const { infoTokens } = useInfoTokens(library, chainId, active, tokenBalances, undefined);
+
+  const nativeToken = getTokenInfo(infoTokens, AddressZero);
+
   useEventToast();
   const [activatingConnector, setActivatingConnector] = useState();
   useEffect(() => {
@@ -385,20 +394,26 @@ function FullApp() {
 
   const query = useRouteQuery();
 
-  const location = useLocation();
-
   useEffect(() => {
-    recordPageVisit(account);
-    // eslint-disable-next-line
-  }, [location.pathname]);
+    if (account && tokenBalances) {
+      const MAX_DECIMALS = 16;
+      const { balanceData } = getBalanceAndSupplyData(tokenBalances);
+      const ethBalance = formatAmount(nativeToken.balance, nativeToken.decimals, 4, true);
 
-  useEffect(() => {
-    if (account) {
-      const { balanceData } = getBalanceAndSupplyData(walletBalances);
-      identifyUser(account);
-      recordLogin(account, balanceData);
+      let gmxBalances = Object.keys(balanceData).map((token) => {
+        if (balanceData[token]) {
+          return {
+            [token]: formatAmount(balanceData[token], MAX_DECIMALS, 4, true),
+          };
+        } else {
+          return null;
+        }
+      });
+      gmxBalances = gmxBalances.filter((balance) => balance);
+
+      trackLogin(account, gmxBalances, ethBalance);
     }
-  }, [account, walletBalances]);
+  }, [account, tokenBalances, trackLogin, nativeToken.balance, nativeToken.decimals]);
 
   useEffect(() => {
     let referralCode = query.get(REFERRAL_CODE_QUERY_PARAMS);
@@ -1049,10 +1064,12 @@ function App() {
       <Web3ReactProvider getLibrary={getLibrary}>
         <SEO>
           <ThemeProvider>
-            <FullApp />
-            <ConsentModal hasConsented={hasConsented} setConsented={setConsented} />
+            <AnalyticsProvider>
+              <FullApp />
+            </AnalyticsProvider>
           </ThemeProvider>
         </SEO>
+        <ConsentModal hasConsented={hasConsented} setConsented={setConsented} />
       </Web3ReactProvider>
     </SWRConfig>
   );

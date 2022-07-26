@@ -1,5 +1,5 @@
 import React, { createContext, useEffect, useState } from "react";
-import { Analytics, AnalyticsBrowser } from "@segment/analytics-next";
+import { AnalyticsBrowser } from "@segment/analytics-next";
 import { useLocation } from "react-router-dom";
 import { ARBITRUM, ARBITRUM_TESTNET, AVALANCHE, hasConsented } from "./Helpers";
 import { useWeb3React } from "@web3-react/core";
@@ -22,44 +22,16 @@ const useValues = () => {
   const location = useLocation();
   const [analytics, setAnalytics] = useState(undefined);
 
-  // const trackStakeAction = (
-  //   stakeAction: StakeActionEnum,
-  //   tokenName: string,
-  //   amount: string,
-  //   amountUSD: string,
-  //   balance: BigNumber,
-  //   isPreCommit: boolean
-  // ) => {
-  //   const actionStage = isPreCommit ? "preCommitStake" : "postCommitStake";
-
-  //   try {
-  //     const balanceAsFloat = convertBNToFloat(balance);
-  //     const balanceAttr = isPreCommit ? { preCommitBalance: balanceAsFloat } : { postCommitBalance: balanceAsFloat };
-
-  //     account &&
-  //       analytics?.track(actionStage, {
-  //         action: stakeAction,
-  //         amount: amount,
-  //         amountUSD: amountUSD,
-  //         ...balanceAttr,
-  //         network: networkName,
-  //         tokenName: tokenName,
-  //         version: POOLS_VERSION,
-  //         walletAddress: account,
-  //       });
-  //   } catch (err) {
-  //     console.error("Failed to send Stake action to Segment", err);
-  //   }
-  // };
-
-  const trackLogin = (chainId, balance) => {
+  const trackLogin = (chainId, gmxBalances, ethBalance) => {
     try {
-      account &&
-        analytics?.track(account, {
+      if (account && hasConsented()) {
+        analytics?.track("userLoggedIn", {
           walletAddress: account,
           network: networkName[chainId],
-          balance: balance,
+          ethBalance: ethBalance,
+          gmxBalances: gmxBalances,
         });
+      }
     } catch (err) {
       console.error("Failed to send Login action to Segment", err);
     }
@@ -68,10 +40,11 @@ const useValues = () => {
   // Identify
   useEffect(() => {
     try {
-      account &&
+      if (account && hasConsented()) {
         analytics?.identify(account, {
           walletAddress: account,
         });
+      }
     } catch (err) {
       console.error("Failed to send Identify action to Segment", err);
     }
@@ -79,7 +52,7 @@ const useValues = () => {
 
   // Page
   useEffect(() => {
-    analytics && analytics.page();
+    analytics?.page();
   }, [analytics, location.pathname]);
 
   useEffect(() => {
