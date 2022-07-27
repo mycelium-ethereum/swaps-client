@@ -1,7 +1,7 @@
 import React, { createContext, useEffect, useState } from "react";
 import { AnalyticsBrowser } from "@segment/analytics-next";
 import { useLocation } from "react-router-dom";
-import { ARBITRUM, ARBITRUM_TESTNET, AVALANCHE, CURRENT_PROVIDER_LOCALSTORAGE_KEY, hasUserConsented } from "./Helpers";
+import { ARBITRUM, ARBITRUM_TESTNET, CURRENT_PROVIDER_LOCALSTORAGE_KEY, hasUserConsented } from "./Helpers";
 import { useWeb3React } from "@web3-react/core";
 
 const writeKey = process.env.REACT_APP_SEGMENT_WRITE_KEY;
@@ -9,7 +9,6 @@ const writeKey = process.env.REACT_APP_SEGMENT_WRITE_KEY;
 const networkName = {
   [ARBITRUM]: "Arbitrum",
   [ARBITRUM_TESTNET]: "Rinkeby",
-  [AVALANCHE]: "Avalanche",
 };
 
 const IGNORE_IP_CONTEXT = {
@@ -18,7 +17,7 @@ const IGNORE_IP_CONTEXT = {
   },
 };
 
-const useValues = () => {
+export const useAnalytics = () => {
   const { account } = useWeb3React();
   const location = useLocation();
   const [analytics, setAnalytics] = useState(undefined);
@@ -30,7 +29,7 @@ const useValues = () => {
       const traits = {
         walletProvider: provider,
         walletAddress: account,
-        network: networkName[chainId],
+        network: networkName[chainId] ?? `Unsupported (${chainId})`,
         balanceEth: balanceEth,
         ...gmxBalances,
       };
@@ -38,7 +37,7 @@ const useValues = () => {
         analytics?.track("userLoggedIn", {
           ...traits,
         });
-      } else if (account && !hasConsented) {
+      } else {
         analytics?.track("userLoggedIn", {
           ...IGNORE_IP_CONTEXT,
           ...traits,
@@ -101,5 +100,5 @@ const useValues = () => {
 export const AnalyticsContext = createContext({});
 
 export const AnalyticsProvider = ({ children }) => {
-  return <AnalyticsContext.Provider value={useValues()}>{children}</AnalyticsContext.Provider>;
+  return <AnalyticsContext.Provider value={useAnalytics()}>{children}</AnalyticsContext.Provider>;
 };
