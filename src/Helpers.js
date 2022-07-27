@@ -2803,6 +2803,11 @@ export function useDebounce(value, delay) {
   return debouncedValue;
 }
 
-export function hasConsented() {
-  return localStorage.getItem("consentAcknowledged") === "true";
+export function hasUserConsented() {
+  const consent = localStorage.getItem("consentAcknowledged");
+  return consent && consent === "true";
+}
+
+export function formatTitleCase(string) {
+  return string[0].toUpperCase() + string.slice(1);
 }
