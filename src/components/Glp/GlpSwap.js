@@ -56,8 +56,8 @@ import Vester from "../../abis/Vester.json";
 import RewardRouter from "../../abis/RewardRouter.json";
 import Token from "../../abis/Token.json";
 
-import tlp24Icon from "../../img/ic_tlp_24.svg";
-import tlp40Icon from "../../img/ic_tlp_40.svg";
+import tlp24Icon from "../../img/ic_mlp_24.svg";
+import tlp40Icon from "../../img/ic_mlp_40.svg";
 import arrowIcon from "../../img/ic_convert_down.svg";
 
 import "./GlpSwap.css";

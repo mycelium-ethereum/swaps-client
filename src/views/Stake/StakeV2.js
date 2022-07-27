@@ -41,7 +41,7 @@ import useSWR from "swr";
 
 import { getContract } from "../../Addresses";
 
-import tlp40Icon from "../../img/ic_tlp_40.svg";
+import tlp40Icon from "../../img/ic_mlp_40.svg";
 import * as StakeV2Styled from "./StakeV2Styles";
 
 import "./StakeV2.css";

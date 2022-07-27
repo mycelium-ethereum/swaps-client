@@ -21,7 +21,7 @@
   justify-content: flex-end;
 }
 .buy-input .TokenSelector-box:hover {
-  color: #7885ff;
+  color: var(--text-hover);
 }
 
 .buy-input .Exchange-swap-input-container {

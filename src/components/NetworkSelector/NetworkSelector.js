@@ -113,7 +113,7 @@ export default function NetworkSelector(props) {
         width: 144,
         height: 36,
         display: "flex",
-        border: "0.5px solid var(--text-navigation)",
+        border: "0.5px solid var(--border-navigation)",
         color: "var(--text-navigation)",
         borderRadius: 4,
         cursor: "pointer",

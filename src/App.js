@@ -80,8 +80,8 @@ import "./App.css";
 import "./Input.css";
 import "./AppOrder.css";
 
-import logoImg from "./img/logo_TRS.svg";
-import logoSmallImg from "./img/logo_TRS_small.svg";
+import logoImg from "./img/logo_MYC.svg";
+import logoSmallImg from "./img/logo_MYC_small.svg";
 import connectWalletImg from "./img/ic_wallet_24.svg";
 
 // import logoImg from './img/gmx-logo-final-white-small.png'

@@ -25,7 +25,7 @@
 }
 
 .TokenSelector-box:hover {
-  color: #7885ff;
+  color: var(--text-hover);
 }
 
 .Token-info {

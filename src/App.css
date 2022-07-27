@@ -86,7 +86,7 @@
   line-height: 18px;
   font-weight: normal;
   letter-spacing: 0.1px;
-  color: var(--tracer-blue-light);
+  color: var(--action-stroke);
   padding: 15px 16px;
   text-decoration: none;
   display: block;
@@ -158,7 +158,7 @@
   position: relative;
   border: 1px solid var(--border-primary);
   border-radius: 4px;
-  background: rgba(34, 39, 74, 0.2);
+  background: var(--background-secondary);
 }
 
 .App-card-bottom-placeholder {
@@ -389,11 +389,11 @@ button.App-connect-wallet:hover {
 
 .App-header-user-link .trade-link {
   background: var(--background-navigation);
-  border: 0.5px solid var(--text-navigation);
+  border: 0.5px solid var(--border-navigation);
 }
 
 .App-header-user-address {
-  border: 0.5px solid var(--text-navigation);
+  border: 0.5px solid var(--border-navigation);
   color: var(--text-navigation);
   height: 36px;
   border-radius: 4px;
@@ -782,15 +782,15 @@ a.App-cta,
 button.App-cta {
   color: white;
   text-decoration: none;
-  background: var(--tracer-blue);
+  background: var(--action-active);
   /* linear-gradient(90deg, rgba(45, 66, 252, 1) 0%, rgba(46, 61, 205, 1) 100%); */
   /* box-shadow: 0 0 4px 6px rgba(45,66,252,0.15); */
 }
 
 a.App-cta:hover,
 button.App-cta:hover:enabled {
-  background: linear-gradient(90deg, rgba(58, 78, 252, 1) 0%, rgba(51, 68, 222, 1) 100%);
-  box-shadow: 0 0 4px 6px rgba(45, 66, 252, 0.2);
+  background: var(--action-hover);
+  box-shadow: var(--action-shadow);
 }
 
 .App-cta.small {
@@ -828,13 +828,13 @@ button.App-button-option {
   text-decoration: none;
   border: none;
   font-size: 1rem;
-  background: var(--button-primary);
+  background: var(--action-active);
 }
 
 a.App-button-option:hover,
 button.App-button-option:hover:enabled {
-  background: linear-gradient(90deg, rgba(58, 78, 252, 1) 0%, rgba(51, 68, 222, 1) 100%);
-  box-shadow: 0 0 4px 6px rgba(45, 66, 252, 0.2);
+  background: var(--action-hover);
+  box-shadow: var(--action-shadow);
 }
 
 button.App-button-option:disabled {
@@ -1087,11 +1087,11 @@ button.App-button {
 }
 
 .App-slider .rc-slider-rail {
-  background: #3F3F46;
+  background: var(--action-inactive);
 }
 
 .App-slider .rc-slider-track {
-  background: var(--tracer-blue-slider);
+  background: var(--action-inactive);
 }
 
 .App-slider .rc-slider-dot {
@@ -1099,16 +1099,16 @@ button.App-button {
   border-radius: 1px;
   width: 2px;
   margin-left: -1px;
-  background: rgba(40, 45, 74, 1);
+  background: var(--action-inactive);
 }
 
 .App-slider .rc-slider-dot-active {
-  background: #3d51ff;
+  background: var(--action-active);
 }
 
 .App-slider .rc-slider-handle {
-  background: var(--tracer-blue-slider);
-  border: solid 2px var(--tracer-blue-slider);
+  background: var(--action-active);
+  border: solid 2px var(--action-active);
 }
 
 .App-slider .rc-slider-handle:active {

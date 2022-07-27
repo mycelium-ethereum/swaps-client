@@ -4,7 +4,7 @@ import styled from 'styled-components';
 
 export const RewardsBanner = styled.div`
   width: calc(100% + 2rem);
-  background: linear-gradient(180deg, #1C64F2 -208.23%, rgba(28, 99, 242, 0) 82.91%);
+  background: var(--cell-gradient);
   font-size: 16px;
   padding: 1rem;
   margin: 1rem 0 1rem -1rem;

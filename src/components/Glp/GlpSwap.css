@@ -87,6 +87,10 @@
   display: flex;
 }
 
+.App-card-title-mark-icon img {
+  width: 100%;
+}
+
 .App-card-title-mark-icon .selected-network-symbol {
   position: absolute;
   bottom: 0;

@@ -705,12 +705,12 @@ table.Exchange-list th {
   border-radius: 3px;
   z-index: 1;
   cursor: pointer;
-  background: var(--tracer-blue);
+  background: var(--action-active);
 }
 
 .Exchange-swap-max:hover {
   color: rgba(255, 255, 255, 1);
-  background: linear-gradient(90deg, rgba(58, 78, 252, 1) 0%, rgba(51, 68, 222, 1) 100%);
+  background: var(--action-hover);
 }
 
 .Exchange-swap-section-bottom .TokenSelector-box {
@@ -784,14 +784,14 @@ input.Exchange-swap-input.small {
   cursor: pointer;
   user-select: none;
   color: var(--text-primary);
-  background: var(--tracer-blue);
+  background: var(--action-active);
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
 .Exchange-swap-ball:hover {
-  background: linear-gradient(90deg, rgba(58, 78, 252, 1) 0%, rgba(51, 68, 222, 1) 100%);
+  background: var(--action-hover);
 }
 
 .Exchange-swap-ball:hover .Exchange-swap-ball-icon {

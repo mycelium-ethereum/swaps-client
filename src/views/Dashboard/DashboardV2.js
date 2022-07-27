@@ -46,7 +46,7 @@ import Footer from "../../Footer";
 import "./DashboardV2.css";
 
 import tcr40Icon from "../../img/ic_tcr_40.svg";
-import tlp40Icon from "../../img/ic_tlp_40.svg";
+import tlp40Icon from "../../img/ic_mlp_40.svg";
 import avalanche16Icon from "../../img/ic_avalanche_16.svg";
 import arbitrum16Icon from "../../img/ic_arbitrum_16.svg";
 import arbitrum24Icon from "../../img/ic_arbitrum_24.svg";

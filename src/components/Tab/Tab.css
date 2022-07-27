@@ -35,14 +35,14 @@
 
 .Tab.block .Tab-option:hover {
   color: rgba(255, 255, 255, 1);
-  background: linear-gradient(90deg, rgba(35,57,172,1) 0%, rgba(43,59,147,1) 100%);
+  background: var(--action-hover);
 }
 
 .Tab.block .Tab-option.active {
   opacity: 1;
   pointer-events: none;
-  background: var(--tracer-blue);
-  border-color: var(--tracer-blue);
+  background: var(--action-active);
+  border-color: var(--action-active);
   color: rgba(255, 255, 255, 1);
 }
 

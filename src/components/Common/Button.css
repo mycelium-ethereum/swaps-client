@@ -74,7 +74,7 @@ a.btn {
 
 .btn-primary {
   background: transparent;
-  border: 0.5px solid var(--tracer-blue-light);
+  border: 0.5px solid var(--action-stroke);
   border-radius: var(--border-radius-sm);
 }
 
@@ -87,7 +87,7 @@ a.btn {
 
 .connect-wallet {
     color: var(--text-navigation);
-    border-color: var(--text-navigation);
+    border-color: var(--border-navigation);
     background: var(--background-navigation)
 }
 
