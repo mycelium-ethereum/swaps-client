@@ -123,8 +123,8 @@ const TOKENS = {
       name: "Bitcoin (WBTC)",
       symbol: "BTC",
       decimals: 18,
-      address: "0xab952e6801daB7920B65b8aC918FF0F66a8a0F44",
-      isShortable: true
+      address: "0x5360425C5dd9a3B3a41F619515F9318caA34CfC9",
+      isShortable: true,
     },
     {
       name: "Ethereum",
@@ -143,13 +143,13 @@ const TOKENS = {
       isWrapped: true,
       baseSymbol: "ETH",
     },
-    // {
-      // name: "Custom Token",
-      // symbol: "CTM",
-      // decimals: 18,
-      // address: "0xaC6101824E8BCdc7Fb399e62aFDf2b3b720DeFEf",
-      // isStable: true,
-    // },
+    {
+      name: "Custom Test Token",
+      symbol: "CTM",
+      decimals: 18,
+      address: "0xaC6101824E8BCdc7Fb399e62aFDf2b3b720DeFEf",
+      isStable: false,
+    },
     {
       name: "Testnet stable coin",
       symbol: "PPUSD",
@@ -161,14 +161,14 @@ const TOKENS = {
       name: "USD Coin",
       symbol: "USDC",
       decimals: 18,
-      address: "0xb93cb5F5c6a56e060A5e5A9691229D2a7e2D234A",
+      address: "0x887c2Ae4f5b9dB3435F92125016BABE9Da06Cf37",
       isStable: true,
     },
     {
       name: "Tether",
       symbol: "USDT",
       decimals: 18,
-      address: "0xaB7ee1A7D5bc677e3A7ac694f2c156b3fFCaABC1",
+      address: "0x24c3f7437a9ad0c10744857260a9FAD82bBEa634",
       isStable: true,
     },
   ],

@@ -143,6 +143,7 @@ export const GLPPOOLCOLORS = {
   UNI: "#E9167C",
   AVAX: "#E84142",
   LINK: "#3256D6",
+  CTM: "#F8B500",
 };
 
 export const ICONLINKS = {
@@ -182,6 +183,9 @@ export const ICONLINKS = {
     },
     PPUSD: {
       arbitrum: "https://testnet.arbiscan.io/address/0x9e062eee2c0Ab96e1E1c8cE38bF14bA3fa0a35F6",
+    },
+    CTM: {
+      arbitrum: "https://testnet.arbiscan.io/address/0xaC6101824E8BCdc7Fb399e62aFDf2b3b720DeFEf",
     },
     USDT: {
       coingecko: "https://www.coingecko.com/en/coins/tether",
