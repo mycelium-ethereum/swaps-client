@@ -43,6 +43,7 @@ import {
   getBalanceAndSupplyData,
   getTokenInfo,
   formatAmount,
+  formatTitleCase,
   SHOULD_EAGER_CONNECT_LOCALSTORAGE_KEY,
   CURRENT_PROVIDER_LOCALSTORAGE_KEY,
   REFERRAL_CODE_KEY,
@@ -399,19 +400,16 @@ function FullApp() {
     if (account && tokenBalances && !loggedInTracked) {
       const MAX_DECIMALS = 16;
       const { balanceData } = getBalanceAndSupplyData(tokenBalances);
-      const ethBalance = parseFloat(formatAmount(nativeToken.balance, nativeToken.decimals, 4, true));
+      const balanceEth = parseFloat(formatAmount(nativeToken.balance, nativeToken.decimals, 4, true));
 
-      let gmxBalances = Object.keys(balanceData).map((token) => {
+      let gmxBalances = {};
+      Object.keys(balanceData).forEach((token) => {
         if (balanceData[token]) {
-          return {
-            [token]: parseFloat(formatAmount(balanceData[token], MAX_DECIMALS, 4, true)),
-          };
-        } else {
-          return null;
+          const fieldName = `balance${formatTitleCase(token)}`;
+          gmxBalances[fieldName] = parseFloat(formatAmount(balanceData[token], MAX_DECIMALS, 4, true));
         }
       });
-      gmxBalances = gmxBalances.filter((balance) => balance);
-      trackLogin(chainId, gmxBalances, ethBalance);
+      trackLogin(chainId, gmxBalances, balanceEth);
       setLoggedInTracked(true); // Only track once
     }
   }, [account, chainId, tokenBalances, trackLogin, nativeToken.balance, nativeToken.decimals, loggedInTracked]);

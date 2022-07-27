@@ -31,7 +31,7 @@ function ConsentModal({ hasConsented, setConsented }) {
       <button onClick={handleReject} className="ConsentModal-close-btn">
         <img src={close} alt="Close" className="ConsentModal-close-btn-icon" />
       </button>
-      <div>
+      <div className="ConsentModal-text">
         <p>
           <b>We use cookies on this site to enhance your user experience.</b>
         </p>
