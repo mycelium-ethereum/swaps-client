@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo, useCallback, useContext, forwardRef, useImperativeHandle } from "react";
+import React, { useEffect, useState, useMemo, useCallback, forwardRef, useImperativeHandle } from "react";
 
 import { useWeb3React } from "@web3-react/core";
 import useSWR from "swr";
@@ -31,7 +31,7 @@ import {
 } from "../../Helpers";
 import { getConstant } from "../../Constants";
 import { approvePlugin, useInfoTokens } from "../../Api";
-import { AnalyticsContext } from "../../segmentAnalytics";
+import { useAnalytics } from "../../segmentAnalytics";
 
 import { getContract } from "../../Addresses";
 import { getTokens, getToken, getWhitelistedTokens, getTokenBySymbol } from "../../data/Tokens";
@@ -367,7 +367,7 @@ export const Exchange = forwardRef((props, ref) => {
   } = props;
   const [showBanner, setShowBanner] = useLocalStorageSerializeKey("showBanner", true);
   const [bannerHidden, setBannerHidden] = useLocalStorageSerializeKey("bannerHidden", null);
-  const { trackPageWithTraits } = useContext(AnalyticsContext);
+  const { trackPageWithTraits } = useAnalytics();
 
   const [pendingPositions, setPendingPositions] = useState({});
   const [updatedPositions, setUpdatedPositions] = useState({});
@@ -750,7 +750,7 @@ export const Exchange = forwardRef((props, ref) => {
   const [tableViewSelection] = useLocalStorage("List-section-v2");
   const [isLeverageSliderEnabled] = useLocalStorage(JSON.stringify([chainId, "Exchange-swap-leverage-slider-enabled"]));
   const [leverageOption] = useLocalStorage(JSON.stringify([chainId, "Exchange-swap-leverage-option"]));
-  const tableView = tableViewSelection[chainId];
+  const tableView = tableViewSelection ? tableViewSelection[chainId] : "Positions"; // localStorage item "List-section-v2" will return undefined if no selection has been made previously
 
   const dataElements = {
     chartPeriod,

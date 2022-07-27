@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect } from "react";
 import { useHistory } from "react-router-dom";
 
 import { useWeb3React } from "@web3-react/core";
@@ -42,7 +42,7 @@ import {
 } from "../../Helpers";
 
 import { callContract, useTCRPrice, useInfoTokens } from "../../Api";
-import { AnalyticsContext } from "../../segmentAnalytics";
+import { useAnalytics } from "../../segmentAnalytics";
 
 import TokenSelector from "../Exchange/TokenSelector";
 import BuyInputSection from "../BuyInputSection/BuyInputSection";
@@ -90,7 +90,8 @@ function getStakingData(stakingInfo) {
 }
 
 export default function GlpSwap(props) {
-  const { trackPageWithTraits } = useContext(AnalyticsContext);
+  const { trackPageWithTraits } = useAnalytics();
+
   const { savedSlippageAmount, isBuying, setPendingTxns, connectWallet, setIsBuying } = props;
   const history = useHistory();
   const swapLabel = isBuying ? "BuyGlp" : "SellGlp";
@@ -672,6 +673,7 @@ export default function GlpSwap(props) {
           tokenToPay: tokenToPay,
           tokenToReceive: tokenToReceive,
         };
+        console.log(traits);
         trackPageWithTraits(traits);
         setPageTracked(true); // Prevent Page function being called twice
       }

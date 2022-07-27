@@ -1,28 +1,29 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 import Footer from "../../Footer";
 
 import { shortenAddress, useENS } from "../../Helpers";
 import * as Styles from "./Rewards.styles";
 // import {createBreakpoint} from "react-use";
-import {useWeb3React} from "@web3-react/core";
+import { useWeb3React } from "@web3-react/core";
 import Davatar from "@davatar/react";
-import {Menu} from "@headlessui/react";
-import {FaChevronDown} from "react-icons/fa";
-
+import { Menu } from "@headlessui/react";
+import { FaChevronDown } from "react-icons/fa";
+import { useAnalytics } from "../../segmentAnalytics";
 
 const REWARD_WEEKS = [
   {
-    label: 'Week 1',
+    label: "Week 1",
     key: 0,
   },
   {
-    label: 'Week 2',
+    label: "Week 2",
     key: 1,
   },
-]
+];
 
 export default function Rewards(props) {
+  const { trackPageWithTraits } = useAnalytics();
   const { connectWallet } = props;
 
   const { ensName } = useENS();
@@ -32,61 +33,56 @@ export default function Rewards(props) {
 
   const [rewardsWeek, setRewardsWeek] = useState(REWARD_WEEKS[0].key);
 
+  const [pageTracked, setPageTracked] = useState(false);
+
+  // Segment Analytics Page tracking
+  useEffect(() => {
+    if (!pageTracked) {
+      const traits = {
+        week: REWARD_WEEKS[REWARD_WEEKS.length - 1].key,
+      };
+      trackPageWithTraits(traits);
+      setPageTracked(true); // Prevent Page function being called twice
+    }
+  }, [pageTracked, trackPageWithTraits]);
+
   return (
     <Styles.StyledRewardsPage className="default-container page-layout">
       <div className="Page-title-section mt-0">
         <div className="Page-title">Trader Rewards</div>
-        <div className="Page-description">
-          Be in the top 50% of traders to earn weekly rewards.
-        </div>
+        <div className="Page-description">Be in the top 50% of traders to earn weekly rewards.</div>
       </div>
-      <Styles.AccountBanner className="App-card"> 
-        {active &&
+      <Styles.AccountBanner className="App-card">
+        {active && (
           <Styles.AccountBannerAddresses>
             <Davatar size={40} address={account} />
-            <Styles.AppCardTitle>
-              {ensName || shortenAddress(account, 13)}
-            </Styles.AppCardTitle>
-            <Styles.AccountBannerShortenedAddress>
-              Wallet address
-            </Styles.AccountBannerShortenedAddress>
+            <Styles.AppCardTitle>{ensName || shortenAddress(account, 13)}</Styles.AppCardTitle>
+            <Styles.AccountBannerShortenedAddress>Wallet address</Styles.AccountBannerShortenedAddress>
           </Styles.AccountBannerAddresses>
-        }
-        {!active &&
+        )}
+        {!active && (
           <Styles.AccountBannerAddresses>
-            <Styles.AppCardTitle>
-              Connect Wallet
-            </Styles.AppCardTitle>
-            <Styles.AccountBannerShortenedAddress>
-              Wallet not connected
-            </Styles.AccountBannerShortenedAddress>
+            <Styles.AppCardTitle>Connect Wallet</Styles.AppCardTitle>
+            <Styles.AccountBannerShortenedAddress>Wallet not connected</Styles.AccountBannerShortenedAddress>
           </Styles.AccountBannerAddresses>
-        }
+        )}
         <Styles.AccountBannerRewards>
           <div className="App-card-row">
             <div className="label">Total Volume Traded</div>
-            <div>
-              $67.00
-            </div>
+            <div>$67.00</div>
           </div>
           <div className="App-card-row">
             <div className="label">Total Rewards</div>
-            <div>
-              1050.00 ETH ($36.75)
-            </div>
+            <div>1050.00 ETH ($36.75)</div>
           </div>
           <div className="App-card-row">
             <div className="label">Unclaimed Rewards</div>
-            <div>
-              1050.00 ETH ($36.75)
-            </div>
+            <div>1050.00 ETH ($36.75)</div>
           </div>
         </Styles.AccountBannerRewards>
       </Styles.AccountBanner>
       <Styles.RewardsData className="App-card">
-        <Styles.AppCardTitle>
-          Rewards data
-        </Styles.AppCardTitle>
+        <Styles.AppCardTitle>Rewards data</Styles.AppCardTitle>
         <Styles.RewardsWeekSelect>
           <Styles.RewardsWeekSelectMenu>
             <Menu>
@@ -116,30 +112,22 @@ export default function Rewards(props) {
         <Styles.RewardsDataBoxes>
           <Styles.RewardsDataBox>
             <Styles.RewardsDataBoxTitle>Volume Traded</Styles.RewardsDataBoxTitle>
-            <Styles.LargeText>
-              $1.00
-            </Styles.LargeText>
+            <Styles.LargeText>$1.00</Styles.LargeText>
           </Styles.RewardsDataBox>
           <Styles.RewardsDataBox className="claimable">
             <Styles.RewardsDataBoxTitle>Claimable Rewards</Styles.RewardsDataBoxTitle>
             <div>
-              <Styles.LargeText>
-                107.14 ETH 
-              </Styles.LargeText>
+              <Styles.LargeText>107.14 ETH</Styles.LargeText>
               <span>($3.75)</span>
             </div>
           </Styles.RewardsDataBox>
         </Styles.RewardsDataBoxes>
-        {active &&
-          <Styles.RewardsButton className="App-cta large">
-            Claim TCR
-          </Styles.RewardsButton>
-        }
-        {!active &&
+        {active && <Styles.RewardsButton className="App-cta large">Claim TCR</Styles.RewardsButton>}
+        {!active && (
           <Styles.RewardsButton className="App-cta large" onClick={() => connectWallet()}>
             Connect Wallet
           </Styles.RewardsButton>
-        }
+        )}
       </Styles.RewardsData>
       <Footer />
     </Styles.StyledRewardsPage>

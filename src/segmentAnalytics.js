@@ -18,7 +18,7 @@ const IGNORE_IP_CONTEXT = {
   },
 };
 
-const useValues = () => {
+export const useAnalytics = () => {
   const { account } = useWeb3React();
   const location = useLocation();
   const [analytics, setAnalytics] = useState(undefined);
@@ -82,14 +82,14 @@ const useValues = () => {
 
   // Page call
   useEffect(() => {
-    const ignoredPages = ["/trade", "/buy_tlp"];
-    const hasConsented = hasUserConsented();
-    const windowTraits = {
-      screenHeight: window.innerHeight || "unknown",
-      screenWidth: window.innerWidth || "unknown",
-      screenDensity: window.devicePixelRatio || "unknown",
-    };
-    if (!ignoredPages.includes(location.pathname)) {
+    const customTrackPages = ["/trade", "/buy_tlp", "/rewards"];
+    if (!customTrackPages.includes(location.pathname)) {
+      const hasConsented = hasUserConsented();
+      const windowTraits = {
+        screenHeight: window.innerHeight || "unknown",
+        screenWidth: window.innerWidth || "unknown",
+        screenDensity: window.devicePixelRatio || "unknown",
+      };
       if (hasConsented) {
         analytics?.page({ ...windowTraits });
       } else {
@@ -122,5 +122,5 @@ const useValues = () => {
 export const AnalyticsContext = createContext({});
 
 export const AnalyticsProvider = ({ children }) => {
-  return <AnalyticsContext.Provider value={useValues()}>{children}</AnalyticsContext.Provider>;
+  return <AnalyticsContext.Provider value={useAnalytics()}>{children}</AnalyticsContext.Provider>;
 };

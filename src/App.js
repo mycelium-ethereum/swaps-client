@@ -396,6 +396,7 @@ function FullApp() {
 
   const query = useRouteQuery();
 
+  // Track user wallet connect
   useEffect(() => {
     if (account && tokenBalances && !loggedInTracked) {
       const MAX_DECIMALS = 16;
