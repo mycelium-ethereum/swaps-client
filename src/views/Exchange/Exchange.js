@@ -3,6 +3,7 @@ import React, { useEffect, useState, useMemo, useCallback, useContext, forwardRe
 import { useWeb3React } from "@web3-react/core";
 import useSWR from "swr";
 import { ethers } from "ethers";
+import { useLocalStorage } from "react-use";
 
 import {
   FUNDING_RATE_PRECISION,
@@ -745,44 +746,72 @@ export const Exchange = forwardRef((props, ref) => {
 
   const [pageTracked, setPageTracked] = useState(false);
 
-  //   <BuyInputSection
-  //   topLeftLabel={receiveLabel}
-  //   topRightLabel={`Balance: `}
-  //   tokenBalance={`${formatAmount(swapTokenBalance, swapToken.decimals, 4, true)}`}
-  //   inputValue={swapValue}
-  //   onInputValueChange={onSwapValueChange}
-  //   balance={receiveBalance}
-  //   selectedToken={swapToken}
-  // >
-  //   <TokenSelector
-  //     label="Receive"
-  //     chainId={chainId}
-  //     tokenAddress={swapTokenAddress}
-  //     onSelectToken={onSelectSwapToken}
-  //     tokens={whitelistedTokens}
-  //     infoTokens={infoTokens}
-  //     className="GlpSwap-from-token"
-  //     showSymbolImage={true}
-  //     showTokenImgInDropdown={true}
-  //   />
-  // </BuyInputSection>
+  const [chartPeriod] = useLocalStorage(JSON.stringify([chainId, "Chart-period"]));
+  const [tableViewSelection] = useLocalStorage("List-section-v2");
+  const [isLeverageSliderEnabled] = useLocalStorage(JSON.stringify([chainId, "Exchange-swap-leverage-slider-enabled"]));
+  const [leverageOption] = useLocalStorage(JSON.stringify([chainId, "Exchange-swap-leverage-option"]));
+  const tableView = tableViewSelection[chainId];
 
+  const dataElements = {
+    chartPeriod,
+    tokenSelection,
+    pageTracked,
+    trackPageWithTraits,
+    chainId,
+    swapOption,
+    tableView,
+    isLeverageSliderEnabled,
+    leverageOption,
+  };
+
+  const elementsLoaded = Object.values(dataElements).every((element) => element !== undefined);
+  // Segment Analytics Page tracking
   useEffect(() => {
-  const tokenInfo = getToken(chainId, tokenAddress);
+    if (elementsLoaded) {
+      // Get current "From" token in right side modal
+      // Get user stored selection for table view ("Positions", "Orders", or "Trades")
+      // Get Chart token selection
+      const chartToken = getChartToken(
+        swapOption,
+        tokenSelection[swapOption].from,
+        tokenSelection[swapOption].to,
+        chainId
+      );
+      const market = getToken(chainId, chartToken);
+      const marketFormatted = `${market.symbol}/USD`;
+      // Get token to pay
+      const tokenToPay = getToken(chainId, tokenSelection[swapOption].from);
+      const tokenToReceive = getToken(chainId, tokenSelection[swapOption].to);
+      // Get leverage option if leverage slider enabled
+      const leverage = isLeverageSliderEnabled ? { leverage: parseInt(leverageOption) } : null;
 
-    if (!pageTracked) {
-      const traits = {
-        action: "Sell GLP",
-      };
-      trackPageWithTraits(traits);
-      setPageTracked(true);
+      if (!pageTracked) {
+        const traits = {
+          graphTime: chartPeriod,
+          tableView: tableView,
+          market: marketFormatted,
+          marketPosition: swapOption,
+          payCurrency: tokenToPay.symbol,
+          receiveCurrency: tokenToReceive.symbol,
+          leverageSliderEnabled: isLeverageSliderEnabled,
+          ...leverage,
+        };
+        trackPageWithTraits(traits);
+        setPageTracked(true); // Prevent Page function being called twice
+      }
     }
-    // Pay Currency: BTC, ETH, WETH, etc
-    // Pay Currency Modal
-    // Receive Currency: BTC, ETH, etc
-    // Receive Currency Modal
-    // Buy with: BTC, ETH, etc.
-  }, [tokenSelection, pageTracked, trackPageWithTraits]);
+  }, [
+    elementsLoaded,
+    chartPeriod,
+    tokenSelection,
+    pageTracked,
+    trackPageWithTraits,
+    chainId,
+    swapOption,
+    tableView,
+    isLeverageSliderEnabled,
+    leverageOption,
+  ]);
 
   const LIST_SECTIONS = ["Positions", flagOrdersEnabled ? "Orders" : undefined, "Trades"].filter(Boolean);
   let [listSection, setListSection] = useLocalStorageByChainId(chainId, "List-section-v2", LIST_SECTIONS[0]);

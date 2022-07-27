@@ -23,8 +23,16 @@ const useValues = () => {
   const location = useLocation();
   const [analytics, setAnalytics] = useState(undefined);
 
-  const trackPageWithTraits = (traits = {}) => {
-    analytics?.page({ ...traits });
+  const trackPageWithTraits = (traits) => {
+    const hasConsented = hasUserConsented();
+    if (hasConsented) {
+      analytics?.page({ ...traits });
+    } else {
+      analytics?.page({
+        ...IGNORE_IP_CONTEXT,
+        ...traits,
+      });
+    }
   };
 
   const trackLogin = (chainId, gmxBalances, balanceEth) => {
@@ -68,22 +76,25 @@ const useValues = () => {
   }, [analytics, account]);
 
   // Page call
-  useEffect(() => {
-    const hasConsented = hasUserConsented();
-    const windowTraits = {
-      screenHeight: window.innerHeight || "unknown",
-      screenWidth: window.innerWidth || "unknown",
-      screenDensity: window.devicePixelRatio || "unknown",
-    };
-    if (hasConsented) {
-      analytics?.page({ ...windowTraits });
-    } else if (!hasConsented) {
-      analytics?.page({
-        ...IGNORE_IP_CONTEXT,
-        ...windowTraits,
-      });
-    }
-  }, [analytics, location.pathname]);
+  // useEffect(() => {
+  //   const ignoredPages = ["/trade", "/buy_tlp"];
+  //   const hasConsented = hasUserConsented();
+  //   const windowTraits = {
+  //     screenHeight: window.innerHeight || "unknown",
+  //     screenWidth: window.innerWidth || "unknown",
+  //     screenDensity: window.devicePixelRatio || "unknown",
+  //   };
+  //   if (!ignoredPages.includes(location.pathname)) {
+  //     if (hasConsented) {
+  //       analytics?.page({ ...windowTraits });
+  //     } else {
+  //       analytics?.page({
+  //         ...IGNORE_IP_CONTEXT,
+  //         ...windowTraits,
+  //       });
+  //     }
+  //   }
+  // }, [analytics, location.pathname]);
 
   useEffect(() => {
     if (!writeKey) {
