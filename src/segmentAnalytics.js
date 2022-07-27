@@ -71,17 +71,16 @@ const useValues = () => {
   useEffect(() => {
     const hasConsented = hasUserConsented();
     const windowTraits = {
-      screen: {
-        height: window.innerHeight || "unknown",
-        width: window.innerWidth || "unknown",
-        density: window.devicePixelRatio || "unknown",
-      },
+      screenHeight: window.innerHeight || "unknown",
+      screenWidth: window.innerWidth || "unknown",
+      screenDensity: window.devicePixelRatio || "unknown",
     };
     if (hasConsented) {
-      analytics?.page({ context: { ...windowTraits } });
+      analytics?.page({ ...windowTraits });
     } else if (!hasConsented) {
       analytics?.page({
-        context: { ...windowTraits, ip: 0 },
+        ...IGNORE_IP_CONTEXT,
+        ...windowTraits,
       });
     }
   }, [analytics, location.pathname]);
