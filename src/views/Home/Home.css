@@ -1,6 +1,9 @@
 .Home {
   min-height: 100vh;
-  padding-bottom: calc(3rem + 200px);
+}
+
+.Home .footer {
+    padding: 1rem 2rem;
 }
 
 .Home-top {
@@ -52,6 +55,7 @@
 
 .Home-benefits-section {
   background: #17182c;
+  margin-bottom: 1rem;
 }
 
 .Home-benefits {
