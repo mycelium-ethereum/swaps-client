@@ -673,7 +673,6 @@ export default function GlpSwap(props) {
           tokenToPay: tokenToPay,
           tokenToReceive: tokenToReceive,
         };
-        console.log(traits);
         trackPageWithTraits(traits);
         setPageTracked(true); // Prevent Page function being called twice
       }
