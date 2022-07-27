@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { useHistory } from "react-router-dom";
 
 import { useWeb3React } from "@web3-react/core";
@@ -42,6 +42,7 @@ import {
 } from "../../Helpers";
 
 import { callContract, useTCRPrice, useInfoTokens } from "../../Api";
+import { AnalyticsContext } from "../../segmentAnalytics";
 
 import TokenSelector from "../Exchange/TokenSelector";
 import BuyInputSection from "../BuyInputSection/BuyInputSection";
@@ -89,6 +90,7 @@ function getStakingData(stakingInfo) {
 }
 
 export default function GlpSwap(props) {
+  const { trackPageWithTraits } = useContext(AnalyticsContext);
   const { savedSlippageAmount, isBuying, setPendingTxns, connectWallet, setIsBuying } = props;
   const history = useHistory();
   const swapLabel = isBuying ? "BuyGlp" : "SellGlp";
@@ -648,6 +650,33 @@ export default function GlpSwap(props) {
       switchSwapOption();
     }
   };
+
+  const [pageTracked, setPageTracked] = useState(false);
+
+  const dataElements = [chainId, isBuying, pageTracked, swapTokenAddress, history.location.hash];
+  const elementsLoaded = Object.values(dataElements).every((element) => element !== undefined);
+
+  // Segment Analytics Page tracking
+  useEffect(() => {
+    if (elementsLoaded) {
+      // If page hash is #redeem, then user is Buying
+      const hash = history.location.hash.replace("#", "");
+      const isBuying = hash === "redeem" ? false : true;
+      // Swap pay and receive tokens depending on isBuying
+      const tokenToPay = isBuying ? getToken(chainId, swapTokenAddress).symbol : "TLP";
+      const tokenToReceive = isBuying ? "TLP" : getToken(chainId, swapTokenAddress).symbol;
+
+      if (!pageTracked) {
+        const traits = {
+          action: isBuying ? "Buy" : "Sell",
+          tokenToPay: tokenToPay,
+          tokenToReceive: tokenToReceive,
+        };
+        trackPageWithTraits(traits);
+        setPageTracked(true); // Prevent Page function being called twice
+      }
+    }
+  }, [chainId, isBuying, pageTracked, swapTokenAddress, elementsLoaded, trackPageWithTraits, history.location.hash]);
 
   return (
     <div className="GlpSwap">

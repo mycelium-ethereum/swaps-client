@@ -780,8 +780,8 @@ export const Exchange = forwardRef((props, ref) => {
       const market = getToken(chainId, chartToken);
       const marketFormatted = `${market.symbol}/USD`;
       // Get token to pay
-      const tokenToPay = getToken(chainId, tokenSelection[swapOption].from);
-      const tokenToReceive = getToken(chainId, tokenSelection[swapOption].to);
+      const tokenToPay = getToken(chainId, tokenSelection[swapOption].from).symbol;
+      const tokenToReceive = getToken(chainId, tokenSelection[swapOption].to).symbol;
       // Get leverage option if leverage slider enabled
       const leverage = isLeverageSliderEnabled ? { leverage: parseInt(leverageOption) } : null;
 
@@ -791,8 +791,8 @@ export const Exchange = forwardRef((props, ref) => {
           tableView: tableView,
           market: marketFormatted,
           marketPosition: swapOption,
-          payCurrency: tokenToPay.symbol,
-          receiveCurrency: tokenToReceive.symbol,
+          tokenToPay: tokenToPay,
+          tokenToReceive: tokenToReceive,
           leverageSliderEnabled: isLeverageSliderEnabled,
           ...leverage,
         };

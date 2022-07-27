@@ -63,12 +63,17 @@ const useValues = () => {
 
   // Identify call
   useEffect(() => {
+    const wasPreviouslyIdentified = window.localStorage.getItem("analyticsIdentified");
     try {
       if (account) {
-        analytics?.alias(account); // Alias previous anonymousId to wallet address
-        analytics?.identify(account, {
-          walletAddress: account,
-        });
+        // Prevent repeated Identify and Alias calls
+        if (!wasPreviouslyIdentified || wasPreviouslyIdentified !== "true") {
+          analytics?.alias(account); // Alias previous anonymousId to wallet address
+          analytics?.identify(account, {
+            walletAddress: account,
+          });
+          window.localStorage.setItem("analyticsIdentified", "true");
+        }
       }
     } catch (err) {
       console.error("Failed to send Identify action to Segment", err);
@@ -76,25 +81,25 @@ const useValues = () => {
   }, [analytics, account]);
 
   // Page call
-  // useEffect(() => {
-  //   const ignoredPages = ["/trade", "/buy_tlp"];
-  //   const hasConsented = hasUserConsented();
-  //   const windowTraits = {
-  //     screenHeight: window.innerHeight || "unknown",
-  //     screenWidth: window.innerWidth || "unknown",
-  //     screenDensity: window.devicePixelRatio || "unknown",
-  //   };
-  //   if (!ignoredPages.includes(location.pathname)) {
-  //     if (hasConsented) {
-  //       analytics?.page({ ...windowTraits });
-  //     } else {
-  //       analytics?.page({
-  //         ...IGNORE_IP_CONTEXT,
-  //         ...windowTraits,
-  //       });
-  //     }
-  //   }
-  // }, [analytics, location.pathname]);
+  useEffect(() => {
+    const ignoredPages = ["/trade", "/buy_tlp"];
+    const hasConsented = hasUserConsented();
+    const windowTraits = {
+      screenHeight: window.innerHeight || "unknown",
+      screenWidth: window.innerWidth || "unknown",
+      screenDensity: window.devicePixelRatio || "unknown",
+    };
+    if (!ignoredPages.includes(location.pathname)) {
+      if (hasConsented) {
+        analytics?.page({ ...windowTraits });
+      } else {
+        analytics?.page({
+          ...IGNORE_IP_CONTEXT,
+          ...windowTraits,
+        });
+      }
+    }
+  }, [analytics, location.pathname]);
 
   useEffect(() => {
     if (!writeKey) {
