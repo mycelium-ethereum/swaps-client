@@ -768,7 +768,8 @@ export const Exchange = forwardRef((props, ref) => {
   // </BuyInputSection>
 
   useEffect(() => {
-    console.log(tokenSelection);
+  const tokenInfo = getToken(chainId, tokenAddress);
+
     if (!pageTracked) {
       const traits = {
         action: "Sell GLP",
