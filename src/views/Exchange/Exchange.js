@@ -767,8 +767,6 @@ export const Exchange = forwardRef((props, ref) => {
   // Segment Analytics Page tracking
   useEffect(() => {
     if (elementsLoaded) {
-      // Get current "From" token in right side modal
-      // Get user stored selection for table view ("Positions", "Orders", or "Trades")
       // Get Chart token selection
       const chartToken = getChartToken(
         swapOption,
