@@ -373,7 +373,7 @@ function FullApp() {
   const tokenAddresses = tokens.map((token) => token.address);
 
   const { data: tokenBalances } = useSWR(
-    [`GlpSwap:getTokenBalances:${active}`, chainId, readerAddress, "getTokenBalances", account || PLACEHOLDER_ACCOUNT],
+    [`FullApp:getTokenBalances:${active}`, chainId, readerAddress, "getTokenBalances", account || PLACEHOLDER_ACCOUNT],
     {
       fetcher: fetcher(library, ReaderV2, [tokenAddresses]),
     }
