@@ -10,6 +10,8 @@ import { Web3Provider } from "@ethersproject/providers";
 import { Switch, Route, NavLink } from "react-router-dom";
 
 import { ThemeProvider } from "@tracer-protocol/tracer-ui";
+import { useAnalytics } from "./segmentAnalytics";
+import { getTokens } from "./data/Tokens";
 
 import {
   ARBITRUM,
@@ -20,6 +22,7 @@ import {
   SHOW_PNL_AFTER_FEES_KEY,
   BASIS_POINTS_DIVISOR,
   SHOULD_SHOW_POSITION_LINES_KEY,
+  fetcher,
   clearWalletConnectData,
   switchNetwork,
   helperToast,
@@ -37,12 +40,17 @@ import {
   hasCoinBaseWalletExtension,
   isMobileDevice,
   clearWalletLinkData,
+  getBalanceAndSupplyData,
+  formatAmount,
+  formatTitleCase,
   SHOULD_EAGER_CONNECT_LOCALSTORAGE_KEY,
   CURRENT_PROVIDER_LOCALSTORAGE_KEY,
   REFERRAL_CODE_KEY,
   REFERRAL_CODE_QUERY_PARAMS,
   ARBITRUM_TESTNET,
+  PLACEHOLDER_ACCOUNT,
 } from "./Helpers";
+import ReaderV2 from "./abis/ReaderV2.json";
 
 import Home from "./views/Home/Home";
 import Presale from "./views/Presale/Presale";
@@ -62,6 +70,7 @@ import ClaimEsGmx from "./views/ClaimEsGmx/ClaimEsGmx";
 import BeginAccountTransfer from "./views/BeginAccountTransfer/BeginAccountTransfer";
 import CompleteAccountTransfer from "./views/CompleteAccountTransfer/CompleteAccountTransfer";
 import Debug from "./views/Debug/Debug";
+import ConsentModal from "./components/ConsentModal/ConsentModal";
 
 import cx from "classnames";
 import { cssTransition, ToastContainer } from "react-toastify";
@@ -102,9 +111,7 @@ import VaultV2 from "./abis/VaultV2.json";
 import VaultV2b from "./abis/VaultV2b.json";
 import PositionRouter from "./abis/PositionRouter.json";
 import PageNotFound from "./views/PageNotFound/PageNotFound";
-import ReferralTerms from "./views/ReferralTerms/ReferralTerms";
-import { identifyUser, recordPageVisit } from "./segmentAnalytics";
-import { useLocation } from "react-router-dom";
+import useSWR from "swr";
 
 if ("ethereum" in window) {
   window.ethereum.autoRefreshOnNetworkChange = false;
@@ -353,9 +360,23 @@ function AppHeaderUser({
 }
 
 function FullApp() {
+  const [loggedInTracked, setLoggedInTracked] = useState(false);
+  const { trackLogin, trackPageWithTraits } = useAnalytics();
+
   const exchangeRef = useRef();
   const { connector, library, deactivate, activate, active, account } = useWeb3React();
   const { chainId } = useChainId();
+  const readerAddress = getContract(chainId, "Reader");
+  const tokens = getTokens(chainId);
+  const tokenAddresses = tokens.map((token) => token.address);
+
+  const { data: tokenBalances } = useSWR(
+    [`FullApp:getTokenBalances:${active}`, chainId, readerAddress, "getTokenBalances", account || PLACEHOLDER_ACCOUNT],
+    {
+      fetcher: fetcher(library, ReaderV2, [tokenAddresses]),
+    }
+  );
+
   useEventToast();
   const [activatingConnector, setActivatingConnector] = useState();
   useEffect(() => {
@@ -368,16 +389,29 @@ function FullApp() {
 
   const query = useRouteQuery();
 
-  const location = useLocation();
-
+  // Track user wallet connect
   useEffect(() => {
-    recordPageVisit(account);
-    // eslint-disable-next-line
-  }, [location.pathname]);
-
-  useEffect(() => {
-    if (account) identifyUser(account);
-  }, [account]);
+    const sendTrackLoginData = async () => {
+      if (account && tokenBalances && !loggedInTracked) {
+        const MAX_DECIMALS = 16;
+        const { balanceData } = getBalanceAndSupplyData(tokenBalances);
+        // Format GMX token balances from BigNubmer to float
+        let gmxBalances = {};
+        Object.keys(balanceData).forEach((token) => {
+          if (balanceData[token]) {
+            const fieldName = `balance${formatTitleCase(token)}`;
+            gmxBalances[fieldName] = parseFloat(formatAmount(balanceData[token], MAX_DECIMALS, 4, true));
+          }
+        });
+        // Get user ETH balances
+        const balanceEth = await library.getBalance(account);
+        const formattedEthBalance = parseFloat(formatAmount(balanceEth, MAX_DECIMALS, 4, true)) / 100;
+        trackLogin(chainId, gmxBalances, formattedEthBalance);
+        setLoggedInTracked(true); // Only track once
+      }
+    };
+    sendTrackLoginData();
+  }, [account, chainId, tokenBalances, trackLogin, loggedInTracked, library]);
 
   useEffect(() => {
     let referralCode = query.get(REFERRAL_CODE_QUERY_PARAMS);
@@ -763,6 +797,7 @@ function FullApp() {
                 savedShouldShowPositionLines={savedShouldShowPositionLines}
                 setSavedShouldShowPositionLines={setSavedShouldShowPositionLines}
                 connectWallet={connectWallet}
+                trackPageWithTraits={trackPageWithTraits}
               />
             </Route>
             <Route exact path="/presale">
@@ -786,6 +821,7 @@ function FullApp() {
                 savedSlippageAmount={savedSlippageAmount}
                 setPendingTxns={setPendingTxns}
                 connectWallet={connectWallet}
+                trackPageWithTraits={trackPageWithTraits}
               />
             </Route>
             <Route exact path="/sell_tlp">
@@ -799,7 +835,11 @@ function FullApp() {
               <BuyGMX />
             </Route>
             <Route exact path="/rewards">
-              <Rewards setPendingTxns={setPendingTxns} connectWallet={connectWallet} />
+              <Rewards
+                setPendingTxns={setPendingTxns}
+                connectWallet={connectWallet}
+                trackPageWithTraits={trackPageWithTraits}
+              />
             </Route>
             <Route exact path="/about">
               <Home />
@@ -1006,6 +1046,13 @@ function PreviewApp() {
 }
 
 function App() {
+  const [hasConsented, setConsented] = useState(false);
+
+  useEffect(() => {
+    const consentAcknowledged = localStorage.getItem("consentAcknowledged") === "true";
+    setConsented(consentAcknowledged);
+  }, []);
+
   if (inPreviewMode()) {
     return (
       <Web3ReactProvider getLibrary={getLibrary}>
@@ -1024,6 +1071,7 @@ function App() {
             <FullApp />
           </ThemeProvider>
         </SEO>
+        <ConsentModal hasConsented={hasConsented} setConsented={setConsented} />
       </Web3ReactProvider>
     </SWRConfig>
   );
