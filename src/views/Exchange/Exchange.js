@@ -364,6 +364,7 @@ export const Exchange = forwardRef((props, ref) => {
     setSavedShouldShowPositionLines,
     connectWallet,
     trackPageWithTraits,
+    trackAction,
   } = props;
   const [showBanner, setShowBanner] = useLocalStorageSerializeKey("showBanner", true);
   const [bannerHidden, setBannerHidden] = useLocalStorageSerializeKey("bannerHidden", null);
@@ -973,6 +974,7 @@ export const Exchange = forwardRef((props, ref) => {
             savedSlippageAmount={savedSlippageAmount}
             totalTokenWeights={totalTokenWeights}
             usdgSupply={usdgSupply}
+            trackAction={trackAction}
           />
           <div className="Exchange-wallet-tokens">
             <div className="Exchange-wallet-tokens-content">

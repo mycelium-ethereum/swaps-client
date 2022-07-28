@@ -11,7 +11,9 @@ export default function Checkbox(props) {
   return (
     <div
       className={cx("Checkbox", { disabled, selected: isChecked }, className)}
-      onClick={() => setIsChecked(!isChecked)}
+      onClick={() => {
+        setIsChecked(!isChecked);
+      }}
     >
       <span className="Checkbox-icon-wrapper">
         {isChecked && <ImCheckboxChecked className="App-icon Checkbox-icon active" />}

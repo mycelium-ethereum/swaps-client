@@ -26,10 +26,9 @@ function getDotColor(network) {
 
 export default function NetworkSelector(props) {
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const { small, options, disabled, label, modalLabel, className, showCaret = true } = props;
+  const { small, options, disabled, label, modalLabel, className, showCaret = true, trackAction } = props;
   const [selectedLabel, setSelectedLabel] = useState(label);
   const [networkChanged, setNetworkChanged] = useState(false);
-
   useEffect(() => {
     setSelectedLabel(label);
   }, [label, networkChanged]);
@@ -48,15 +47,22 @@ export default function NetworkSelector(props) {
   }
 
   const onSelect = async (token) => {
+    const prevLabel = selectedLabel;
     setIsModalVisible(false);
     props.showModal(false);
     let network;
     try {
       network = await props.onSelect(token);
       setSelectedLabel(network);
+      const traits = {
+        previousNetwork: prevLabel,
+        currentNetwork: network,
+      };
+      trackAction("Network changed", traits);
     } catch (error) {
       console.error(error);
     }
+
     setNetworkChanged(true);
   };
 

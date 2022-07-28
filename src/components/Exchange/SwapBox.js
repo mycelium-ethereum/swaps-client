@@ -164,6 +164,7 @@ export default function SwapBox(props) {
     setIsWaitingForPositionRouterApproval,
     isPluginApproving,
     isPositionRouterApproving,
+    trackAction,
   } = props;
 
   const [fromValue, setFromValue] = useState("");
@@ -1596,6 +1597,29 @@ export default function SwapBox(props) {
       setPendingTxns,
     });
   }
+
+  const trackTradeAction = () => {
+    // Action: Create / Deposit Margin / Withdraw Margin / Close
+    // Position: Long, Short, Swap
+    // Market: BTC/USD, ETH/USD
+    // Amount: Numeric
+    // Leverage: Numeric
+    // Balance Long Point-In-Time: Numeric
+    // Balance Short Point-In-Time: Numeric
+    // Tracer Fees: Fee charged to user by tracer
+    // walletAddress
+    // Network: Rinkeby / Arbitrum
+    // Profits in: Numeric
+    // Liq. Price: Numeric
+    // Fees: Numeric
+    // Collateral: Numeric
+    // Spread: Numeric
+    // Entry Price: Numeric
+    // Borrow Fee: Numeric
+    // Allowed Slippage:
+    // Allow up to 1% slippage: True/False
+    // trackAction()
+  };
 
   const onClickPrimary = () => {
     if (!active) {

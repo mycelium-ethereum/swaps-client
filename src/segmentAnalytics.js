@@ -22,6 +22,20 @@ export const useAnalytics = () => {
   const location = useLocation();
   const [analytics, setAnalytics] = useState(undefined);
 
+  const trackAction = (actionName, traits) => {
+    const hasConsented = hasUserConsented();
+    const currentPathContext = { path: location.pathname };
+    if (hasConsented) {
+      analytics?.track(actionName, { ...traits, ...currentPathContext });
+    } else {
+      analytics?.track(actionName, {
+        ...IGNORE_IP_CONTEXT,
+        ...traits,
+        ...currentPathContext,
+      });
+    }
+  };
+
   const trackPageWithTraits = (traits) => {
     const hasConsented = hasUserConsented();
     if (hasConsented) {
@@ -46,11 +60,11 @@ export const useAnalytics = () => {
         ...gmxBalances,
       };
       if (account && hasConsented) {
-        analytics?.track("userLoggedIn", {
+        analytics?.track("User logged in", {
           ...traits,
         });
       } else {
-        analytics?.track("userLoggedIn", {
+        analytics?.track("User logged in", {
           ...IGNORE_IP_CONTEXT,
           ...traits,
         });
@@ -115,5 +129,6 @@ export const useAnalytics = () => {
   return {
     trackLogin,
     trackPageWithTraits,
+    trackAction,
   };
 };
