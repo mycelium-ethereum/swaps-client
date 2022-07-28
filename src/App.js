@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useRef, useContext } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import { SWRConfig } from "swr";
 import { ethers } from "ethers";
 
@@ -41,7 +41,6 @@ import {
   isMobileDevice,
   clearWalletLinkData,
   getBalanceAndSupplyData,
-  getTokenInfo,
   formatAmount,
   formatTitleCase,
   SHOULD_EAGER_CONNECT_LOCALSTORAGE_KEY,
@@ -108,7 +107,6 @@ import useRouteQuery from "./hooks/useRouteQuery";
 import { encodeReferralCode } from "./Api/referrals";
 
 import { getContract } from "./Addresses";
-import { useInfoTokens } from "./Api";
 import VaultV2 from "./abis/VaultV2.json";
 import VaultV2b from "./abis/VaultV2b.json";
 import PositionRouter from "./abis/PositionRouter.json";
