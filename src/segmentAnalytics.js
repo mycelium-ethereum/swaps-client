@@ -1,4 +1,4 @@
-import React, { createContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { AnalyticsBrowser } from "@segment/analytics-next";
 import { useLocation } from "react-router-dom";
 import { ARBITRUM, ARBITRUM_TESTNET, CURRENT_PROVIDER_LOCALSTORAGE_KEY, hasUserConsented } from "./Helpers";
@@ -95,10 +95,4 @@ export const useAnalytics = () => {
   return {
     trackLogin,
   };
-};
-
-export const AnalyticsContext = createContext({});
-
-export const AnalyticsProvider = ({ children }) => {
-  return <AnalyticsContext.Provider value={useAnalytics()}>{children}</AnalyticsContext.Provider>;
 };

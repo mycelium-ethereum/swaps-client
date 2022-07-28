@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useRef, useContext } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import { SWRConfig } from "swr";
 import { ethers } from "ethers";
 
@@ -10,7 +10,7 @@ import { Web3Provider } from "@ethersproject/providers";
 import { Switch, Route, NavLink } from "react-router-dom";
 
 import { ThemeProvider } from "@tracer-protocol/tracer-ui";
-import { useAnalytics, AnalyticsProvider } from "./segmentAnalytics";
+import { useAnalytics } from "./segmentAnalytics";
 import { getTokens } from "./data/Tokens";
 
 import {
@@ -1062,9 +1062,7 @@ function App() {
       <Web3ReactProvider getLibrary={getLibrary}>
         <SEO>
           <ThemeProvider>
-            <AnalyticsProvider>
-              <FullApp />
-            </AnalyticsProvider>
+            <FullApp />
           </ThemeProvider>
         </SEO>
         <ConsentModal hasConsented={hasConsented} setConsented={setConsented} />
