@@ -10,7 +10,7 @@ import { Web3Provider } from "@ethersproject/providers";
 import { Switch, Route, NavLink } from "react-router-dom";
 
 import { ThemeProvider } from "@tracer-protocol/tracer-ui";
-import { AnalyticsContext, AnalyticsProvider } from "./segmentAnalytics";
+import { useAnalytics, AnalyticsProvider } from "./segmentAnalytics";
 import { getTokens } from "./data/Tokens";
 
 import {
@@ -114,8 +114,6 @@ import VaultV2b from "./abis/VaultV2b.json";
 import PositionRouter from "./abis/PositionRouter.json";
 import PageNotFound from "./views/PageNotFound/PageNotFound";
 import useSWR from "swr";
-
-const { AddressZero } = ethers.constants;
 
 if ("ethereum" in window) {
   window.ethereum.autoRefreshOnNetworkChange = false;
@@ -365,7 +363,7 @@ function AppHeaderUser({
 
 function FullApp() {
   const [loggedInTracked, setLoggedInTracked] = useState(false);
-  const { trackLogin } = useContext(AnalyticsContext);
+  const { trackLogin } = useAnalytics();
 
   const exchangeRef = useRef();
   const { connector, library, deactivate, activate, active, account } = useWeb3React();
@@ -380,9 +378,6 @@ function FullApp() {
       fetcher: fetcher(library, ReaderV2, [tokenAddresses]),
     }
   );
-  const { infoTokens } = useInfoTokens(library, chainId, active, tokenBalances, undefined);
-
-  const nativeToken = getTokenInfo(infoTokens, AddressZero);
 
   useEventToast();
   const [activatingConnector, setActivatingConnector] = useState();
@@ -396,24 +391,30 @@ function FullApp() {
 
   const query = useRouteQuery();
 
+
   // Track user wallet connect
   useEffect(() => {
-    if (account && tokenBalances && !loggedInTracked) {
-      const MAX_DECIMALS = 16;
-      const { balanceData } = getBalanceAndSupplyData(tokenBalances);
-      const balanceEth = parseFloat(formatAmount(nativeToken.balance, nativeToken.decimals, 4, true));
-
-      let gmxBalances = {};
-      Object.keys(balanceData).forEach((token) => {
-        if (balanceData[token]) {
-          const fieldName = `balance${formatTitleCase(token)}`;
-          gmxBalances[fieldName] = parseFloat(formatAmount(balanceData[token], MAX_DECIMALS, 4, true));
-        }
-      });
-      trackLogin(chainId, gmxBalances, balanceEth);
-      setLoggedInTracked(true); // Only track once
-    }
-  }, [account, chainId, tokenBalances, trackLogin, nativeToken.balance, nativeToken.decimals, loggedInTracked]);
+    const sendTrackLoginData = async () => {
+      if (account && tokenBalances && !loggedInTracked) {
+        const MAX_DECIMALS = 16;
+        const { balanceData } = getBalanceAndSupplyData(tokenBalances);
+        // Format GMX token balances from BigNubmer to float
+        let gmxBalances = {};
+        Object.keys(balanceData).forEach((token) => {
+          if (balanceData[token]) {
+            const fieldName = `balance${formatTitleCase(token)}`;
+            gmxBalances[fieldName] = parseFloat(formatAmount(balanceData[token], MAX_DECIMALS, 4, true));
+          }
+        });
+        // Get user ETH balances
+        const balanceEth = await library.getBalance(account);
+        const formattedEthBalance = parseFloat(formatAmount(balanceEth, MAX_DECIMALS, 4, true)) / 100;
+        trackLogin(chainId, gmxBalances, formattedEthBalance);
+        setLoggedInTracked(true); // Only track once
+      }
+    };
+    sendTrackLoginData();
+  }, [account, chainId, tokenBalances, trackLogin, loggedInTracked, library]);
 
   useEffect(() => {
     let referralCode = query.get(REFERRAL_CODE_QUERY_PARAMS);

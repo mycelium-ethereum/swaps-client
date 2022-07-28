@@ -1,7 +1,7 @@
 import React, { createContext, useEffect, useState } from "react";
 import { AnalyticsBrowser } from "@segment/analytics-next";
 import { useLocation } from "react-router-dom";
-import { ARBITRUM, ARBITRUM_TESTNET, AVALANCHE, CURRENT_PROVIDER_LOCALSTORAGE_KEY, hasUserConsented } from "./Helpers";
+import { ARBITRUM, ARBITRUM_TESTNET, CURRENT_PROVIDER_LOCALSTORAGE_KEY, hasUserConsented } from "./Helpers";
 import { useWeb3React } from "@web3-react/core";
 
 const writeKey = process.env.REACT_APP_SEGMENT_WRITE_KEY;
@@ -9,7 +9,6 @@ const writeKey = process.env.REACT_APP_SEGMENT_WRITE_KEY;
 const networkName = {
   [ARBITRUM]: "Arbitrum",
   [ARBITRUM_TESTNET]: "Rinkeby",
-  [AVALANCHE]: "Avalanche",
 };
 
 const IGNORE_IP_CONTEXT = {
@@ -42,7 +41,7 @@ export const useAnalytics = () => {
       const traits = {
         walletProvider: provider,
         walletAddress: account,
-        network: networkName[chainId],
+        network: networkName[chainId] ?? `Unsupported (${chainId})`,
         balanceEth: balanceEth,
         ...gmxBalances,
       };
@@ -50,7 +49,7 @@ export const useAnalytics = () => {
         analytics?.track("userLoggedIn", {
           ...traits,
         });
-      } else if (account && !hasConsented) {
+      } else {
         analytics?.track("userLoggedIn", {
           ...IGNORE_IP_CONTEXT,
           ...traits,
