@@ -749,9 +749,8 @@ export const Exchange = forwardRef((props, ref) => {
   const [tableViewSelection] = useLocalStorage("List-section-v2");
   const [isLeverageSliderEnabled] = useLocalStorage(JSON.stringify([chainId, "Exchange-swap-leverage-slider-enabled"]));
   const [leverageOption] = useLocalStorage(JSON.stringify([chainId, "Exchange-swap-leverage-option"]));
-  const tableView = tableViewSelection ? tableViewSelection[chainId] : "Positions"; // localStorage item "List-section-v2" will return undefined if no selection has been made previously
-
-  const dataElements = {
+  const tableView = Object.keys(tableViewSelection).length > 0 ? tableViewSelection[chainId] : "Positions"; // localStorage item "List-section-v2" will return undefined if no selection has been made previously
+  const dataElements = [
     chartPeriod,
     tokenSelection,
     pageTracked,
@@ -761,9 +760,10 @@ export const Exchange = forwardRef((props, ref) => {
     tableView,
     isLeverageSliderEnabled,
     leverageOption,
-  };
+  ];
 
-  const elementsLoaded = Object.values(dataElements).every((element) => element !== undefined);
+  const elementsLoaded = dataElements.every((element) => element !== undefined);
+
   // Segment Analytics Page tracking
   useEffect(() => {
     if (elementsLoaded) {

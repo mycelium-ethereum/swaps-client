@@ -652,7 +652,7 @@ export default function GlpSwap(props) {
   const [pageTracked, setPageTracked] = useState(false);
 
   const dataElements = [chainId, isBuying, pageTracked, swapTokenAddress, history.location.hash];
-  const elementsLoaded = Object.values(dataElements).every((element) => element !== undefined);
+  const elementsLoaded = dataElements.every((element) => element !== undefined);
 
   // Segment Analytics Page tracking
   useEffect(() => {
