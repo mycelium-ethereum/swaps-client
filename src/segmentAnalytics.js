@@ -22,6 +22,18 @@ export const useAnalytics = () => {
   const location = useLocation();
   const [analytics, setAnalytics] = useState(undefined);
 
+  const trackPageWithTraits = (traits) => {
+    const hasConsented = hasUserConsented();
+    if (hasConsented) {
+      analytics?.page({ ...traits });
+    } else {
+      analytics?.page({
+        ...IGNORE_IP_CONTEXT,
+        ...traits,
+      });
+    }
+  };
+
   const trackLogin = (chainId, gmxBalances, balanceEth) => {
     const hasConsented = hasUserConsented();
     try {
@@ -50,12 +62,17 @@ export const useAnalytics = () => {
 
   // Identify call
   useEffect(() => {
+    const wasPreviouslyIdentified = window.localStorage.getItem("analyticsIdentified");
     try {
       if (account) {
-        analytics?.alias(account); // Alias previous anonymousId to wallet address
-        analytics?.identify(account, {
-          walletAddress: account,
-        });
+        // Prevent repeated Identify and Alias calls
+        if (!wasPreviouslyIdentified || wasPreviouslyIdentified !== "true") {
+          analytics?.alias(account); // Alias previous anonymousId to wallet address
+          analytics?.identify(account, {
+            walletAddress: account,
+          });
+          window.localStorage.setItem("analyticsIdentified", "true");
+        }
       }
     } catch (err) {
       console.error("Failed to send Identify action to Segment", err);
@@ -64,19 +81,22 @@ export const useAnalytics = () => {
 
   // Page call
   useEffect(() => {
-    const hasConsented = hasUserConsented();
-    const windowTraits = {
-      screenHeight: window.innerHeight || "unknown",
-      screenWidth: window.innerWidth || "unknown",
-      screenDensity: window.devicePixelRatio || "unknown",
-    };
-    if (hasConsented) {
-      analytics?.page({ ...windowTraits });
-    } else if (!hasConsented) {
-      analytics?.page({
-        ...IGNORE_IP_CONTEXT,
-        ...windowTraits,
-      });
+    const customTrackPages = ["/trade", "/buy_tlp", "/rewards"];
+    if (!customTrackPages.includes(location.pathname)) {
+      const hasConsented = hasUserConsented();
+      const windowTraits = {
+        screenHeight: window.innerHeight || "unknown",
+        screenWidth: window.innerWidth || "unknown",
+        screenDensity: window.devicePixelRatio || "unknown",
+      };
+      if (hasConsented) {
+        analytics?.page({ ...windowTraits });
+      } else {
+        analytics?.page({
+          ...IGNORE_IP_CONTEXT,
+          ...windowTraits,
+        });
+      }
     }
   }, [analytics, location.pathname]);
 
@@ -94,5 +114,6 @@ export const useAnalytics = () => {
 
   return {
     trackLogin,
+    trackPageWithTraits,
   };
 };

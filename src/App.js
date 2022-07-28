@@ -41,7 +41,6 @@ import {
   isMobileDevice,
   clearWalletLinkData,
   getBalanceAndSupplyData,
-  getTokenInfo,
   formatAmount,
   formatTitleCase,
   SHOULD_EAGER_CONNECT_LOCALSTORAGE_KEY,
@@ -108,7 +107,6 @@ import useRouteQuery from "./hooks/useRouteQuery";
 import { encodeReferralCode } from "./Api/referrals";
 
 import { getContract } from "./Addresses";
-import { useInfoTokens } from "./Api";
 import VaultV2 from "./abis/VaultV2.json";
 import VaultV2b from "./abis/VaultV2b.json";
 import PositionRouter from "./abis/PositionRouter.json";
@@ -363,7 +361,7 @@ function AppHeaderUser({
 
 function FullApp() {
   const [loggedInTracked, setLoggedInTracked] = useState(false);
-  const { trackLogin } = useAnalytics();
+  const { trackLogin, trackPageWithTraits } = useAnalytics();
 
   const exchangeRef = useRef();
   const { connector, library, deactivate, activate, active, account } = useWeb3React();
@@ -390,6 +388,8 @@ function FullApp() {
   useInactiveListener(!triedEager || !!activatingConnector);
 
   const query = useRouteQuery();
+
+  // Track user wallet connect
   useEffect(() => {
     const sendTrackLoginData = async () => {
       if (account && tokenBalances && !loggedInTracked) {
@@ -797,6 +797,7 @@ function FullApp() {
                 savedShouldShowPositionLines={savedShouldShowPositionLines}
                 setSavedShouldShowPositionLines={setSavedShouldShowPositionLines}
                 connectWallet={connectWallet}
+                trackPageWithTraits={trackPageWithTraits}
               />
             </Route>
             <Route exact path="/presale">
@@ -820,6 +821,7 @@ function FullApp() {
                 savedSlippageAmount={savedSlippageAmount}
                 setPendingTxns={setPendingTxns}
                 connectWallet={connectWallet}
+                trackPageWithTraits={trackPageWithTraits}
               />
             </Route>
             <Route exact path="/sell_tlp">
@@ -833,7 +835,11 @@ function FullApp() {
               <BuyGMX />
             </Route>
             <Route exact path="/rewards">
-              <Rewards setPendingTxns={setPendingTxns} connectWallet={connectWallet} />
+              <Rewards
+                setPendingTxns={setPendingTxns}
+                connectWallet={connectWallet}
+                trackPageWithTraits={trackPageWithTraits}
+              />
             </Route>
             <Route exact path="/about">
               <Home />
