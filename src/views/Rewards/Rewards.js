@@ -9,7 +9,6 @@ import { useWeb3React } from "@web3-react/core";
 import Davatar from "@davatar/react";
 import { Menu } from "@headlessui/react";
 import { FaChevronDown } from "react-icons/fa";
-import { useAnalytics } from "../../segmentAnalytics";
 
 const REWARD_WEEKS = [
   {
@@ -23,8 +22,7 @@ const REWARD_WEEKS = [
 ];
 
 export default function Rewards(props) {
-  const { trackPageWithTraits } = useAnalytics();
-  const { connectWallet } = props;
+  const { connectWallet, trackPageWithTraits } = props;
 
   const { ensName } = useENS();
   const { active, account } = useWeb3React();

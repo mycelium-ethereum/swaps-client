@@ -10,7 +10,7 @@ import { Web3Provider } from "@ethersproject/providers";
 import { Switch, Route, NavLink } from "react-router-dom";
 
 import { ThemeProvider } from "@tracer-protocol/tracer-ui";
-import { useAnalytics, AnalyticsProvider } from "./segmentAnalytics";
+import { useAnalytics } from "./segmentAnalytics";
 import { getTokens } from "./data/Tokens";
 
 import {
@@ -363,7 +363,7 @@ function AppHeaderUser({
 
 function FullApp() {
   const [loggedInTracked, setLoggedInTracked] = useState(false);
-  const { trackLogin } = useAnalytics();
+  const { trackLogin, trackPageWithTraits } = useAnalytics();
 
   const exchangeRef = useRef();
   const { connector, library, deactivate, activate, active, account } = useWeb3React();
@@ -390,7 +390,6 @@ function FullApp() {
   useInactiveListener(!triedEager || !!activatingConnector);
 
   const query = useRouteQuery();
-
 
   // Track user wallet connect
   useEffect(() => {
@@ -800,6 +799,7 @@ function FullApp() {
                 savedShouldShowPositionLines={savedShouldShowPositionLines}
                 setSavedShouldShowPositionLines={setSavedShouldShowPositionLines}
                 connectWallet={connectWallet}
+                trackPageWithTraits={trackPageWithTraits}
               />
             </Route>
             <Route exact path="/presale">
@@ -823,6 +823,7 @@ function FullApp() {
                 savedSlippageAmount={savedSlippageAmount}
                 setPendingTxns={setPendingTxns}
                 connectWallet={connectWallet}
+                trackPageWithTraits={trackPageWithTraits}
               />
             </Route>
             <Route exact path="/sell_tlp">
@@ -836,7 +837,11 @@ function FullApp() {
               <BuyGMX />
             </Route>
             <Route exact path="/rewards">
-              <Rewards setPendingTxns={setPendingTxns} connectWallet={connectWallet} />
+              <Rewards
+                setPendingTxns={setPendingTxns}
+                connectWallet={connectWallet}
+                trackPageWithTraits={trackPageWithTraits}
+              />
             </Route>
             <Route exact path="/about">
               <Home />
@@ -1065,9 +1070,7 @@ function App() {
       <Web3ReactProvider getLibrary={getLibrary}>
         <SEO>
           <ThemeProvider>
-            <AnalyticsProvider>
-              <FullApp />
-            </AnalyticsProvider>
+            <FullApp />
           </ThemeProvider>
         </SEO>
         <ConsentModal hasConsented={hasConsented} setConsented={setConsented} />

@@ -42,7 +42,6 @@ import {
 } from "../../Helpers";
 
 import { callContract, useTCRPrice, useInfoTokens } from "../../Api";
-import { useAnalytics } from "../../segmentAnalytics";
 
 import TokenSelector from "../Exchange/TokenSelector";
 import BuyInputSection from "../BuyInputSection/BuyInputSection";
@@ -90,9 +89,7 @@ function getStakingData(stakingInfo) {
 }
 
 export default function GlpSwap(props) {
-  const { trackPageWithTraits } = useAnalytics();
-
-  const { savedSlippageAmount, isBuying, setPendingTxns, connectWallet, setIsBuying } = props;
+  const { savedSlippageAmount, isBuying, setPendingTxns, connectWallet, setIsBuying, trackPageWithTraits } = props;
   const history = useHistory();
   const swapLabel = isBuying ? "BuyGlp" : "SellGlp";
   const tabLabel = isBuying ? "Buy TLP" : "Sell TLP";
