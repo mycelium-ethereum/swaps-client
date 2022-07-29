@@ -21,7 +21,7 @@
 .menu-items {
   position: absolute;
   right: 0;
-  top: 43px;
+  top: calc(100% + 0.5rem);
   min-width: 10rem;
   width: 100%;
   transform-origin: top right;
