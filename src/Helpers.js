@@ -2814,8 +2814,8 @@ export function hasUserConsented() {
   return consent && consent === "true";
 }
 
-export function formatTitleCase(string) {
-  return string[0].toUpperCase() + string.slice(1);
+export function formatTitleCase(string, isLowerCase = false) {
+  return `${string[0].toUpperCase()}${isLowerCase ? string.slice(1).toLowerCase() : string.slice(1)}`;
 }
 
 export const NETWORK_NAME = {

@@ -344,7 +344,7 @@ export default function SwapBox(props) {
   const fromTokenInfo = getTokenInfo(infoTokens, fromTokenAddress);
   const toTokenInfo = getTokenInfo(infoTokens, toTokenAddress);
   const toTokenAvailableUsd = toTokenInfo.availableUsd;
-
+  
   const renderAvailableLongLiquidity = () => {
     if (!isLong) {
       return null;

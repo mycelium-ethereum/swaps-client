@@ -380,6 +380,7 @@ function AppHeaderUser({
 
 function FullApp() {
   const [loggedInTracked, setLoggedInTracked] = useState(false);
+  const [infoTokens, setInfoTokens] = useState([]);
   const { trackLogin, trackPageWithTraits, trackAction } = useAnalytics();
 
   const exchangeRef = useRef();
@@ -412,10 +413,10 @@ function FullApp() {
   useEffect(() => {
     if (!loggedInTracked) {
       const sendTrackLoginData = async () => {
+        const MAX_DECIMALS = 16;
         if (account && tokenBalances) {
-          const MAX_DECIMALS = 16;
           const { balanceData } = getBalanceAndSupplyData(tokenBalances);
-          // Format GMX token balances from BigNubmer to float
+          // Format GMX token balances from BigNumber to float
           let gmxBalances = {};
           Object.keys(balanceData).forEach((token) => {
             if (balanceData[token]) {
@@ -423,16 +424,22 @@ function FullApp() {
               gmxBalances[fieldName] = parseFloat(formatAmount(balanceData[token], MAX_DECIMALS, 4, true));
             }
           });
-          // Get user ETH balances
-          const balanceEth = await library.getBalance(account);
-          const formattedEthBalance = parseFloat(formatAmount(balanceEth, MAX_DECIMALS, 4, true)) / 100;
-          trackLogin(chainId, gmxBalances, formattedEthBalance);
+          // Format user ERC20 token balances from BigNumber to float
+          let userBalances = {};
+          Object.keys(infoTokens).forEach((token) => {
+            if (infoTokens[token]) {
+              const fieldName = `balance${formatTitleCase(infoTokens[token].symbol, true)}`;
+              userBalances[fieldName] = parseFloat(formatAmount(infoTokens[token].balance, MAX_DECIMALS, 4, true));
+            }
+          });
+          console.log(userBalances);
+          trackLogin(chainId, gmxBalances, userBalances);
           setLoggedInTracked(true); // Only track once
         }
       };
       sendTrackLoginData();
     }
-  }, [account, chainId, tokenBalances, trackLogin, loggedInTracked, library]);
+  }, [account, chainId, tokenBalances, trackLogin, loggedInTracked, library, infoTokens]);
 
   useEffect(() => {
     let referralCode = query.get(REFERRAL_CODE_QUERY_PARAMS);
@@ -844,6 +851,7 @@ function FullApp() {
                 setSavedShouldShowPositionLines={setSavedShouldShowPositionLines}
                 connectWallet={connectWallet}
                 trackPageWithTraits={trackPageWithTraits}
+                setInfoTokens={setInfoTokens}
                 trackAction={trackAction}
               />
             </Route>
