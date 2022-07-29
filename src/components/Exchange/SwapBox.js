@@ -1693,7 +1693,7 @@ export default function SwapBox(props) {
         entryPrice: parseFloat(entryPrice),
         borrowFee: determineBorrowFee(),
         allowedSlippage: parseFloat(formatAmount(allowedSlippage, 2, 2)),
-        upToOnePercentSlippage: isHigherSlippageAllowed,
+        upToOnePercentSlippageEnabled: isHigherSlippageAllowed,
         ...userBalances,
         ...tokenPrices,
         ...poolBalances,
