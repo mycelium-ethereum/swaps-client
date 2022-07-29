@@ -750,7 +750,7 @@ export const Exchange = forwardRef((props, ref) => {
   const [tableViewSelection] = useLocalStorage("List-section-v2");
   const [isLeverageSliderEnabled] = useLocalStorage(JSON.stringify([chainId, "Exchange-swap-leverage-slider-enabled"]));
   const [leverageOption] = useLocalStorage(JSON.stringify([chainId, "Exchange-swap-leverage-option"]));
-  const tableView = Object.keys(tableViewSelection).length > 0 ? tableViewSelection[chainId] : "Positions"; // localStorage item "List-section-v2" will return undefined if no selection has been made previously
+  const tableView = !!tableViewSelection && Object.keys(tableViewSelection).length > 0 ? tableViewSelection[chainId] : "Positions"; // localStorage item "List-section-v2" will return undefined if no selection has been made previously
   const dataElements = [
     chartPeriod,
     tokenSelection,
