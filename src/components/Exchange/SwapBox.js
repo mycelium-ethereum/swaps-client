@@ -1218,7 +1218,6 @@ export default function SwapBox(props) {
       setPendingTxns,
     })
       .then(async (res) => {
-        trackTrade(true, "Swap");
       })
       .finally(() => {
         setIsSubmitting(false);
@@ -1238,7 +1237,6 @@ export default function SwapBox(props) {
       setPendingTxns,
     })
       .then(async (res) => {
-        trackTrade(true, "Swap");
       })
       .finally(() => {
         setIsSubmitting(false);
@@ -1314,6 +1312,7 @@ export default function SwapBox(props) {
         setPendingTxns,
       })
         .then(() => {
+          trackTrade(true, "Swap");
           setIsConfirming(false);
         })
         .finally(() => {
@@ -1349,7 +1348,8 @@ export default function SwapBox(props) {
       setPendingTxns,
     })
       .then(async () => {
-        setIsConfirming(false);
+          trackTrade(true, "Swap");
+          setIsConfirming(false);
       })
       .finally(() => {
         setIsSubmitting(false);
@@ -1399,7 +1399,8 @@ export default function SwapBox(props) {
       }
     )
       .then(() => {
-        setIsConfirming(false);
+          trackTrade(true, "Limit");
+          setIsConfirming(false);
       })
       .finally(() => {
         setIsSubmitting(false);
@@ -1519,6 +1520,7 @@ export default function SwapBox(props) {
       successMsg,
     })
       .then(async () => {
+        trackTrade(true, `${isLong ? "Long" : "Short"}`);
         setIsConfirming(false);
 
         const key = getPositionKey(account, path[path.length - 1], indexTokenAddress, isLong);
@@ -1715,12 +1717,12 @@ export default function SwapBox(props) {
 
     if (isSwap) {
       if (fromTokenAddress === AddressZero && toTokenAddress === nativeTokenAddress) {
-        wrap();
+      wrap();
         return;
       }
 
       if (fromTokenAddress === nativeTokenAddress && toTokenAddress === AddressZero) {
-        unwrap();
+      unwrap();
         return;
       }
     }
