@@ -53,8 +53,8 @@ import Actions from "./views/Actions/Actions";
 import OrdersOverview from "./views/OrdersOverview/OrdersOverview";
 import PositionsOverview from "./views/PositionsOverview/PositionsOverview";
 import BuyGMX from "./views/BuyGMX/BuyGMX";
-import BuyTlp from "./views/BuyTlp/BuyTlp";
-import SellTlp from "./views/SellTlp/SellTlp";
+import BuyMlp from "./views/BuyMlp/BuyMlp";
+import SellMlp from "./views/SellMlp/SellMlp";
 import Buy from "./views/Buy/Buy";
 import Rewards from "./views/Rewards/Rewards";
 import NftWallet from "./views/NftWallet/NftWallet";
@@ -212,7 +212,7 @@ function AppHeaderLinks({ small, openSettings, clickCloseIcon }) {
         </NavLink>
       </div>
       <div className="App-header-link-container">
-        <NavLink activeClassName="active" to="/buy_tlp">
+        <NavLink activeClassName="active" to="/buy_mlp">
           Buy
         </NavLink>
       </div>
@@ -781,15 +781,15 @@ function FullApp() {
                 connectWallet={connectWallet}
               />
             </Route>
-            <Route exact path="/buy_tlp">
-              <BuyTlp
+            <Route exact path="/buy_mlp">
+              <BuyMlp
                 savedSlippageAmount={savedSlippageAmount}
                 setPendingTxns={setPendingTxns}
                 connectWallet={connectWallet}
               />
             </Route>
-            <Route exact path="/sell_tlp">
-              <SellTlp
+            <Route exact path="/sell_mlp">
+              <SellMlp
                 savedSlippageAmount={savedSlippageAmount}
                 setPendingTxns={setPendingTxns}
                 connectWallet={connectWallet}

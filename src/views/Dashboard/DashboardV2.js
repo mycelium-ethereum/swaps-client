@@ -46,7 +46,7 @@ import Footer from "../../Footer";
 import "./DashboardV2.css";
 
 import tcr40Icon from "../../img/ic_tcr_40.svg";
-import tlp40Icon from "../../img/ic_mlp_40.svg";
+import mlp40Icon from "../../img/ic_mlp_40.svg";
 import avalanche16Icon from "../../img/ic_avalanche_16.svg";
 import arbitrum16Icon from "../../img/ic_arbitrum_16.svg";
 import arbitrum24Icon from "../../img/ic_arbitrum_24.svg";
@@ -269,8 +269,8 @@ export default function DashboardV2() {
                   <br />
                   <br />
                   Get lower fees to{" "}
-                  <Link to="/buy_tlp" target="_blank" rel="noopener noreferrer">
-                    buy TLP
+                  <Link to="/buy_mlp" target="_blank" rel="noopener noreferrer">
+                    buy MLP
                   </Link>{" "}
                   with {tokenInfo.symbol},&nbsp; and to{" "}
                   <Link to="/trade" target="_blank" rel="noopener noreferrer">
@@ -294,7 +294,7 @@ export default function DashboardV2() {
               <br />
               <div>
                 <a
-                  href="https://tracer-1.gitbook.io/tracer-perpetual-swaps/6VOYVKGbCCw0I8cj7vdF/protocol-design/shared-liquidity-pool/tlp-token-pricing"
+                  href="https://tracer-1.gitbook.io/tracer-perpetual-swaps/6VOYVKGbCCw0I8cj7vdF/protocol-design/shared-liquidity-pool/mlp-token-pricing"
                   target="_blank"
                   rel="noopener noreferrer"
                 >
@@ -447,18 +447,18 @@ export default function DashboardV2() {
                     <TooltipComponent
                       handle={`$${formatAmount(tvl, USD_DECIMALS, 0, true)}`}
                       position="right-bottom"
-                      renderContent={() => `Assets Under Management: TCR staked (All chains) + TLP pool (${chainName})`}
+                      renderContent={() => `Assets Under Management: TCR staked (All chains) + MLP pool (${chainName})`}
                     />
                   </div>
                 </div>
                 */}
                 <div className="App-card-row">
-                  <div className="label">TLP Pool</div>
+                  <div className="label">MLP Pool</div>
                   <div>
                     <TooltipComponent
                       handle={`$${formatAmount(aum, USD_DECIMALS, 0, true)}`}
                       position="right-bottom"
-                      renderContent={() => `Total value of tokens in TLP pool (${chainName})`}
+                      renderContent={() => `Total value of tokens in MLP pool (${chainName})`}
                     />
                   </div>
                 </div>
@@ -502,7 +502,7 @@ export default function DashboardV2() {
               Tokens {chainId === AVALANCHE && <img src={avalanche24Icon} alt="avalanche24Icon" />}
               {chainId === ARBITRUM && <img src={arbitrum24Icon} alt="arbitrum24Icon" />}
             </div>
-            <div className="Page-description">Platform and TLP index tokens.</div>
+            <div className="Page-description">Platform and MLP index tokens.</div>
           </div>
           <div className="DashboardV2-token-cards">
             <div className="stats-wrapper stats-wrapper--gmx">
@@ -620,14 +620,14 @@ export default function DashboardV2() {
                   <div className="App-card-title">
                     <div className="App-card-title-mark">
                       <div className="App-card-title-mark-icon">
-                        <img src={tlp40Icon} alt="tlp40Icon" />
+                        <img src={mlp40Icon} alt="mlp40Icon" />
                       </div>
                       <div className="App-card-title-mark-info">
-                        <div className="App-card-title-mark-title">TLP</div>
-                        <div className="App-card-title-mark-subtitle">TLP</div>
+                        <div className="App-card-title-mark-title">MLP</div>
+                        <div className="App-card-title-mark-subtitle">MLP</div>
                       </div>
                       <div>
-                        <AssetDropdown assetSymbol="TLP" />
+                        <AssetDropdown assetSymbol="MLP" />
                       </div>
                     </div>
                   </div>
@@ -639,7 +639,7 @@ export default function DashboardV2() {
                     </div>
                     <div className="App-card-row">
                       <div className="label">Supply</div>
-                      <div>{formatAmount(glpSupply, GLP_DECIMALS, 0, true)} TLP</div>
+                      <div>{formatAmount(glpSupply, GLP_DECIMALS, 0, true)} MLP</div>
                     </div>
                     <div className="App-card-row">
                       <div className="label">Total Staked</div>
@@ -690,7 +690,7 @@ export default function DashboardV2() {
                         ))}
                       </Pie>
                       <text x={"50%"} y={"50%"} fill="white" textAnchor="middle" dominantBaseline="middle">
-                        TLP Pool
+                        MLP Pool
                       </text>
                       <Tooltip content={<CustomTooltip />} />
                     </PieChart>
@@ -700,7 +700,7 @@ export default function DashboardV2() {
             </div>
             <div className="token-table-wrapper App-card">
               <div className="App-card-title">
-                TLP Index Composition {chainId === AVALANCHE && <img src={avalanche16Icon} alt="avalanche16Icon" />}
+                MLP Index Composition {chainId === AVALANCHE && <img src={avalanche16Icon} alt="avalanche16Icon" />}
                 {chainId === ARBITRUM && <img src={arbitrum16Icon} alt="arbitrum16Icon" />}
               </div>
               <div className="App-card-divider"></div>

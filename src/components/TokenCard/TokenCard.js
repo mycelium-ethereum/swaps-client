@@ -2,7 +2,7 @@ import React, { useCallback } from "react";
 import { Link } from "react-router-dom";
 
 import gmxBigIcon from "../../img/ic_gmx_custom.svg";
-import glpBigIcon from "../../img/ic_glp_custom.svg";
+import mlpBigIcon from "../../img/ic_mlp_custom.svg";
 
 import { ARBITRUM, switchNetwork, useChainId } from "../../Helpers";
 
@@ -62,23 +62,23 @@ export default function TokenCard() {
       </div>
       <div className="Home-token-card-option">
         <div className="Home-token-card-option-icon">
-          <img src={glpBigIcon} alt="glpBigIcon" /> TLP
+          <img src={mlpBigIcon} alt="mlpBigIcon" /> MLP
         </div>
         <div className="Home-token-card-option-info">
           <div className="Home-token-card-option-title">
-            TLP is the liquidity provider token. Accrues 70% of the platform's generated fees.
+            MLP is the liquidity provider token. Accrues 70% of the platform's generated fees.
           </div>
           <div className="Home-token-card-option-apr">
             Arbitrum APR: <APRLabel chainId={ARBITRUM} label="glpAprTotal" key="ARBITRUM" />
           </div>
           <div className="Home-token-card-option-action">
             <div className="buy">
-              <Link to="/buy_tlp" className="default-btn" onClick={() => changeNetwork(ARBITRUM)}>
+              <Link to="/buy_mlp" className="default-btn" onClick={() => changeNetwork(ARBITRUM)}>
                 Buy on Arbitrum
               </Link>
             </div>
             <a
-              href="https://tracer-1.gitbook.io/tracer-perpetual-swaps/6VOYVKGbCCw0I8cj7vdF/protocol-design/shared-liquidity-pool/tlp-token-pricing"
+              href="https://tracer-1.gitbook.io/tracer-perpetual-swaps/6VOYVKGbCCw0I8cj7vdF/protocol-design/shared-liquidity-pool/mlp-token-pricing"
               target="_blank"
               rel="noreferrer"
               className="default-btn read-more"
