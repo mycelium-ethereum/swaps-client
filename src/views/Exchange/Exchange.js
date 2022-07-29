@@ -362,7 +362,8 @@ export const Exchange = forwardRef((props, ref) => {
     setPendingTxns,
     savedShouldShowPositionLines,
     setSavedShouldShowPositionLines,
-    setInfoTokens,
+    setTokenData,
+    tokenData,
     connectWallet,
     trackPageWithTraits,
     trackAction,
@@ -531,8 +532,10 @@ export const Exchange = forwardRef((props, ref) => {
   const { infoTokens } = useInfoTokens(library, chainId, active, tokenBalances, fundingRateInfo);
 
   useEffect(() => {
-    setInfoTokens(infoTokens);
-  }, [infoTokens, setInfoTokens]);
+    if (!tokenData) {
+      setTokenData(infoTokens);
+    }
+  }, [infoTokens, tokenData, setTokenData]);
 
   useEffect(() => {
     const fromToken = getTokenInfo(infoTokens, fromTokenAddress);
@@ -755,7 +758,8 @@ export const Exchange = forwardRef((props, ref) => {
   const [tableViewSelection] = useLocalStorage("List-section-v2");
   const [isLeverageSliderEnabled] = useLocalStorage(JSON.stringify([chainId, "Exchange-swap-leverage-slider-enabled"]));
   const [leverageOption] = useLocalStorage(JSON.stringify([chainId, "Exchange-swap-leverage-option"]));
-  const tableView = !!tableViewSelection && Object.keys(tableViewSelection).length > 0 ? tableViewSelection[chainId] : "Positions"; // localStorage item "List-section-v2" will return undefined if no selection has been made previously
+  const tableView =
+    !!tableViewSelection && Object.keys(tableViewSelection).length > 0 ? tableViewSelection[chainId] : "Positions"; // localStorage item "List-section-v2" will return undefined if no selection has been made previously
   const dataElements = [
     chartPeriod,
     tokenSelection,

@@ -380,7 +380,7 @@ function AppHeaderUser({
 
 function FullApp() {
   const [loggedInTracked, setLoggedInTracked] = useState(false);
-  const [infoTokens, setInfoTokens] = useState([]);
+  const [tokenData, setTokenData] = useState(null);
   const { trackLogin, trackPageWithTraits, trackAction } = useAnalytics();
 
   const exchangeRef = useRef();
@@ -426,20 +426,19 @@ function FullApp() {
           });
           // Format user ERC20 token balances from BigNumber to float
           let userBalances = {};
-          Object.keys(infoTokens).forEach((token) => {
-            if (infoTokens[token]) {
-              const fieldName = `balance${formatTitleCase(infoTokens[token].symbol, true)}`;
-              userBalances[fieldName] = parseFloat(formatAmount(infoTokens[token].balance, MAX_DECIMALS, 4, true));
+          Object.keys(tokenData).forEach((token) => {
+            if (tokenData[token]) {
+              const fieldName = `balance${formatTitleCase(tokenData[token].symbol, true)}`;
+              userBalances[fieldName] = parseFloat(formatAmount(tokenData[token].balance, MAX_DECIMALS, 4, true));
             }
           });
-          console.log(userBalances);
           trackLogin(chainId, gmxBalances, userBalances);
           setLoggedInTracked(true); // Only track once
         }
       };
       sendTrackLoginData();
     }
-  }, [account, chainId, tokenBalances, trackLogin, loggedInTracked, library, infoTokens]);
+  }, [account, chainId, tokenBalances, trackLogin, loggedInTracked, library, tokenData]);
 
   useEffect(() => {
     let referralCode = query.get(REFERRAL_CODE_QUERY_PARAMS);
@@ -851,7 +850,8 @@ function FullApp() {
                 setSavedShouldShowPositionLines={setSavedShouldShowPositionLines}
                 connectWallet={connectWallet}
                 trackPageWithTraits={trackPageWithTraits}
-                setInfoTokens={setInfoTokens}
+                tokenData={tokenData}
+                setTokenData={setTokenData}
                 trackAction={trackAction}
               />
             </Route>

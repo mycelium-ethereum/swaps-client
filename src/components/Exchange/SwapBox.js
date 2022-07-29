@@ -62,7 +62,8 @@ import {
   REFERRAL_CODE_KEY,
   isHashZero,
   NETWORK_NAME,
-  getSpread
+  getSpread,
+  formatTitleCase
 } from "../../Helpers";
 import { getConstant } from "../../Constants";
 import * as Api from "../../Api";
@@ -1613,9 +1614,9 @@ export default function SwapBox(props) {
   const determineLiquidationPrice = () => {
     switch(true) {
       case !!existingLiquidationPrice:
-        return formatAmount(existingLiquidationPrice, USD_DECIMALS, 2, true);
+        return formatAmount(existingLiquidationPrice, USD_DECIMALS, 2, false);
       case !!displayLiquidationPrice:
-        return formatAmount(displayLiquidationPrice, USD_DECIMALS, 2, true);
+        return formatAmount(displayLiquidationPrice, USD_DECIMALS, 2, false);
       default: 
         return 0;
     };
@@ -1625,7 +1626,7 @@ export default function SwapBox(props) {
     let borrowFee = 0;
     switch(true) {
       case isLong && toTokenInfo:
-        borrowFee = parseFloat(formatAmount(toTokenInfo.fundingRate, 4, 4));
+        borrowFee = parseFloat(formatAmount(toTokenInfo.fundingRate, 4, 4,));
         break;
       case isShort && shortCollateralToken: 
         borrowFee = parseFloat(formatAmount(shortCollateralToken.fundingRate, 4, 4));
@@ -1652,7 +1653,21 @@ export default function SwapBox(props) {
       const market = swapOption !== "Swap" ? `${toToken.symbol}/USD` : "No market - swap"; //No market for Swap
       const collateralAfterFees = feesUsd ? fromUsdMin.sub(feesUsd) : "No collateral - swap";
       const spread = getSpread(fromTokenInfo, toTokenInfo, isLong, nativeTokenAddress);
-      const entryPrice = isLong || isShort ? formatAmount(entryMarkPrice, USD_DECIMALS, 2, true) : "No entry price - swap"
+      const entryPrice = isLong || isShort ? formatAmount(entryMarkPrice, USD_DECIMALS, 2, false) : "No entry price - swap"
+
+      // Format user ERC20 token balances from BigNumber to float
+      let userBalances = {};
+      let tokenPrices = {};
+      console.log(infoTokens);
+      Object.keys(infoTokens).forEach((token) => {
+        if (infoTokens[token]) {
+          const balancefieldName = `balance${formatTitleCase(infoTokens[token].symbol, true)}`;
+          const pricefieldName = `price${formatTitleCase(infoTokens[token].symbol, true)}`;
+          userBalances[balancefieldName] = parseFloat(formatAmount(infoTokens[token].balance, infoTokens[token].decimals, infoTokens[token].decimals, false));
+          tokenPrices[pricefieldName] = parseFloat(formatAmount(infoTokens[token].maxPrice, USD_DECIMALS, 2, false));
+        }
+      });
+
       const traits = {
         position: swapOption,
         market: market,
@@ -1664,18 +1679,20 @@ export default function SwapBox(props) {
         balanceToken: fromToken.symbol,
         leverage: parseFloat(leverage),
         feesUsd: parseFloat(formatAmount(feesUsd, 4, 4, true)), 
-        [`fees${fromToken.symbol}`]: parseFloat(formatAmount(fees, fromToken.decimals, 4, true)),
+        [`fees${fromToken.symbol}`]: parseFloat(formatAmount(fees, fromToken.decimals, 4, false)),
         walletAddress: account,
         network: NETWORK_NAME[chainId],
         profitsIn: toToken.symbol,
-        liqPrice: parseFloat(determineLiquidationPrice().replaceAll(",", "")),
-        collateral: `$${parseFloat(formatAmount(collateralAfterFees, USD_DECIMALS, 2, true))}`,
+        liqPrice: parseFloat(determineLiquidationPrice()),
+        collateral: `$${parseFloat(formatAmount(collateralAfterFees, USD_DECIMALS, 2, false))}`,
         spreadIsHigh: spread.isHigh,
         spreadValue: parseFloat(formatAmount(spread.value, 4, 4, true)),
-        entryPrice: parseFloat(entryPrice.replaceAll(",", "")),
+        entryPrice: parseFloat(entryPrice),
         borrowFee: determineBorrowFee(),
         allowedSlippage: parseFloat(formatAmount(allowedSlippage, 2, 2)),
         upToOnePercentSlippage: isHigherSlippageAllowed,
+        ...userBalances,
+        ...tokenPrices
       };
       trackAction(actionName, traits);
     }
