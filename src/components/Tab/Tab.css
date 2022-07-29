@@ -20,7 +20,7 @@
   padding-right: 1rem;
   cursor: pointer;
   border-radius: 0px;
-  border: 1px solid #3F3F46;
+  border: 1px solid var(--cell-stroke);
 }
 
 .Tab.block .Tab-option:first-child {

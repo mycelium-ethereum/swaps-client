@@ -2,6 +2,7 @@
   width: 20rem;
   margin: 0;
   max-height: 100vh;
+  border: 1px solid var(--cell-highlight)!important;
 }
 
 .TokenSelector-token-name {
