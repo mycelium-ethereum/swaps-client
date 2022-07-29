@@ -146,6 +146,8 @@ export const GLPPOOLCOLORS = {
   CTM: "#F8B500",
 };
 
+export const HIGH_SPREAD_THRESHOLD = expandDecimals(1, USD_DECIMALS).div(100); // 1%;
+
 export const ICONLINKS = {
   421611: {
     TCR: {
@@ -2814,4 +2816,32 @@ export function hasUserConsented() {
 
 export function formatTitleCase(string) {
   return string[0].toUpperCase() + string.slice(1);
+}
+
+export const NETWORK_NAME = {
+  [ARBITRUM]: "Arbitrum",
+  [ARBITRUM_TESTNET]: "Testnet",
+};
+
+export function getSpread(fromTokenInfo, toTokenInfo, isLong, nativeTokenAddress) {
+  if (fromTokenInfo && fromTokenInfo.maxPrice && toTokenInfo && toTokenInfo.minPrice) {
+    const fromDiff = fromTokenInfo.maxPrice.sub(fromTokenInfo.minPrice);
+    const fromSpread = fromDiff.mul(PRECISION).div(fromTokenInfo.maxPrice);
+    const toDiff = toTokenInfo.maxPrice.sub(toTokenInfo.minPrice);
+    const toSpread = toDiff.mul(PRECISION).div(toTokenInfo.maxPrice);
+
+    let value = fromSpread.add(toSpread);
+
+    const fromTokenAddress = fromTokenInfo.isNative ? nativeTokenAddress : fromTokenInfo.address;
+    const toTokenAddress = toTokenInfo.isNative ? nativeTokenAddress : toTokenInfo.address;
+
+    if (isLong && fromTokenAddress === toTokenAddress) {
+      value = fromSpread;
+    }
+
+    return {
+      value,
+      isHigh: value.gt(HIGH_SPREAD_THRESHOLD),
+    };
+  }
 }

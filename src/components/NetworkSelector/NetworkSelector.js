@@ -177,13 +177,26 @@ export default function NetworkSelector(props) {
     <div className={cx("Selector", className, { disabled })}>
       {isModalVisible && (
         <div>
-          <Modal className="selector-modal" isVisible={isModalVisible} setIsVisible={toggleModal} label={modalLabel}>
+          <Modal
+            className="selector-modal"
+            isVisible={isModalVisible}
+            setIsVisible={() => toggleModal()}
+            label={modalLabel}
+          >
             <div className="Selector-options">{options.map(renderOption)}</div>
           </Modal>
         </div>
       )}
       {small ? (
-        <div className={cx("Selector-box", value.label)} onClick={() => toggleModal(true)}>
+        <div
+          className={cx("Selector-box", value.label)}
+          onClick={() => {
+            toggleModal(true);
+            trackAction("Button clicked", {
+              buttonName: "Network selector",
+            });
+          }}
+        >
           <img src={valueIcon.default} alt="valueIcon" />
           {showCaret && <img src={selectorDropdowns} alt="selectorDropdowns" />}
         </div>

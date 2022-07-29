@@ -8,7 +8,7 @@ import metamaskIcon from "../../img/ic_metamask_16.svg";
 import { addTokenToMetamask, ICONLINKS, platformTokens, useChainId } from "../../Helpers";
 import { useWeb3React } from "@web3-react/core";
 
-function AssetDropdown({ assetSymbol, assetInfo }) {
+function AssetDropdown({ assetSymbol, assetInfo, trackAction }) {
   const { active } = useWeb3React();
   const { chainId } = useChainId();
   let { coingecko, arbitrum, avalanche } = ICONLINKS[chainId][assetSymbol];
@@ -27,7 +27,17 @@ function AssetDropdown({ assetSymbol, assetInfo }) {
         <Menu.Item>
           <>
             {coingecko && (
-              <a href={coingecko} className="asset-item" target="_blank" rel="noopener noreferrer">
+              <a
+                href={coingecko}
+                className="asset-item"
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() =>
+                  trackAction("Button clicked", {
+                    buttonName: `Open ${assetInfo.symbol} in Coingecko`,
+                  })
+                }
+              >
                 <img src={coingeckoIcon} alt="Open in Coingecko" />
                 <p>Open in Coingecko</p>
               </a>
@@ -37,13 +47,33 @@ function AssetDropdown({ assetSymbol, assetInfo }) {
         <Menu.Item>
           <>
             {arbitrum && (
-              <a href={arbitrum} className="asset-item" target="_blank" rel="noopener noreferrer">
+              <a
+                href={arbitrum}
+                className="asset-item"
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() =>
+                  trackAction("Button clicked", {
+                    buttonName: `Open ${assetInfo.symbol} in Arbitrum Explorer`,
+                  })
+                }
+              >
                 <img src={arbitrumIcon} alt="Open in explorer" />
                 <p>Open in Explorer</p>
               </a>
             )}
             {avalanche && (
-              <a target="_blank" rel="noopener noreferrer" href={avalanche} className="asset-item">
+              <a
+                target="_blank"
+                rel="noopener noreferrer"
+                href={avalanche}
+                className="asset-item"
+                onClick={() =>
+                  trackAction("Button clicked", {
+                    buttonName: `Open ${assetInfo.symbol} in Avalanche Explorer`,
+                  })
+                }
+              >
                 <img src={avalancheIcon} alt="Open in explorer" />
                 <p>Open in Explorer</p>
               </a>
@@ -59,6 +89,9 @@ function AssetDropdown({ assetSymbol, assetInfo }) {
                     ? { ...assetInfo, image: assetInfo.imageUrl }
                     : platformTokens[chainId][assetSymbol];
                   addTokenToMetamask(token);
+                  trackAction("Button clicked", {
+                    buttonName: `Add ${assetInfo.symbol} to Metamask`,
+                  });
                 }}
                 className="asset-item"
               >

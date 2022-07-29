@@ -25,6 +25,7 @@ export default function TokenSelector(props) {
     showTokenImgInDropdown = false,
     showSymbolImage = false,
     showNewCaret = false,
+    trackAction,
   } = props;
 
   const onSelectToken = (token) => {
@@ -102,7 +103,16 @@ export default function TokenSelector(props) {
               balanceUsd = balance.mul(info.maxPrice).div(expandDecimals(1, token.decimals));
             }
             return (
-              <div className="TokenSelector-token-row" onClick={() => onSelectToken(token)} key={token.address}>
+              <div
+                className="TokenSelector-token-row"
+                onClick={() => {
+                  onSelectToken(token);
+                  trackAction("Button clicked", {
+                    buttonName: `${props.label} Token Selection modal option - ${token.symbol}`,
+                  });
+                }}
+                key={token.address}
+              >
                 <div className="Token-info">
                   {showTokenImgInDropdown && (
                     <img src={tokenPopupImage?.default} alt={token.name} className="token-logo" />
@@ -132,7 +142,15 @@ export default function TokenSelector(props) {
           })}
         </div>
       </Modal>
-      <div className="TokenSelector-box" onClick={() => setIsModalVisible(true)}>
+      <div
+        className="TokenSelector-box"
+        onClick={() => {
+          setIsModalVisible(true);
+          trackAction("Button clicked", {
+            buttonName: `Token selector box`,
+          });
+        }}
+      >
         {tokenInfo.symbol}
         {showSymbolImage && (
           <img src={tokenImage && tokenImage.default} alt={tokenInfo.symbol} className="TokenSelector-box-symbol" />

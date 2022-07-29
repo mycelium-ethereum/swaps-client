@@ -1,15 +1,10 @@
 import { useEffect, useState } from "react";
 import { AnalyticsBrowser } from "@segment/analytics-next";
 import { useLocation } from "react-router-dom";
-import { ARBITRUM, ARBITRUM_TESTNET, CURRENT_PROVIDER_LOCALSTORAGE_KEY, hasUserConsented } from "./Helpers";
+import { NETWORK_NAME, CURRENT_PROVIDER_LOCALSTORAGE_KEY, hasUserConsented } from "./Helpers";
 import { useWeb3React } from "@web3-react/core";
 
 const writeKey = process.env.REACT_APP_SEGMENT_WRITE_KEY;
-
-const networkName = {
-  [ARBITRUM]: "Arbitrum",
-  [ARBITRUM_TESTNET]: "Rinkeby",
-};
 
 const IGNORE_IP_CONTEXT = {
   context: {
@@ -24,14 +19,15 @@ export const useAnalytics = () => {
 
   const trackAction = (actionName, traits) => {
     const hasConsented = hasUserConsented();
-    const currentPathContext = { path: location.pathname };
+    const pageTitle = document.title;
+    const currentPageContext = { path: location.pathname, title: pageTitle };
     if (hasConsented) {
-      analytics?.track(actionName, { ...traits, ...currentPathContext });
+      analytics?.track(actionName, { ...traits, ...currentPageContext });
     } else {
       analytics?.track(actionName, {
         ...IGNORE_IP_CONTEXT,
         ...traits,
-        ...currentPathContext,
+        ...currentPageContext,
       });
     }
   };
@@ -55,7 +51,7 @@ export const useAnalytics = () => {
       const traits = {
         walletProvider: provider,
         walletAddress: account,
-        network: networkName[chainId] ?? `Unsupported (${chainId})`,
+        network: NETWORK_NAME[chainId] ?? `Unsupported (${chainId})`,
         balanceEth: balanceEth,
         ...gmxBalances,
       };

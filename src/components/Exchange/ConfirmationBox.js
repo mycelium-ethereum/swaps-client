@@ -18,6 +18,7 @@ import {
   SLIPPAGE_BPS_KEY,
   formatDateTime,
   calculatePositionDelta,
+  getSpread
 } from "../../Helpers";
 import { getConstant } from "../../Constants";
 import { getContract } from "../../Addresses";
@@ -29,31 +30,6 @@ import Checkbox from "../Checkbox/Checkbox";
 import ExchangeInfoRow from "./ExchangeInfoRow";
 
 import { getNativeToken, getToken, getWrappedToken } from "../../data/Tokens";
-
-const HIGH_SPREAD_THRESHOLD = expandDecimals(1, USD_DECIMALS).div(100); // 1%;
-
-function getSpread(fromTokenInfo, toTokenInfo, isLong, nativeTokenAddress) {
-  if (fromTokenInfo && fromTokenInfo.maxPrice && toTokenInfo && toTokenInfo.minPrice) {
-    const fromDiff = fromTokenInfo.maxPrice.sub(fromTokenInfo.minPrice);
-    const fromSpread = fromDiff.mul(PRECISION).div(fromTokenInfo.maxPrice);
-    const toDiff = toTokenInfo.maxPrice.sub(toTokenInfo.minPrice);
-    const toSpread = toDiff.mul(PRECISION).div(toTokenInfo.maxPrice);
-
-    let value = fromSpread.add(toSpread);
-
-    const fromTokenAddress = fromTokenInfo.isNative ? nativeTokenAddress : fromTokenInfo.address;
-    const toTokenAddress = toTokenInfo.isNative ? nativeTokenAddress : toTokenInfo.address;
-
-    if (isLong && fromTokenAddress === toTokenAddress) {
-      value = fromSpread;
-    }
-
-    return {
-      value,
-      isHigh: value.gt(HIGH_SPREAD_THRESHOLD),
-    };
-  }
-}
 
 export default function ConfirmationBox(props) {
   const {
@@ -92,6 +68,8 @@ export default function ConfirmationBox(props) {
     feeBps,
     chainId,
     orders,
+    trackAction,
+    trackTrade,
   } = props;
 
   const [savedSlippageAmount] = useLocalStorageSerializeKey([chainId, SLIPPAGE_BPS_KEY], DEFAULT_SLIPPAGE_AMOUNT);
@@ -651,7 +629,13 @@ export default function ConfirmationBox(props) {
         {!isSwap && renderMarginSection()}
         <div className="Confirmation-box-row">
           <button
-            onClick={onConfirmationClick}
+            onClick={() => {
+              onConfirmationClick();
+              trackAction("Button clicked", {
+                buttonName: `Confirmation modal - ${getPrimaryText()} Trade`,
+              });
+              trackTrade(false, getPrimaryText());
+            }}
             className="App-cta Confirmation-box-button"
             disabled={!isPrimaryEnabled()}
           >

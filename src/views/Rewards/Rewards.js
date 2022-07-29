@@ -22,7 +22,7 @@ const REWARD_WEEKS = [
 ];
 
 export default function Rewards(props) {
-  const { connectWallet, trackPageWithTraits } = props;
+  const { connectWallet, trackPageWithTraits, trackAction } = props;
 
   const { ensName } = useENS();
   const { active, account } = useWeb3React();
@@ -120,9 +120,28 @@ export default function Rewards(props) {
             </div>
           </Styles.RewardsDataBox>
         </Styles.RewardsDataBoxes>
-        {active && <Styles.RewardsButton className="App-cta large">Claim TCR</Styles.RewardsButton>}
+        {active && (
+          <Styles.RewardsButton
+            className="App-cta large"
+            onClick={() =>
+              trackAction("Button clicked", {
+                buttonName: "Claim TCR",
+              })
+            }
+          >
+            Claim TCR
+          </Styles.RewardsButton>
+        )}
         {!active && (
-          <Styles.RewardsButton className="App-cta large" onClick={() => connectWallet()}>
+          <Styles.RewardsButton
+            className="App-cta large"
+            onClick={() => {
+              connectWallet();
+              trackAction("Button clicked", {
+                buttonName: "Connect Wallet",
+              });
+            }}
+          >
             Connect Wallet
           </Styles.RewardsButton>
         )}

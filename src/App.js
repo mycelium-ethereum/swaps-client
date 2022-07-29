@@ -869,6 +869,7 @@ function FullApp() {
                 setPendingTxns={setPendingTxns}
                 connectWallet={connectWallet}
                 trackPageWithTraits={trackPageWithTraits}
+                trackAction={trackAction}
               />
             </Route>
             <Route exact path="/sell_tlp">
@@ -886,6 +887,7 @@ function FullApp() {
                 setPendingTxns={setPendingTxns}
                 connectWallet={connectWallet}
                 trackPageWithTraits={trackPageWithTraits}
+                trackAction={trackAction}
               />
             </Route>
             <Route exact path="/about">
@@ -949,7 +951,7 @@ function FullApp() {
           className="Wallet-btn MetaMask-btn"
           onClick={() => {
             activateMetaMask();
-            trackAction("Button clicked", { buttonName: "MetaMask" });
+            trackAction("Button clicked", { buttonName: "Connect with MetaMask" });
           }}
         >
           <img src={metamaskImg} alt="MetaMask" />
@@ -959,7 +961,7 @@ function FullApp() {
           className="Wallet-btn CoinbaseWallet-btn"
           onClick={() => {
             activateCoinBase();
-            trackAction("Button clicked", { buttonName: "Coinbase Wallet" });
+            trackAction("Button clicked", { buttonName: "Connect with Coinbase Wallet" });
           }}
         >
           <img src={coinbaseImg} alt="Coinbase Wallet" />
@@ -969,7 +971,7 @@ function FullApp() {
           className="Wallet-btn WalletConnect-btn"
           onClick={() => {
             activateWalletConnect();
-            trackAction("Button clicked", { buttonName: "WalletConnect" });
+            trackAction("Button clicked", { buttonName: "Connect with WalletConnect" });
           }}
         >
           <img src={walletConnectImg} alt="WalletConnect" />

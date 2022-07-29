@@ -15,6 +15,8 @@ export default function BuyInputSection(props) {
     staticInput,
     balance,
     tokenBalance,
+    trackAction,
+    tabLabel,
   } = props;
 
   return (
@@ -44,7 +46,15 @@ export default function BuyInputSection(props) {
           )}
           {staticInput && <div className="InputSection-static-input">{inputValue}</div>}
           {showMaxButton && (
-            <div className="Exchange-swap-max" onClick={onClickMax}>
+            <div
+              className="Exchange-swap-max"
+              onClick={() => {
+                onClickMax();
+                trackAction("Button clicked", {
+                  buttonName: `${tabLabel} - Max amount`,
+                });
+              }}
+            >
               MAX
             </div>
           )}

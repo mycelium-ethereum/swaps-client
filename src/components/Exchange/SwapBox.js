@@ -61,6 +61,8 @@ import {
   adjustForDecimals,
   REFERRAL_CODE_KEY,
   isHashZero,
+  NETWORK_NAME,
+  getSpread
 } from "../../Helpers";
 import { getConstant } from "../../Constants";
 import * as Api from "../../Api";
@@ -1215,7 +1217,9 @@ export default function SwapBox(props) {
       failMsg: "Swap failed.",
       setPendingTxns,
     })
-      .then(async (res) => {})
+      .then(async (res) => {
+        trackTrade(true, "Swap");
+      })
       .finally(() => {
         setIsSubmitting(false);
       });
@@ -1233,7 +1237,9 @@ export default function SwapBox(props) {
       } for ${formatAmount(toAmount, toToken.decimals, 4, true)} ${toToken.symbol}!`,
       setPendingTxns,
     })
-      .then(async (res) => {})
+      .then(async (res) => {
+        trackTrade(true, "Swap");
+      })
       .finally(() => {
         setIsSubmitting(false);
       });
@@ -1553,6 +1559,10 @@ export default function SwapBox(props) {
         setShortCollateralAddress(stableToken.address);
       }
     }
+
+    trackAction("Swap option changed", {
+      option: opt,
+    });
   };
 
   const onConfirmationClick = () => {
@@ -1598,27 +1608,78 @@ export default function SwapBox(props) {
     });
   }
 
-  const trackTradeAction = () => {
-    // Action: Create / Deposit Margin / Withdraw Margin / Close
-    // Position: Long, Short, Swap
-    // Market: BTC/USD, ETH/USD
-    // Amount: Numeric
-    // Leverage: Numeric
-    // Balance Long Point-In-Time: Numeric
-    // Balance Short Point-In-Time: Numeric
-    // Tracer Fees: Fee charged to user by tracer
-    // walletAddress
-    // Network: Rinkeby / Arbitrum
-    // Profits in: Numeric
-    // Liq. Price: Numeric
-    // Fees: Numeric
-    // Collateral: Numeric
-    // Spread: Numeric
-    // Entry Price: Numeric
-    // Borrow Fee: Numeric
-    // Allowed Slippage:
-    // Allow up to 1% slippage: True/False
-    // trackAction()
+  const determineLiquidationPrice = () => {
+    switch(true) {
+      case !!existingLiquidationPrice:
+        return formatAmount(existingLiquidationPrice, USD_DECIMALS, 2, true);
+      case !!displayLiquidationPrice:
+        return formatAmount(displayLiquidationPrice, USD_DECIMALS, 2, true);
+      default: 
+        return 0;
+    };
+  }
+
+  const determineBorrowFee = () => {
+    let borrowFee = 0;
+    switch(true) {
+      case isLong && toTokenInfo:
+        borrowFee = parseFloat(formatAmount(toTokenInfo.fundingRate, 4, 4));
+        break;
+      case isShort && shortCollateralToken: 
+        borrowFee = parseFloat(formatAmount(shortCollateralToken.fundingRate, 4, 4));
+        break;
+      default:
+        borrowFee = 0;
+        break;
+    };
+    if((isLong && toTokenInfo && toTokenInfo.fundingRate) ||
+      (isShort && shortCollateralToken && shortCollateralToken.fundingRate)) {
+        return `${borrowFee}% / 1h`
+      }
+      else {
+        return borrowFee
+      }
+  }
+
+  const trackTrade = (isPostTrade, tradeType) => {
+    const actionName = isPostTrade ? `Post-confirmation ${tradeType} Trade` : `Pre-confirmation ${tradeType} Trade`;
+    try {
+      const fromToken = getToken(chainId, fromTokenAddress);
+      const toToken = getToken(chainId, toTokenAddress);
+      const leverage = (isLong || isShort) && hasLeverageOption && parseFloat(leverageOption).toFixed(2);
+      const market = swapOption !== "Swap" ? `${toToken.symbol}/USD` : "No market - swap"; //No market for Swap
+      const collateralAfterFees = feesUsd ? fromUsdMin.sub(feesUsd) : "No collateral - swap";
+      const spread = getSpread(fromTokenInfo, toTokenInfo, isLong, nativeTokenAddress);
+      const entryPrice = isLong || isShort ? formatAmount(entryMarkPrice, USD_DECIMALS, 2, true) : "No entry price - swap"
+      const traits = {
+        position: swapOption,
+        market: market,
+        tokenToPay: fromToken.symbol,
+        tokenToReceive: toToken.symbol,
+        amountToPay: parseFloat(fromValue),
+        amountToReceive: parseFloat(toValue),
+        balance: parseFloat(formatAmount(fromBalance, fromToken.decimals, 4, true)),
+        balanceToken: fromToken.symbol,
+        leverage: parseFloat(leverage),
+        feesUsd: parseFloat(formatAmount(feesUsd, 4, 4, true)), 
+        [`fees${fromToken.symbol}`]: parseFloat(formatAmount(fees, fromToken.decimals, 4, true)),
+        walletAddress: account,
+        network: NETWORK_NAME[chainId],
+        profitsIn: toToken.symbol,
+        liqPrice: parseFloat(determineLiquidationPrice().replaceAll(",", "")),
+        collateral: `$${parseFloat(formatAmount(collateralAfterFees, USD_DECIMALS, 2, true))}`,
+        spreadIsHigh: spread.isHigh,
+        spreadValue: parseFloat(formatAmount(spread.value, 4, 4, true)),
+        entryPrice: parseFloat(entryPrice.replaceAll(",", "")),
+        borrowFee: determineBorrowFee(),
+        allowedSlippage: parseFloat(formatAmount(allowedSlippage, 2, 2)),
+        upToOnePercentSlippage: isHigherSlippageAllowed,
+      };
+      trackAction(actionName, traits);
+    }
+    catch (err) {
+      console.error(`Unable to track ${actionName} event`, err);
+    }
   };
 
   const onClickPrimary = () => {
@@ -1835,6 +1896,7 @@ export default function SwapBox(props) {
                     infoTokens={infoTokens}
                     showMintingCap={false}
                     showTokenImgInDropdown={true}
+                    trackAction={trackAction}
                   />
                 </div>
               </div>
@@ -1881,6 +1943,7 @@ export default function SwapBox(props) {
                     tokens={toTokens}
                     infoTokens={infoTokens}
                     showTokenImgInDropdown={true}
+                    trackAction={trackAction}
                   />
                 </div>
               </div>
@@ -1931,6 +1994,7 @@ export default function SwapBox(props) {
                   onSelectToken={onSelectToToken}
                   tokens={toTokens}
                   infoTokens={infoTokens}
+                  trackAction={trackAction}
                 />
               </div>
             </div>
@@ -2063,6 +2127,7 @@ export default function SwapBox(props) {
                     onSelectToken={onSelectShortCollateralAddress}
                     tokens={stableTokens}
                     showTokenImgInDropdown={true}
+                    trackAction={trackAction}
                   />
                 </div>
               </div>
@@ -2149,7 +2214,16 @@ export default function SwapBox(props) {
           </div>
         )}
         <div className="Exchange-swap-button-container">
-          <button className="App-cta Exchange-swap-button" onClick={onClickPrimary} disabled={!isPrimaryEnabled()}>
+          <button
+            className="App-cta Exchange-swap-button"
+            onClick={() => {
+              onClickPrimary();
+              trackAction("Button clicked", {
+                buttonName: getPrimaryText(),
+              });
+            }}
+            disabled={!isPrimaryEnabled()}
+          >
             {getPrimaryText()}
           </button>
         </div>
@@ -2363,6 +2437,8 @@ export default function SwapBox(props) {
           collateralTokenAddress={collateralTokenAddress}
           infoTokens={infoTokens}
           chainId={chainId}
+          trackAction={trackAction}
+          trackTrade={trackTrade}
         />
       )}
     </div>

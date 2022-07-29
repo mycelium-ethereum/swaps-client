@@ -89,7 +89,15 @@ function getStakingData(stakingInfo) {
 }
 
 export default function GlpSwap(props) {
-  const { savedSlippageAmount, isBuying, setPendingTxns, connectWallet, setIsBuying, trackPageWithTraits } = props;
+  const {
+    savedSlippageAmount,
+    isBuying,
+    setPendingTxns,
+    connectWallet,
+    setIsBuying,
+    trackPageWithTraits,
+    trackAction,
+  } = props;
   const history = useHistory();
   const swapLabel = isBuying ? "BuyGlp" : "SellGlp";
   const tabLabel = isBuying ? "Buy TLP" : "Sell TLP";
@@ -802,6 +810,8 @@ export default function GlpSwap(props) {
               onClickMax={fillMaxAmount}
               selectedToken={swapToken}
               balance={payBalance}
+              trackAction={trackAction}
+              tabLabel={tabLabel}
             >
               <TokenSelector
                 label="Pay"
@@ -813,6 +823,7 @@ export default function GlpSwap(props) {
                 className="GlpSwap-from-token"
                 showSymbolImage={true}
                 showTokenImgInDropdown={true}
+                trackAction={trackAction}
               />
             </BuyInputSection>
           )}
@@ -829,6 +840,8 @@ export default function GlpSwap(props) {
               onClickMax={fillMaxAmount}
               balance={payBalance}
               defaultTokenName={"TLP"}
+              trackAction={trackAction}
+              tabLabel={tabLabel}
             >
               <div className="selected-token">
                 TLP <img src={tlp24Icon} alt="tlp24Icon" />
@@ -844,6 +857,9 @@ export default function GlpSwap(props) {
                 onClick={() => {
                   setIsBuying(!isBuying);
                   switchSwapOption(isBuying ? "redeem" : "");
+                  trackAction("Button clicked", {
+                    buttonName: `Swap action - ${isBuying ? "Sell TLP" : "Buy TLP"}`,
+                  });
                 }}
               />
             </div>
@@ -858,6 +874,8 @@ export default function GlpSwap(props) {
               onInputValueChange={onGlpValueChange}
               balance={receiveBalance}
               defaultTokenName={"TLP"}
+              trackAction={trackAction}
+              tabLabel={tabLabel}
             >
               <div className="selected-token">
                 TLP <img src={tlp24Icon} alt="tlp24Icon" />
@@ -874,6 +892,8 @@ export default function GlpSwap(props) {
               onInputValueChange={onSwapValueChange}
               balance={receiveBalance}
               selectedToken={swapToken}
+              trackAction={trackAction}
+              tabLabel={tabLabel}
             >
               <TokenSelector
                 label="Receive"
@@ -885,6 +905,7 @@ export default function GlpSwap(props) {
                 className="GlpSwap-from-token"
                 showSymbolImage={true}
                 showTokenImgInDropdown={true}
+                trackAction={trackAction}
               />
             </BuyInputSection>
           )}
@@ -924,7 +945,16 @@ export default function GlpSwap(props) {
             </div>
           </div>
           <div className="GlpSwap-cta Exchange-swap-button-container">
-            <button className="App-cta Exchange-swap-button" onClick={onClickPrimary} disabled={!isPrimaryEnabled()}>
+            <button
+              className="App-cta Exchange-swap-button"
+              onClick={() => {
+                onClickPrimary();
+                trackAction("Button clicked", {
+                  buttonName: getPrimaryText(),
+                });
+              }}
+              disabled={!isPrimaryEnabled()}
+            >
               {getPrimaryText()}
             </button>
           </div>
@@ -1097,7 +1127,7 @@ export default function GlpSwap(props) {
                         <div className="App-card-info-subtitle">{token.symbol}</div>
                       </div>
                       <div>
-                        <AssetDropdown assetSymbol={token.symbol} assetInfo={token} />
+                        <AssetDropdown assetSymbol={token.symbol} assetInfo={token} trackAction={trackAction} />
                       </div>
                     </div>
                   </td>
@@ -1142,7 +1172,12 @@ export default function GlpSwap(props) {
                   <td>
                     <button
                       className={cx("App-button-option action-btn", isBuying ? "buying" : "selling")}
-                      onClick={() => selectToken(token)}
+                      onClick={() => {
+                        selectToken(token);
+                        trackAction("Button clicked", {
+                          buttonName: isBuying ? "Buy with " + token.symbol : "Sell for " + token.symbol,
+                        });
+                      }}
                     >
                       {isBuying ? "Buy with " + token.symbol : "Sell for " + token.symbol}
                     </button>
