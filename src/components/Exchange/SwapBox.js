@@ -1658,13 +1658,16 @@ export default function SwapBox(props) {
       // Format user ERC20 token balances from BigNumber to float
       let userBalances = {};
       let tokenPrices = {};
-      console.log(infoTokens);
+      let poolBalances = {};
       Object.keys(infoTokens).forEach((token) => {
         if (infoTokens[token]) {
-          const balancefieldName = `balance${formatTitleCase(infoTokens[token].symbol, true)}`;
-          const pricefieldName = `price${formatTitleCase(infoTokens[token].symbol, true)}`;
-          userBalances[balancefieldName] = parseFloat(formatAmount(infoTokens[token].balance, infoTokens[token].decimals, infoTokens[token].decimals, false));
-          tokenPrices[pricefieldName] = parseFloat(formatAmount(infoTokens[token].maxPrice, USD_DECIMALS, 2, false));
+          const tokenName = formatTitleCase(infoTokens[token].symbol, true);
+          const balanceFieldName = `balance${tokenName}`;
+          const priceFieldName = `price${tokenName}`;
+          const poolBalanceFieldName = `poolBalance${tokenName}`;
+          userBalances[balanceFieldName] = parseFloat(formatAmount(infoTokens[token].balance, infoTokens[token].decimals, infoTokens[token].decimals, false));
+          tokenPrices[priceFieldName] = parseFloat(formatAmount(infoTokens[token].maxPrice, USD_DECIMALS, 2, false));
+          poolBalances[poolBalanceFieldName] = parseFloat(formatAmount(infoTokens[token].poolAmount, infoTokens[token].decimals, 2, false));
         }
       });
 
@@ -1692,7 +1695,8 @@ export default function SwapBox(props) {
         allowedSlippage: parseFloat(formatAmount(allowedSlippage, 2, 2)),
         upToOnePercentSlippage: isHigherSlippageAllowed,
         ...userBalances,
-        ...tokenPrices
+        ...tokenPrices,
+        ...poolBalances,
       };
       trackAction(actionName, traits);
     }
