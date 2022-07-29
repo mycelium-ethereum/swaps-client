@@ -134,7 +134,7 @@ export default function NetworkSelector(props) {
       ...provided,
       background: "#16182E",
       boxShadow: "0px 5px 12px #00000052",
-      border: "1px solid #FFFFFF29",
+      border: "1px solid var(--cell-stroke)",
       borderRadius: 4,
       fontSize: "14px",
     }),

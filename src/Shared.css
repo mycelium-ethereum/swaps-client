@@ -55,7 +55,6 @@ body,
   --background-secondary: rgba(0, 9, 0, 0.2);
   --background-navigation: linear-gradient(83.12deg, rgba(9, 130, 0, 0.5) -208.54%, rgba(9, 130, 0, 0) 159.09%);
 
-  --border-primary: #003000;
   --border-navigation: #098200;
 
   --action-active: #098200;
@@ -65,6 +64,11 @@ body,
   --action-shadow: 0 0 4px 6px rgba(9, 130, 0, 0.1);
 
   --cell-gradient: linear-gradient(180deg, rgba(5, 67, 1, 0.2) 0%, rgba(5, 67, 1, 0) 65.01%);
+  --cell-hover: #03100E;
+  --cell-stroke: #003000;
+
+  --tooltip-fill: #03100E;
+  --tooltip-shadow: 0px 0px 7px rgba(39, 62, 89, 0.53);
 
   --text-primary: #fff;
   --text-secondary: #8B968C;

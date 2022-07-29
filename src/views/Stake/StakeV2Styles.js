@@ -9,8 +9,8 @@ export const RewardsBanner = styled.div`
   padding: 1rem;
   margin: 1rem 0 1rem -1rem;
   color: var(--text-primary);
-  border-top: 1px var(--border-primary) solid;
-  border-bottom: 1px var(--border-primary) solid;
+  border-top: 1px var(--cell-stroke) solid;
+  border-bottom: 1px var(--cell-stroke) solid;
 `
 
 export const RewardsBannerRow = styled.div`

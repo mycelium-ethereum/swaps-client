@@ -118,7 +118,7 @@
 }
 
 .GlpSwap-token-list {
-  border: 1px solid var(--border-primary);
+  border: 1px solid var(--cell-stroke);
   border-radius: 4px;
   padding: 1rem;
   padding-top: 0;

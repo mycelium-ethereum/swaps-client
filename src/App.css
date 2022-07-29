@@ -156,7 +156,7 @@
 .App-box-highlight,
 .App-box-solid {
   position: relative;
-  border: 1px solid var(--border-primary);
+  border: 1px solid var(--cell-stroke);
   border-radius: 4px;
   background: var(--background-secondary);
 }
@@ -322,8 +322,8 @@
   box-shadow: inset 0px 0px 10px 5px rgba(27, 30, 46, 0.2);
   background: var(--background-secondary);
   height: 3.3rem;
-  width: 17rem;
-  border: 1px solid var(--border-primary);
+  width: 24.5rem;
+  border: 1px solid var(--cell-stroke);
   border-radius: 3px;
   position: relative;
   color: white;
@@ -365,6 +365,15 @@
   margin-right: 1.2rem;
 }
 
+.Connect-wallet-modal .Modal-content {
+  border: 1px solid #8B968C;
+  border-radius: 8px;
+}
+
+.Connect-wallet-modal .Modal-content .divider {
+  display: none;
+}
+
 button.App-connect-wallet {
   cursor: pointer;
   display: inline-block;
@@ -404,7 +413,7 @@ button.App-connect-wallet:hover {
 
 .App-card-divider {
   height: 1px;
-  background: #23263b;
+  background: var(--cell-stroke);
   margin: 0.7rem -1rem;
 }
 
@@ -532,7 +541,7 @@ button.App-connect-wallet:hover {
 
 .App-card {
   padding: 1rem 1rem 1.2rem;
-  border: 1px solid var(--border-primary);
+  border: 1px solid var(--cell-stroke);
   border-radius: 4px;
 }
 
@@ -1286,6 +1295,9 @@ button.App-button {
 @media (max-width: 700px) {
   .App-card-long-content {
     grid-template-columns: 1fr 1fr;
+  }
+  .Wallet-btn {
+    width: 17rem;
   }
 }
 

@@ -486,7 +486,7 @@ table.Exchange-list.Orders td {
 }
 
 table.Exchange-list tr {
-  border-bottom: 1px solid #23263b;
+  border-bottom: 1px solid var(--cell-stroke);
 }
 
 table.Exchange-list tr:last-child {
@@ -494,7 +494,7 @@ table.Exchange-list tr:last-child {
 }
 
 table.Exchange-list tr:hover {
-  background: linear-gradient(90deg, rgba(30, 34, 61, 1) 0%, rgba(38, 43, 71, 1) 100%);
+  background: var(--cell-hover);
   box-shadow: inset 0px 0px 30px 5px rgba(255, 255, 255, 0.01);
 }
 
@@ -532,7 +532,7 @@ table.Exchange-list th {
 
 
 .Exchange-info-row.top-line {
-  border-top: 1px solid #23263b;
+  border-top: 1px solid var(--cell-stroke);
   margin-top: 1rem;
   padding-top: 1rem;
 }
@@ -650,7 +650,7 @@ table.Exchange-list th {
   padding: 1rem;
   margin-bottom: 0.7rem;
   border-radius: 3px;
-  border: 1px solid var(--border-primary);
+  border: 1px solid var(--cell-stroke);
   background: var(--background-secondary);
   box-shadow: inset 0px 0px 30px 5px rgba(255, 255, 255, 0.01);
 }
@@ -865,8 +865,8 @@ table.Exchange-list-small td {
   font-weight: bold;
 
   padding: 1rem 0;
-  border-top: 1px solid #ffffff29;
-  border-bottom: 1px solid #ffffff29;
+  border-top: 1px solid var(--cell-stroke);
+  border-bottom: 1px solid var(--cell-stroke);
 }
 .Confirmation-box-main-icon {
   margin: 5px 0;
@@ -880,7 +880,7 @@ table.Exchange-list-small td {
 
 .Confirmation-box .Modal-content {
   width: 26.5rem;
-  border: 1px solid var(--border-primary);
+  border: 1px solid var(--cell-stroke);
 }
 
 .Confirmation-box-row {
