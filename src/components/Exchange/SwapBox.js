@@ -345,7 +345,7 @@ export default function SwapBox(props) {
   const fromTokenInfo = getTokenInfo(infoTokens, fromTokenAddress);
   const toTokenInfo = getTokenInfo(infoTokens, toTokenAddress);
   const toTokenAvailableUsd = toTokenInfo.availableUsd;
-  
+
   const renderAvailableLongLiquidity = () => {
     if (!isLong) {
       return null;
@@ -1313,7 +1313,7 @@ export default function SwapBox(props) {
         setPendingTxns,
       })
         .then(() => {
-          trackTrade(true, "Swap");
+          trackTrade(3, "Swap");
           setIsConfirming(false);
         })
         .finally(() => {
@@ -1349,7 +1349,7 @@ export default function SwapBox(props) {
       setPendingTxns,
     })
       .then(async () => {
-          trackTrade(true, "Swap");
+          trackTrade(3, "Swap");
           setIsConfirming(false);
       })
       .finally(() => {
@@ -1400,7 +1400,7 @@ export default function SwapBox(props) {
       }
     )
       .then(() => {
-          trackTrade(true, "Limit");
+          trackTrade(3, "Limit");
           setIsConfirming(false);
       })
       .finally(() => {
@@ -1521,7 +1521,7 @@ export default function SwapBox(props) {
       successMsg,
     })
       .then(async () => {
-        trackTrade(true, `${isLong ? "Long" : "Short"}`);
+        trackTrade(3, `${isLong ? "Long" : "Short"}`);
         setIsConfirming(false);
 
         const key = getPositionKey(account, path[path.length - 1], indexTokenAddress, isLong);
@@ -1617,7 +1617,7 @@ export default function SwapBox(props) {
         return formatAmount(existingLiquidationPrice, USD_DECIMALS, 2, false);
       case !!displayLiquidationPrice:
         return formatAmount(displayLiquidationPrice, USD_DECIMALS, 2, false);
-      default: 
+      default:
         return 0;
     };
   }
@@ -1628,7 +1628,7 @@ export default function SwapBox(props) {
       case isLong && toTokenInfo:
         borrowFee = parseFloat(formatAmount(toTokenInfo.fundingRate, 4, 4,));
         break;
-      case isShort && shortCollateralToken: 
+      case isShort && shortCollateralToken:
         borrowFee = parseFloat(formatAmount(shortCollateralToken.fundingRate, 4, 4));
         break;
       default:
@@ -1644,8 +1644,25 @@ export default function SwapBox(props) {
       }
   }
 
-  const trackTrade = (isPostTrade, tradeType) => {
-    const actionName = isPostTrade ? `Post-confirmation ${tradeType} Trade` : `Pre-confirmation ${tradeType} Trade`;
+  const trackTrade = (stage, tradeType) => {
+    let stageName = "";
+    switch(stage) {
+      case 1:
+        stageName = "Approve";
+        break;
+      case 2:
+        stageName = "Pre-confirmation";
+        break;
+      case 3:
+        stageName = "Post-confirmation";
+        break;
+      default:
+        stageName = "Approve";
+        break;
+    }
+
+    const actionName = `${stageName} ${tradeType} Trade`;
+
     try {
       const fromToken = getToken(chainId, fromTokenAddress);
       const toToken = getToken(chainId, toTokenAddress);
@@ -1681,7 +1698,7 @@ export default function SwapBox(props) {
         balance: parseFloat(formatAmount(fromBalance, fromToken.decimals, 4, false)),
         balanceToken: fromToken.symbol,
         leverage: parseFloat(leverage),
-        feesUsd: parseFloat(formatAmount(feesUsd, 4, 4, false)), 
+        feesUsd: parseFloat(formatAmount(feesUsd, 4, 4, false)),
         [`fees${fromToken.symbol}`]: parseFloat(formatAmount(fees, fromToken.decimals, 4, false)),
         walletAddress: account,
         network: NETWORK_NAME[chainId],
@@ -2240,10 +2257,14 @@ export default function SwapBox(props) {
           <button
             className="App-cta Exchange-swap-button"
             onClick={() => {
+              const buttonText = getPrimaryText();
               onClickPrimary();
               trackAction("Button clicked", {
-                buttonName: getPrimaryText(),
+                buttonName: buttonText,
               });
+              if(buttonText.includes("Approve")) {
+                trackTrade(1, fromToken?.symbol)
+              }
             }}
             disabled={!isPrimaryEnabled()}
           >

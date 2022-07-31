@@ -634,7 +634,7 @@ export default function ConfirmationBox(props) {
               trackAction("Button clicked", {
                 buttonName: `Confirmation modal - ${getPrimaryText()} Trade`,
               });
-              trackTrade(false, getPrimaryText());
+              trackTrade(2, getPrimaryText());
             }}
             className="App-cta Confirmation-box-button"
             disabled={!isPrimaryEnabled()}
