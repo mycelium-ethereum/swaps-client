@@ -1791,6 +1791,7 @@ export default function SwapBox(props) {
         return borrowFee;
       }
     };
+    console.log(determineLiquidationPrice());
 
     const trackTrade = (stage, tradeType) => {
       let stageName = "";
@@ -1820,7 +1821,9 @@ export default function SwapBox(props) {
         const spread = getSpread(fromTokenInfo, toTokenInfo, isLong, nativeTokenAddress);
         const entryPrice =
           isLong || isShort ? formatAmount(entryMarkPrice, USD_DECIMALS, 2, false) : "No entry price - swap";
-
+        let liqPrice = parseFloat(determineLiquidationPrice());
+        liqPrice = liqPrice < 0 ? 0 : liqPrice;
+        
         // Format user ERC20 token balances from BigNumber to float
         const [userBalances, tokenPrices, poolBalances] = getUserTokenBalances(infoTokens);
 
@@ -1839,7 +1842,7 @@ export default function SwapBox(props) {
           walletAddress: account,
           network: NETWORK_NAME[chainId],
           profitsIn: toToken.symbol,
-          liqPrice: parseFloat(determineLiquidationPrice()),
+          liqPrice: liqPrice,
           collateral: `$${parseFloat(formatAmount(collateralAfterFees, USD_DECIMALS, 2, false))}`,
           spreadIsHigh: spread.isHigh,
           spreadValue: parseFloat(formatAmount(spread.value, 4, 4, true)),
