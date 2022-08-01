@@ -2,27 +2,33 @@ import React, { useState, useMemo, useEffect } from "react";
 
 import useSWR from "swr";
 
-import Footer from "../../Footer";
-
-import {
-  ETH_DECIMALS,
-  formatAmount,
-  getTokenInfo,
-  shortenAddress,
-  USD_DECIMALS,
-  useChainId,
-  useENS,
-} from "../../Helpers";
-import * as Styles from "./Rewards.styles";
+import { getTokenInfo, useChainId, useENS } from "../../Helpers";
 import { useWeb3React } from "@web3-react/core";
-import Davatar from "@davatar/react";
-import { Menu } from "@headlessui/react";
-import { FaChevronDown } from "react-icons/fa";
 import { getTracerServerUrl } from "../../Api/rewards";
 import { useInfoTokens } from "../../Api";
 import { ethers } from "ethers";
+import TraderRewards from "./TraderRewards";
+import Leaderboard from "./Leaderboard";
+import * as Styles from "./Rewards.styles";
+// import cx from "classnames";
+import { LeaderboardSwitch } from "./ViewSwitch";
+
+const PersonalHeader = () => (
+  <div className="Page-title-section mt-0">
+    <div className="Page-title">Trader Rewards</div>
+    <div className="Page-description">Be in the top 50 % of traders to earn weekly rewards.</div>
+  </div>
+);
+
+const LeaderboardHeader = () => (
+  <div className="Page-title-section mt-0">
+    <div className="Page-title">Rewards Leaderboard</div>
+    <div className="Page-description">Weekly user rankings by volume.</div>
+  </div>
+);
 
 export default function Rewards(props) {
+  const [currentView, setCurrentView] = useState("Personal");
   const { connectWallet, trackPageWithTraits } = props;
 
   const { ensName } = useENS();
@@ -123,9 +129,13 @@ export default function Rewards(props) {
 
   const [pageTracked, setPageTracked] = useState(false);
 
+  const switchView = () => {
+    setCurrentView(currentView === "Personal" ? "Leaderboard" : "Personal");
+  };
+
   // Segment Analytics Page tracking
   useEffect(() => {
-    if (!pageTracked) {
+    if (!pageTracked && rewardWeeks) {
       const traits = {
         week: rewardWeeks[rewardWeeks.length - 1].key,
       };
@@ -136,95 +146,40 @@ export default function Rewards(props) {
 
   return (
     <Styles.StyledRewardsPage className="default-container page-layout">
-      <div className="Page-title-section mt-0">
-        <div className="Page-title">Trader Rewards</div>
-        <div className="Page-description">Be in the top 50% of traders to earn weekly rewards.</div>
-      </div>
-      <Styles.AccountBanner className="App-card">
-        {active && (
-          <Styles.AccountBannerAddresses>
-            <Davatar size={40} address={account} />
-            <Styles.AppCardTitle>{ensName || shortenAddress(account, 13)}</Styles.AppCardTitle>
-            <Styles.AccountBannerShortenedAddress>Wallet address</Styles.AccountBannerShortenedAddress>
-          </Styles.AccountBannerAddresses>
-        )}
-        {!active && (
-          <Styles.AccountBannerAddresses>
-            <Styles.AppCardTitle>Connect Wallet</Styles.AppCardTitle>
-            <Styles.AccountBannerShortenedAddress>Wallet not connected</Styles.AccountBannerShortenedAddress>
-          </Styles.AccountBannerAddresses>
-        )}
-        <Styles.AccountBannerRewards>
-          <div className="App-card-row">
-            <div className="label">Total Volume Traded</div>
-            <div>${formatAmount(userData?.totalTradingVolume, 0, 2, true)}</div>
-          </div>
-          <div className="App-card-row">
-            <div className="label">Total Rewards</div>
-            <div>
-              {formatAmount(userData?.totalRewards, ETH_DECIMALS, 2, true)} ETH ($
-              {formatAmount(totalRewardAmountEth, USD_DECIMALS + ETH_DECIMALS, 2, true)})
-            </div>
-          </div>
-          <div className="App-card-row">
-            <div className="label">Unclaimed Rewards</div>
-            <div>
-              {formatAmount(userData?.unclaimedRewards, ETH_DECIMALS, 2, true)} ETH ($
-              {formatAmount(unclaimedRewardsEth, USD_DECIMALS + ETH_DECIMALS, 2, true)})
-            </div>
-          </div>
-        </Styles.AccountBannerRewards>
-      </Styles.AccountBanner>
-      <Styles.RewardsData className="App-card">
-        <Styles.AppCardTitle>Rewards data</Styles.AppCardTitle>
-        <Styles.RewardsWeekSelect>
-          <Styles.RewardsWeekSelectMenu>
-            <Menu>
-              <Menu.Button as="div">
-                <Styles.WeekSelectButton className="App-cta transparent">
-                  {rewardsMessage}
-                  <FaChevronDown />
-                </Styles.WeekSelectButton>
-              </Menu.Button>
-              <div>
-                <Menu.Items as="div" className="menu-items">
-                  {!!rewardWeeks &&
-                    rewardWeeks.map((rewardWeek) => (
-                      <Menu.Item>
-                        <div className="menu-item" onClick={() => setSelectedWeek(rewardWeek.week)}>
-                          Week {rewardWeek.week}
-                        </div>
-                      </Menu.Item>
-                    ))}
-                </Menu.Items>
-              </div>
-            </Menu>
-          </Styles.RewardsWeekSelectMenu>
-          <Styles.RewardsWeekNextRewards>
-            Next rewards in <Styles.RewardsWeekCountdown>8d 13h 42m</Styles.RewardsWeekCountdown>
-          </Styles.RewardsWeekNextRewards>
-        </Styles.RewardsWeekSelect>
-        <Styles.RewardsDataBoxes>
-          <Styles.RewardsDataBox>
-            <Styles.RewardsDataBoxTitle>Volume Traded</Styles.RewardsDataBoxTitle>
-            <Styles.LargeText>{`$${formatAmount(userWeekData?.volume, 0, 2, true)}`}</Styles.LargeText>
-          </Styles.RewardsDataBox>
-          <Styles.RewardsDataBox className="claimable">
-            <Styles.RewardsDataBoxTitle>Claimable Rewards</Styles.RewardsDataBoxTitle>
-            <div>
-              <Styles.LargeText>{`${formatAmount(userWeekData?.reward, ETH_DECIMALS, 4, true)} ETH`}</Styles.LargeText>
-              <span>{` ($${formatAmount(rewardAmountEth, USD_DECIMALS + ETH_DECIMALS, 2, true)})`}</span>
-            </div>
-          </Styles.RewardsDataBox>
-        </Styles.RewardsDataBoxes>
-        {active && <Styles.RewardsButton className="App-cta large">Claim TCR</Styles.RewardsButton>}
-        {!active && (
-          <Styles.RewardsButton className="App-cta large" onClick={() => connectWallet()}>
-            Connect Wallet
-          </Styles.RewardsButton>
-        )}
-      </Styles.RewardsData>
-      <Footer />
+      {
+        {
+          Personal: <PersonalHeader />,
+          Leaderboard: <LeaderboardHeader />,
+        }[currentView]
+      }
+      <LeaderboardSwitch
+        switchView={switchView}
+        currentView={currentView}
+        rewardsMessage={rewardsMessage}
+        rewardWeeks={rewardWeeks}
+        setSelectedWeek={setSelectedWeek}
+      />
+      {
+        {
+          Personal: (
+            <TraderRewards
+              active={active}
+              account={account}
+              ensName={ensName}
+              userData={userData}
+              totalRewardAmountEth={totalRewardAmountEth}
+              unclaimedRewardsEth={unclaimedRewardsEth}
+              rewardsMessage={rewardsMessage}
+              rewardWeeks={rewardWeeks}
+              setSelectedWeek={setSelectedWeek}
+              connectWallet={connectWallet}
+              userWeekData={userWeekData}
+              rewardAmountEth={rewardAmountEth}
+            />
+          ),
+          Leaderboard: <Leaderboard />,
+        }[currentView]
+      }
     </Styles.StyledRewardsPage>
   );
 }
