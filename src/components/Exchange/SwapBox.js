@@ -1791,7 +1791,6 @@ export default function SwapBox(props) {
         return borrowFee;
       }
     };
-    console.log(determineLiquidationPrice());
 
     const trackTrade = (stage, tradeType) => {
       let stageName = "";
@@ -1823,7 +1822,7 @@ export default function SwapBox(props) {
           isLong || isShort ? formatAmount(entryMarkPrice, USD_DECIMALS, 2, false) : "No entry price - swap";
         let liqPrice = parseFloat(determineLiquidationPrice());
         liqPrice = liqPrice < 0 ? 0 : liqPrice;
-        
+
         // Format user ERC20 token balances from BigNumber to float
         const [userBalances, tokenPrices, poolBalances] = getUserTokenBalances(infoTokens);
 
