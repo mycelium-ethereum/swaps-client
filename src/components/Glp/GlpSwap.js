@@ -31,7 +31,6 @@ import {
   approveTokens,
   getUsd,
   adjustForDecimals,
-  formatTitleCase,
   getUserTokenBalances,
   NETWORK_NAME,
   GLP_DECIMALS,
