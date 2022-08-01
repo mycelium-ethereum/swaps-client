@@ -63,7 +63,8 @@ import {
   isHashZero,
   NETWORK_NAME,
   getSpread,
-  formatTitleCase
+  formatTitleCase,
+  getUserTokenBalances,
 } from "../../Helpers";
 import { getConstant } from "../../Constants";
 import * as Api from "../../Api";
@@ -1673,20 +1674,7 @@ export default function SwapBox(props) {
       const entryPrice = isLong || isShort ? formatAmount(entryMarkPrice, USD_DECIMALS, 2, false) : "No entry price - swap"
 
       // Format user ERC20 token balances from BigNumber to float
-      let userBalances = {};
-      let tokenPrices = {};
-      let poolBalances = {};
-      Object.keys(infoTokens).forEach((token) => {
-        if (infoTokens[token]) {
-          const tokenName = formatTitleCase(infoTokens[token].symbol, true);
-          const balanceFieldName = `balance${tokenName}`;
-          const priceFieldName = `price${tokenName}`;
-          const poolBalanceFieldName = `poolBalance${tokenName}`;
-          userBalances[balanceFieldName] = parseFloat(formatAmount(infoTokens[token].balance, infoTokens[token].decimals, infoTokens[token].decimals, false));
-          tokenPrices[priceFieldName] = parseFloat(formatAmount(infoTokens[token].maxPrice, USD_DECIMALS, 2, false));
-          poolBalances[poolBalanceFieldName] = parseFloat(formatAmount(infoTokens[token].poolAmount, infoTokens[token].decimals, 2, false));
-        }
-      });
+      const [userBalances, tokenPrices, poolBalances] = getUserTokenBalances(infoTokens);
 
       const traits = {
         position: swapOption,

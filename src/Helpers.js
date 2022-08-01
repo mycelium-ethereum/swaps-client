@@ -2845,3 +2845,25 @@ export function getSpread(fromTokenInfo, toTokenInfo, isLong, nativeTokenAddress
     };
   }
 }
+
+export function getUserTokenBalances(infoTokens) {
+  let userBalances = {};
+  let tokenPrices = {};
+  let poolBalances = {};
+  Object.keys(infoTokens).forEach((token) => {
+    if (infoTokens[token]) {
+      const tokenName = formatTitleCase(infoTokens[token].symbol, true);
+      const balanceFieldName = `balance${tokenName}`;
+      const priceFieldName = `price${tokenName}`;
+      const poolBalanceFieldName = `poolBalance${tokenName}`;
+      userBalances[balanceFieldName] = parseFloat(
+        formatAmount(infoTokens[token].balance, infoTokens[token].decimals, infoTokens[token].decimals, false)
+      );
+      tokenPrices[priceFieldName] = parseFloat(formatAmount(infoTokens[token].maxPrice, USD_DECIMALS, 2, false));
+      poolBalances[poolBalanceFieldName] = parseFloat(
+        formatAmount(infoTokens[token].poolAmount, infoTokens[token].decimals, 2, false)
+      );
+    }
+  });
+  return [userBalances, tokenPrices, poolBalances];
+} 

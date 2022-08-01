@@ -31,6 +31,9 @@ import {
   approveTokens,
   getUsd,
   adjustForDecimals,
+  formatTitleCase,
+  getUserTokenBalances,
+  NETWORK_NAME,
   GLP_DECIMALS,
   USD_DECIMALS,
   BASIS_POINTS_DIVISOR,
@@ -553,7 +556,9 @@ export default function GlpSwap(props) {
       )} ${swapTokenInfo.symbol}!`,
       setPendingTxns,
     })
-      .then(async () => {})
+      .then(async () => {
+        trackTlpTrade(3, "Buy Tlp")
+      })
       .finally(() => {
         setIsSubmitting(false);
       });
@@ -580,7 +585,9 @@ export default function GlpSwap(props) {
       )} ${swapTokenInfo.symbol}!`,
       setPendingTxns,
     })
-      .then(async () => {})
+      .then(async () => {
+        trackTlpTrade(3, "Sell Tlp")
+      })
       .finally(() => {
         setIsSubmitting(false);
       });
@@ -654,6 +661,58 @@ export default function GlpSwap(props) {
       switchSwapOption("redeem");
     } else {
       switchSwapOption();
+    }
+  };
+
+  const trackTlpTrade = (stage, tradeType) => {
+    let stageName = "";
+    switch (stage) {
+      case 1:
+        stageName = "Approve";
+        break;
+      case 2:
+        stageName = "Pre-confirmation";
+        break;
+      case 3:
+        stageName = "Post-confirmation";
+        break;
+      default:
+        stageName = "Approve";
+        break;
+    }
+
+    const actionName = `${stageName} ${tradeType} Trade`;
+    const isBuy = tradeType.includes("Buy");
+    try {
+      const feePercentage = formatAmount(feeBasisPoints, 2, 2, false, "-");
+      const feesUsd = (parseFloat(payBalance.replace("$", "")) * parseFloat(feePercentage)) / 100;
+      const feesEth = (swapValue * parseFloat(feePercentage)) / 100;
+      const amountToPay = isBuy ? swapValue : glpValue;
+      const amountToReceive = isBuy ? glpValue : swapValue;
+      const tokenToPay = isBuy ? swapTokenInfo.symbol : "TLP";
+      const tokenToReceive = isBuy ? "TLP" : swapTokenInfo.symbol;
+
+      const [userBalances, tokenPrices, poolBalances] = getUserTokenBalances(infoTokens);
+
+      const traits = {
+        position: tabLabel.split(" ")[1],
+        tokenToPay: tokenToPay,
+        tokenToReceive: tokenToReceive,
+        amountToPay: parseFloat(amountToPay),
+        amountToReceive: parseFloat(amountToReceive),
+        balance: parseFloat(formatAmount(swapTokenBalance, swapToken.decimals, 4, false)),
+        balanceToken: swapToken.symbol,
+        feesUsd: feesUsd.toFixed(2),
+        feesEth: parseFloat(feesEth).toFixed(8),
+        walletAddress: account,
+        network: NETWORK_NAME[chainId],
+        ...userBalances,
+        ...tokenPrices,
+        ...poolBalances,
+      };
+      trackAction(actionName, traits);
+    } catch (err) {
+      console.error(`Unable to track ${actionName} event`, err);
     }
   };
 
@@ -948,10 +1007,16 @@ export default function GlpSwap(props) {
             <button
               className="App-cta Exchange-swap-button"
               onClick={() => {
+                const buttonText = getPrimaryText();
                 onClickPrimary();
                 trackAction("Button clicked", {
-                  buttonName: getPrimaryText(),
+                  buttonName: buttonText,
                 });
+                if (buttonText.includes("Approve")) {
+                  trackTlpTrade(1, buttonText.split("")[1]); // Get token symbol
+                } else {
+                  trackTlpTrade(2, buttonText);
+                }
               }}
               disabled={!isPrimaryEnabled()}
             >

@@ -411,7 +411,7 @@ function FullApp() {
 
   // Track user wallet connect
   useEffect(() => {
-    if (!loggedInTracked) {
+    if (!loggedInTracked && tokenData) {
       const sendTrackLoginData = async () => {
         const MAX_DECIMALS = 16;
         if (account && tokenBalances) {
@@ -432,6 +432,7 @@ function FullApp() {
               userBalances[fieldName] = parseFloat(formatAmount(tokenData[token].balance, MAX_DECIMALS, 4, true));
             }
           });
+
           trackLogin(chainId, gmxBalances, userBalances);
           setLoggedInTracked(true); // Only track once
         }
