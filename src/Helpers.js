@@ -152,7 +152,7 @@ export const ICONLINKS = {
       coingecko: "https://www.coingecko.com/en/coins/tracer-dao",
       arbitrum: `https://arbiscan.io/address/${getContract(ARBITRUM_TESTNET, "TCR")}`,
     },
-    TLP: {
+    MLP: {
       arbitrum: `https://arbiscan.io/address/${getContract(ARBITRUM_TESTNET, "StakedGlpTracker")}`,
     },
     GMX: {
@@ -209,7 +209,7 @@ export const ICONLINKS = {
       coingecko: "https://www.coingecko.com/en/coins/tracer-dao",
       arbitrum: `https://arbiscan.io/address/${getContract(ARBITRUM, "TCR")}`,
     },
-    TLP: {
+    MLP: {
       arbitrum: `https://arbiscan.io/address/${getContract(ARBITRUM, "StakedGlpTracker")}`,
     },
     GMX: {
@@ -260,7 +260,7 @@ export const ICONLINKS = {
       coingecko: "https://www.coingecko.com/en/coins/tracer-dao",
       arbitrum: `https://arbiscan.io/address/${getContract(ARBITRUM_TESTNET, "TCR")}`,
     },
-    TLP: {
+    MLP: {
       arbitrum: `https://arbiscan.io/address/${getContract(ARBITRUM_TESTNET, "StakedGlpTracker")}`,
     },
     GMX: {
@@ -306,9 +306,9 @@ export const platformTokens = {
       address: getContract(ARBITRUM_TESTNET, "TCR"),
       imageUrl: "https://assets.coingecko.com/coins/images/18271/small/tracer_logo.png?1631176676",
     },
-    TLP: {
+    MLP: {
       name: "TCR LP",
-      symbol: "TLP",
+      symbol: "MLP",
       decimals: 18,
       address: getContract(ARBITRUM_TESTNET, "StakedGlpTracker"), // address of fsGLP token because user only holds fsGLP
       imageUrl: "https://i.imgur.com/1xbBwPe.png",
@@ -323,9 +323,9 @@ export const platformTokens = {
       address: getContract(ARBITRUM, "TCR"),
       imageUrl: "https://assets.coingecko.com/coins/images/18271/small/tracer_logo.png?1631176676",
     },
-    TLP: {
+    MLP: {
       name: "TCR LP",
-      symbol: "TLP",
+      symbol: "MLP",
       decimals: 18,
       address: getContract(ARBITRUM, "StakedGlpTracker"), // address of fsGLP token because user only holds fsGLP
       imageUrl: "https://github.com/gmx-io/gmx-assets/blob/main/GMX-Assets/PNG/GLP_LOGO%20ONLY.png?raw=true",
@@ -354,9 +354,9 @@ export const platformTokens = {
       address: getContract(ARBITRUM, "TCR"),
       imageUrl: "https://assets.coingecko.com/coins/images/18271/small/tracer_logo.png?1631176676",
     },
-    TLP: {
+    MLP: {
       name: "TCR LP",
-      symbol: "TLP",
+      symbol: "MLP",
       decimals: 18,
       address: getContract(ARBITRUM, "StakedGlpTracker"), // address of fsGLP token because user only holds fsGLP
       imageUrl: "https://github.com/gmx-io/gmx-assets/blob/main/GMX-Assets/PNG/GLP_LOGO%20ONLY.png?raw=true",

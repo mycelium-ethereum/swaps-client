@@ -61,8 +61,8 @@ import Actions from "./views/Actions/Actions";
 import OrdersOverview from "./views/OrdersOverview/OrdersOverview";
 import PositionsOverview from "./views/PositionsOverview/PositionsOverview";
 import BuyGMX from "./views/BuyGMX/BuyGMX";
-import BuyTlp from "./views/BuyTlp/BuyTlp";
-import SellTlp from "./views/SellTlp/SellTlp";
+import BuyMlp from "./views/BuyMlp/BuyMlp";
+import SellMlp from "./views/SellMlp/SellMlp";
 import Buy from "./views/Buy/Buy";
 import Rewards from "./views/Rewards/Rewards";
 import NftWallet from "./views/NftWallet/NftWallet";
@@ -89,8 +89,8 @@ import "./App.css";
 import "./Input.css";
 import "./AppOrder.css";
 
-import logoImg from "./img/logo_TRS.svg";
-import logoSmallImg from "./img/logo_TRS_small.svg";
+import logoImg from "./img/logo_MYC.svg";
+import logoSmallImg from "./img/logo_MYC_small.svg";
 import connectWalletImg from "./img/ic_wallet_24.svg";
 
 // import logoImg from './img/gmx-logo-final-white-small.png'
@@ -219,7 +219,7 @@ function AppHeaderLinks({ small, openSettings, clickCloseIcon }) {
         </NavLink>
       </div>
       <div className="App-header-link-container">
-        <NavLink activeClassName="active" to="/buy_tlp">
+        <NavLink activeClassName="active" to="/buy_mlp">
           Buy
         </NavLink>
       </div>
@@ -816,16 +816,16 @@ function FullApp() {
                 connectWallet={connectWallet}
               />
             </Route>
-            <Route exact path="/buy_tlp">
-              <BuyTlp
+            <Route exact path="/buy_mlp">
+              <BuyMlp
                 savedSlippageAmount={savedSlippageAmount}
                 setPendingTxns={setPendingTxns}
                 connectWallet={connectWallet}
                 trackPageWithTraits={trackPageWithTraits}
               />
             </Route>
-            <Route exact path="/sell_tlp">
-              <SellTlp
+            <Route exact path="/sell_mlp">
+              <SellMlp
                 savedSlippageAmount={savedSlippageAmount}
                 setPendingTxns={setPendingTxns}
                 connectWallet={connectWallet}

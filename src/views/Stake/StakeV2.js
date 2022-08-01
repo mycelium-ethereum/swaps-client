@@ -41,7 +41,7 @@ import useSWR from "swr";
 
 import { getContract } from "../../Addresses";
 
-import tlp40Icon from "../../img/ic_tlp_40.svg";
+import mlp40Icon from "../../img/ic_mlp_40.svg";
 import * as StakeV2Styled from "./StakeV2Styles";
 
 import "./StakeV2.css";
@@ -81,8 +81,8 @@ function CompoundModal(props) {
     [chainId, "StakeV2-compound-should-convert-weth"],
     true
   );
-  const [shouldBuyTlp, setShouldBuyTlp] = useLocalStorageSerializeKey(
-    [chainId, "StakeV2-compound-should-buy-tlp"],
+  const [shouldBuymlp, setShouldBuymlp] = useLocalStorageSerializeKey(
+    [chainId, "StakeV2-compound-should-buy-mlp"],
     true
   );
 
@@ -204,8 +204,8 @@ function CompoundModal(props) {
             </Checkbox>
           </div>
           <div>
-            <Checkbox isChecked={shouldBuyTlp} setIsChecked={setShouldBuyTlp}>
-              Buy TlP
+            <Checkbox isChecked={shouldBuymlp} setIsChecked={setShouldBuymlp}>
+              Buy mlp
             </Checkbox>
           </div>
         </div>
@@ -504,7 +504,7 @@ export default function StakeV2({ setPendingTxns, connectWallet }) {
     }
     let glpStr;
     if (processedData.glpBalance && processedData.glpBalance.gt(0)) {
-      glpStr = formatAmount(processedData.glpBalance, 18, 2, true) + " TLP";
+      glpStr = formatAmount(processedData.glpBalance, 18, 2, true) + " MLP";
     }
     const amountStr = [gmxAmountStr, esGmxAmountStr, mpAmountStr, glpStr].filter((s) => s).join(", ");
     earnMsg = (
@@ -550,11 +550,11 @@ export default function StakeV2({ setPendingTxns, connectWallet }) {
           <div className="Page-description">
             Stake{" "}
             <a
-              href="https://tracer-1.gitbook.io/tracer-perpetual-swaps/6VOYVKGbCCw0I8cj7vdF/protocol-design/shared-liquidity-pool/tlp-token-pricing"
+              href="https://tracer-1.gitbook.io/tracer-perpetual-swaps/6VOYVKGbCCw0I8cj7vdF/protocol-design/shared-liquidity-pool/mlp-token-pricing"
               target="_blank"
               rel="noopener noreferrer"
             >
-              TLP
+              MLP
             </a>{" "}
             to earn rewards.
           </div>
@@ -563,8 +563,8 @@ export default function StakeV2({ setPendingTxns, connectWallet }) {
         <div className="StakeV2-cards">
           <div className="App-card">
             <div className="App-card-title">
-              <img src={tlp40Icon} alt="tlp40Icon" />
-              TLP ({chainName})
+              <img src={mlp40Icon} alt="mlp40Icon" />
+              MLP ({chainName})
             </div>
             <StakeV2Styled.RewardsBanner>
               <StakeV2Styled.RewardsBannerRow>
@@ -625,14 +625,14 @@ export default function StakeV2({ setPendingTxns, connectWallet }) {
               <div className="App-card-row">
                 <div className="label">Wallet</div>
                 <div>
-                  {formatKeyAmount(processedData, "glpBalance", GLP_DECIMALS, 2, true)} TLP ($
+                  {formatKeyAmount(processedData, "glpBalance", GLP_DECIMALS, 2, true)} MLP ($
                   {formatKeyAmount(processedData, "glpBalanceUsd", USD_DECIMALS, 2, true)})
                 </div>
               </div>
               <div className="App-card-row">
                 <div className="label">Staked</div>
                 <div>
-                  {formatKeyAmount(processedData, "glpBalance", GLP_DECIMALS, 2, true)} TLP ($
+                  {formatKeyAmount(processedData, "glpBalance", GLP_DECIMALS, 2, true)} MLP ($
                   {formatKeyAmount(processedData, "glpBalanceUsd", USD_DECIMALS, 2, true)})
                 </div>
               </div>
@@ -640,24 +640,24 @@ export default function StakeV2({ setPendingTxns, connectWallet }) {
               <div className="App-card-row">
                 <div className="label">Total Staked</div>
                 <div>
-                  {formatKeyAmount(processedData, "glpSupply", 18, 2, true)} TLP ($
+                  {formatKeyAmount(processedData, "glpSupply", 18, 2, true)} MLP ($
                   {formatKeyAmount(processedData, "glpSupplyUsd", USD_DECIMALS, 2, true)})
                 </div>
               </div>
               <div className="App-card-row">
                 <div className="label">Total Supply</div>
                 <div>
-                  {formatKeyAmount(processedData, "glpSupply", 18, 2, true)} TLP ($
+                  {formatKeyAmount(processedData, "glpSupply", 18, 2, true)} MLP ($
                   {formatKeyAmount(processedData, "glpSupplyUsd", USD_DECIMALS, 2, true)})
                 </div>
               </div>
               <div className="App-card-divider"></div>
               <div className="App-card-options">
-                <Link className="App-button-option App-card-option" to="/buy_tlp">
-                  Buy TLP
+                <Link className="App-button-option App-card-option" to="/buy_mlp">
+                  Buy MLP
                 </Link>
-                <Link className="App-button-option App-card-option" to="/buy_tlp#redeem">
-                  Sell TLP
+                <Link className="App-button-option App-card-option" to="/buy_mlp#redeem">
+                  Sell MLP
                 </Link>
                 {active && (
                   <button className="App-button-option App-card-option" onClick={() => setIsCompoundModalVisible(true)}>

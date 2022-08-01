@@ -64,15 +64,15 @@ const DEFAULT_PERIOD = "4h";
 
 const getSeriesOptions = () => ({
   // https://github.com/tradingview/lightweight-charts/blob/master/docs/area-series.md
-  lineColor: "#5472cc",
+  lineColor: "rgba(0, 48, 0, 0.2)",
   topColor: "rgba(49, 69, 131, 0.4)",
   bottomColor: "rgba(42, 64, 103, 0.0)",
   lineWidth: 2,
-  priceLineColor: "#3a3e5e",
-  downColor: "#fa3c58",
-  wickDownColor: "#fa3c58",
-  upColor: "#0ecc83",
-  wickUpColor: "#0ecc83",
+  priceLineColor: "rgba(0, 48, 0, 1)",
+  downColor: "#FF5621",
+  wickDownColor: "#FF5621",
+  upColor: "#4FE021",
+  wickUpColor: "#4FE021",
   borderVisible: false,
 });
 
@@ -93,12 +93,12 @@ const getChartOptions = (width, height) => ({
   grid: {
     vertLines: {
       visible: true,
-      color: "rgba(35, 38, 59, 1)",
+      color: "rgba(0, 48, 0, 0.2)",
       style: 2,
     },
     horzLines: {
       visible: true,
-      color: "rgba(35, 38, 59, 1)",
+      color: "rgba(0, 48, 0, 0.2)",
       style: 2,
     },
   },

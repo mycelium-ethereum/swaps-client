@@ -51,21 +51,34 @@ body,
   --arbitrum-blue: #28a0f0;
   --border-radius-sm: 4px;
 
-  --background-primary: #040811;
-  --background-secondary: rgba(34, 39, 74, 0.2);
-  --background-navigation: linear-gradient(83.12deg, rgba(27, 101, 234, 0.5) -208.54%, rgba(27, 101, 234, 0) 159.09%);
+  --short-active: #DD463A;
+  --long-active: #3EE028;
 
-  --border-primary: #2B2F51;
+  --background-primary: #000A00;
+  --background-secondary: rgba(0, 9, 0, 0.2);
+  --background-navigation: linear-gradient(83.12deg, rgba(9, 130, 0, 0.5) -208.54%, rgba(9, 130, 0, 0) 159.09%);
 
-  --tracer-blue: #1C64F2;
-  --tracer-blue-light: #3DA8F5;
-  --tracer-blue-slider: #1C64F2;
+  --border-navigation: #098200;
+
+  --action-active: #098200;
+  --action-inactive: #093806;
+  --action-hover: #003000;
+  --action-stroke: #003000;
+  --action-shadow: 0 0 4px 6px rgba(9, 130, 0, 0.1);
+
+  --cell-gradient: linear-gradient(180deg, rgba(5, 67, 1, 0.2) 0%, rgba(5, 67, 1, 0) 65.01%);
+  --cell-hover: #03100E;
+  --cell-stroke: #003000;
+  --cell-highlight: #098200;
+
+  --tooltip-fill: #03100E;
+  --tooltip-shadow: 0px 0px 7px rgba(39, 62, 89, 0.53);
 
   --text-primary: #fff;
-  --text-secondary: #7889A5;
-  --text-navigation: #1B65EA;
-
-  --button-primary: #1C64F2;
+  --text-secondary: #8B968C;
+  /* Same as secondary but unsure what it should be so keeping seperate */
+  --text-hover: #8B968C;
+  --text-navigation: #fff;
 }
 
 a {
@@ -195,7 +208,7 @@ a.plain {
 }
 
 .default-btn {
-  background: var(--tracer-blue);
+  background: var(--action-active);
   border-radius: 4px;
   font-size: 14px;
   line-height: 20px;

@@ -21,13 +21,13 @@
 .menu-items {
   position: absolute;
   right: 0;
-  top: 43px;
+  top: calc(100% + 0.5rem);
   min-width: 10rem;
   width: 100%;
   transform-origin: top right;
   border-radius: 4px;
   background: var(--background-primary);
-  border: 1px solid var(--border-primary);
+  border: 1px solid var(--cell-stroke);
   list-style: none;
   cursor: pointer;
   outline: none;

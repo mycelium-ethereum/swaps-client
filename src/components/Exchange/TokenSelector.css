@@ -2,6 +2,7 @@
   width: 20rem;
   margin: 0;
   max-height: 100vh;
+  border: 1px solid var(--cell-highlight)!important;
 }
 
 .TokenSelector-token-name {
@@ -25,7 +26,7 @@
 }
 
 .TokenSelector-box:hover {
-  color: #7885ff;
+  color: var(--text-hover);
 }
 
 .Token-info {
@@ -62,7 +63,7 @@
 
 .TokenSelector-token-row {
   cursor: pointer;
-  border: 1px solid #ffffff29;
+  border: 1px solid var(--cell-stroke);
   background: transparent;
   border-radius: var(--border-radius-sm);
   display: flex;
