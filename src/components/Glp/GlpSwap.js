@@ -89,7 +89,7 @@ function getStakingData(stakingInfo) {
 }
 
 export default function GlpSwap(props) {
-  const { savedSlippageAmount, isBuying, setPendingTxns, connectWallet, setIsBuying } = props;
+  const { savedSlippageAmount, isBuying, setPendingTxns, connectWallet, setIsBuying, trackPageWithTraits } = props;
   const history = useHistory();
   const swapLabel = isBuying ? "BuyGlp" : "SellGlp";
   const tabLabel = isBuying ? "Buy MLP" : "Sell MLP";
@@ -648,6 +648,33 @@ export default function GlpSwap(props) {
       switchSwapOption();
     }
   };
+
+  const [pageTracked, setPageTracked] = useState(false);
+
+  const dataElements = [chainId, isBuying, pageTracked, swapTokenAddress, history.location.hash];
+  const elementsLoaded = dataElements.every((element) => element !== undefined);
+
+  // Segment Analytics Page tracking
+  useEffect(() => {
+    if (elementsLoaded) {
+      // If page hash is #redeem, then user is Buying
+      const hash = history.location.hash.replace("#", "");
+      const isBuying = hash === "redeem" ? false : true;
+      // Swap pay and receive tokens depending on isBuying
+      const tokenToPay = isBuying ? getToken(chainId, swapTokenAddress).symbol : "TLP";
+      const tokenToReceive = isBuying ? "TLP" : getToken(chainId, swapTokenAddress).symbol;
+
+      if (!pageTracked) {
+        const traits = {
+          action: isBuying ? "Buy" : "Sell",
+          tokenToPay: tokenToPay,
+          tokenToReceive: tokenToReceive,
+        };
+        trackPageWithTraits(traits);
+        setPageTracked(true); // Prevent Page function being called twice
+      }
+    }
+  }, [chainId, isBuying, pageTracked, swapTokenAddress, elementsLoaded, trackPageWithTraits, history.location.hash]);
 
   return (
     <div className="GlpSwap">
