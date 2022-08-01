@@ -34,6 +34,8 @@ export default function Rewards(props) {
     fetcher: (...args) => fetch(...args).then((res) => res.json()),
   });
 
+  console.log(rewardWeeks);
+
   const userData = useMemo(() => rewardWeeks?.reduce((totals, week) => {
     const trader = week.traders.find((trader) => trader.user_address === account);
     if (!trader) {
