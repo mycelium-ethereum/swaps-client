@@ -362,8 +362,6 @@ export const Exchange = forwardRef((props, ref) => {
     setPendingTxns,
     savedShouldShowPositionLines,
     setSavedShouldShowPositionLines,
-    setTokenData,
-    tokenData,
     connectWallet,
     trackPageWithTraits,
     trackAction,
@@ -530,12 +528,6 @@ export const Exchange = forwardRef((props, ref) => {
   );
 
   const { infoTokens } = useInfoTokens(library, chainId, active, tokenBalances, fundingRateInfo);
-
-  useEffect(() => {
-    if (!tokenData) {
-      setTokenData(infoTokens);
-    }
-  }, [infoTokens, tokenData, setTokenData]);
 
   useEffect(() => {
     const fromToken = getTokenInfo(infoTokens, fromTokenAddress);

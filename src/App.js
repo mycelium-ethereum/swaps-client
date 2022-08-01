@@ -11,7 +11,7 @@ import { Switch, Route, NavLink } from "react-router-dom";
 
 import { ThemeProvider } from "@tracer-protocol/tracer-ui";
 import { useAnalytics } from "./segmentAnalytics";
-import { getTokens } from "./data/Tokens";
+import { getTokens, getWhitelistedTokens } from "./data/Tokens";
 
 import {
   ARBITRUM,
@@ -104,6 +104,7 @@ import { Link } from "react-router-dom";
 import EventToastContainer from "./components/EventToast/EventToastContainer";
 import SEO from "./components/Common/SEO";
 import useRouteQuery from "./hooks/useRouteQuery";
+import { useInfoTokens } from "./Api";
 import { encodeReferralCode } from "./Api/referrals";
 
 import { getContract } from "./Addresses";
@@ -380,7 +381,6 @@ function AppHeaderUser({
 
 function FullApp() {
   const [loggedInTracked, setLoggedInTracked] = useState(false);
-  const [tokenData, setTokenData] = useState(null);
   const { trackLogin, trackPageWithTraits, trackAction } = useAnalytics();
 
   const exchangeRef = useRef();
@@ -389,13 +389,9 @@ function FullApp() {
   const readerAddress = getContract(chainId, "Reader");
   const tokens = getTokens(chainId);
   const tokenAddresses = tokens.map((token) => token.address);
-
-  const { data: tokenBalances } = useSWR(
-    [`FullApp:getTokenBalances:${active}`, chainId, readerAddress, "getTokenBalances", account || PLACEHOLDER_ACCOUNT],
-    {
-      fetcher: fetcher(library, ReaderV2, [tokenAddresses]),
-    }
-  );
+  const whitelistedTokens = getWhitelistedTokens(chainId);
+  const whitelistedTokenAddresses = whitelistedTokens.map((token) => token.address);
+  const nativeTokenAddress = getContract(chainId, "NATIVE_TOKEN");
 
   useEventToast();
   const [activatingConnector, setActivatingConnector] = useState();
@@ -408,38 +404,6 @@ function FullApp() {
   useInactiveListener(!triedEager || !!activatingConnector);
 
   const query = useRouteQuery();
-
-  // Track user wallet connect
-  useEffect(() => {
-    if (!loggedInTracked && tokenData) {
-      const sendTrackLoginData = async () => {
-        const MAX_DECIMALS = 16;
-        if (account && tokenBalances) {
-          const { balanceData } = getBalanceAndSupplyData(tokenBalances);
-          // Format GMX token balances from BigNumber to float
-          let gmxBalances = {};
-          Object.keys(balanceData).forEach((token) => {
-            if (balanceData[token]) {
-              const fieldName = `balance${formatTitleCase(token)}`;
-              gmxBalances[fieldName] = parseFloat(formatAmount(balanceData[token], MAX_DECIMALS, 4, true));
-            }
-          });
-          // Format user ERC20 token balances from BigNumber to float
-          let userBalances = {};
-          Object.keys(tokenData).forEach((token) => {
-            if (tokenData[token]) {
-              const fieldName = `balance${formatTitleCase(tokenData[token].symbol, true)}`;
-              userBalances[fieldName] = parseFloat(formatAmount(tokenData[token].balance, MAX_DECIMALS, 4, true));
-            }
-          });
-
-          trackLogin(chainId, gmxBalances, userBalances);
-          setLoggedInTracked(true); // Only track once
-        }
-      };
-      sendTrackLoginData();
-    }
-  }, [account, chainId, tokenBalances, trackLogin, loggedInTracked, library, tokenData]);
 
   useEffect(() => {
     let referralCode = query.get(REFERRAL_CODE_QUERY_PARAMS);
@@ -704,6 +668,51 @@ function FullApp() {
     };
   }, [active, chainId, vaultAddress, positionRouterAddress]);
 
+  
+  const { data: tokenBalances } = useSWR(
+    [`FullApp:getTokenBalances:${active}`, chainId, readerAddress, "getTokenBalances", account || PLACEHOLDER_ACCOUNT],
+    {
+      fetcher: fetcher(library, ReaderV2, [tokenAddresses]),
+    }
+  );
+  const { data: fundingRateInfo } = useSWR([active, chainId, readerAddress, "getFundingRates"], {
+    fetcher: fetcher(library, ReaderV2, [vaultAddress, nativeTokenAddress, whitelistedTokenAddresses]),
+  });
+
+  const { infoTokens } = useInfoTokens(library, chainId, active, tokenBalances, fundingRateInfo);
+
+  // Track user wallet connect
+  useEffect(() => {
+    if (!loggedInTracked && infoTokens) {
+      const sendTrackLoginData = async () => {
+        const MAX_DECIMALS = 16;
+        if (account && tokenBalances) {
+          const { balanceData } = getBalanceAndSupplyData(tokenBalances);
+          // Format GMX token balances from BigNumber to float
+          let gmxBalances = {};
+          Object.keys(balanceData).forEach((token) => {
+            if (balanceData[token]) {
+              const fieldName = `balance${formatTitleCase(token)}`;
+              gmxBalances[fieldName] = parseFloat(formatAmount(balanceData[token], MAX_DECIMALS, 4, true));
+            }
+          });
+          // Format user ERC20 token balances from BigNumber to float
+          let userBalances = {};
+          Object.keys(infoTokens).forEach((token) => {
+            if (infoTokens[token]) {
+              const fieldName = `balance${formatTitleCase(infoTokens[token].symbol, true)}`;
+              userBalances[fieldName] = parseFloat(formatAmount(infoTokens[token].balance, MAX_DECIMALS, 4, true));
+            }
+          });
+
+          trackLogin(chainId, gmxBalances, userBalances);
+          setLoggedInTracked(true); // Only track once
+        }
+      };
+      sendTrackLoginData();
+    }
+  }, [account, chainId, tokenBalances, trackLogin, loggedInTracked, library, infoTokens]);
+
   return (
     <>
       <div className="App">
@@ -851,8 +860,6 @@ function FullApp() {
                 setSavedShouldShowPositionLines={setSavedShouldShowPositionLines}
                 connectWallet={connectWallet}
                 trackPageWithTraits={trackPageWithTraits}
-                tokenData={tokenData}
-                setTokenData={setTokenData}
                 trackAction={trackAction}
               />
             </Route>
