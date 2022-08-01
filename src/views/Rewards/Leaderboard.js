@@ -2,16 +2,9 @@ import React from "react";
 import * as Styles from "./Rewards.styles";
 
 export default function Leaderboard(props) {
+  const { userWeekData, account, ensName } = props;
   const headings = ["Rank", "User", "Volume", "Reward"];
-  // const {} = props;
-  //   {
-  //   week: number,
-  //   traders: {
-  //     user_address: string,
-  //     volume: string,
-  //     reward: string
-  //   }[]
-  // }[]
+  console.log(userWeekData);
   return (
     <Styles.LeaderboardContainer>
       <Styles.Title>Your rewards</Styles.Title>
@@ -27,7 +20,8 @@ export default function Leaderboard(props) {
           </Styles.RewardsTableHeader>
           <tbody>
             <tr>
-              <Styles.RankCell>22nd</Styles.RankCell>
+              {/* {userWeekData.map((userData) => (} */}
+              <Styles.RankCell>{userWeekData.position}</Styles.RankCell>
             </tr>
           </tbody>
         </Styles.RewardsTable>

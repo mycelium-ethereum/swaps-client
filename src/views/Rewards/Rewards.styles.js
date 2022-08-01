@@ -106,7 +106,8 @@ export const RewardsWeekSelectMenu = styled.div`
   position: relative;
 
   .menu-items {
-    overflow: scroll;
+    overflow-y: scroll;
+    overflow-x: hidden;
     max-height: 20rem;
   }
 `;

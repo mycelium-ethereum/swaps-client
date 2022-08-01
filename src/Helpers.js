@@ -19,7 +19,7 @@ import OrderBook from "./abis/OrderBook.json";
 
 import { getWhitelistedTokens, isValidToken } from "./data/Tokens";
 import ComingSoonTooltip from "./components/Tooltip/ComingSoon";
-import { isAddress } from 'ethers/lib/utils';
+import { isAddress } from "ethers/lib/utils";
 
 const { AddressZero } = ethers.constants;
 
@@ -2818,31 +2818,22 @@ export function formatTitleCase(string) {
   return string[0].toUpperCase() + string.slice(1);
 }
 
-
 const defaultTruncateLength = 10;
 
 export function truncateMiddleEthAddress(address, truncateLength) {
   const strLength = truncateLength || defaultTruncateLength;
   if (!isAddress(address)) {
-      console.warn('Calling toTruncatedMiddleEthAddress on a string not matching a valid Eth address format');
-      return address;
+    console.warn("Calling toTruncatedMiddleEthAddress on a string not matching a valid Eth address format");
+    return address;
   }
 
   if (strLength < 7) {
-      console.warn('Cannot truncate Eth address by desired amount. Returning original string.');
-      return address;
+    console.warn("Cannot truncate Eth address by desired amount. Returning original string.");
+    return address;
   }
 
   const leadingCharsNum = strLength / 2 - 1;
   const trailingCharsNum = strLength - leadingCharsNum - 3;
 
   return `${address.slice(0, leadingCharsNum)}...${address.slice(-trailingCharsNum)}`;
-};
-
-
-export async function getRewards(weekNo) {
-  const API_URL = process.env.REACT_APP_TRACER_API;
-  const rewardsUrl = `${API_URL}/trs/rewards?network=42161${weekNo ? `&week=${parseInt(weekNo)}` : ``}`;
-  const data = await fetch(rewardsUrl).then((res) => res.json()).catch((err) => console.error(err));
-  return data;
-} 
+}

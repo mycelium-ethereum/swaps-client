@@ -1,8 +1,7 @@
 import React from "react";
 import * as Styles from "./Rewards.styles";
 import cx from "classnames";
-import { Menu } from "@headlessui/react";
-import { FaChevronDown } from "react-icons/fa";
+import WeekDropdown from "./WeekDropdown";
 
 export function LeaderboardSwitch(props) {
   const { switchView, currentView, rewardsMessage, rewardWeeks, setSelectedWeek } = props;
@@ -30,28 +29,8 @@ export function LeaderboardSwitch(props) {
           Leaderboard
         </Styles.ViewOption>
       </Styles.ViewSwitch>
-      {currentView === "Leaderboard" ? (
-        <Menu>
-          <Menu.Button as="div">
-            <Styles.WeekSelectButton className="App-cta transparent">
-              {rewardsMessage}
-              <FaChevronDown />
-            </Styles.WeekSelectButton>
-          </Menu.Button>
-          {!!rewardWeeks ? (
-            <div>
-              <Menu.Items as="div" className="menu-items">
-                {rewardWeeks.map((rewardWeek) => (
-                  <Menu.Item>
-                    <div className="menu-item" onClick={() => setSelectedWeek(rewardWeek.week)}>
-                      Week {rewardWeek.week}
-                    </div>
-                  </Menu.Item>
-                ))}
-              </Menu.Items>
-            </div>
-          ) : null}
-        </Menu>
+      {currentView === "Leaderboard" && !!rewardWeeks ? (
+        <WeekDropdown rewardWeeks={rewardWeeks} setSelectedWeek={setSelectedWeek} rewardsMessage={rewardsMessage} />
       ) : null}
     </Styles.ViewSwitchContainer>
   );

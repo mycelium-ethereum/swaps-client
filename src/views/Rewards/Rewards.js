@@ -47,8 +47,6 @@ export default function Rewards(props) {
     fetcher: (...args) => fetch(...args).then((res) => res.json()),
   });
 
-  console.log(rewardWeeks);
-
   const userData = useMemo(
     () =>
       rewardWeeks?.reduce(
@@ -83,10 +81,12 @@ export default function Rewards(props) {
     if (!weekData) {
       return undefined;
     }
-    const tradersData = weekData.traders?.find((trader) => trader.user_address === account);
-    // traders data found
-    if (tradersData) {
-      return tradersData;
+    const traderData = weekData.traders?.find((trader) => trader.user_address === account);
+    const leaderboardPosition = weekData.traders?.findIndex((trader) => trader.user_address === account);
+    // trader's data found
+    if (traderData) {
+      traderData.position = leaderboardPosition;
+      return traderData;
     } else {
       // trader not found but data exists so user has no rewards
       return {
@@ -113,7 +113,7 @@ export default function Rewards(props) {
   if (!rewardWeeks && selectedWeek !== undefined) {
     setSelectedWeek(undefined);
   } else if (selectedWeek === undefined && !!rewardWeeks) {
-    setSelectedWeek(0);
+    setSelectedWeek(1);
   }
 
   let rewardsMessage = "";
@@ -179,7 +179,7 @@ export default function Rewards(props) {
               rewardAmountEth={rewardAmountEth}
             />
           ),
-          Leaderboard: <Leaderboard />,
+          Leaderboard: <Leaderboard userWeekData={userWeekData} account={account} ensName={ensName} />,
         }[currentView]
       }
     </Styles.StyledRewardsPage>

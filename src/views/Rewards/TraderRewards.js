@@ -7,6 +7,7 @@ import * as Styles from "./Rewards.styles";
 import Davatar from "@davatar/react";
 import { Menu } from "@headlessui/react";
 import { FaChevronDown } from "react-icons/fa";
+import WeekDropdown from "./WeekDropdown";
 
 export default function TraderRewards(props) {
   const {
@@ -63,29 +64,9 @@ export default function TraderRewards(props) {
       <Styles.RewardsData className="App-card">
         <Styles.AppCardTitle>Rewards data</Styles.AppCardTitle>
         <Styles.RewardsWeekSelect>
-          <Styles.RewardsWeekSelectMenu>
-            <Menu>
-              <Menu.Button as="div">
-                <Styles.WeekSelectButton className="App-cta transparent">
-                  {rewardsMessage}
-                  <FaChevronDown />
-                </Styles.WeekSelectButton>
-              </Menu.Button>
-              {!!rewardWeeks ? (
-                <div>
-                  <Menu.Items as="div" className="menu-items">
-                    {rewardWeeks.map((rewardWeek) => (
-                      <Menu.Item>
-                        <div className="menu-item" onClick={() => setSelectedWeek(rewardWeek.week)}>
-                          Week {rewardWeek.week}
-                        </div>
-                      </Menu.Item>
-                    ))}
-                  </Menu.Items>
-                </div>
-              ) : null}
-            </Menu>
-          </Styles.RewardsWeekSelectMenu>
+          {!!rewardWeeks ? (
+            <WeekDropdown rewardWeeks={rewardWeeks} setSelectedWeek={setSelectedWeek} rewardsMessage={rewardsMessage} />
+          ) : null}
           <Styles.RewardsWeekNextRewards>
             Next rewards in <Styles.RewardsWeekCountdown>8d 13h 42m </Styles.RewardsWeekCountdown>
           </Styles.RewardsWeekNextRewards>
