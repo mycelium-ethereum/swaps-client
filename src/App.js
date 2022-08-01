@@ -43,6 +43,7 @@ import {
   getBalanceAndSupplyData,
   formatAmount,
   formatTitleCase,
+  getUserTokenBalances,
   SHOULD_EAGER_CONNECT_LOCALSTORAGE_KEY,
   CURRENT_PROVIDER_LOCALSTORAGE_KEY,
   REFERRAL_CODE_KEY,
@@ -697,13 +698,7 @@ function FullApp() {
             }
           });
           // Format user ERC20 token balances from BigNumber to float
-          let userBalances = {};
-          Object.keys(infoTokens).forEach((token) => {
-            if (infoTokens[token]) {
-              const fieldName = `balance${formatTitleCase(infoTokens[token].symbol, true)}`;
-              userBalances[fieldName] = parseFloat(formatAmount(infoTokens[token].balance, MAX_DECIMALS, 4, true));
-            }
-          });
+          const [userBalances] = getUserTokenBalances(infoTokens);
 
           trackLogin(chainId, gmxBalances, userBalances);
           setLoggedInTracked(true); // Only track once
@@ -859,6 +854,7 @@ function FullApp() {
                 savedShouldShowPositionLines={savedShouldShowPositionLines}
                 setSavedShouldShowPositionLines={setSavedShouldShowPositionLines}
                 connectWallet={connectWallet}
+                infoTokens={infoTokens}
                 trackPageWithTraits={trackPageWithTraits}
                 trackAction={trackAction}
               />
