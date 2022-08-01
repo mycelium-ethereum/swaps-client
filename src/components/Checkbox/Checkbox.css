@@ -18,7 +18,7 @@
 
 .Checkbox .Checkbox-icon {
   font-size: 0.8rem;
-  color: var(--tracer-blue);
+  color: var(--action-active);
   margin-right: 0.4rem;
   margin-bottom: 0;
 }

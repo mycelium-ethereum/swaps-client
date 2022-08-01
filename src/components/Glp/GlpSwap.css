@@ -87,6 +87,10 @@
   display: flex;
 }
 
+.App-card-title-mark-icon img {
+  width: 100%;
+}
+
 .App-card-title-mark-icon .selected-network-symbol {
   position: absolute;
   bottom: 0;
@@ -114,7 +118,7 @@
 }
 
 .GlpSwap-token-list {
-  border: 1px solid var(--border-primary);
+  border: 1px solid var(--cell-stroke);
   border-radius: 4px;
   padding: 1rem;
   padding-top: 0;

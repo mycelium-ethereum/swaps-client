@@ -11,7 +11,11 @@
   letter-spacing: 0.4px;
   min-width: 250px;
   text-align: left;
-  background: linear-gradient(90deg, #0b0b0f 0%, rgba(10, 13, 28, 1) 100%);
+
+  background: var(--tooltip-fill);
+  border: 1px solid var(--cell-stroke);
+  box-shadow: var(--tooltip-shadow);
+
   z-index: 1000;
 }
 

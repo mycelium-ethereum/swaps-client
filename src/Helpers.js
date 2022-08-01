@@ -60,7 +60,7 @@ const MAX_GAS_PRICE_MAP = {
 
 const ETHEREUM_RPC_PROVIDERS = ["https://cloudflare-eth.com"];
 const ARBITRUM_RPC_PROVIDERS = ["https://arb1.arbitrum.io/rpc"];
-const ARBITRUM_TESTNET_RPC_PROVIDERS = ["https://arb-rinkeby.g.alchemy.com/v2/4TO9yKJtxrTsGrVksRe6JrPO3AEj2pgn"];
+const ARBITRUM_TESTNET_RPC_PROVIDERS = ["https://rinkeby.arbitrum.io/rpc"];
 const AVALANCHE_RPC_PROVIDERS = ["https://avax-mainnet.gateway.pokt.network/v1/lb/626f37766c499d003aada23b"];
 export const WALLET_CONNECT_LOCALSTORAGE_KEY = "walletconnect";
 export const WALLET_LINK_LOCALSTORAGE_PREFIX = "-walletlink";
@@ -154,7 +154,7 @@ export const ICONLINKS = {
       coingecko: "https://www.coingecko.com/en/coins/tracer-dao",
       arbitrum: `https://arbiscan.io/address/${getContract(ARBITRUM_TESTNET, "TCR")}`,
     },
-    TLP: {
+    MLP: {
       arbitrum: `https://arbiscan.io/address/${getContract(ARBITRUM_TESTNET, "StakedGlpTracker")}`,
     },
     GMX: {
@@ -211,7 +211,7 @@ export const ICONLINKS = {
       coingecko: "https://www.coingecko.com/en/coins/tracer-dao",
       arbitrum: `https://arbiscan.io/address/${getContract(ARBITRUM, "TCR")}`,
     },
-    TLP: {
+    MLP: {
       arbitrum: `https://arbiscan.io/address/${getContract(ARBITRUM, "StakedGlpTracker")}`,
     },
     GMX: {
@@ -262,7 +262,7 @@ export const ICONLINKS = {
       coingecko: "https://www.coingecko.com/en/coins/tracer-dao",
       arbitrum: `https://arbiscan.io/address/${getContract(ARBITRUM_TESTNET, "TCR")}`,
     },
-    TLP: {
+    MLP: {
       arbitrum: `https://arbiscan.io/address/${getContract(ARBITRUM_TESTNET, "StakedGlpTracker")}`,
     },
     GMX: {
@@ -308,9 +308,9 @@ export const platformTokens = {
       address: getContract(ARBITRUM_TESTNET, "TCR"),
       imageUrl: "https://assets.coingecko.com/coins/images/18271/small/tracer_logo.png?1631176676",
     },
-    TLP: {
+    MLP: {
       name: "TCR LP",
-      symbol: "TLP",
+      symbol: "MLP",
       decimals: 18,
       address: getContract(ARBITRUM_TESTNET, "StakedGlpTracker"), // address of fsGLP token because user only holds fsGLP
       imageUrl: "https://i.imgur.com/1xbBwPe.png",
@@ -325,9 +325,9 @@ export const platformTokens = {
       address: getContract(ARBITRUM, "TCR"),
       imageUrl: "https://assets.coingecko.com/coins/images/18271/small/tracer_logo.png?1631176676",
     },
-    TLP: {
+    MLP: {
       name: "TCR LP",
-      symbol: "TLP",
+      symbol: "MLP",
       decimals: 18,
       address: getContract(ARBITRUM, "StakedGlpTracker"), // address of fsGLP token because user only holds fsGLP
       imageUrl: "https://github.com/gmx-io/gmx-assets/blob/main/GMX-Assets/PNG/GLP_LOGO%20ONLY.png?raw=true",
@@ -356,9 +356,9 @@ export const platformTokens = {
       address: getContract(ARBITRUM, "TCR"),
       imageUrl: "https://assets.coingecko.com/coins/images/18271/small/tracer_logo.png?1631176676",
     },
-    TLP: {
+    MLP: {
       name: "TCR LP",
-      symbol: "TLP",
+      symbol: "MLP",
       decimals: 18,
       address: getContract(ARBITRUM, "StakedGlpTracker"), // address of fsGLP token because user only holds fsGLP
       imageUrl: "https://github.com/gmx-io/gmx-assets/blob/main/GMX-Assets/PNG/GLP_LOGO%20ONLY.png?raw=true",

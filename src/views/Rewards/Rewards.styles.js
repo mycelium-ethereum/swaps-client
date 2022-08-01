@@ -80,7 +80,7 @@ export const RewardsDataBox = styled.div`
   padding: 2rem;
   font-size: 16px;
 
-  background: rgba(34, 39, 74, 0.2);
+  background: var(--background-secondary);
 
   &.claimable {
     background: linear-gradient(180deg, rgba(20, 45, 29, 0.5) 0%, rgba(20, 45, 29, 0) 100%);
@@ -114,7 +114,7 @@ export const RewardsWeekNextRewards = styled.span`
 `
 
 export const RewardsWeekCountdown = styled.span`
-  background: rgba(34, 39, 74, 0.2);
+  background: var(--background-secondary);
   border: 1px solid #2B2F51;
   padding: 4px 16px;
 
@@ -137,7 +137,7 @@ export const WeekSelectButton = styled.button`
   border: 0.5px solid #7889A5;
 
   &.App-cta {
-    background: rgba(34, 39, 74, 0.2);
+    background: var(--background-secondary);
   }
 `
 

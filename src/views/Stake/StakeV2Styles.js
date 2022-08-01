@@ -4,13 +4,13 @@ import styled from 'styled-components';
 
 export const RewardsBanner = styled.div`
   width: calc(100% + 2rem);
-  background: linear-gradient(180deg, #1C64F2 -208.23%, rgba(28, 99, 242, 0) 82.91%);
+  background: var(--cell-gradient);
   font-size: 16px;
   padding: 1rem;
   margin: 1rem 0 1rem -1rem;
   color: var(--text-primary);
-  border-top: 1px var(--border-primary) solid;
-  border-bottom: 1px var(--border-primary) solid;
+  border-top: 1px var(--cell-stroke) solid;
+  border-bottom: 1px var(--cell-stroke) solid;
 `
 
 export const RewardsBannerRow = styled.div`

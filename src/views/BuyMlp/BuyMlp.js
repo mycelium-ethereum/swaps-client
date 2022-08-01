@@ -3,7 +3,7 @@ import { Link, useHistory } from "react-router-dom";
 
 import GlpSwap from "../../components/Glp/GlpSwap";
 import Footer from "../../Footer";
-import "./BuyTlp.css";
+import "./BuyMlp.css";
 
 import { useChainId } from "../../Helpers";
 import { getNativeToken } from "../../data/Tokens";
@@ -29,7 +29,7 @@ export default function BuyGlp(props) {
           </div>
         */}
         <div className="section-title-content">
-          <div className="Page-title">Buy / Sell TLP</div>
+          <div className="Page-title">Buy / Sell MLP</div>
           <div className="Page-description">
             Purchase{" "}
             <a
@@ -42,7 +42,7 @@ export default function BuyGlp(props) {
                 })
               }
             >
-              TLP tokens
+              MLP tokens
             </a>{" "}
             to earn {nativeTokenSymbol} fees from swaps and leverages trading.
             <br />

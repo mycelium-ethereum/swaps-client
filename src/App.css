@@ -86,7 +86,7 @@
   line-height: 18px;
   font-weight: normal;
   letter-spacing: 0.1px;
-  color: var(--tracer-blue-light);
+  color: var(--action-stroke);
   padding: 15px 16px;
   text-decoration: none;
   display: block;
@@ -156,9 +156,9 @@
 .App-box-highlight,
 .App-box-solid {
   position: relative;
-  border: 1px solid var(--border-primary);
+  border: 1px solid var(--cell-stroke);
   border-radius: 4px;
-  background: rgba(34, 39, 74, 0.2);
+  background: var(--background-secondary);
 }
 
 .App-card-bottom-placeholder {
@@ -322,8 +322,8 @@
   box-shadow: inset 0px 0px 10px 5px rgba(27, 30, 46, 0.2);
   background: var(--background-secondary);
   height: 3.3rem;
-  width: 17rem;
-  border: 1px solid var(--border-primary);
+  width: 24.5rem;
+  border: 1px solid var(--cell-stroke);
   border-radius: 3px;
   position: relative;
   color: white;
@@ -365,6 +365,15 @@
   margin-right: 1.2rem;
 }
 
+.Connect-wallet-modal .Modal-content {
+  border: 1px solid #8B968C;
+  border-radius: 8px;
+}
+
+.Connect-wallet-modal .Modal-content .divider {
+  display: none;
+}
+
 button.App-connect-wallet {
   cursor: pointer;
   display: inline-block;
@@ -389,11 +398,11 @@ button.App-connect-wallet:hover {
 
 .App-header-user-link .trade-link {
   background: var(--background-navigation);
-  border: 0.5px solid var(--text-navigation);
+  border: 0.5px solid var(--border-navigation);
 }
 
 .App-header-user-address {
-  border: 0.5px solid var(--text-navigation);
+  border: 0.5px solid var(--border-navigation);
   color: var(--text-navigation);
   height: 36px;
   border-radius: 4px;
@@ -404,7 +413,7 @@ button.App-connect-wallet:hover {
 
 .App-card-divider {
   height: 1px;
-  background: #23263b;
+  background: var(--cell-stroke);
   margin: 0.7rem -1rem;
 }
 
@@ -532,7 +541,7 @@ button.App-connect-wallet:hover {
 
 .App-card {
   padding: 1rem 1rem 1.2rem;
-  border: 1px solid var(--border-primary);
+  border: 1px solid var(--cell-stroke);
   border-radius: 4px;
 }
 
@@ -782,15 +791,15 @@ a.App-cta,
 button.App-cta {
   color: white;
   text-decoration: none;
-  background: var(--tracer-blue);
+  background: var(--action-active);
   /* linear-gradient(90deg, rgba(45, 66, 252, 1) 0%, rgba(46, 61, 205, 1) 100%); */
   /* box-shadow: 0 0 4px 6px rgba(45,66,252,0.15); */
 }
 
 a.App-cta:hover,
 button.App-cta:hover:enabled {
-  background: linear-gradient(90deg, rgba(58, 78, 252, 1) 0%, rgba(51, 68, 222, 1) 100%);
-  box-shadow: 0 0 4px 6px rgba(45, 66, 252, 0.2);
+  background: var(--action-hover);
+  box-shadow: var(--action-shadow);
 }
 
 .App-cta.small {
@@ -828,13 +837,13 @@ button.App-button-option {
   text-decoration: none;
   border: none;
   font-size: 1rem;
-  background: var(--button-primary);
+  background: var(--action-active);
 }
 
 a.App-button-option:hover,
 button.App-button-option:hover:enabled {
-  background: linear-gradient(90deg, rgba(58, 78, 252, 1) 0%, rgba(51, 68, 222, 1) 100%);
-  box-shadow: 0 0 4px 6px rgba(45, 66, 252, 0.2);
+  background: var(--action-hover);
+  box-shadow: var(--action-shadow);
 }
 
 button.App-button-option:disabled {
@@ -1062,7 +1071,7 @@ button.App-button {
 }
 
 .positive {
-  color: #0ecc83;
+  color: var(--long-active);
 }
 
 .positive-background {
@@ -1070,7 +1079,7 @@ button.App-button {
 }
 
 .negative {
-  color: #fa3c58;
+  color: var(--short-active);
 }
 
 .negative-background {
@@ -1087,11 +1096,11 @@ button.App-button {
 }
 
 .App-slider .rc-slider-rail {
-  background: #3F3F46;
+  background: var(--action-inactive);
 }
 
 .App-slider .rc-slider-track {
-  background: var(--tracer-blue-slider);
+  background: var(--action-inactive);
 }
 
 .App-slider .rc-slider-dot {
@@ -1099,16 +1108,16 @@ button.App-button {
   border-radius: 1px;
   width: 2px;
   margin-left: -1px;
-  background: rgba(40, 45, 74, 1);
+  background: var(--action-inactive);
 }
 
 .App-slider .rc-slider-dot-active {
-  background: #3d51ff;
+  background: var(--action-active);
 }
 
 .App-slider .rc-slider-handle {
-  background: var(--tracer-blue-slider);
-  border: solid 2px var(--tracer-blue-slider);
+  background: var(--action-active);
+  border: solid 2px var(--action-active);
 }
 
 .App-slider .rc-slider-handle:active {
@@ -1286,6 +1295,9 @@ button.App-button {
 @media (max-width: 700px) {
   .App-card-long-content {
     grid-template-columns: 1fr 1fr;
+  }
+  .Wallet-btn {
+    width: 17rem;
   }
 }
 
