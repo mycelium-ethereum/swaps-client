@@ -47,6 +47,8 @@ export default function Rewards(props) {
     fetcher: (...args) => fetch(...args).then((res) => res.json()),
   });
 
+  console.log(rewardWeeks);
+
   const userData = useMemo(
     () =>
       rewardWeeks?.reduce(
