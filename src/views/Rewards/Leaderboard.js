@@ -115,7 +115,7 @@ export default function Leaderboard(props) {
                 ))}
               </tbody>
             </RewardsTable>
-          ) : !weekData?.traders || weekData?.traders?.length === 0 ? (
+          ) : (!weekData?.traders || weekData?.traders?.length === 0) && selectedWeek ? (
             <FullWidthText>
               <p>No data available for Week {selectedWeek}</p>
             </FullWidthText>
