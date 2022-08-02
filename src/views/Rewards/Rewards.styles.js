@@ -50,6 +50,11 @@ export const AccountBanner = styled.div`
   }
 `;
 
+export const PersonalRewardsContainer = styled.div`
+  max-width: 900px;
+  width: 100%;
+`;
+
 export const AppCardTitle = styled.div`
   font-weight: 600;
   font-size: 24px;
@@ -242,8 +247,13 @@ export const LeaderboardContainer = styled.div`
   width: 100%;
 `;
 
+export const PersonalRewardsTableContainer = styled.div`
+  position: relative;
+`;
+
 export const RewardsTableContainer = styled.div`
   position: relative;
+  margin-bottom: 74px;
 `;
 
 export const RewardsTable = styled.table`
@@ -328,13 +338,14 @@ export const UserCell = styled(TableCell)`
     display: flex;
     align-items: center;
   }
-  > div:first-child div {
-    margin-left: 8px;
-  }
-  > div div span {
+`;
+
+export const UserDetails = styled.div`
+  margin-left: 8px;
+  span {
     display: block;
   }
-  > div div span:nth-child(2) {
+  span:nth-child(2) {
     font-size: 12px;
     line-height: 18px;
     color: var(--text-secondary);
@@ -366,10 +377,10 @@ export const ClaimButton = styled.button`
   text-decoration: none;
   border: none;
   font-size: 1rem;
-  background: var(--action-active);
-  transition: background 0.3s ease;
+  background-color: var(--action-active);
+  transition: background-color 0.3s ease;
   &:hover {
-    background: var(--action-hover);
+    background-color: var(--action-hover);
   }
 `;
 

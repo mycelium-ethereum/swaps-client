@@ -12,6 +12,7 @@ import Leaderboard from "./Leaderboard";
 import * as Styles from "./Rewards.styles";
 // import cx from "classnames";
 import { LeaderboardSwitch } from "./ViewSwitch";
+import Footer from "../../Footer";
 
 const PersonalHeader = () => (
   <div className="Page-title-section mt-0">
@@ -168,29 +169,29 @@ export default function Rewards(props) {
         rewardWeeks={rewardWeeks}
         setSelectedWeek={setSelectedWeek}
       />
-      {
-        {
-          Personal: (
-            <TraderRewards
-              active={active}
-              account={account}
-              ensName={ensName}
-              userData={userData}
-              totalRewardAmountEth={totalRewardAmountEth}
-              unclaimedRewardsEth={unclaimedRewardsEth}
-              rewardsMessage={rewardsMessage}
-              rewardWeeks={rewardWeeks}
-              setSelectedWeek={setSelectedWeek}
-              connectWallet={connectWallet}
-              userWeekData={userWeekData}
-              rewardAmountEth={rewardAmountEth}
-            />
-          ),
-          Leaderboard: (
-            <Leaderboard userWeekData={userWeekData} account={account} ensName={ensName} weekData={weekData} />
-          ),
-        }[currentView]
-      }
+      <TraderRewards
+        active={active}
+        account={account}
+        ensName={ensName}
+        userData={userData}
+        totalRewardAmountEth={totalRewardAmountEth}
+        unclaimedRewardsEth={unclaimedRewardsEth}
+        rewardsMessage={rewardsMessage}
+        rewardWeeks={rewardWeeks}
+        setSelectedWeek={setSelectedWeek}
+        connectWallet={connectWallet}
+        userWeekData={userWeekData}
+        rewardAmountEth={rewardAmountEth}
+        currentView={currentView}
+      />
+      <Leaderboard
+        userWeekData={userWeekData}
+        account={account}
+        ensName={ensName}
+        weekData={weekData}
+        currentView={currentView}
+      />
+      <Footer />
     </Styles.StyledRewardsPage>
   );
 }

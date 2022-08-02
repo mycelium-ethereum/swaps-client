@@ -1,7 +1,4 @@
 import React from "react";
-
-import Footer from "../../Footer";
-
 import { ETH_DECIMALS, formatAmount, shortenAddress, USD_DECIMALS } from "../../Helpers";
 import * as Styles from "./Rewards.styles";
 import Davatar from "@davatar/react";
@@ -21,9 +18,10 @@ export default function TraderRewards(props) {
     connectWallet,
     userWeekData,
     rewardAmountEth,
+    currentView,
   } = props;
   return (
-    <>
+    <Styles.PersonalRewardsContainer hidden={currentView === "Leaderboard"}>
       <Styles.AccountBanner className="App-card">
         {active && (
           <Styles.AccountBannerAddresses>
@@ -89,7 +87,6 @@ export default function TraderRewards(props) {
           </Styles.RewardsButton>
         )}
       </Styles.RewardsData>
-      <Footer />
-    </>
+    </Styles.PersonalRewardsContainer>
   );
 }

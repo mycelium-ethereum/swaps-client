@@ -3,7 +3,7 @@ import { useENS, truncateMiddleEthAddress, formatAmount, USD_DECIMALS } from "..
 import * as Styles from "./Rewards.styles";
 import Davatar from "@davatar/react";
 
-const MAX_LISTINGS = 100;
+const MAX_LISTINGS = 25;
 
 function TableRow({ position, account, volume, reward }) {
   const { ensName } = useENS(account);
@@ -13,11 +13,11 @@ function TableRow({ position, account, volume, reward }) {
       <Styles.RankCell>{position}</Styles.RankCell>
       <Styles.UserCell>
         <div>
-          <Davatar size={32} address={account} />
-          <div>
+          {!!account && <Davatar size={32} address={account} />}
+          <Styles.UserDetails>
             <span>{truncateMiddleEthAddress(account)}</span>
             <span>{ensName}</span>
-          </div>
+          </Styles.UserDetails>
         </div>
       </Styles.UserCell>
       <Styles.VolumeCell>${formatAmount(volume, USD_DECIMALS, 4, true)}</Styles.VolumeCell>
@@ -30,13 +30,14 @@ function TableRow({ position, account, volume, reward }) {
 }
 
 export default function Leaderboard(props) {
-  const { weekData, userWeekData, account, ensName } = props;
+  const { weekData, userWeekData, account, ensName, currentView } = props;
 
   const headings = ["Rank", "User", "Volume", "Reward", ""];
+
   return (
-    <Styles.LeaderboardContainer>
+    <Styles.LeaderboardContainer hidden={currentView === "Personal"}>
       <Styles.Title>Your rewards</Styles.Title>
-      <Styles.RewardsTableContainer>
+      <Styles.PersonalRewardsTableContainer>
         <Styles.RewardsTableBorder />
         {userWeekData && userWeekData.position ? (
           <Styles.RewardsTable>
@@ -62,7 +63,7 @@ export default function Leaderboard(props) {
             <p>No previous trades</p>
           </Styles.FullWidthText>
         )}
-      </Styles.RewardsTableContainer>
+      </Styles.PersonalRewardsTableContainer>
       <Styles.LeaderboardTitle>Leaderboard</Styles.LeaderboardTitle>
       <Styles.RewardsTableContainer>
         <Styles.RewardsTableBorder />
