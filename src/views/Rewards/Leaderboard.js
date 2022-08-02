@@ -1,9 +1,28 @@
 import React from "react";
 import { useENS, truncateMiddleEthAddress, formatAmount, USD_DECIMALS } from "../../Helpers";
-import * as Styles from "./Rewards.styles";
 import Davatar from "@davatar/react";
 import cx from "classnames";
-
+import {
+  LeaderboardContainer,
+  Title,
+  PersonalRewardsTableContainer,
+  RewardsTableBorder,
+  RewardsTable,
+  RewardsTableHeader,
+  RewardsTableHeading,
+  FullWidthText,
+  LeaderboardTitle,
+  RewardsTableContainer,
+  ScrollContainer,
+  RankCell,
+  UserCell,
+  EmptyAvatar,
+  UserDetails,
+  VolumeCell,
+  RewardCell,
+  ClaimCell,
+  ClaimButton,
+} from "./Rewards.styles";
 const DEFAULT_LISTINGS_COUNT = 50;
 const ARBISCAN_URL = "https://arbiscan.io/address/";
 
@@ -12,27 +31,27 @@ function TableRow({ position, account, userAccount, volume, reward }) {
 
   return (
     <tr>
-      <Styles.RankCell>{position}</Styles.RankCell>
-      <Styles.UserCell>
+      <RankCell>{position}</RankCell>
+      <UserCell>
         <div>
-          {account ? <Davatar size={32} address={account} /> : <Styles.EmptyAvatar />}
-          <Styles.UserDetails>
+          {account ? <Davatar size={32} address={account} /> : <EmptyAvatar />}
+          <UserDetails>
             <a href={`${ARBISCAN_URL}${account}`} rel="noopener noreferrer" target="_blank">
               <span>{truncateMiddleEthAddress(account)}</span>
             </a>
             <span>{ensName}</span>
-          </Styles.UserDetails>
+          </UserDetails>
         </div>
-      </Styles.UserCell>
-      <Styles.VolumeCell>${formatAmount(volume, USD_DECIMALS, 2, true)}</Styles.VolumeCell>
-      <Styles.RewardCell>${formatAmount(reward, USD_DECIMALS, 2, true)}</Styles.RewardCell>
-      <Styles.ClaimCell
+      </UserCell>
+      <VolumeCell>${formatAmount(volume, USD_DECIMALS, 2, true)}</VolumeCell>
+      <RewardCell>${formatAmount(reward, USD_DECIMALS, 2, true)}</RewardCell>
+      <ClaimCell
         className={cx({
           "highlight-current": account === userAccount,
         })}
       >
-        {account === userAccount ? <Styles.ClaimButton>Claim ETH</Styles.ClaimButton> : null}
-      </Styles.ClaimCell>
+        {account === userAccount ? <ClaimButton>Claim ETH</ClaimButton> : null}
+      </ClaimCell>
     </tr>
   );
 }
@@ -42,19 +61,19 @@ export default function Leaderboard(props) {
   const headings = ["Rank", "User", "Volume", "Reward", ""];
 
   return (
-    <Styles.LeaderboardContainer hidden={currentView === "Personal"}>
-      <Styles.Title>Your rewards</Styles.Title>
-      <Styles.PersonalRewardsTableContainer>
-        <Styles.RewardsTableBorder />
+    <LeaderboardContainer hidden={currentView === "Personal"}>
+      <Title>Your rewards</Title>
+      <PersonalRewardsTableContainer>
+        <RewardsTableBorder />
         {userWeekData && userWeekData.position ? (
-          <Styles.RewardsTable>
-            <Styles.RewardsTableHeader>
+          <RewardsTable>
+            <RewardsTableHeader>
               <tr>
                 {headings.map((heading) => (
-                  <Styles.RewardsTableHeading key={heading}>{heading}</Styles.RewardsTableHeading>
+                  <RewardsTableHeading key={heading}>{heading}</RewardsTableHeading>
                 ))}
               </tr>
-            </Styles.RewardsTableHeader>
+            </RewardsTableHeader>
             <tbody>
               <TableRow
                 position={userWeekData.position}
@@ -64,26 +83,26 @@ export default function Leaderboard(props) {
                 reward={userWeekData.reward}
               />
             </tbody>
-          </Styles.RewardsTable>
+          </RewardsTable>
         ) : (
-          <Styles.FullWidthText>
+          <FullWidthText>
             <p>No previous trades</p>
-          </Styles.FullWidthText>
+          </FullWidthText>
         )}
-      </Styles.PersonalRewardsTableContainer>
-      <Styles.LeaderboardTitle>Leaderboard</Styles.LeaderboardTitle>
-      <Styles.RewardsTableContainer>
-        <Styles.RewardsTableBorder />
-        <Styles.ScrollContainer>
+      </PersonalRewardsTableContainer>
+      <LeaderboardTitle>Leaderboard</LeaderboardTitle>
+      <RewardsTableContainer>
+        <RewardsTableBorder />
+        <ScrollContainer>
           {weekData?.traders?.length > 1 ? (
-            <Styles.RewardsTable>
-              <Styles.RewardsTableHeader>
+            <RewardsTable>
+              <RewardsTableHeader>
                 <tr>
                   {headings.map((heading) => (
-                    <Styles.RewardsTableHeading>{heading}</Styles.RewardsTableHeading>
+                    <RewardsTableHeading>{heading}</RewardsTableHeading>
                   ))}
                 </tr>
-              </Styles.RewardsTableHeader>
+              </RewardsTableHeader>
               <tbody>
                 {weekData?.traders?.slice(0, DEFAULT_LISTINGS_COUNT).map(({ user_address, volume, reward }, index) => (
                   <TableRow
@@ -95,18 +114,18 @@ export default function Leaderboard(props) {
                   />
                 ))}
               </tbody>
-            </Styles.RewardsTable>
-          ) : weekData?.traders?.length === 0 ? (
-            <Styles.FullWidthText>
+            </RewardsTable>
+          ) : !weekData?.traders || weekData?.traders?.length === 0 ? (
+            <FullWidthText>
               <p>No data available for Week {selectedWeek}</p>
-            </Styles.FullWidthText>
+            </FullWidthText>
           ) : (
-            <Styles.FullWidthText>
+            <FullWidthText>
               <p>Loading week data...</p>
-            </Styles.FullWidthText>
+            </FullWidthText>
           )}
-        </Styles.ScrollContainer>
-      </Styles.RewardsTableContainer>
-    </Styles.LeaderboardContainer>
+        </ScrollContainer>
+      </RewardsTableContainer>
+    </LeaderboardContainer>
   );
 }

@@ -45,6 +45,9 @@
   border-bottom: 1px solid var(--cell-highlight);
   transition: background-color 0.3s ease;
 }
+.menu-item.menu-item-selected {
+  background-color: #161a2d !important;
+}
 .menu-item:last-of-type {
   border-bottom: 0;
 }

@@ -142,15 +142,17 @@ export const WeekSelectButton = styled.button`
 
   font-size: 16px;
   line-height: 150%;
-  transition: background-color 0.3s ease;
+  transition: background-color 0.3s ease, border 0.3s ease;
 
-  border: 1px solid var(--cell-highlight);
+  border: 1px solid var(--cell-stroke);
 
   &.App-cta {
     background: var(--background-secondary);
   }
+  &.App-cta-selected,
   &.App-cta:hover {
     background-color: #161a2d !important;
+    border: 1px solid var(--cell-highlight);
   }
 `;
 
@@ -430,4 +432,8 @@ export const EmptyAvatar = styled.span`
   height: 32px;
   border-radius: 9999px;
   background-color: white;
+`;
+
+export const GradientPlaceholder = styled.div`
+  background-image: linear-gradient(111.31deg, var(--cell-stroke) 70%, rgba(0, 48, 0, 0) 99.29%);
 `;

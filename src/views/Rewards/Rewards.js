@@ -67,8 +67,7 @@ export default function Rewards(props) {
           totalRewards: ethers.BigNumber.from(0),
           unclaimedRewards: ethers.BigNumber.from(0),
         }
-      ),
-    [rewardWeeks, account]
+      )[(rewardWeeks, account)]
   );
 
   const weekData = useMemo(() => {
@@ -78,7 +77,8 @@ export default function Rewards(props) {
     if (!!rewardWeeks?.message) {
       return undefined;
     }
-    const weekData = rewardWeeks?.find((week) => week.week === selectedWeek?.toString());
+    const selectedWeekActual = selectedWeek && parseFloat(selectedWeek) - 1;
+    const weekData = rewardWeeks?.find((week) => week.week === selectedWeekActual?.toString());
     if (!weekData) {
       return undefined;
     }
@@ -122,7 +122,7 @@ export default function Rewards(props) {
   if (!rewardWeeks && selectedWeek !== undefined) {
     setSelectedWeek(undefined);
   } else if (selectedWeek === undefined && !!rewardWeeks) {
-    setSelectedWeek(1);
+    setSelectedWeek(rewardWeeks[rewardWeeks.length - 1].week);
   }
 
   let rewardsMessage = "";
