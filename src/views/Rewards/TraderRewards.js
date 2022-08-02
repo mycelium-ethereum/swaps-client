@@ -38,18 +38,18 @@ export default function TraderRewards(props) {
         )}
         <Styles.AccountBannerRewards>
           <div className="App-card-row">
-            <div className="label"> Total Volume Traded </div>
-            <div> ${formatAmount(userData?.totalTradingVolume, 0, 2, true)} </div>
+            <div className="label">Total Volume Traded</div>
+            <div> ${formatAmount(userData?.totalTradingVolume, 0, 2, true)}</div>
           </div>
           <div className="App-card-row">
-            <div className="label"> Total Rewards </div>
+            <div className="label">Total Rewards</div>
             <div>
               {formatAmount(userData?.totalRewards, ETH_DECIMALS, 2, true)} ETH($
               {formatAmount(totalRewardAmountEth, USD_DECIMALS + ETH_DECIMALS, 2, true)})
             </div>
           </div>
           <div className="App-card-row">
-            <div className="label"> Unclaimed Rewards </div>
+            <div className="label">Unclaimed Rewards</div>
             <div>
               {formatAmount(userData?.unclaimedRewards, ETH_DECIMALS, 2, true)} ETH($
               {formatAmount(unclaimedRewardsEth, USD_DECIMALS + ETH_DECIMALS, 2, true)})
@@ -64,7 +64,7 @@ export default function TraderRewards(props) {
             <WeekDropdown rewardWeeks={rewardWeeks} setSelectedWeek={setSelectedWeek} rewardsMessage={rewardsMessage} />
           ) : null}
           <Styles.RewardsWeekNextRewards>
-            Next rewards in <Styles.RewardsWeekCountdown>8d 13h 42m </Styles.RewardsWeekCountdown>
+            Next rewards in <Styles.RewardsWeekCountdown>8d 13h 42m</Styles.RewardsWeekCountdown>
           </Styles.RewardsWeekNextRewards>
         </Styles.RewardsWeekSelect>
         <Styles.RewardsDataBoxes>

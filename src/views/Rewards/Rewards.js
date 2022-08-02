@@ -186,7 +186,7 @@ export default function Rewards(props) {
       />
       <Leaderboard
         userWeekData={userWeekData}
-        account={account}
+        userAccount={account}
         ensName={ensName}
         weekData={weekData}
         currentView={currentView}

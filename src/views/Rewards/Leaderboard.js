@@ -5,7 +5,7 @@ import Davatar from "@davatar/react";
 
 const MAX_LISTINGS = 25;
 
-function TableRow({ position, account, volume, reward }) {
+function TableRow({ position, account, userAccount, volume, reward }) {
   const { ensName } = useENS(account);
 
   return (
@@ -20,17 +20,17 @@ function TableRow({ position, account, volume, reward }) {
           </Styles.UserDetails>
         </div>
       </Styles.UserCell>
-      <Styles.VolumeCell>${formatAmount(volume, USD_DECIMALS, 4, true)}</Styles.VolumeCell>
+      <Styles.VolumeCell>${formatAmount(volume, USD_DECIMALS, 2, true)}</Styles.VolumeCell>
       <Styles.RewardCell>${formatAmount(reward, USD_DECIMALS, 2, true)}</Styles.RewardCell>
       <Styles.ClaimCell>
-        <Styles.ClaimButton>Claim ETH</Styles.ClaimButton>
+        {account === userAccount ? <Styles.ClaimButton>Claim ETH</Styles.ClaimButton> : null}
       </Styles.ClaimCell>
     </tr>
   );
 }
 
 export default function Leaderboard(props) {
-  const { weekData, userWeekData, account, ensName, currentView } = props;
+  const { weekData, userWeekData, userAccount, ensName, currentView } = props;
 
   const headings = ["Rank", "User", "Volume", "Reward", ""];
 
@@ -51,7 +51,7 @@ export default function Leaderboard(props) {
             <tbody>
               <TableRow
                 position={userWeekData.position}
-                account={account}
+                account={userAccount}
                 ensName={ensName}
                 volume={userWeekData.volume}
                 reward={userWeekData.reward}
