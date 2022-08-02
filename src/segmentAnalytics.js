@@ -34,12 +34,14 @@ export const useAnalytics = () => {
 
   const trackPageWithTraits = (traits) => {
     const hasConsented = hasUserConsented();
+    const urlParams = getUrlParameters(location.search);
     if (hasConsented) {
-      analytics?.page({ ...traits });
+      analytics?.page({ ...traits, ...urlParams });
     } else {
       analytics?.page({
         ...IGNORE_IP_CONTEXT,
         ...traits,
+        ...urlParams,
       });
     }
   };
@@ -70,6 +72,15 @@ export const useAnalytics = () => {
     }
   };
 
+  const getUrlParameters = (searchString) => {
+    const queryString = searchString;
+    const urlParams = new URLSearchParams(queryString);
+    const keys = urlParams.keys();
+    const params = {};
+    for (const key of keys) params[key] = urlParams.get(key);
+    return params;
+  };
+
   // Identify call
   useEffect(() => {
     const wasPreviouslyIdentified = window.localStorage.getItem("analyticsIdentified");
@@ -92,23 +103,26 @@ export const useAnalytics = () => {
   // Page call
   useEffect(() => {
     const customTrackPages = ["/trade", "/buy_tlp", "/rewards"];
+
     if (!customTrackPages.includes(location.pathname)) {
       const hasConsented = hasUserConsented();
+      const urlParams = getUrlParameters(location.search);
       const windowTraits = {
         screenHeight: window.innerHeight || "unknown",
         screenWidth: window.innerWidth || "unknown",
         screenDensity: window.devicePixelRatio || "unknown",
       };
       if (hasConsented) {
-        analytics?.page({ ...windowTraits });
+        analytics?.page({ ...windowTraits, ...urlParams });
       } else {
         analytics?.page({
           ...IGNORE_IP_CONTEXT,
           ...windowTraits,
+          ...urlParams,
         });
       }
     }
-  }, [analytics, location.pathname]);
+  }, [analytics, location.pathname, location.search]);
 
   useEffect(() => {
     if (!writeKey) {
