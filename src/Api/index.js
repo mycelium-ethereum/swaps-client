@@ -346,8 +346,8 @@ function invariant(condition, errorMsg) {
 export function useTrades(chainId, account) {
   const url =
     account && account.length > 0
-      ? `http://localhost:3030/trs/actions?account=${account}&network=${chainId}`
-      : `http://localhost:3030/trs/actions?network=${chainId}`;
+      ? `https://api.tracer.finance/trs/actions?account=${account}&network=${chainId}`
+      : `http://api.tracer.finance/trs/actions?network=${chainId}`;
 
   const { data, mutate: updateTrades } = useSWR(url, {
     dedupingInterval: 30000,
