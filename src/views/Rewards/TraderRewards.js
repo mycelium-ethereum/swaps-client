@@ -5,8 +5,6 @@ import Footer from "../../Footer";
 import { ETH_DECIMALS, formatAmount, shortenAddress, USD_DECIMALS } from "../../Helpers";
 import * as Styles from "./Rewards.styles";
 import Davatar from "@davatar/react";
-import { Menu } from "@headlessui/react";
-import { FaChevronDown } from "react-icons/fa";
 import WeekDropdown from "./WeekDropdown";
 
 export default function TraderRewards(props) {

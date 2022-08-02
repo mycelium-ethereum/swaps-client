@@ -31,9 +31,9 @@ export default function Rewards(props) {
   const [currentView, setCurrentView] = useState("Personal");
   const { connectWallet, trackPageWithTraits } = props;
 
-  const { ensName } = useENS();
   const { chainId } = useChainId();
   const { active, account, library } = useWeb3React();
+  const { ensName } = useENS(account);
 
   const [selectedWeek, setSelectedWeek] = useState(undefined);
 
@@ -70,7 +70,7 @@ export default function Rewards(props) {
     [rewardWeeks, account]
   );
 
-  const userWeekData = useMemo(() => {
+  const weekData = useMemo(() => {
     if (!rewardWeeks) {
       return undefined;
     }
@@ -78,6 +78,13 @@ export default function Rewards(props) {
       return undefined;
     }
     const weekData = rewardWeeks?.find((week) => week.week === selectedWeek?.toString());
+    if (!weekData) {
+      return undefined;
+    }
+    return weekData;
+  }, [rewardWeeks, selectedWeek]);
+
+  const userWeekData = useMemo(() => {
     if (!weekData) {
       return undefined;
     }
@@ -94,7 +101,7 @@ export default function Rewards(props) {
         reward: ethers.BigNumber.from(0),
       };
     }
-  }, [rewardWeeks, selectedWeek, account]);
+  }, [account, weekData]);
 
   const eth = getTokenInfo(infoTokens, ethers.constants.AddressZero);
   const ethPrice = eth?.maxPrimaryPrice;
@@ -179,7 +186,9 @@ export default function Rewards(props) {
               rewardAmountEth={rewardAmountEth}
             />
           ),
-          Leaderboard: <Leaderboard userWeekData={userWeekData} account={account} ensName={ensName} />,
+          Leaderboard: (
+            <Leaderboard userWeekData={userWeekData} account={account} ensName={ensName} weekData={weekData} />
+          ),
         }[currentView]
       }
     </Styles.StyledRewardsPage>

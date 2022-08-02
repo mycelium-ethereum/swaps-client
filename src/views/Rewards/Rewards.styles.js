@@ -233,6 +233,10 @@ export const Title = styled.div`
   color: #ffffff;
 `;
 
+export const LeaderboardTitle = styled(Title)`
+  margin-top: 16px;
+`;
+
 export const LeaderboardContainer = styled.div`
   max-width: 900px;
   width: 100%;
@@ -250,6 +254,17 @@ export const RewardsTable = styled.table`
   border: 0;
   border-collapse: separate;
   border-spacing: 0 1px;
+  overflow: hidden;
+
+  tbody tr {
+    border-bottom: 1px solid var(--cell-stroke);
+  }
+  tbody tr:last-child {
+    border-bottom: 0;
+  }
+  tbody tr:nth-child(even) {
+    background: linear-gradient(180deg, rgba(5, 67, 1, 0.2) 0%, rgba(5, 67, 1, 0) 65.01%);
+  }
 `;
 
 export const RewardsTableBorder = styled.div`
@@ -281,14 +296,91 @@ export const RewardsTableHeader = styled.thead`
 `;
 
 export const RewardsTableHeading = styled.th`
-  padding: 16px 32px;
-  border-bottom: 1px solid var(--cell-stroke);
+  padding: 16px;
+  line-height: 150%;
+  text-align: left;
+  &:first-of-type {
+    padding: 16px 32px;
+    text-align: center;
+  }
+  &:last-of-type {
+    padding: 16px 32px 16px 0;
+  }
 `;
 
-export const RankCell = styled.td`
-  font-weight: 700;
+const TableCell = styled.td`
   font-size: 16px;
   line-height: 150%;
-  padding: 25px 32px;
+  color: #ffffff;
+  padding: 16px;
+`;
+
+export const RankCell = styled(TableCell)`
+  text-align: center;
+  font-weight: 700;
+`;
+
+export const UserCell = styled(TableCell)`
+  text-align: left;
+  padding: 16px;
+  font-size: 16px;
+  > div:first-child {
+    display: flex;
+    align-items: center;
+  }
+  > div:first-child div {
+    margin-left: 8px;
+  }
+  > div div span {
+    display: block;
+  }
+  > div div span:nth-child(2) {
+    font-size: 12px;
+    line-height: 18px;
+    color: var(--text-secondary);
+  }
+`;
+
+export const VolumeCell = styled(TableCell)``;
+
+export const RewardCell = styled(TableCell)`
+  text-decoration: underline;
+`;
+
+export const ClaimCell = styled(TableCell)`
+  padding: 16px;
+  font-size: 16px;
+  span:nth-child(1) {
+    font-size: 16px;
+    color: #ffffff;
+  }
+`;
+
+export const ClaimButton = styled.button`
+  cursor: pointer;
+  display: block;
+  white-space: nowrap;
+  padding: 0.4rem 0.7rem;
+  border-radius: 3px;
+  color: white;
+  text-decoration: none;
+  border: none;
+  font-size: 1rem;
+  background: var(--action-active);
+  transition: background 0.3s ease;
+  &:hover {
+    background: var(--action-hover);
+  }
+`;
+
+export const FullWidthText = styled.div`
+  position: relative;
+  z-index: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 24px;
+  width: 100%;
+  font-size: 16px;
   color: #ffffff;
 `;
