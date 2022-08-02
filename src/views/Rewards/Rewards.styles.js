@@ -239,7 +239,7 @@ export const Title = styled.div`
   margin-bottom: 8px;
   font-size: 16px;
   line-height: 150%;
-  color: #ffffff;
+  color: white;
 `;
 
 export const LeaderboardTitle = styled(Title)`
@@ -347,7 +347,7 @@ export const RewardsTableHeading = styled.th`
 const TableCell = styled.td`
   font-size: 16px;
   line-height: 150%;
-  color: #ffffff;
+  color: white;
   padding: 16px;
 `;
 
@@ -392,7 +392,7 @@ export const ClaimCell = styled(TableCell)`
   font-size: 16px;
   span:nth-child(1) {
     font-size: 16px;
-    color: #ffffff;
+    color: white;
   }
 `;
 
@@ -422,5 +422,12 @@ export const FullWidthText = styled.div`
   padding: 24px;
   width: 100%;
   font-size: 16px;
-  color: #ffffff;
+  color: white;
+`;
+
+export const EmptyAvatar = styled.span`
+  width: 32px;
+  height: 32px;
+  border-radius: 9999px;
+  background-color: white;
 `;
