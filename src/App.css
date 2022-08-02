@@ -781,9 +781,10 @@ button.App-connect-wallet:hover {
   cursor: pointer;
   display: inline-block;
   padding: 1rem;
-  border-radius: 3px;
+  border-radius: 7px;
   border: none;
   font-size: 14px;
+  transition: background-color 0.3s ease;
 }
 
 a.App-cta,

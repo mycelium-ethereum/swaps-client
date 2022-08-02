@@ -192,6 +192,7 @@ export default function Rewards(props) {
         weekData={weekData}
         currentView={currentView}
         selectedWeek={selectedWeek}
+        connectWallet={connectWallet}
       />
       <Footer />
     </Styles.StyledRewardsPage>

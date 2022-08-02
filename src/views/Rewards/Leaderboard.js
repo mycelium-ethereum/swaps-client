@@ -3,9 +3,12 @@ import { useENS, truncateMiddleEthAddress, formatAmount, USD_DECIMALS } from "..
 import Davatar from "@davatar/react";
 import cx from "classnames";
 import {
+  ConnectWalletText,
+  ConnectWalletOverlay,
   LeaderboardContainer,
   Title,
   PersonalRewardsTableContainer,
+  RewardsButton,
   RewardsTableBorder,
   RewardsTable,
   RewardsTableHeader,
@@ -22,9 +25,26 @@ import {
   RewardCell,
   ClaimCell,
   ClaimButton,
+  WalletIcon,
 } from "./Rewards.styles";
 const DEFAULT_LISTINGS_COUNT = 50;
 const ARBISCAN_URL = "https://arbiscan.io/address/";
+const headings = ["Rank", "User", "Volume", "Reward", ""];
+
+function RewardsTableWrapper({ children }) {
+  return (
+    <RewardsTable>
+      <RewardsTableHeader>
+        <tr>
+          {headings.map((heading) => (
+            <RewardsTableHeading key={heading}>{heading}</RewardsTableHeading>
+          ))}
+        </tr>
+      </RewardsTableHeader>
+      <tbody>{children ? children : null}</tbody>
+    </RewardsTable>
+  );
+}
 
 function TableRow({ position, account, userAccount, volume, reward }) {
   const { ensName } = useENS(account);
@@ -57,37 +77,48 @@ function TableRow({ position, account, userAccount, volume, reward }) {
 }
 
 export default function Leaderboard(props) {
-  const { weekData, userWeekData, userAccount, ensName, currentView, selectedWeek } = props;
-  const headings = ["Rank", "User", "Volume", "Reward", ""];
+  const { weekData, userWeekData, userAccount, ensName, currentView, selectedWeek, connectWallet } = props;
 
   return (
     <LeaderboardContainer hidden={currentView === "Personal"}>
       <Title>Your rewards</Title>
       <PersonalRewardsTableContainer>
         <RewardsTableBorder />
-        {userWeekData && userWeekData.position ? (
-          <RewardsTable>
-            <RewardsTableHeader>
-              <tr>
-                {headings.map((heading) => (
-                  <RewardsTableHeading key={heading}>{heading}</RewardsTableHeading>
-                ))}
-              </tr>
-            </RewardsTableHeader>
-            <tbody>
-              <TableRow
-                position={userWeekData.position}
-                account={userAccount}
-                ensName={ensName}
-                volume={userWeekData.volume}
-                reward={userWeekData.reward}
-              />
-            </tbody>
-          </RewardsTable>
-        ) : (
+        {userAccount && userWeekData && userWeekData.position ? (
+          <RewardsTableWrapper>
+            <TableRow
+              position={userWeekData.position}
+              account={userAccount}
+              ensName={ensName}
+              volume={userWeekData.volume}
+              reward={userWeekData.reward}
+            />
+          </RewardsTableWrapper>
+        ) : userAccount ? (
           <FullWidthText>
             <p>No previous trades</p>
           </FullWidthText>
+        ) : (
+          <ConnectWalletOverlay>
+            {/* Empty table as placeholder */}
+            <RewardsTableWrapper>
+              <tr>
+                <td colSpan={5}>
+                  <br />
+                  <br />
+                  <br />
+                  <br />
+                  <br />
+                </td>
+              </tr>
+            </RewardsTableWrapper>
+            <ConnectWalletText>
+              <span>Connect to wallet to view your rewards</span>
+              <RewardsButton className="App-cta large" onClick={connectWallet}>
+                Connect Wallet <WalletIcon src="/icons/wallet.svg" />
+              </RewardsButton>
+            </ConnectWalletText>
+          </ConnectWalletOverlay>
         )}
       </PersonalRewardsTableContainer>
       <LeaderboardTitle>Leaderboard</LeaderboardTitle>
@@ -95,26 +126,17 @@ export default function Leaderboard(props) {
         <RewardsTableBorder />
         <ScrollContainer>
           {weekData?.traders?.length > 1 ? (
-            <RewardsTable>
-              <RewardsTableHeader>
-                <tr>
-                  {headings.map((heading) => (
-                    <RewardsTableHeading>{heading}</RewardsTableHeading>
-                  ))}
-                </tr>
-              </RewardsTableHeader>
-              <tbody>
-                {weekData?.traders?.slice(0, DEFAULT_LISTINGS_COUNT).map(({ user_address, volume, reward }, index) => (
-                  <TableRow
-                    key={user_address}
-                    position={index + 1}
-                    account={user_address}
-                    volume={volume}
-                    reward={reward}
-                  />
-                ))}
-              </tbody>
-            </RewardsTable>
+            <RewardsTableWrapper>
+              {weekData?.traders?.slice(0, DEFAULT_LISTINGS_COUNT).map(({ user_address, volume, reward }, index) => (
+                <TableRow
+                  key={user_address}
+                  position={index + 1}
+                  account={user_address}
+                  volume={volume}
+                  reward={reward}
+                />
+              ))}
+            </RewardsTableWrapper>
           ) : (!weekData?.traders || weekData?.traders?.length === 0) && selectedWeek ? (
             <FullWidthText>
               <p>No data available for Week {selectedWeek}</p>

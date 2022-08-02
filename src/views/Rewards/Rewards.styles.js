@@ -437,3 +437,43 @@ export const EmptyAvatar = styled.span`
 export const GradientPlaceholder = styled.div`
   background-image: linear-gradient(111.31deg, var(--cell-stroke) 70%, rgba(0, 48, 0, 0) 99.29%);
 `;
+
+export const ConnectWalletOverlay = styled.div`
+  position: relative;
+
+  &:before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 9, 0, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2;
+    border-radius: 4px;
+  }
+`;
+
+export const ConnectWalletText = styled.div`
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 3;
+
+  span {
+    display: block;
+    font-size: 14px;
+    color: white;
+    margin-bottom: 8px;
+  }
+`;
+
+export const WalletIcon = styled.img`
+  width: 22px;
+  height: 19px;
+  margin-left: 10px;
+`;
