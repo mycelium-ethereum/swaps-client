@@ -122,7 +122,7 @@ export default function Rewards(props) {
   if (!rewardWeeks && selectedWeek !== undefined) {
     setSelectedWeek(undefined);
   } else if (selectedWeek === undefined && !!rewardWeeks) {
-    setSelectedWeek(rewardWeeks[rewardWeeks.length - 1].week);
+    setSelectedWeek(parseFloat(rewardWeeks[rewardWeeks.length - 1].week) + 1);
   }
 
   let rewardsMessage = "";
