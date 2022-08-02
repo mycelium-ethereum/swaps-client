@@ -113,7 +113,7 @@ export const RewardsWeekSelectMenu = styled.div`
   .menu-items {
     overflow-y: scroll;
     overflow-x: hidden;
-    max-height: 20rem;
+    max-height: 168px;
   }
 `;
 
@@ -142,11 +142,15 @@ export const WeekSelectButton = styled.button`
 
   font-size: 16px;
   line-height: 150%;
+  transition: background-color 0.3s ease;
 
-  border: 0.5px solid var(--cell-stroke);
+  border: 1px solid var(--cell-highlight);
 
   &.App-cta {
     background: var(--background-secondary);
+  }
+  &.App-cta:hover {
+    background-color: #161a2d !important;
   }
 `;
 
@@ -256,6 +260,13 @@ export const RewardsTableContainer = styled.div`
   margin-bottom: 74px;
 `;
 
+export const ScrollContainer = styled.div`
+  position: relative;
+  overflow-x: hidden;
+  overflow-y: auto;
+  max-height: 491px;
+`;
+
 export const RewardsTable = styled.table`
   position: relative;
   z-index: 1;
@@ -264,15 +275,24 @@ export const RewardsTable = styled.table`
   border: 0;
   border-collapse: separate;
   border-spacing: 0 1px;
-  overflow: hidden;
 
   tbody tr {
-    border-bottom: 1px solid var(--cell-stroke);
+    position: relative;
+    &:after {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      height: 1px;
+      width: calc(100% - 32px);
+      border-bottom: 1px solid var(--cell-stroke);
+    }
   }
   tbody tr:last-child {
     border-bottom: 0;
   }
-  tbody tr:nth-child(even) {
+  tbody tr.highlight-current {
     background: linear-gradient(180deg, rgba(5, 67, 1, 0.2) 0%, rgba(5, 67, 1, 0) 65.01%);
   }
 `;
@@ -306,14 +326,20 @@ export const RewardsTableHeader = styled.thead`
 `;
 
 export const RewardsTableHeading = styled.th`
+  position: sticky;
+  top: 0;
+  z-index: 1;
   padding: 16px;
   line-height: 150%;
   text-align: left;
+  background-color: var(--background-primary);
+
   &:first-of-type {
     padding: 16px 32px;
     text-align: center;
   }
   &:last-of-type {
+    min-width: 60px; // Provide some spacing to right side of table when Claim button not present
     padding: 16px 32px 16px 0;
   }
 `;
@@ -342,6 +368,9 @@ export const UserCell = styled(TableCell)`
 
 export const UserDetails = styled.div`
   margin-left: 8px;
+  a {
+    text-decoration: none;
+  }
   span {
     display: block;
   }

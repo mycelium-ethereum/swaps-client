@@ -15,7 +15,7 @@ export default function WeekDropdown(props) {
             <FaChevronDown />
           </Styles.WeekSelectButton>
         </Menu.Button>
-        <div>
+        <div className="hide-overflow">
           <Menu.Items as="div" className="menu-items">
             {rewardWeeks.map((rewardWeek) => (
               <Menu.Item>

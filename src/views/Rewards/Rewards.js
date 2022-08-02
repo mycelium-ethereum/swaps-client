@@ -82,6 +82,7 @@ export default function Rewards(props) {
     if (!weekData) {
       return undefined;
     }
+    weekData.traders.sort((a, b) => b.volume - a.volume); // Sort traders by highest to lowest in volume
     return weekData;
   }, [rewardWeeks, selectedWeek]);
 
@@ -190,6 +191,7 @@ export default function Rewards(props) {
         ensName={ensName}
         weekData={weekData}
         currentView={currentView}
+        selectedWeek={selectedWeek}
       />
       <Footer />
     </Styles.StyledRewardsPage>
