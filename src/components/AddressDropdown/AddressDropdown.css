@@ -38,17 +38,21 @@
   align-items: center;
   font-size: 1rem;
   color: white;
-  padding: 16px;
-  font-size: 16px;
+  padding: 8.5px 8px;
+  font-size: 12px;
   line-height: 150%;
   border-right: 1px solid var(--cell-highlight);
   border-bottom: 1px solid var(--cell-highlight);
   transition: background-color 0.3s ease;
 }
+.menu-item.large {
+  padding: 16px;
+  font-size: 16px;
+}
 .menu-item.menu-item-selected {
   background-color: #161a2d !important;
 }
-.menu-item:last-of-type {
+.menu-item:last-child {
   border-bottom: 0;
 }
 .menu-item:hover {
@@ -58,6 +62,12 @@
 }
 .menu-item > p {
   margin: 0px;
+}
+.menu-item > img {
+  margin-right: 8px;
+}
+.menu-item > p {
+  margin-right: 8px;
 }
 .menu-item > a {
   display: inline-flex;

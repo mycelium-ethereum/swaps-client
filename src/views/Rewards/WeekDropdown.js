@@ -28,7 +28,7 @@ export default function WeekDropdown(props) {
                   .sort((a, b) => b.week - a.week)
                   .map((rewardWeek) => (
                     <Menu.Item>
-                      <div className="menu-item" onClick={() => setSelectedWeek(parseFloat(rewardWeek.week) + 1)}>
+                      <div className="menu-item large" onClick={() => setSelectedWeek(parseFloat(rewardWeek.week) + 1)}>
                         Week {parseFloat(rewardWeek.week) + 1}
                       </div>
                     </Menu.Item>
