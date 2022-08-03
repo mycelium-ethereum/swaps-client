@@ -835,11 +835,7 @@ function FullApp() {
               <BuyGMX />
             </Route>
             <Route exact path="/rewards">
-              <Rewards
-                setPendingTxns={setPendingTxns}
-                connectWallet={connectWallet}
-                trackPageWithTraits={trackPageWithTraits}
-              />
+              <Rewards connectWallet={connectWallet} trackPageWithTraits={trackPageWithTraits} />
             </Route>
             <Route exact path="/about">
               <Home />
