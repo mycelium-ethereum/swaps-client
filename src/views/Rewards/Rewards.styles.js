@@ -143,7 +143,7 @@ export const WeekSelectButton = styled.button`
   font-size: 16px;
   line-height: 150%;
   transition: background-color 0.3s ease, border 0.3s ease;
-
+  border-radius: 4px;
   border: 1px solid var(--cell-stroke);
 
   &.App-cta {
@@ -329,7 +329,7 @@ export const RewardsTableHeader = styled.thead`
 
 export const RewardsTableHeading = styled.th`
   position: sticky;
-  top: 0;
+  top: 0px;
   z-index: 1;
   padding: 16px;
   line-height: 150%;
@@ -339,10 +339,12 @@ export const RewardsTableHeading = styled.th`
   &:first-of-type {
     padding: 16px 32px;
     text-align: center;
+    border-top-left-radius: 4px;
   }
   &:last-of-type {
     min-width: 60px; // Provide some spacing to right side of table when Claim button not present
     padding: 16px 32px 16px 0;
+    border-top-right-radius: 4px;
   }
 `;
 
