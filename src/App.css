@@ -4,7 +4,7 @@
   min-height: 100%;
   background-repeat: no-repeat;
   background-position-y: bottom;
-  background-image: url('./img/background_mesh.svg');
+  background-image: url("./img/background_mesh.svg");
   background-size: contain;
 }
 
@@ -366,7 +366,7 @@
 }
 
 .Connect-wallet-modal .Modal-content {
-  border: 1px solid #8B968C;
+  border: 1px solid #8b968c;
   border-radius: 8px;
 }
 
@@ -657,7 +657,6 @@ button.App-connect-wallet:hover {
   color: #ffffff61;
 }
 
-
 .Toastify {
   font-size: 0.9rem;
 }
@@ -782,9 +781,10 @@ button.App-connect-wallet:hover {
   cursor: pointer;
   display: inline-block;
   padding: 1rem;
-  border-radius: 3px;
+  border-radius: 7px;
   border: none;
   font-size: 14px;
+  transition: background-color 0.3s ease;
 }
 
 a.App-cta,
@@ -810,7 +810,7 @@ a.App-cta.transparent,
 button.App-cta.transparent {
   box-shadow: none;
   background: none;
-  color: rgba(255, 255, 255, 0.7);
+  color: white;
   opacity: 1;
 }
 

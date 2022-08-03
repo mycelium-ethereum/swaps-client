@@ -903,7 +903,6 @@ function FullApp() {
             </Route>
             <Route exact path="/rewards">
               <Rewards
-                setPendingTxns={setPendingTxns}
                 connectWallet={connectWallet}
                 trackPageWithTraits={trackPageWithTraits}
                 trackAction={trackAction}

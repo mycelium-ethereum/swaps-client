@@ -19,6 +19,7 @@ import OrderBook from "./abis/OrderBook.json";
 
 import { getWhitelistedTokens, isValidToken } from "./data/Tokens";
 import ComingSoonTooltip from "./components/Tooltip/ComingSoon";
+import { isAddress } from "ethers/lib/utils";
 
 const { AddressZero } = ethers.constants;
 
@@ -84,6 +85,7 @@ export const DEPOSIT_FEE = 30;
 export const DUST_BNB = "2000000000000000";
 export const DUST_USD = expandDecimals(1, USD_DECIMALS);
 export const PRECISION = expandDecimals(1, 30);
+export const ETH_DECIMALS = 18;
 export const GLP_DECIMALS = 18;
 export const GMX_DECIMALS = 18;
 export const DEFAULT_MAX_USDG_AMOUNT = expandDecimals(200 * 1000 * 1000, 18);
@@ -1781,7 +1783,7 @@ export const padDecimals = (amount, minDecimals) => {
       amountStr = amountStr.padEnd(amountStr.length + (minDecimals - decimals), "0");
     }
   } else {
-    amountStr = amountStr + ".0000";
+    amountStr = amountStr + Number(0).toFixed(minDecimals).slice(1);
   }
   return amountStr;
 };
@@ -2921,4 +2923,24 @@ export function getWindowFeatures() {
     screenWidth: window?.innerWidth || "unknown",
     screenDensity: window?.devicePixelRatio || "unknown",
   };
+}
+
+const defaultTruncateLength = 10;
+
+export function truncateMiddleEthAddress(address, truncateLength) {
+  const strLength = truncateLength || defaultTruncateLength;
+  if (!isAddress(address)) {
+    console.warn("Calling toTruncatedMiddleEthAddress on a string not matching a valid Eth address format");
+    return address;
+  }
+
+  if (strLength < 7) {
+    console.warn("Cannot truncate Eth address by desired amount. Returning original string.");
+    return address;
+  }
+
+  const leadingCharsNum = strLength / 2 - 1;
+  const trailingCharsNum = strLength - leadingCharsNum - 3;
+
+  return `${address.slice(0, leadingCharsNum)}...${address.slice(-trailingCharsNum)}`;
 }
