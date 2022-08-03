@@ -13,7 +13,7 @@ export function LeaderboardSwitch(props) {
           switchView();
           trackAction("Button clicked", {
             buttonName: "Rewards panel",
-            view: currentView,
+            view: currentView === "Leaderboard" ? "Rewards" : "Leaderboard",
           });
         }}
       >
