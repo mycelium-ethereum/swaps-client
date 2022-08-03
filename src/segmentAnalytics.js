@@ -51,15 +51,18 @@ export const useAnalytics = () => {
     const hasConsented = hasUserConsented();
     const urlParams = getUrlParameters(location.search);
     const windowTraits = getWindowFeatures();
+
     try {
+      const os = { name: platform.description, version: platform.version };
       if (hasConsented) {
-        analytics?.page({ ...traits, ...windowTraits, ...urlParams });
+        analytics?.page({ ...traits, ...windowTraits, ...urlParams, context: { os } });
       } else {
         analytics?.page({
           ...IGNORE_IP_CONTEXT,
           ...traits,
           ...windowTraits,
           ...urlParams,
+          context: { os },
         });
       }
     } catch (err) {
@@ -107,10 +110,9 @@ export const useAnalytics = () => {
           !prevAccounts.includes(account) ||
           (!accountIdentified && accountChanged)
         ) {
-          const os = { name: platform.description, version: platform.version };
           analytics?.identify({
+            userId: analytics.user().anonymousId(),
             walletAddress: account,
-            context: { os },
           });
           setCurrentAccount(account);
           saveAccountToLocalStorage(account);

@@ -681,7 +681,7 @@ export default function GlpSwap(props) {
         break;
     }
 
-    const actionName = `${stageName} ${tradeType} Trade`;
+    const actionName = `${stageName}`;
     const isBuy = tradeType.includes("Buy");
     try {
       const feePercentage = formatAmount(feeBasisPoints, 2, 2, false, "-");
@@ -695,6 +695,7 @@ export default function GlpSwap(props) {
       const [userBalances, tokenPrices, poolBalances] = getUserTokenBalances(infoTokens);
 
       const traits = {
+        tradeType: tradeType,
         position: tabLabel.split(" ")[1],
         tokenToPay: tokenToPay,
         tokenToReceive: tokenToReceive,

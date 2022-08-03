@@ -1807,7 +1807,7 @@ export default function SwapBox(props) {
         break;
     }
 
-    const actionName = `${stageName} ${tradeType}`;
+    const actionName = `${stageName}`;
 
     try {
       const fromToken = getToken(chainId, fromTokenAddress);
@@ -1825,13 +1825,15 @@ export default function SwapBox(props) {
       const [userBalances, tokenPrices, poolBalances] = getUserTokenBalances(infoTokens);
 
       const traits = {
+        tradeType: tradeType,
         position: swapOption,
         market: market,
         tokenToPay: fromToken.symbol,
         tokenToReceive: toToken.symbol,
         amountToPay: parseFloat(fromValue),
         amountToReceive: parseFloat(toValue),
-        [`balance${fromToken.symbol}`]: parseFloat(formatAmount(fromBalance, fromToken.decimals, 4, false)),
+        fromCurrencyBalance: parseFloat(formatAmount(fromBalance, fromToken.decimals, 4, false)),
+        fromCurrencyToken: fromToken.symbol,
         leverage: parseFloat(leverage),
         feesUsd: parseFloat(formatAmount(feesUsd, 4, 4, false)),
         [`fees${fromToken.symbol}`]: parseFloat(formatAmount(fees, fromToken.decimals, 4, false)),
@@ -2252,8 +2254,7 @@ export default function SwapBox(props) {
                   buttonName: "Approve",
                   fromToken: fromToken?.symbol,
                 });
-              }
-              else {
+              } else {
                 trackAction("Button clicked", {
                   buttonName: buttonText,
                 });
