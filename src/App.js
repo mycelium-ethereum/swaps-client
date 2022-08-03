@@ -10,7 +10,7 @@ import { Web3Provider } from "@ethersproject/providers";
 import { Switch, Route, NavLink } from "react-router-dom";
 
 import { ThemeProvider } from "@tracer-protocol/tracer-ui";
-import { useAnalytics } from "./segmentAnalytics";
+import { useAnalytics, hasChangedAccount, setCurrentAccount } from "./segmentAnalytics";
 import { getTokens, getWhitelistedTokens } from "./data/Tokens";
 
 import {
@@ -669,7 +669,6 @@ function FullApp() {
     };
   }, [active, chainId, vaultAddress, positionRouterAddress]);
 
-  
   const { data: tokenBalances } = useSWR(
     [`FullApp:getTokenBalances:${active}`, chainId, readerAddress, "getTokenBalances", account || PLACEHOLDER_ACCOUNT],
     {
@@ -684,11 +683,13 @@ function FullApp() {
 
   // Track user wallet connect
   useEffect(() => {
-    if (!loggedInTracked && infoTokens) {
+    const accountChanged = hasChangedAccount(account);
+    if ((!loggedInTracked || accountChanged) && infoTokens) {
       const sendTrackLoginData = async () => {
         const MAX_DECIMALS = 16;
         if (account && tokenBalances) {
           const { balanceData } = getBalanceAndSupplyData(tokenBalances);
+
           // Format GMX token balances from BigNumber to float
           let gmxBalances = {};
           Object.keys(balanceData).forEach((token) => {
@@ -697,10 +698,12 @@ function FullApp() {
               gmxBalances[fieldName] = parseFloat(formatAmount(balanceData[token], MAX_DECIMALS, 4, true));
             }
           });
+
           // Format user ERC20 token balances from BigNumber to float
           const [userBalances] = getUserTokenBalances(infoTokens);
 
           trackLogin(chainId, gmxBalances, userBalances);
+          setCurrentAccount(account);
           setLoggedInTracked(true); // Only track once
         }
       };

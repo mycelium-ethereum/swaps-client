@@ -1218,8 +1218,7 @@ export default function SwapBox(props) {
       failMsg: "Swap failed.",
       setPendingTxns,
     })
-      .then(async (res) => {
-      })
+      .then(async (res) => {})
       .finally(() => {
         setIsSubmitting(false);
       });
@@ -1237,8 +1236,7 @@ export default function SwapBox(props) {
       } for ${formatAmount(toAmount, toToken.decimals, 4, true)} ${toToken.symbol}!`,
       setPendingTxns,
     })
-      .then(async (res) => {
-      })
+      .then(async (res) => {})
       .finally(() => {
         setIsSubmitting(false);
       });
@@ -1349,8 +1347,8 @@ export default function SwapBox(props) {
       setPendingTxns,
     })
       .then(async () => {
-          trackTrade(3, "Swap");
-          setIsConfirming(false);
+        trackTrade(3, "Swap");
+        setIsConfirming(false);
       })
       .finally(() => {
         setIsSubmitting(false);
@@ -1400,8 +1398,8 @@ export default function SwapBox(props) {
       }
     )
       .then(() => {
-          trackTrade(3, "Limit");
-          setIsConfirming(false);
+        trackTrade(3, "Limit");
+        setIsConfirming(false);
       })
       .finally(() => {
         setIsSubmitting(false);
@@ -1644,12 +1642,12 @@ export default function SwapBox(props) {
 
     if (isSwap) {
       if (fromTokenAddress === AddressZero && toTokenAddress === nativeTokenAddress) {
-      wrap();
+        wrap();
         return;
       }
 
       if (fromTokenAddress === nativeTokenAddress && toTokenAddress === AddressZero) {
-      unwrap();
+        unwrap();
         return;
       }
     }
@@ -1758,106 +1756,105 @@ export default function SwapBox(props) {
     return fromValue !== formatAmountFree(maxAvailableAmount, fromToken.decimals, fromToken.decimals);
   }
 
-    const determineLiquidationPrice = () => {
-      switch (true) {
-        case !!existingLiquidationPrice:
-          return formatAmount(existingLiquidationPrice, USD_DECIMALS, 2, false);
-        case !!displayLiquidationPrice:
-          return formatAmount(displayLiquidationPrice, USD_DECIMALS, 2, false);
-        default:
-          return 0;
-      }
-    };
+  const determineLiquidationPrice = () => {
+    switch (true) {
+      case !!existingLiquidationPrice:
+        return formatAmount(existingLiquidationPrice, USD_DECIMALS, 2, false);
+      case !!displayLiquidationPrice:
+        return formatAmount(displayLiquidationPrice, USD_DECIMALS, 2, false);
+      default:
+        return 0;
+    }
+  };
 
-    const determineBorrowFee = () => {
-      let borrowFee = 0;
-      switch (true) {
-        case isLong && toTokenInfo:
-          borrowFee = parseFloat(formatAmount(toTokenInfo.fundingRate, 4, 4));
-          break;
-        case isShort && shortCollateralToken:
-          borrowFee = parseFloat(formatAmount(shortCollateralToken.fundingRate, 4, 4));
-          break;
-        default:
-          borrowFee = 0;
-          break;
-      }
-      if (
-        (isLong && toTokenInfo && toTokenInfo.fundingRate) ||
-        (isShort && shortCollateralToken && shortCollateralToken.fundingRate)
-      ) {
-        return `${borrowFee}% / 1h`;
-      } else {
-        return borrowFee;
-      }
-    };
+  const determineBorrowFee = () => {
+    let borrowFee = 0;
+    switch (true) {
+      case isLong && toTokenInfo:
+        borrowFee = parseFloat(formatAmount(toTokenInfo.fundingRate, 4, 4));
+        break;
+      case isShort && shortCollateralToken:
+        borrowFee = parseFloat(formatAmount(shortCollateralToken.fundingRate, 4, 4));
+        break;
+      default:
+        borrowFee = 0;
+        break;
+    }
+    if (
+      (isLong && toTokenInfo && toTokenInfo.fundingRate) ||
+      (isShort && shortCollateralToken && shortCollateralToken.fundingRate)
+    ) {
+      return `${borrowFee}% / 1h`;
+    } else {
+      return borrowFee;
+    }
+  };
 
-    const trackTrade = (stage, tradeType) => {
-      let stageName = "";
-      switch (stage) {
-        case 1:
-          stageName = "Approve";
-          break;
-        case 2:
-          stageName = "Pre-confirmation";
-          break;
-        case 3:
-          stageName = "Post-confirmation";
-          break;
-        default:
-          stageName = "Approve";
-          break;
-      }
+  const trackTrade = (stage, tradeType) => {
+    let stageName = "";
+    switch (stage) {
+      case 1:
+        stageName = "Approve";
+        break;
+      case 2:
+        stageName = "Pre-confirmation";
+        break;
+      case 3:
+        stageName = "Post-confirmation";
+        break;
+      default:
+        stageName = "Approve";
+        break;
+    }
 
-      const actionName = `${stageName} ${tradeType} Trade`;
+    const actionName = `${stageName} ${tradeType}`;
 
-      try {
-        const fromToken = getToken(chainId, fromTokenAddress);
-        const toToken = getToken(chainId, toTokenAddress);
-        const leverage = (isLong || isShort) && hasLeverageOption && parseFloat(leverageOption).toFixed(2);
-        const market = swapOption !== "Swap" ? `${toToken.symbol}/USD` : "No market - swap"; //No market for Swap
-        const collateralAfterFees = feesUsd ? fromUsdMin.sub(feesUsd) : "No collateral - swap";
-        const spread = getSpread(fromTokenInfo, toTokenInfo, isLong, nativeTokenAddress);
-        const entryPrice =
-          isLong || isShort ? formatAmount(entryMarkPrice, USD_DECIMALS, 2, false) : "No entry price - swap";
-        let liqPrice = parseFloat(determineLiquidationPrice());
-        liqPrice = liqPrice < 0 ? 0 : liqPrice;
+    try {
+      const fromToken = getToken(chainId, fromTokenAddress);
+      const toToken = getToken(chainId, toTokenAddress);
+      const leverage = (isLong || isShort) && hasLeverageOption && parseFloat(leverageOption).toFixed(2);
+      const market = swapOption !== "Swap" ? `${toToken.symbol}/USD` : "No market - swap"; //No market for Swap
+      const collateralAfterFees = feesUsd ? fromUsdMin.sub(feesUsd) : "No collateral - swap";
+      const spread = getSpread(fromTokenInfo, toTokenInfo, isLong, nativeTokenAddress);
+      const entryPrice =
+        isLong || isShort ? formatAmount(entryMarkPrice, USD_DECIMALS, 2, false) : "No entry price - swap";
+      let liqPrice = parseFloat(determineLiquidationPrice());
+      liqPrice = liqPrice < 0 ? 0 : liqPrice;
 
-        // Format user ERC20 token balances from BigNumber to float
-        const [userBalances, tokenPrices, poolBalances] = getUserTokenBalances(infoTokens);
+      // Format user ERC20 token balances from BigNumber to float
+      const [userBalances, tokenPrices, poolBalances] = getUserTokenBalances(infoTokens);
 
-        const traits = {
-          position: swapOption,
-          market: market,
-          tokenToPay: fromToken.symbol,
-          tokenToReceive: toToken.symbol,
-          amountToPay: parseFloat(fromValue),
-          amountToReceive: parseFloat(toValue),
-          balance: parseFloat(formatAmount(fromBalance, fromToken.decimals, 4, false)),
-          balanceToken: fromToken.symbol,
-          leverage: parseFloat(leverage),
-          feesUsd: parseFloat(formatAmount(feesUsd, 4, 4, false)),
-          [`fees${fromToken.symbol}`]: parseFloat(formatAmount(fees, fromToken.decimals, 4, false)),
-          walletAddress: account,
-          network: NETWORK_NAME[chainId],
-          profitsIn: toToken.symbol,
-          liqPrice: liqPrice,
-          collateral: `$${parseFloat(formatAmount(collateralAfterFees, USD_DECIMALS, 2, false))}`,
-          spreadIsHigh: spread.isHigh,
-          spreadValue: parseFloat(formatAmount(spread.value, 4, 4, true)),
-          entryPrice: parseFloat(entryPrice),
-          borrowFee: determineBorrowFee(),
-          allowedSlippage: parseFloat(formatAmount(allowedSlippage, 2, 2)),
-          upToOnePercentSlippageEnabled: isHigherSlippageAllowed,
-          ...userBalances,
-          ...tokenPrices,
-          ...poolBalances,
-        };
-        trackAction(actionName, traits);
-      } catch (err) {
-        console.error(`Unable to track ${actionName} event`, err);
-      }
-    };
+      const traits = {
+        position: swapOption,
+        market: market,
+        tokenToPay: fromToken.symbol,
+        tokenToReceive: toToken.symbol,
+        amountToPay: parseFloat(fromValue),
+        amountToReceive: parseFloat(toValue),
+        [`balance${fromToken.symbol}`]: parseFloat(formatAmount(fromBalance, fromToken.decimals, 4, false)),
+        leverage: parseFloat(leverage),
+        feesUsd: parseFloat(formatAmount(feesUsd, 4, 4, false)),
+        [`fees${fromToken.symbol}`]: parseFloat(formatAmount(fees, fromToken.decimals, 4, false)),
+        walletAddress: account,
+        network: NETWORK_NAME[chainId],
+        profitsIn: toToken.symbol,
+        liqPrice: liqPrice,
+        collateral: `$${parseFloat(formatAmount(collateralAfterFees, USD_DECIMALS, 2, false))}`,
+        spreadIsHigh: spread.isHigh,
+        spreadValue: parseFloat(formatAmount(spread.value, 4, 4, true)),
+        entryPrice: parseFloat(entryPrice),
+        borrowFee: determineBorrowFee(),
+        allowedSlippage: parseFloat(formatAmount(allowedSlippage, 2, 2)),
+        upToOnePercentSlippageEnabled: isHigherSlippageAllowed,
+        ...userBalances,
+        ...tokenPrices,
+        ...poolBalances,
+      };
+      trackAction(actionName, traits);
+    } catch (err) {
+      console.error(`Unable to track ${actionName} event`, err);
+    }
+  };
 
   return (
     <div className="Exchange-swap-box">
@@ -2252,8 +2249,8 @@ export default function SwapBox(props) {
               trackAction("Button clicked", {
                 buttonName: buttonText,
               });
-              if(buttonText.includes("Approve")) {
-                trackTrade(1, fromToken?.symbol)
+              if (buttonText.includes("Approve")) {
+                trackTrade(1, fromToken?.symbol);
               }
             }}
             disabled={!isPrimaryEnabled()}

@@ -3,13 +3,53 @@ import { AnalyticsBrowser } from "@segment/analytics-next";
 import { useLocation } from "react-router-dom";
 import { NETWORK_NAME, CURRENT_PROVIDER_LOCALSTORAGE_KEY, hasUserConsented } from "./Helpers";
 import { useWeb3React } from "@web3-react/core";
+import platform from "platform";
 
 const writeKey = process.env.REACT_APP_SEGMENT_WRITE_KEY;
+const customTrackPages = ["/trade", "/buy_tlp", "/rewards"];
 
 const IGNORE_IP_CONTEXT = {
   context: {
     ip: 0,
   },
+};
+
+const saveAccountToLocalStorage = (address) => {
+  const prevIdentifiedAccounts = window.localStorage.getItem("analyticsIdentifiedAddresses");
+  if (!prevIdentifiedAccounts) {
+    // Create new localStorage variable to store imported accounts
+    localStorage.setItem("analyticsIdentifiedAddresses", JSON.stringify([address]));
+  } else {
+    const parsedAccounts = JSON.parse(prevIdentifiedAccounts);
+    if (!parsedAccounts.includes(address)) {
+      parsedAccounts.push(address);
+    }
+    localStorage.setItem("analyticsIdentifiedAddresses", JSON.stringify(parsedAccounts));
+  }
+};
+
+const getPreviousAccounts = () => {
+  const prevIdentifiedAccounts = window.localStorage.getItem("analyticsIdentifiedAddresses");
+  if (prevIdentifiedAccounts) {
+    return JSON.parse(prevIdentifiedAccounts);
+  } else {
+    return [];
+  }
+};
+
+export const setCurrentAccount = (account) => {
+  window.localStorage.setItem("walletAddress", account);
+};
+
+const hasBeenIdentified = (account) => {
+  const prevIdentifiedAddresses = window.localStorage.getItem("analyticsIdentifiedAddresses");
+  const formattedAddresses = JSON.parse(prevIdentifiedAddresses) || [];
+  return Boolean(formattedAddresses.includes(account));
+};
+
+export const hasChangedAccount = (account) => {
+  const prevAccount = window.localStorage.getItem("walletAddress");
+  return Boolean(prevAccount && prevAccount !== account);
 };
 
 export const useAnalytics = () => {
@@ -83,27 +123,34 @@ export const useAnalytics = () => {
 
   // Identify call
   useEffect(() => {
-    const wasPreviouslyIdentified = window.localStorage.getItem("analyticsIdentified");
-    try {
-      if (account) {
-        // Prevent repeated Identify and Alias calls
-        if (!wasPreviouslyIdentified || wasPreviouslyIdentified !== "true") {
-          analytics?.alias(account); // Alias previous anonymousId to wallet address
+    if (account) {
+      try {
+        // Prevent repeated Identify calls
+        const accountIdentified = hasBeenIdentified(account);
+        const accountChanged = hasChangedAccount(account);
+        const prevAccounts = getPreviousAccounts();
+
+        if (
+          (prevAccounts && prevAccounts.length === 0) ||
+          !prevAccounts.includes(account) ||
+          (!accountIdentified && accountChanged)
+        ) {
+          const os = { name: platform.description, version: platform.version };
           analytics?.identify(account, {
             walletAddress: account,
+            context: { os },
           });
-          window.localStorage.setItem("analyticsIdentified", "true");
+          setCurrentAccount(account);
+          saveAccountToLocalStorage(account);
         }
+      } catch (err) {
+        console.error("Failed to send Identify action to Segment", err);
       }
-    } catch (err) {
-      console.error("Failed to send Identify action to Segment", err);
     }
   }, [analytics, account]);
 
   // Page call
   useEffect(() => {
-    const customTrackPages = ["/trade", "/buy_tlp", "/rewards"];
-
     if (!customTrackPages.includes(location.pathname)) {
       const hasConsented = hasUserConsented();
       const urlParams = getUrlParameters(location.search);
