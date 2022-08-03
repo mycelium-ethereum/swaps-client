@@ -2246,11 +2246,17 @@ export default function SwapBox(props) {
             onClick={() => {
               const buttonText = getPrimaryText();
               onClickPrimary();
-              trackAction("Button clicked", {
-                buttonName: buttonText,
-              });
               if (buttonText.includes("Approve")) {
                 trackTrade(1, fromToken?.symbol);
+                trackAction("Button clicked", {
+                  buttonName: "Approve",
+                  fromToken: fromToken?.symbol,
+                });
+              }
+              else {
+                trackAction("Button clicked", {
+                  buttonName: buttonText,
+                });
               }
             }}
             disabled={!isPrimaryEnabled()}

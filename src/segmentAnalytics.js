@@ -136,7 +136,7 @@ export const useAnalytics = () => {
           (!accountIdentified && accountChanged)
         ) {
           const os = { name: platform.description, version: platform.version };
-          analytics?.identify(account, {
+          analytics?.identify({
             walletAddress: account,
             context: { os },
           });

@@ -556,7 +556,7 @@ export default function GlpSwap(props) {
       setPendingTxns,
     })
       .then(async () => {
-        trackMlpTrade(3, "Buy Tlp")
+        trackMlpTrade(3, "Buy Tlp");
       })
       .finally(() => {
         setIsSubmitting(false);
@@ -585,7 +585,7 @@ export default function GlpSwap(props) {
       setPendingTxns,
     })
       .then(async () => {
-        trackMlpTrade(3, "Sell Tlp")
+        trackMlpTrade(3, "Sell Tlp");
       })
       .finally(() => {
         setIsSubmitting(false);
@@ -1004,13 +1004,18 @@ export default function GlpSwap(props) {
               onClick={() => {
                 const buttonText = getPrimaryText();
                 onClickPrimary();
-                trackAction("Button clicked", {
-                  buttonName: buttonText,
-                });
+
                 if (buttonText.includes("Approve")) {
-                  trackMlpTrade(1, buttonText.split("")[1]); // Get token symbol
+                  trackMlpTrade(1, buttonText.split(" ")[1]); // Get token symbol
+                  trackAction("Button clicked", {
+                    buttonName: "Approve",
+                    fromToken: buttonText.split(" ")[1],
+                  });
                 } else {
                   trackMlpTrade(2, buttonText);
+                  trackAction("Button clicked", {
+                    buttonName: buttonText,
+                  });
                 }
               }}
               disabled={!isPrimaryEnabled()}
