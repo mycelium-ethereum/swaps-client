@@ -67,7 +67,8 @@ export default function Rewards(props) {
           totalRewards: ethers.BigNumber.from(0),
           unclaimedRewards: ethers.BigNumber.from(0),
         }
-      )[(rewardWeeks, account)]
+      ),
+    [rewardWeeks, account]
   );
 
   const weekData = useMemo(() => {
