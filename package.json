@@ -4,7 +4,6 @@
   "private": true,
   "dependencies": {
     "@apollo/client": "^3.3.19",
-    "@builder.io/partytown": "^0.6.2",
     "@davatar/react": "^1.8.1",
     "@ethersproject/providers": "^5.0.23",
     "@ethersproject/units": "^5.0.10",

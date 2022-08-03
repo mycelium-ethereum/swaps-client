@@ -22,7 +22,7 @@ const REWARD_WEEKS = [
 ];
 
 export default function Rewards(props) {
-  const { connectWallet, trackPageWithTraits, trackAction } = props;
+  const { connectWallet, trackPageWithTraits, trackAction, analytics } = props;
 
   const { ensName } = useENS();
   const { active, account } = useWeb3React();
@@ -35,14 +35,14 @@ export default function Rewards(props) {
 
   // Segment Analytics Page tracking
   useEffect(() => {
-    if (!pageTracked) {
+    if (!pageTracked && analytics) {
       const traits = {
         week: REWARD_WEEKS[REWARD_WEEKS.length - 1].key,
       };
       trackPageWithTraits(traits);
       setPageTracked(true); // Prevent Page function being called twice
     }
-  }, [pageTracked, trackPageWithTraits]);
+  }, [pageTracked, trackPageWithTraits, analytics]);
 
   return (
     <Styles.StyledRewardsPage className="default-container page-layout">
@@ -93,7 +93,7 @@ export default function Rewards(props) {
               <div>
                 <Menu.Items as="div" className="menu-items">
                   {REWARD_WEEKS.map((week) => (
-                    <Menu.Item>
+                    <Menu.Item key={week.key}>
                       <div className="menu-item" onClick={() => setRewardsWeek(week.key)}>
                         {week.label}
                       </div>

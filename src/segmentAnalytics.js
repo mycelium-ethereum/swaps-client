@@ -4,52 +4,23 @@ import { useLocation } from "react-router-dom";
 import { NETWORK_NAME, CURRENT_PROVIDER_LOCALSTORAGE_KEY, hasUserConsented } from "./Helpers";
 import { useWeb3React } from "@web3-react/core";
 import platform from "platform";
+import {
+  getPreviousAccounts,
+  saveAccountToLocalStorage,
+  setCurrentAccount,
+  hasBeenIdentified,
+  hasChangedAccount,
+  getUrlParameters,
+  getWindowFeatures,
+} from "./Helpers";
 
 const writeKey = process.env.REACT_APP_SEGMENT_WRITE_KEY;
-const customTrackPages = ["/trade", "/buy_tlp", "/rewards"];
+const customTrackPages = ["/trade", "/buy_mlp", "/rewards"]; //These pages are tracked through trackPageWithTraits() separately
 
 const IGNORE_IP_CONTEXT = {
   context: {
     ip: 0,
   },
-};
-
-const saveAccountToLocalStorage = (address) => {
-  const prevIdentifiedAccounts = window.localStorage.getItem("analyticsIdentifiedAddresses");
-  if (!prevIdentifiedAccounts) {
-    // Create new localStorage variable to store imported accounts
-    localStorage.setItem("analyticsIdentifiedAddresses", JSON.stringify([address]));
-  } else {
-    const parsedAccounts = JSON.parse(prevIdentifiedAccounts);
-    if (!parsedAccounts.includes(address)) {
-      parsedAccounts.push(address);
-    }
-    localStorage.setItem("analyticsIdentifiedAddresses", JSON.stringify(parsedAccounts));
-  }
-};
-
-const getPreviousAccounts = () => {
-  const prevIdentifiedAccounts = window.localStorage.getItem("analyticsIdentifiedAddresses");
-  if (prevIdentifiedAccounts) {
-    return JSON.parse(prevIdentifiedAccounts);
-  } else {
-    return [];
-  }
-};
-
-export const setCurrentAccount = (account) => {
-  window.localStorage.setItem("walletAddress", account);
-};
-
-const hasBeenIdentified = (account) => {
-  const prevIdentifiedAddresses = window.localStorage.getItem("analyticsIdentifiedAddresses");
-  const formattedAddresses = JSON.parse(prevIdentifiedAddresses) || [];
-  return Boolean(formattedAddresses.includes(account));
-};
-
-export const hasChangedAccount = (account) => {
-  const prevAccount = window.localStorage.getItem("walletAddress");
-  return Boolean(prevAccount && prevAccount !== account);
 };
 
 export const useAnalytics = () => {
@@ -61,28 +32,38 @@ export const useAnalytics = () => {
     const hasConsented = hasUserConsented();
     const pageTitle = document.title;
     const currentPageContext = { path: location.pathname, title: pageTitle };
-    if (hasConsented) {
-      analytics?.track(actionName, { ...traits, ...currentPageContext });
-    } else {
-      analytics?.track(actionName, {
-        ...IGNORE_IP_CONTEXT,
-        ...traits,
-        ...currentPageContext,
-      });
+    try {
+      if (hasConsented) {
+        analytics?.track(actionName, { ...traits, ...currentPageContext });
+      } else {
+        analytics?.track(actionName, {
+          ...IGNORE_IP_CONTEXT,
+          ...traits,
+          ...currentPageContext,
+        });
+      }
+    } catch (err) {
+      console.error(`Failed to send custom ${actionName} Track action to Segment`, err);
     }
   };
 
   const trackPageWithTraits = (traits) => {
     const hasConsented = hasUserConsented();
     const urlParams = getUrlParameters(location.search);
-    if (hasConsented) {
-      analytics?.page({ ...traits, ...urlParams });
-    } else {
-      analytics?.page({
-        ...IGNORE_IP_CONTEXT,
-        ...traits,
-        ...urlParams,
-      });
+    const windowTraits = getWindowFeatures();
+    try {
+      if (hasConsented) {
+        analytics?.page({ ...traits, ...windowTraits, ...urlParams });
+      } else {
+        analytics?.page({
+          ...IGNORE_IP_CONTEXT,
+          ...traits,
+          ...windowTraits,
+          ...urlParams,
+        });
+      }
+    } catch (err) {
+      console.error("Failed to send Page with traits call to Segment", err);
     }
   };
 
@@ -112,15 +93,6 @@ export const useAnalytics = () => {
     }
   };
 
-  const getUrlParameters = (searchString) => {
-    const queryString = searchString;
-    const urlParams = new URLSearchParams(queryString);
-    const keys = urlParams.keys();
-    const params = {};
-    for (const key of keys) params[key] = urlParams.get(key);
-    return params;
-  };
-
   // Identify call
   useEffect(() => {
     if (account) {
@@ -144,30 +116,30 @@ export const useAnalytics = () => {
           saveAccountToLocalStorage(account);
         }
       } catch (err) {
-        console.error("Failed to send Identify action to Segment", err);
+        console.error("Failed to send Identify call to Segment", err);
       }
     }
   }, [analytics, account]);
 
   // Page call
   useEffect(() => {
-    if (!customTrackPages.includes(location.pathname)) {
-      const hasConsented = hasUserConsented();
-      const urlParams = getUrlParameters(location.search);
-      const windowTraits = {
-        screenHeight: window.innerHeight || "unknown",
-        screenWidth: window.innerWidth || "unknown",
-        screenDensity: window.devicePixelRatio || "unknown",
-      };
-      if (hasConsented) {
-        analytics?.page({ ...windowTraits, ...urlParams });
-      } else {
-        analytics?.page({
-          ...IGNORE_IP_CONTEXT,
-          ...windowTraits,
-          ...urlParams,
-        });
+    try {
+      if (!customTrackPages.includes(location.pathname)) {
+        const hasConsented = hasUserConsented();
+        const urlParams = getUrlParameters(location.search);
+        const windowTraits = getWindowFeatures();
+        if (hasConsented) {
+          analytics?.page({ ...windowTraits, ...urlParams });
+        } else {
+          analytics?.page({
+            ...IGNORE_IP_CONTEXT,
+            ...windowTraits,
+            ...urlParams,
+          });
+        }
       }
+    } catch (err) {
+      console.error("Failed to send Page call to Segment", err);
     }
   }, [analytics, location.pathname, location.search]);
 
@@ -184,6 +156,7 @@ export const useAnalytics = () => {
   }, []);
 
   return {
+    analytics,
     trackLogin,
     trackPageWithTraits,
     trackAction,

@@ -2866,4 +2866,59 @@ export function getUserTokenBalances(infoTokens) {
     }
   });
   return [userBalances, tokenPrices, poolBalances];
-} 
+}
+
+export function saveAccountToLocalStorage(address) {
+  const prevIdentifiedAccounts = window.localStorage.getItem("identifiedAddresses");
+  if (!prevIdentifiedAccounts) {
+    // Create new localStorage variable to store imported accounts
+    localStorage.setItem("identifiedAddresses", JSON.stringify([address]));
+  } else {
+    const parsedAccounts = JSON.parse(prevIdentifiedAccounts);
+    if (!parsedAccounts.includes(address)) {
+      parsedAccounts.push(address);
+    }
+    localStorage.setItem("identifiedAddresses", JSON.stringify(parsedAccounts));
+  }
+}
+
+export function getPreviousAccounts() {
+  const prevIdentifiedAccounts = window.localStorage.getItem("identifiedAddresses");
+  if (prevIdentifiedAccounts) {
+    return JSON.parse(prevIdentifiedAccounts);
+  } else {
+    return [];
+  }
+}
+
+export function setCurrentAccount(account) {
+  window.localStorage.setItem("walletAddress", account);
+}
+
+export function hasBeenIdentified(account) {
+  const prevIdentifiedAccounts = window.localStorage.getItem("identifiedAddresses");
+  const formattedAddresses = JSON.parse(prevIdentifiedAccounts) || [];
+  return Boolean(formattedAddresses.includes(account));
+}
+
+export function hasChangedAccount(account) {
+  const prevAccount = window.localStorage.getItem("walletAddress");
+  return Boolean(prevAccount && prevAccount !== account);
+}
+
+export function getUrlParameters(searchString) {
+  const queryString = searchString;
+  const urlParams = new URLSearchParams(queryString);
+  const keys = urlParams.keys();
+  const params = {};
+  for (const key of keys) params[key] = urlParams.get(key);
+  return params;
+}
+
+export function getWindowFeatures() {
+  return {
+    screenHeight: window?.innerHeight || "unknown",
+    screenWidth: window?.innerWidth || "unknown",
+    screenDensity: window?.devicePixelRatio || "unknown",
+  };
+}

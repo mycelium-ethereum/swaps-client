@@ -366,6 +366,7 @@ export const Exchange = forwardRef((props, ref) => {
     infoTokens,
     trackPageWithTraits,
     trackAction,
+    analytics,
   } = props;
   const [showBanner, setShowBanner] = useLocalStorageSerializeKey("showBanner", true);
   const [bannerHidden, setBannerHidden] = useLocalStorageSerializeKey("bannerHidden", null);
@@ -757,7 +758,7 @@ export const Exchange = forwardRef((props, ref) => {
 
   // Segment Analytics Page tracking
   useEffect(() => {
-    if (elementsLoaded) {
+    if (elementsLoaded && analytics && !pageTracked) {
       // Get Chart token selection
       const chartToken = getChartToken(
         swapOption,
@@ -773,20 +774,18 @@ export const Exchange = forwardRef((props, ref) => {
       // Get leverage option if leverage slider enabled
       const leverage = isLeverageSliderEnabled ? { leverage: parseInt(leverageOption) } : null;
 
-      if (!pageTracked) {
-        const traits = {
-          graphTime: chartPeriod,
-          tableView: tableView,
-          market: marketFormatted,
-          marketPosition: swapOption,
-          tokenToPay: tokenToPay,
-          tokenToReceive: tokenToReceive,
-          leverageSliderEnabled: isLeverageSliderEnabled,
-          ...leverage,
-        };
-        trackPageWithTraits(traits);
-        setPageTracked(true); // Prevent Page function being called twice
-      }
+      const traits = {
+        graphTime: chartPeriod,
+        tableView: tableView,
+        market: marketFormatted,
+        marketPosition: swapOption,
+        tokenToPay: tokenToPay,
+        tokenToReceive: tokenToReceive,
+        leverageSliderEnabled: isLeverageSliderEnabled,
+        ...leverage,
+      };
+      trackPageWithTraits(traits);
+      setPageTracked(true); // Prevent Page function being called twice
     }
   }, [
     elementsLoaded,
@@ -799,6 +798,7 @@ export const Exchange = forwardRef((props, ref) => {
     tableView,
     isLeverageSliderEnabled,
     leverageOption,
+    analytics,
   ]);
 
   const LIST_SECTIONS = ["Positions", flagOrdersEnabled ? "Orders" : undefined, "Trades"].filter(Boolean);

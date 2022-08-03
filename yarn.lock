@@ -1547,15 +1547,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@builder.io/partytown@npm:^0.6.2":
-  version: 0.6.4
-  resolution: "@builder.io/partytown@npm:0.6.4"
-  bin:
-    partytown: bin/partytown.cjs
-  checksum: 000133b6ab1adcbe6ab9686a8d7af554449f68002ec7ff14cb069d5af674c172c44cd3fad5731939dea9fe7c817f8cd944458aa42c63e2ca954126f3e0f39403
-  languageName: node
-  linkType: hard
-
 "@cnakazawa/watch@npm:^1.0.3":
   version: 1.0.4
   resolution: "@cnakazawa/watch@npm:1.0.4"
@@ -10303,7 +10294,6 @@ __metadata:
   resolution: "gambit-interface@workspace:."
   dependencies:
     "@apollo/client": ^3.3.19
-    "@builder.io/partytown": ^0.6.2
     "@davatar/react": ^1.8.1
     "@ethersproject/providers": ^5.0.23
     "@ethersproject/units": ^5.0.10

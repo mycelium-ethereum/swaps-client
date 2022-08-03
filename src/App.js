@@ -10,7 +10,7 @@ import { Web3Provider } from "@ethersproject/providers";
 import { Switch, Route, NavLink } from "react-router-dom";
 
 import { ThemeProvider } from "@tracer-protocol/tracer-ui";
-import { useAnalytics, hasChangedAccount, setCurrentAccount } from "./segmentAnalytics";
+import { useAnalytics } from "./segmentAnalytics";
 import { getTokens, getWhitelistedTokens } from "./data/Tokens";
 
 import {
@@ -44,6 +44,8 @@ import {
   formatAmount,
   formatTitleCase,
   getUserTokenBalances,
+  hasChangedAccount,
+  setCurrentAccount,
   SHOULD_EAGER_CONNECT_LOCALSTORAGE_KEY,
   CURRENT_PROVIDER_LOCALSTORAGE_KEY,
   REFERRAL_CODE_KEY,
@@ -382,7 +384,7 @@ function AppHeaderUser({
 
 function FullApp() {
   const [loggedInTracked, setLoggedInTracked] = useState(false);
-  const { trackLogin, trackPageWithTraits, trackAction } = useAnalytics();
+  const { trackLogin, trackPageWithTraits, trackAction, analytics } = useAnalytics();
 
   const exchangeRef = useRef();
   const { connector, library, deactivate, activate, active, account } = useWeb3React();
@@ -860,6 +862,7 @@ function FullApp() {
                 infoTokens={infoTokens}
                 trackPageWithTraits={trackPageWithTraits}
                 trackAction={trackAction}
+                analytics={analytics}
               />
             </Route>
             <Route exact path="/presale">
@@ -885,6 +888,7 @@ function FullApp() {
                 connectWallet={connectWallet}
                 trackPageWithTraits={trackPageWithTraits}
                 trackAction={trackAction}
+                analytics={analytics}
               />
             </Route>
             <Route exact path="/sell_mlp">
@@ -903,6 +907,7 @@ function FullApp() {
                 connectWallet={connectWallet}
                 trackPageWithTraits={trackPageWithTraits}
                 trackAction={trackAction}
+                analytics={analytics}
               />
             </Route>
             <Route exact path="/about">

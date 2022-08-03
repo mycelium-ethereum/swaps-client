@@ -99,6 +99,7 @@ export default function GlpSwap(props) {
     setIsBuying,
     trackPageWithTraits,
     trackAction,
+    analytics,
   } = props;
   const history = useHistory();
   const swapLabel = isBuying ? "BuyGlp" : "SellGlp";
@@ -722,25 +723,31 @@ export default function GlpSwap(props) {
 
   // Segment Analytics Page tracking
   useEffect(() => {
-    if (elementsLoaded) {
+    if (elementsLoaded && analytics && !pageTracked) {
       // If page hash is #redeem, then user is Buying
       const hash = history.location.hash.replace("#", "");
       const isBuying = hash === "redeem" ? false : true;
       // Swap pay and receive tokens depending on isBuying
       const tokenToPay = isBuying ? getToken(chainId, swapTokenAddress).symbol : "TLP";
       const tokenToReceive = isBuying ? "TLP" : getToken(chainId, swapTokenAddress).symbol;
-
-      if (!pageTracked) {
-        const traits = {
-          action: isBuying ? "Buy" : "Sell",
-          tokenToPay: tokenToPay,
-          tokenToReceive: tokenToReceive,
-        };
-        trackPageWithTraits(traits);
-        setPageTracked(true); // Prevent Page function being called twice
-      }
+      const traits = {
+        action: isBuying ? "Buy" : "Sell",
+        tokenToPay: tokenToPay,
+        tokenToReceive: tokenToReceive,
+      };
+      trackPageWithTraits(traits);
+      setPageTracked(true); // Prevent Page function being called twice
     }
-  }, [chainId, isBuying, pageTracked, swapTokenAddress, elementsLoaded, trackPageWithTraits, history.location.hash]);
+  }, [
+    chainId,
+    isBuying,
+    pageTracked,
+    swapTokenAddress,
+    elementsLoaded,
+    trackPageWithTraits,
+    history.location.hash,
+    analytics,
+  ]);
 
   return (
     <div className="GlpSwap">
