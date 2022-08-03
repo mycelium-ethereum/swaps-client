@@ -7,7 +7,6 @@ export function getTracerServerUrl(chainId, path) {
     throw new Error("chainId is not provided");
   } else if (chainId !== ARBITRUM && chainId !== ARBITRUM_TESTNET) {
     throw new Error("chainId is not supported")
-
   }
 
   return `${BASE_TRACER_URL}/trs${path}?network=${chainId}`;
