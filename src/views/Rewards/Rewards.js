@@ -170,6 +170,7 @@ export default function Rewards(props) {
         rewardsMessage={rewardsMessage}
         rewardWeeks={rewardWeeks}
         setSelectedWeek={setSelectedWeek}
+        trackAction={trackAction}
       />
       <TraderRewards
         active={active}
@@ -185,6 +186,7 @@ export default function Rewards(props) {
         userWeekData={userWeekData}
         rewardAmountEth={rewardAmountEth}
         currentView={currentView}
+        trackAction={trackAction}
       />
       <Leaderboard
         userWeekData={userWeekData}
@@ -194,6 +196,7 @@ export default function Rewards(props) {
         currentView={currentView}
         selectedWeek={selectedWeek}
         connectWallet={connectWallet}
+        trackAction={trackAction}
       />
       <Footer />
     </Styles.StyledRewardsPage>

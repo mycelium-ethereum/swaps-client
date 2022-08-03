@@ -19,6 +19,7 @@ export default function TraderRewards(props) {
     userWeekData,
     rewardAmountEth,
     currentView,
+    trackAction,
   } = props;
   return (
     <Styles.PersonalRewardsContainer hidden={currentView === "Leaderboard"}>
@@ -61,7 +62,12 @@ export default function TraderRewards(props) {
         <Styles.AppCardTitle>Rewards data</Styles.AppCardTitle>
         <Styles.RewardsWeekSelect>
           {!!rewardWeeks ? (
-            <WeekDropdown rewardWeeks={rewardWeeks} setSelectedWeek={setSelectedWeek} rewardsMessage={rewardsMessage} />
+            <WeekDropdown
+              rewardWeeks={rewardWeeks}
+              setSelectedWeek={setSelectedWeek}
+              rewardsMessage={rewardsMessage}
+              trackAction={trackAction}
+            />
           ) : null}
           <Styles.RewardsWeekNextRewards>
             Next rewards in <Styles.RewardsWeekCountdown>8d 13h 42m</Styles.RewardsWeekCountdown>
