@@ -19,6 +19,7 @@ import OrderBook from "./abis/OrderBook.json";
 
 import { getWhitelistedTokens, isValidToken } from "./data/Tokens";
 import ComingSoonTooltip from "./components/Tooltip/ComingSoon";
+import { isAddress } from "ethers/lib/utils";
 
 const { AddressZero } = ethers.constants;
 
@@ -60,7 +61,7 @@ const MAX_GAS_PRICE_MAP = {
 
 const ETHEREUM_RPC_PROVIDERS = ["https://cloudflare-eth.com"];
 const ARBITRUM_RPC_PROVIDERS = ["https://arb1.arbitrum.io/rpc"];
-const ARBITRUM_TESTNET_RPC_PROVIDERS = ["https://arb-rinkeby.g.alchemy.com/v2/4TO9yKJtxrTsGrVksRe6JrPO3AEj2pgn"];
+const ARBITRUM_TESTNET_RPC_PROVIDERS = ["https://rinkeby.arbitrum.io/rpc"];
 const AVALANCHE_RPC_PROVIDERS = ["https://avax-mainnet.gateway.pokt.network/v1/lb/626f37766c499d003aada23b"];
 export const WALLET_CONNECT_LOCALSTORAGE_KEY = "walletconnect";
 export const WALLET_LINK_LOCALSTORAGE_PREFIX = "-walletlink";
@@ -84,6 +85,7 @@ export const DEPOSIT_FEE = 30;
 export const DUST_BNB = "2000000000000000";
 export const DUST_USD = expandDecimals(1, USD_DECIMALS);
 export const PRECISION = expandDecimals(1, 30);
+export const ETH_DECIMALS = 18;
 export const GLP_DECIMALS = 18;
 export const GMX_DECIMALS = 18;
 export const DEFAULT_MAX_USDG_AMOUNT = expandDecimals(200 * 1000 * 1000, 18);
@@ -143,6 +145,7 @@ export const GLPPOOLCOLORS = {
   UNI: "#E9167C",
   AVAX: "#E84142",
   LINK: "#3256D6",
+  CTM: "#F8B500",
 };
 
 export const ICONLINKS = {
@@ -151,7 +154,7 @@ export const ICONLINKS = {
       coingecko: "https://www.coingecko.com/en/coins/tracer-dao",
       arbitrum: `https://arbiscan.io/address/${getContract(ARBITRUM_TESTNET, "TCR")}`,
     },
-    TLP: {
+    MLP: {
       arbitrum: `https://arbiscan.io/address/${getContract(ARBITRUM_TESTNET, "StakedGlpTracker")}`,
     },
     GMX: {
@@ -183,6 +186,9 @@ export const ICONLINKS = {
     PPUSD: {
       arbitrum: "https://testnet.arbiscan.io/address/0x9e062eee2c0Ab96e1E1c8cE38bF14bA3fa0a35F6",
     },
+    CTM: {
+      arbitrum: "https://testnet.arbiscan.io/address/0xaC6101824E8BCdc7Fb399e62aFDf2b3b720DeFEf",
+    },
     USDT: {
       coingecko: "https://www.coingecko.com/en/coins/tether",
       arbitrum: "https://arbiscan.io/address/0xfd086bc7cd5c481dcc9c85ebe478a1c0b69fcbb9",
@@ -205,7 +211,7 @@ export const ICONLINKS = {
       coingecko: "https://www.coingecko.com/en/coins/tracer-dao",
       arbitrum: `https://arbiscan.io/address/${getContract(ARBITRUM, "TCR")}`,
     },
-    TLP: {
+    MLP: {
       arbitrum: `https://arbiscan.io/address/${getContract(ARBITRUM, "StakedGlpTracker")}`,
     },
     GMX: {
@@ -256,7 +262,7 @@ export const ICONLINKS = {
       coingecko: "https://www.coingecko.com/en/coins/tracer-dao",
       arbitrum: `https://arbiscan.io/address/${getContract(ARBITRUM_TESTNET, "TCR")}`,
     },
-    TLP: {
+    MLP: {
       arbitrum: `https://arbiscan.io/address/${getContract(ARBITRUM_TESTNET, "StakedGlpTracker")}`,
     },
     GMX: {
@@ -302,9 +308,9 @@ export const platformTokens = {
       address: getContract(ARBITRUM_TESTNET, "TCR"),
       imageUrl: "https://assets.coingecko.com/coins/images/18271/small/tracer_logo.png?1631176676",
     },
-    TLP: {
+    MLP: {
       name: "TCR LP",
-      symbol: "TLP",
+      symbol: "MLP",
       decimals: 18,
       address: getContract(ARBITRUM_TESTNET, "StakedGlpTracker"), // address of fsGLP token because user only holds fsGLP
       imageUrl: "https://i.imgur.com/1xbBwPe.png",
@@ -319,9 +325,9 @@ export const platformTokens = {
       address: getContract(ARBITRUM, "TCR"),
       imageUrl: "https://assets.coingecko.com/coins/images/18271/small/tracer_logo.png?1631176676",
     },
-    TLP: {
+    MLP: {
       name: "TCR LP",
-      symbol: "TLP",
+      symbol: "MLP",
       decimals: 18,
       address: getContract(ARBITRUM, "StakedGlpTracker"), // address of fsGLP token because user only holds fsGLP
       imageUrl: "https://github.com/gmx-io/gmx-assets/blob/main/GMX-Assets/PNG/GLP_LOGO%20ONLY.png?raw=true",
@@ -350,9 +356,9 @@ export const platformTokens = {
       address: getContract(ARBITRUM, "TCR"),
       imageUrl: "https://assets.coingecko.com/coins/images/18271/small/tracer_logo.png?1631176676",
     },
-    TLP: {
+    MLP: {
       name: "TCR LP",
-      symbol: "TLP",
+      symbol: "MLP",
       decimals: 18,
       address: getContract(ARBITRUM, "StakedGlpTracker"), // address of fsGLP token because user only holds fsGLP
       imageUrl: "https://github.com/gmx-io/gmx-assets/blob/main/GMX-Assets/PNG/GLP_LOGO%20ONLY.png?raw=true",
@@ -1775,7 +1781,7 @@ export const padDecimals = (amount, minDecimals) => {
       amountStr = amountStr.padEnd(amountStr.length + (minDecimals - decimals), "0");
     }
   } else {
-    amountStr = amountStr + ".0000";
+    amountStr = amountStr + Number(0).toFixed(minDecimals).slice(1);
   }
   return amountStr;
 };
@@ -2801,4 +2807,33 @@ export function useDebounce(value, delay) {
     [value, delay] // Only re-call effect if value or delay changes
   );
   return debouncedValue;
+}
+
+export function hasUserConsented() {
+  const consent = localStorage.getItem("consentAcknowledged");
+  return consent && consent === "true";
+}
+
+export function formatTitleCase(string) {
+  return string[0].toUpperCase() + string.slice(1);
+}
+
+const defaultTruncateLength = 10;
+
+export function truncateMiddleEthAddress(address, truncateLength) {
+  const strLength = truncateLength || defaultTruncateLength;
+  if (!isAddress(address)) {
+    console.warn("Calling toTruncatedMiddleEthAddress on a string not matching a valid Eth address format");
+    return address;
+  }
+
+  if (strLength < 7) {
+    console.warn("Cannot truncate Eth address by desired amount. Returning original string.");
+    return address;
+  }
+
+  const leadingCharsNum = strLength / 2 - 1;
+  const trailingCharsNum = strLength - leadingCharsNum - 3;
+
+  return `${address.slice(0, leadingCharsNum)}...${address.slice(-trailingCharsNum)}`;
 }

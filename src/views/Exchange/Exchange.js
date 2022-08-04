@@ -3,6 +3,7 @@ import React, { useEffect, useState, useMemo, useCallback, forwardRef, useImpera
 import { useWeb3React } from "@web3-react/core";
 import useSWR from "swr";
 import { ethers } from "ethers";
+import { useLocalStorage } from "react-use";
 
 import {
   FUNDING_RATE_PRECISION,
@@ -362,6 +363,7 @@ export const Exchange = forwardRef((props, ref) => {
     savedShouldShowPositionLines,
     setSavedShouldShowPositionLines,
     connectWallet,
+    trackPageWithTraits,
   } = props;
   const [showBanner, setShowBanner] = useLocalStorageSerializeKey("showBanner", true);
   const [bannerHidden, setBannerHidden] = useLocalStorageSerializeKey("bannerHidden", null);
@@ -740,6 +742,73 @@ export const Exchange = forwardRef((props, ref) => {
         setIsPositionRouterApproving(false);
       });
   };
+
+  const [pageTracked, setPageTracked] = useState(false);
+
+  const [chartPeriod] = useLocalStorage(JSON.stringify([chainId, "Chart-period"]));
+  const [tableViewSelection] = useLocalStorage("List-section-v2");
+  const [isLeverageSliderEnabled] = useLocalStorage(JSON.stringify([chainId, "Exchange-swap-leverage-slider-enabled"]));
+  const [leverageOption] = useLocalStorage(JSON.stringify([chainId, "Exchange-swap-leverage-option"]));
+  const tableView = !!tableViewSelection && Object.keys(tableViewSelection).length > 0 ? tableViewSelection[chainId] : "Positions"; // localStorage item "List-section-v2" will return undefined if no selection has been made previously
+  const dataElements = [
+    chartPeriod,
+    tokenSelection,
+    pageTracked,
+    trackPageWithTraits,
+    chainId,
+    swapOption,
+    tableView,
+    isLeverageSliderEnabled,
+    leverageOption,
+  ];
+
+  const elementsLoaded = dataElements.every((element) => element !== undefined);
+
+  // Segment Analytics Page tracking
+  useEffect(() => {
+    if (elementsLoaded) {
+      // Get Chart token selection
+      const chartToken = getChartToken(
+        swapOption,
+        tokenSelection[swapOption].from,
+        tokenSelection[swapOption].to,
+        chainId
+      );
+      const market = getToken(chainId, chartToken);
+      const marketFormatted = `${market.symbol}/USD`;
+      // Get token to pay
+      const tokenToPay = getToken(chainId, tokenSelection[swapOption].from).symbol;
+      const tokenToReceive = getToken(chainId, tokenSelection[swapOption].to).symbol;
+      // Get leverage option if leverage slider enabled
+      const leverage = isLeverageSliderEnabled ? { leverage: parseInt(leverageOption) } : null;
+
+      if (!pageTracked) {
+        const traits = {
+          graphTime: chartPeriod,
+          tableView: tableView,
+          market: marketFormatted,
+          marketPosition: swapOption,
+          tokenToPay: tokenToPay,
+          tokenToReceive: tokenToReceive,
+          leverageSliderEnabled: isLeverageSliderEnabled,
+          ...leverage,
+        };
+        trackPageWithTraits(traits);
+        setPageTracked(true); // Prevent Page function being called twice
+      }
+    }
+  }, [
+    elementsLoaded,
+    chartPeriod,
+    tokenSelection,
+    pageTracked,
+    trackPageWithTraits,
+    chainId,
+    swapOption,
+    tableView,
+    isLeverageSliderEnabled,
+    leverageOption,
+  ]);
 
   const LIST_SECTIONS = ["Positions", flagOrdersEnabled ? "Orders" : undefined, "Trades"].filter(Boolean);
   let [listSection, setListSection] = useLocalStorageByChainId(chainId, "List-section-v2", LIST_SECTIONS[0]);

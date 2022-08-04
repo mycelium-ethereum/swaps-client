@@ -19,7 +19,7 @@
 
 .card-divider {
   height: 1px;
-  background: #23263b;
+  background: var(--cell-stroke);
   margin: 0.7rem -1rem;
 }
 
