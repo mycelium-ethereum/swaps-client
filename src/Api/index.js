@@ -25,7 +25,6 @@ import {
   // DEFAULT_GAS_LIMIT,
   bigNumberify,
   getExplorerUrl,
-  getServerBaseUrl,
   getServerUrl,
   setGasPrice,
   getGasLimit,
@@ -42,6 +41,7 @@ import {
 import { getTokens, getTokenBySymbol, getWhitelistedTokens } from "../data/Tokens";
 
 import { nissohGraphClient, arbitrumGraphClient, avalancheGraphClient } from "./common";
+import { getTracerServerUrl } from "./rewards";
 export * from "./prices";
 
 const { AddressZero } = ethers.constants;
@@ -344,10 +344,10 @@ function invariant(condition, errorMsg) {
 }
 
 export function useTrades(chainId, account) {
-  const url =
-    account && account.length > 0
-      ? `https://api.tracer.finance/trs/actions?account=${account}&network=${chainId}`
-      : `http://api.tracer.finance/trs/actions?network=${chainId}`;
+  let url = getTracerServerUrl(chainId, "/actions");
+  if (account && account.length) {
+    url += `&account=${account}`;
+  }
 
   const { data, mutate: updateTrades } = useSWR(url, {
     dedupingInterval: 30000,
