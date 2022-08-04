@@ -159,7 +159,6 @@ export default function ExchangeTVChart(props) {
     setChartToken(tmp)
   }, [swapOption, fromToken, toToken, chainId])
 
-  console.log(chartToken)
   const symbol = chartToken ? (chartToken.isWrapped ? chartToken.baseSymbol : chartToken.symbol) : undefined;
   const marketName = chartToken ? symbol + "_USD" : undefined;
   const previousMarketName = usePrevious(marketName);
