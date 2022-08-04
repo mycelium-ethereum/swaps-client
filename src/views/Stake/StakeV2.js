@@ -177,7 +177,7 @@ function CompoundModal(props) {
       <Modal isVisible={isVisible} setIsVisible={setIsVisible} label="Compound Rewards">
         <div className="CompoundModal-menu">
           <div>
-            <Checkbox isChecked={shouldClaimTCR} setIsChecked={setShouldClaimTCR} disabled>
+            <Checkbox isChecked={shouldClaimTCR} setIsChecked={setShouldClaimTCR}>
               Claim TCR Rewards
             </Checkbox>
           </div>
