@@ -98,20 +98,21 @@ export const useAnalytics = () => {
 
   // Identify call
   useEffect(() => {
-    if (account) {
+    if (account && analytics) {
       try {
         // Prevent repeated Identify calls
         const accountIdentified = hasBeenIdentified(account);
         const accountChanged = hasChangedAccount(account);
         const prevAccounts = getPreviousAccounts();
+        const anonId = analytics.user().anonymousId();
 
         if (
           (prevAccounts && prevAccounts.length === 0) ||
           !prevAccounts.includes(account) ||
           (!accountIdentified && accountChanged)
         ) {
-          analytics?.identify({
-            userId: analytics.user().anonymousId(),
+          analytics.identify(anonId, {
+            userId: anonId,
             walletAddress: account,
           });
           setCurrentAccount(account);
