@@ -106,10 +106,10 @@ function CompoundModal(props) {
 
   const getPrimaryText = () => {
     if (isApproving) {
-      return `Approving TCR...`;
+      return `Approving MYC...`;
     }
     if (needApproval) {
-      return `Approve TCR`;
+      return `Approve MYC`;
     }
     if (isCompounding) {
       return "Compounding...";
@@ -185,12 +185,12 @@ function CompoundModal(props) {
           </div>
           <div>
             <Checkbox isChecked={shouldClaimTCR} setIsChecked={setShouldClaimTCR} disabled={shouldStakeTCR}>
-              Claim TCR Rewards
+              Claim MYC Rewards
             </Checkbox>
           </div>
           <div>
             <Checkbox isChecked={shouldStakeTCR} setIsChecked={toggleShouldStakeTCR}>
-              Stake TCR Rewards
+              Stake MYC Rewards
             </Checkbox>
           </div>
           <div>
@@ -582,7 +582,7 @@ export default function StakeV2({ setPendingTxns, connectWallet }) {
                   </StakeV2Styled.RewardsBannerTextWrap>
                   <StakeV2Styled.RewardsBannerTextWrap>
                     <StakeV2Styled.RewardsBannerText large inline>
-                      {formatKeyAmount(processedData, "stakedGlpTrackerRewards", 18, 4)} TCR
+                      {formatKeyAmount(processedData, "stakedGlpTrackerRewards", 18, 4)} MYC
                     </StakeV2Styled.RewardsBannerText>{" "}
                     <StakeV2Styled.RewardsBannerText inline>
                       ($
@@ -607,7 +607,7 @@ export default function StakeV2({ setPendingTxns, connectWallet }) {
                             <span>{formatKeyAmount(processedData, "glpAprForNativeToken", 2, 2, true)}%</span>
                           </div>
                           <div className="Tooltip-row">
-                            <span className="label">TCR APR</span>
+                            <span className="label">MYC APR</span>
                             <span>{formatKeyAmount(processedData, "glpAprForEsGmx", 2, 2, true)}%</span>
                           </div>
                         </>
