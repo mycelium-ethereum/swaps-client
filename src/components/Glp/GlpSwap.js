@@ -765,7 +765,7 @@ export default function GlpSwap(props) {
                           <span>{formatAmount(feeGlpTrackerApr, 2, 2, false)}%</span>
                         </div>
                         <div className="Tooltip-row">
-                          <span className="label">MYC APR</span>
+                          <span className="label">esMYC APR</span>
                           <span>{formatAmount(stakedGlpTrackerApr, 2, 2, false)}%</span>
                         </div>
                       </>

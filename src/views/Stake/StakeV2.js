@@ -607,7 +607,7 @@ export default function StakeV2({ setPendingTxns, connectWallet }) {
                             <span>{formatKeyAmount(processedData, "glpAprForNativeToken", 2, 2, true)}%</span>
                           </div>
                           <div className="Tooltip-row">
-                            <span className="label">MYC APR</span>
+                            <span className="label">esMYC APR</span>
                             <span>{formatKeyAmount(processedData, "glpAprForEsGmx", 2, 2, true)}%</span>
                           </div>
                         </>
