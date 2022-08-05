@@ -10,5 +10,5 @@ export function getTracerServerUrl(chainId, path, params) {
     chainId = ARBITRUM;
   }
 
-  return `${BASE_TRACER_URL}/trs/${path}?network=${chainId}${params ? `&${params}` : ""}`;
+  return `${BASE_TRACER_URL}/trs${path}?network=${chainId}`;
 }
