@@ -47,7 +47,7 @@ export default function Rewards(props) {
 
   // Fetch only the latest week's data from server
   const { data: currentRewardWeek, error: failedFetchingWeekRewards } = useSWR(
-    [getTracerServerUrl(chainId, "rewards", "week=latest")],
+    [`${getTracerServerUrl(chainId, "rewards")}&week=latest`],
     {
       fetcher: (...args) => fetch(...args).then((res) => res.json()),
     }
