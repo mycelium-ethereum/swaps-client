@@ -234,7 +234,7 @@ function AppHeaderLinks({ small, openSettings, clickCloseIcon }) {
           target="_blank"
           rel="noopener noreferrer"
         >
-          About
+          Docs
         </a>
       </div>
       {small && (
