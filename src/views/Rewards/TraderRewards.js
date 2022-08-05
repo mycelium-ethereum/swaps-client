@@ -80,7 +80,7 @@ export default function TraderRewards(props) {
             </div>
           </Styles.RewardsDataBox>
         </Styles.RewardsDataBoxes>
-        {active && <Styles.RewardsButton className="App-cta large"> Claim TCR </Styles.RewardsButton>}
+        {active && <Styles.RewardsButton className="App-cta large"> Claim MYC </Styles.RewardsButton>}
         {!active && (
           <Styles.RewardsButton className="App-cta large" onClick={() => connectWallet()}>
             Connect Wallet

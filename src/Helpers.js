@@ -597,7 +597,7 @@ export function getExchangeRateDisplay(rate, tokenA, tokenB, opts = {}) {
   if (opts.omitSymbols) {
     return rateValue;
   }
-  return `${rateValue} ${tokenA.symbol} / ${tokenB.symbol}`;
+  return `${rateValue} ${tokenA.symbol} / ${tokenB.symbol}`;
 }
 
 const adjustForDecimalsFactory = (n) => (number) => {

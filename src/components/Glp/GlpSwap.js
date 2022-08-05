@@ -661,8 +661,8 @@ export default function GlpSwap(props) {
       const hash = history.location.hash.replace("#", "");
       const isBuying = hash === "redeem" ? false : true;
       // Swap pay and receive tokens depending on isBuying
-      const tokenToPay = isBuying ? getToken(chainId, swapTokenAddress).symbol : "TLP";
-      const tokenToReceive = isBuying ? "TLP" : getToken(chainId, swapTokenAddress).symbol;
+      const tokenToPay = isBuying ? getToken(chainId, swapTokenAddress).symbol : "MLP";
+      const tokenToReceive = isBuying ? "MLP" : getToken(chainId, swapTokenAddress).symbol;
 
       if (!pageTracked) {
         const traits = {
@@ -765,7 +765,7 @@ export default function GlpSwap(props) {
                           <span>{formatAmount(feeGlpTrackerApr, 2, 2, false)}%</span>
                         </div>
                         <div className="Tooltip-row">
-                          <span className="label">TCR APR</span>
+                          <span className="label">esMYC APR</span>
                           <span>{formatAmount(stakedGlpTrackerApr, 2, 2, false)}%</span>
                         </div>
                       </>
