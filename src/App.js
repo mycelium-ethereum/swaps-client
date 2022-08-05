@@ -688,16 +688,16 @@ function FullApp() {
     const accountChanged = hasChangedAccount(account);
     if ((!loggedInTracked || accountChanged) && infoTokens) {
       const sendTrackLoginData = async () => {
-        const ETH_DECIMALS = 18;
         if (account && tokenBalances) {
           const { balanceData } = getBalanceAndSupplyData(tokenBalances);
 
           // Format GMX token balances from BigNumber to float
+          const tokenDecimals = tokens.map((token) => token.decimals);
           let gmxBalances = {};
-          Object.keys(balanceData).forEach((token) => {
+          Object.keys(balanceData).forEach((token, i) => {
             if (balanceData[token]) {
               const fieldName = `balance${formatTitleCase(token)}`;
-              gmxBalances[fieldName] = parseFloat(formatAmount(balanceData[token], ETH_DECIMALS, 4, true));
+              gmxBalances[fieldName] = parseFloat(formatAmount(balanceData[token], tokenDecimals[i], 4, true));
             }
           });
 
