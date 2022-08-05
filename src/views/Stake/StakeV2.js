@@ -71,8 +71,8 @@ function CompoundModal(props) {
     wrappedTokenSymbol,
   } = props;
   const [isCompounding, setIsCompounding] = useState(false);
-  const [shouldClaimTCR, setShouldClaimTCR] = useLocalStorageSerializeKey(
-    [chainId, "StakeV2-compound-should-claim-tcr"],
+  const [shouldClaimMYC, setShouldClaimMYC] = useLocalStorageSerializeKey(
+    [chainId, "StakeV2-compound-should-claim-myc"],
     true
   );
   const [shouldClaimWeth, setShouldClaimWeth] = useLocalStorageSerializeKey(
@@ -142,7 +142,7 @@ function CompoundModal(props) {
       contract,
       "handleRewards",
       [
-        shouldClaimTCR,
+        shouldClaimMYC,
         false, // shouldStakeTCR,
         false, // shouldClaimEsGMX
         false, // shouldStakeEsGmx,
@@ -187,7 +187,7 @@ function CompoundModal(props) {
       <Modal isVisible={isVisible} setIsVisible={setIsVisible} label="Compound Rewards">
         <div className="CompoundModal-menu">
           <div>
-            <Checkbox isChecked={shouldClaimTCR} setIsChecked={setShouldClaimTCR}>
+            <Checkbox isChecked={shouldClaimMYC} setIsChecked={setShouldClaimMYC}>
               Claim TCR Rewards
             </Checkbox>
           </div>
@@ -229,8 +229,8 @@ function ClaimModal(props) {
     wrappedTokenSymbol,
   } = props;
   const [isClaiming, setIsClaiming] = useState(false);
-  const [shouldClaimTCR, setShouldClaimTCR] = useLocalStorageSerializeKey(
-    [chainId, "StakeV2-claim-should-claim-tcr"],
+  const [shouldClaimMYC, setShouldClaimMYC] = useLocalStorageSerializeKey(
+    [chainId, "StakeV2-claim-should-claim-myc"],
     true
   );
   const [shouldClaimWeth, setShouldClaimWeth] = useLocalStorageSerializeKey(
@@ -262,7 +262,7 @@ function ClaimModal(props) {
       contract,
       "handleRewards",
       [
-        shouldClaimTCR,
+        shouldClaimMYC,
         false, // shouldStakeTCR
         false, // shouldClaimEsGmx,
         false, // shouldStakeEsGmx
@@ -298,8 +298,8 @@ function ClaimModal(props) {
       <Modal isVisible={isVisible} setIsVisible={setIsVisible} label="Claim Rewards">
         <div className="CompoundModal-menu">
           <div>
-            <Checkbox isChecked={shouldClaimTCR} setIsChecked={setShouldClaimTCR}>
-              Claim TCR Rewards
+            <Checkbox isChecked={shouldClaimMYC} setIsChecked={setShouldClaimMYC}>
+              Claim MYC Rewards
             </Checkbox>
           </div>
           <div>
@@ -905,7 +905,7 @@ export default function StakeV2({ setPendingTxns, connectWallet }) {
                     </StakeV2Styled.RewardsBannerTextWrap>
                     <StakeV2Styled.RewardsBannerTextWrap>
                       <StakeV2Styled.RewardsBannerText large inline>
-                        {formatKeyAmount(processedData, "stakedGlpTrackerRewards", 18, 4)} TCR
+                        {formatKeyAmount(processedData, "stakedGlpTrackerRewards", 18, 4)} MYC
                       </StakeV2Styled.RewardsBannerText>{" "}
                       <StakeV2Styled.RewardsBannerText inline>
                         ($
@@ -930,7 +930,7 @@ export default function StakeV2({ setPendingTxns, connectWallet }) {
                               <span>{formatKeyAmount(processedData, "glpAprForNativeToken", 2, 2, true)}%</span>
                             </div>
                             <div className="Tooltip-row">
-                              <span className="label">TCR APR</span>
+                              <span className="label">MYC APR</span>
                               <span>{formatKeyAmount(processedData, "glpAprForEsGmx", 2, 2, true)}%</span>
                             </div>
                           </>
