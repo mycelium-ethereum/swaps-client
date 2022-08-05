@@ -45,7 +45,7 @@ import Footer from "../../Footer";
 
 import "./DashboardV2.css";
 
-import tcr40Icon from "../../img/ic_tcr_40.svg";
+import mycToken from "../../img/ic_myc.svg";
 import mlp40Icon from "../../img/ic_mlp_40.svg";
 import avalanche16Icon from "../../img/ic_avalanche_16.svg";
 import arbitrum16Icon from "../../img/ic_arbitrum_16.svg";
@@ -511,14 +511,14 @@ export default function DashboardV2() {
                   <div className="App-card-title">
                     <div className="App-card-title-mark">
                       <div className="App-card-title-mark-icon">
-                        <img src={tcr40Icon} alt="tcr40Icon" />
+                        <img src={mycToken} alt="mycToken" />
                       </div>
                       <div className="App-card-title-mark-info">
                         <div className="App-card-title-mark-title">MYC</div>
                         <div className="App-card-title-mark-subtitle">MYC</div>
                       </div>
                       <div>
-                        <AssetDropdown assetSymbol="TCR" />
+                        <AssetDropdown assetSymbol="MYC" />
                       </div>
                     </div>
                   </div>
