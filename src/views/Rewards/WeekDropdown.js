@@ -5,7 +5,7 @@ import { FaChevronDown } from "react-icons/fa";
 import cx from "classnames";
 
 export default function WeekDropdown(props) {
-  const { rewardWeeks, setSelectedWeek, rewardsMessage } = props;
+  const { weeksRewardsData, setSelectedWeek, rewardsMessage } = props;
 
   return (
     <Styles.RewardsWeekSelectMenu>
@@ -24,7 +24,7 @@ export default function WeekDropdown(props) {
             </Menu.Button>
             <div className="hide-overflow">
               <Menu.Items as="div" className="menu-items">
-                {rewardWeeks
+                {weeksRewardsData
                   .sort((a, b) => b.week - a.week)
                   .map((rewardWeek) => (
                     <Menu.Item>

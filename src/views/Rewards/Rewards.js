@@ -40,17 +40,34 @@ export default function Rewards(props) {
 
   const { infoTokens } = useInfoTokens(library, chainId, active, undefined, undefined);
 
-  // const { data: rewardProof } = useSWR([getTracerServerUrl(chainId, "/user_reward_proof"), account, selectedWeek, chainId], {
-  // fetcher: (url, account, week) => fetch(`${url}&userAddress=${account}&week=${week}`).then((res) => res.json())
-  // });
-
-  const { data: rewardWeeks, error: failedFetchingRewards } = useSWR([getTracerServerUrl(chainId, "/rewards")], {
+  // Fetch all week data from server
+  const { data: allweeksRewardsData, error: failedFetchingRewards } = useSWR([getTracerServerUrl(chainId, "rewards")], {
     fetcher: (...args) => fetch(...args).then((res) => res.json()),
   });
 
+  // Fetch only the latest week's data from server
+  const { data: currentRewardWeek, error: failedFetchingWeekRewards } = useSWR(
+    [getTracerServerUrl(chainId, "rewards", "week=latest")],
+    {
+      fetcher: (...args) => fetch(...args).then((res) => res.json()),
+    }
+  );
+
+  // If the full data has not been loaded, use current week data
+  const weeksRewardsData = useMemo(() => {
+    if (allweeksRewardsData && selectedWeek) {
+      return allweeksRewardsData;
+    } else if (currentRewardWeek) {
+      return [currentRewardWeek];
+    } else {
+      return undefined;
+    }
+  }, [currentRewardWeek, allweeksRewardsData, selectedWeek]);
+
+  // Get the data for the current user
   const userData = useMemo(
     () =>
-      rewardWeeks?.reduce(
+      weeksRewardsData?.reduce(
         (totals, week) => {
           const trader = week.traders.find((trader) => trader.user_address === account);
           if (!trader) {
@@ -68,31 +85,33 @@ export default function Rewards(props) {
           unclaimedRewards: ethers.BigNumber.from(0),
         }
       ),
-    [rewardWeeks, account]
+    [weeksRewardsData, account]
   );
 
+  // Extract week data from full API response
   const weekData = useMemo(() => {
-    if (!rewardWeeks) {
+    if (!weeksRewardsData) {
       return undefined;
     }
-    if (!!rewardWeeks?.message) {
+    if (!!weeksRewardsData?.message) {
       return undefined;
     }
     const selectedWeekActual = selectedWeek && parseFloat(selectedWeek) - 1;
-    const weekData = rewardWeeks?.find((week) => week.week === selectedWeekActual?.toString());
-    if (!weekData) {
+    const allWeeksRewardsData = weeksRewardsData?.find((week) => week.week === selectedWeekActual?.toString());
+    if (!allWeeksRewardsData) {
       return undefined;
     }
-    weekData.traders.sort((a, b) => b.volume - a.volume); // Sort traders by highest to lowest in volume
-    return weekData;
-  }, [rewardWeeks, selectedWeek]);
+    allWeeksRewardsData.traders.sort((a, b) => b.volume - a.volume); // Sort traders by highest to lowest in volume
+    return allWeeksRewardsData;
+  }, [weeksRewardsData, selectedWeek]);
 
+  // Get volume, position and reward from user week data
   const userWeekData = useMemo(() => {
-    if (!weekData) {
+    if (!weeksRewardsData) {
       return undefined;
     }
-    const traderData = weekData.traders?.find((trader) => trader.user_address === account);
-    const leaderboardPosition = weekData.traders?.findIndex((trader) => trader.user_address === account);
+    const traderData = weeksRewardsData.traders?.find((trader) => trader.user_address === account);
+    const leaderboardPosition = weeksRewardsData.traders?.findIndex((trader) => trader.user_address === account);
     // trader's data found
     if (traderData) {
       traderData.position = leaderboardPosition;
@@ -104,7 +123,7 @@ export default function Rewards(props) {
         reward: ethers.BigNumber.from(0),
       };
     }
-  }, [account, weekData]);
+  }, [account, weeksRewardsData]);
 
   const eth = getTokenInfo(infoTokens, ethers.constants.AddressZero);
   const ethPrice = eth?.maxPrimaryPrice;
@@ -120,19 +139,21 @@ export default function Rewards(props) {
     totalRewardAmountEth = ethPrice.mul(userData.totalRewards);
   }
 
-  if (!rewardWeeks && selectedWeek !== undefined) {
+  if (!currentRewardWeek && selectedWeek !== undefined) {
     setSelectedWeek(undefined);
-  } else if (selectedWeek === undefined && !!rewardWeeks) {
-    setSelectedWeek(parseFloat(rewardWeeks[rewardWeeks.length - 1].week) + 1);
+  } else if (selectedWeek === undefined && !!currentRewardWeek) {
+    setSelectedWeek(parseFloat(currentRewardWeek.week) + 1);
   }
 
   let rewardsMessage = "";
-  if (!rewardWeeks) {
+  if (!weeksRewardsData) {
     rewardsMessage = "Fetching rewards";
+  } else if (!!failedFetchingWeekRewards) {
+    rewardsMessage = "Failed fetching current week rewards";
   } else if (!!failedFetchingRewards) {
     rewardsMessage = "Failed fetching rewards";
   } else {
-    if (rewardWeeks?.length === 0) {
+    if (weeksRewardsData?.length === 0) {
       rewardsMessage = "No rewards for network";
     } else {
       rewardsMessage = `Week ${selectedWeek}`;
@@ -147,14 +168,14 @@ export default function Rewards(props) {
 
   // Segment Analytics Page tracking
   useEffect(() => {
-    if (!pageTracked && rewardWeeks) {
+    if (!pageTracked && weeksRewardsData) {
       const traits = {
-        week: rewardWeeks[rewardWeeks.length - 1].key,
+        week: weeksRewardsData[weeksRewardsData.length - 1].key,
       };
       trackPageWithTraits(traits);
       setPageTracked(true); // Prevent Page function being called twice
     }
-  }, [rewardWeeks, pageTracked, trackPageWithTraits]);
+  }, [weeksRewardsData, pageTracked, trackPageWithTraits]);
 
   return (
     <Styles.StyledRewardsPage className="default-container page-layout">
@@ -168,7 +189,7 @@ export default function Rewards(props) {
         switchView={switchView}
         currentView={currentView}
         rewardsMessage={rewardsMessage}
-        rewardWeeks={rewardWeeks}
+        weeksRewardsData={weeksRewardsData}
         setSelectedWeek={setSelectedWeek}
       />
       <TraderRewards
@@ -179,7 +200,7 @@ export default function Rewards(props) {
         totalRewardAmountEth={totalRewardAmountEth}
         unclaimedRewardsEth={unclaimedRewardsEth}
         rewardsMessage={rewardsMessage}
-        rewardWeeks={rewardWeeks}
+        weeksRewardsData={weeksRewardsData}
         setSelectedWeek={setSelectedWeek}
         connectWallet={connectWallet}
         userWeekData={userWeekData}
@@ -187,10 +208,10 @@ export default function Rewards(props) {
         currentView={currentView}
       />
       <Leaderboard
+        weekData={weekData}
         userWeekData={userWeekData}
         userAccount={account}
         ensName={ensName}
-        weekData={weekData}
         currentView={currentView}
         selectedWeek={selectedWeek}
         connectWallet={connectWallet}
