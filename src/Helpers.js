@@ -20,8 +20,6 @@ import OrderBook from "./abis/OrderBook.json";
 import { getWhitelistedTokens, isValidToken } from "./data/Tokens";
 import ComingSoonTooltip from "./components/Tooltip/ComingSoon";
 import { isAddress } from "ethers/lib/utils";
-// Import token images
-import mycToken from "./img/ic_myc.svg";
 
 const { AddressZero } = ethers.constants;
 
@@ -152,7 +150,7 @@ export const GLPPOOLCOLORS = {
 
 export const ICONLINKS = {
   421611: {
-    MYC: {
+    TCR: {
       coingecko: "https://www.coingecko.com/en/coins/tracer-dao",
       arbitrum: `https://arbiscan.io/address/${getContract(ARBITRUM_TESTNET, "TCR")}`,
     },
@@ -209,7 +207,7 @@ export const ICONLINKS = {
     },
   },
   42161: {
-    MYC: {
+    TCR: {
       coingecko: "https://www.coingecko.com/en/coins/tracer-dao",
       arbitrum: `https://arbiscan.io/address/${getContract(ARBITRUM, "TCR")}`,
     },
@@ -260,7 +258,7 @@ export const ICONLINKS = {
     },
   },
   43114: {
-    MYC: {
+    TCR: {
       coingecko: "https://www.coingecko.com/en/coins/tracer-dao",
       arbitrum: `https://arbiscan.io/address/${getContract(ARBITRUM_TESTNET, "TCR")}`,
     },
@@ -303,15 +301,15 @@ export const ICONLINKS = {
 export const platformTokens = {
   421611: {
     // arbitrum testnet
-    MYC: {
-      name: "MYC",
-      symbol: "MYC",
+    TCR: {
+      name: "TCR",
+      symbol: "TCR",
       decimals: 18,
       address: getContract(ARBITRUM_TESTNET, "TCR"),
-      imageUrl: mycToken,
+      imageUrl: "https://assets.coingecko.com/coins/images/18271/small/tracer_logo.png?1631176676",
     },
     MLP: {
-      name: "MYC LP",
+      name: "TCR LP",
       symbol: "MLP",
       decimals: 18,
       address: getContract(ARBITRUM_TESTNET, "StakedGlpTracker"), // address of fsGLP token because user only holds fsGLP
@@ -320,12 +318,12 @@ export const platformTokens = {
   },
   42161: {
     // arbitrum
-    MYC: {
-      name: "MYC",
-      symbol: "MYC",
+    TCR: {
+      name: "TCR",
+      symbol: "TCR",
       decimals: 18,
       address: getContract(ARBITRUM, "TCR"),
-      imageUrl: mycToken,
+      imageUrl: "https://assets.coingecko.com/coins/images/18271/small/tracer_logo.png?1631176676",
     },
     MLP: {
       name: "TCR LP",
@@ -356,7 +354,7 @@ export const platformTokens = {
       symbol: "TCR",
       decimals: 18,
       address: getContract(ARBITRUM, "TCR"),
-      imageUrl: mycToken,
+      imageUrl: "https://assets.coingecko.com/coins/images/18271/small/tracer_logo.png?1631176676",
     },
     MLP: {
       name: "TCR LP",
@@ -599,7 +597,7 @@ export function getExchangeRateDisplay(rate, tokenA, tokenB, opts = {}) {
   if (opts.omitSymbols) {
     return rateValue;
   }
-  return `${rateValue} ${tokenA.symbol} / ${tokenB.symbol}`;
+  return `${rateValue} ${tokenA.symbol} / ${tokenB.symbol}`;
 }
 
 const adjustForDecimalsFactory = (n) => (number) => {

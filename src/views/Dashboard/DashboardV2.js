@@ -518,7 +518,7 @@ export default function DashboardV2() {
                         <div className="App-card-title-mark-subtitle">MYC</div>
                       </div>
                       <div>
-                        <AssetDropdown assetSymbol="MYC" />
+                        <AssetDropdown assetSymbol="TCR" />
                       </div>
                     </div>
                   </div>
