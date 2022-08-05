@@ -300,7 +300,7 @@ function ClaimModal(props) {
         <div className="CompoundModal-menu">
           <div>
             <Checkbox isChecked={shouldClaimTCR} setIsChecked={setShouldClaimTCR}>
-              Claim TCR Rewards
+              Claim ETH Rewards
             </Checkbox>
           </div>
           <div>
