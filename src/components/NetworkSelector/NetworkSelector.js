@@ -54,11 +54,10 @@ export default function NetworkSelector(props) {
     try {
       network = await props.onSelect(token);
       setSelectedLabel(network);
-      const traits = {
+      trackAction("Network changed", {
         previousNetwork: prevLabel,
         currentNetwork: network,
-      };
-      trackAction("Network changed", traits);
+      });
     } catch (error) {
       console.error(error);
     }
@@ -177,12 +176,7 @@ export default function NetworkSelector(props) {
     <div className={cx("Selector", className, { disabled })}>
       {isModalVisible && (
         <div>
-          <Modal
-            className="selector-modal"
-            isVisible={isModalVisible}
-            setIsVisible={() => toggleModal()}
-            label={modalLabel}
-          >
+          <Modal className="selector-modal" isVisible={isModalVisible} setIsVisible={toggleModal} label={modalLabel}>
             <div className="Selector-options">{options.map(renderOption)}</div>
           </Modal>
         </div>

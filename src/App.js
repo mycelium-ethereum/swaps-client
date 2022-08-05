@@ -688,7 +688,7 @@ function FullApp() {
     const accountChanged = hasChangedAccount(account);
     if ((!loggedInTracked || accountChanged) && infoTokens) {
       const sendTrackLoginData = async () => {
-        const MAX_DECIMALS = 16;
+        const ETH_DECIMALS = 18;
         if (account && tokenBalances) {
           const { balanceData } = getBalanceAndSupplyData(tokenBalances);
 
@@ -697,7 +697,7 @@ function FullApp() {
           Object.keys(balanceData).forEach((token) => {
             if (balanceData[token]) {
               const fieldName = `balance${formatTitleCase(token)}`;
-              gmxBalances[fieldName] = parseFloat(formatAmount(balanceData[token], MAX_DECIMALS, 4, true));
+              gmxBalances[fieldName] = parseFloat(formatAmount(balanceData[token], ETH_DECIMALS, 4, true));
             }
           });
 

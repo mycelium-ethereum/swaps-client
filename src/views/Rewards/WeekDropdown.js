@@ -40,7 +40,7 @@ export default function WeekDropdown(props) {
                           setSelectedWeek(selectedWeek);
                           trackAction("Button clicked", {
                             buttonName: "Select rewards week",
-                            weekNo: selectedWeek,
+                            weekNo: parseInt(selectedWeek) + 1,
                           });
                         }}
                       >
