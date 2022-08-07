@@ -135,10 +135,10 @@ function inPreviewMode() {
   return false;
 }
 
-const arbWsProvider = new ethers.providers.WebSocketProvider("wss://arb1.arbitrum.io/ws");
-const arbTestnetWsProvider = new ethers.providers.WebSocketProvider(
-  "wss://arb-rinkeby.g.alchemy.com/v2/4TO9yKJtxrTsGrVksRe6JrPO3AEj2pgn"
-);
+// const arbWsProvider = new ethers.providers.WebSocketProvider("wss://arb1.arbitrum.io/ws");
+const arbWsProvider = new ethers.providers.JsonRpcProvider("https://arb1.arbitrum.io/rpc");
+// const arbTestnetWsProvider = new ethers.providers.WebSocketProvider("wss://rinkeby.arbitrum.io/ws");
+const arbTestnetWsProvider = new ethers.providers.JsonRpcProvider("https://rinkeby.arbitrum.io/rpc");
 const avaxWsProvider = new ethers.providers.JsonRpcProvider("https://api.avax.network/ext/bc/C/rpc");
 
 function getWsProvider(active, chainId) {
