@@ -144,7 +144,7 @@ export default function Rewards(props) {
 
   if (!currentRewardWeek && selectedWeek !== undefined) {
     setSelectedWeek(undefined);
-  } else if (selectedWeek === undefined && !!currentRewardWeek) {
+  } else if (!!currentRewardWeek && selectedWeek === undefined) {
     setSelectedWeek(parseFloat(currentRewardWeek.week) + 1);
   }
 
