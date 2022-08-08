@@ -10,7 +10,6 @@ import { ethers } from "ethers";
 import TraderRewards from "./TraderRewards";
 import Leaderboard from "./Leaderboard";
 import * as Styles from "./Rewards.styles";
-// import cx from "classnames";
 import { LeaderboardSwitch } from "./ViewSwitch";
 import Footer from "../../Footer";
 
@@ -41,7 +40,7 @@ export default function Rewards(props) {
   const { infoTokens } = useInfoTokens(library, chainId, active, undefined, undefined);
 
   // Fetch all week data from server
-  const { data: allweeksRewardsData, error: failedFetchingRewards } = useSWR(
+  const { data: allWeeksRewardsData, error: failedFetchingRewards } = useSWR(
     [getTracerServerUrl(chainId, "/rewards")],
     {
       fetcher: (...args) => fetch(...args).then((res) => res.json()),
@@ -58,14 +57,14 @@ export default function Rewards(props) {
 
   // If the full data has not been loaded, use current week data
   const weeksRewardsData = useMemo(() => {
-    if (allweeksRewardsData && selectedWeek) {
-      return allweeksRewardsData;
+    if (allWeeksRewardsData && selectedWeek) {
+      return allWeeksRewardsData;
     } else if (currentRewardWeek) {
       return [currentRewardWeek];
     } else {
       return undefined;
     }
-  }, [currentRewardWeek, allweeksRewardsData, selectedWeek]);
+  }, [currentRewardWeek, allWeeksRewardsData, selectedWeek]);
 
   // Get the data for the current user
   const userData = useMemo(
