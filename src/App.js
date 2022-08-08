@@ -711,7 +711,7 @@ function FullApp() {
       };
       sendTrackLoginData();
     }
-  }, [account, chainId, tokenBalances, trackLogin, loggedInTracked, library, infoTokens]);
+  }, [account, chainId, tokenBalances, trackLogin, loggedInTracked, library, infoTokens, tokens]);
 
   return (
     <>
