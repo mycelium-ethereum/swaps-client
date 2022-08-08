@@ -1,14 +1,13 @@
 import { ARBITRUM, ARBITRUM_TESTNET } from "../Helpers";
 
-const BASE_TRACER_URL = 'https://dev.api.tracer.finance'
+const BASE_TRACER_URL = "https://dev.api.tracer.finance";
 
-
-export function getTracerServerUrl(chainId, path) {
+export function getTracerServerUrl(chainId, path, params) {
   if (!chainId) {
     throw new Error("chainId is not provided");
   }
   if (chainId === ARBITRUM_TESTNET) {
-    chainId = ARBITRUM; 
+    chainId = ARBITRUM;
   }
 
   return `${BASE_TRACER_URL}/trs${path}?network=${chainId}`;

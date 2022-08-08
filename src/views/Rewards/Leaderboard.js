@@ -88,21 +88,21 @@ function TableRow({ position, account, userAccount, volume, reward, trackAction 
 }
 
 export default function Leaderboard(props) {
-  const { weekData, userWeekData, userAccount, ensName, currentView, selectedWeek, connectWallet, trackAction } = props;
+  const { weekData, userweekData, userAccount, ensName, currentView, selectedWeek, connectWallet, trackAction } = props;
 
   return (
     <LeaderboardContainer hidden={currentView === "Personal"}>
       <Title>Your rewards</Title>
       <PersonalRewardsTableContainer>
         <RewardsTableBorder />
-        {userAccount && userWeekData && userWeekData.position ? (
+        {userAccount && userweekData && userweekData.position ? (
           <RewardsTableWrapper>
             <TableRow
-              position={userWeekData.position}
+              position={userweekData.position}
               account={userAccount}
               ensName={ensName}
-              volume={userWeekData.volume}
-              reward={userWeekData.reward}
+              volume={userweekData.volume}
+              reward={userweekData.reward}
               trackAction={trackAction}
             />
           </RewardsTableWrapper>

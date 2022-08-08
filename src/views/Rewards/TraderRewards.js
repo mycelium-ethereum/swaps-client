@@ -13,7 +13,7 @@ export default function TraderRewards(props) {
     totalRewardAmountEth,
     unclaimedRewardsEth,
     rewardsMessage,
-    rewardWeeks,
+    weeksRewardsData,
     setSelectedWeek,
     connectWallet,
     userWeekData,
@@ -61,9 +61,9 @@ export default function TraderRewards(props) {
       <Styles.RewardsData className="App-card">
         <Styles.AppCardTitle>Rewards data</Styles.AppCardTitle>
         <Styles.RewardsWeekSelect>
-          {!!rewardWeeks ? (
+          {!!weeksRewardsData ? (
             <WeekDropdown
-              rewardWeeks={rewardWeeks}
+              weeksRewardsData={weeksRewardsData}
               setSelectedWeek={setSelectedWeek}
               rewardsMessage={rewardsMessage}
               trackAction={trackAction}
@@ -86,7 +86,7 @@ export default function TraderRewards(props) {
             </div>
           </Styles.RewardsDataBox>
         </Styles.RewardsDataBoxes>
-        {active && <Styles.RewardsButton className="App-cta large"> Claim MYC </Styles.RewardsButton>}
+        {active && <Styles.RewardsButton className="App-cta large"> Claim ETH </Styles.RewardsButton>}
         {!active && (
           <Styles.RewardsButton className="App-cta large" onClick={() => connectWallet()}>
             Connect Wallet
