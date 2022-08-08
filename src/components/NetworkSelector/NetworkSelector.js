@@ -26,10 +26,9 @@ function getDotColor(network) {
 
 export default function NetworkSelector(props) {
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const { small, options, disabled, label, modalLabel, className, showCaret = true } = props;
+  const { small, options, disabled, label, modalLabel, className, showCaret = true, trackAction } = props;
   const [selectedLabel, setSelectedLabel] = useState(label);
   const [networkChanged, setNetworkChanged] = useState(false);
-
   useEffect(() => {
     setSelectedLabel(label);
   }, [label, networkChanged]);
@@ -48,15 +47,21 @@ export default function NetworkSelector(props) {
   }
 
   const onSelect = async (token) => {
+    const prevLabel = selectedLabel;
     setIsModalVisible(false);
     props.showModal(false);
     let network;
     try {
       network = await props.onSelect(token);
       setSelectedLabel(network);
+      trackAction && trackAction("Network changed", {
+        previousNetwork: prevLabel,
+        currentNetwork: network,
+      });
     } catch (error) {
       console.error(error);
     }
+
     setNetworkChanged(true);
   };
 
@@ -177,7 +182,15 @@ export default function NetworkSelector(props) {
         </div>
       )}
       {small ? (
-        <div className={cx("Selector-box", value.label)} onClick={() => toggleModal(true)}>
+        <div
+          className={cx("Selector-box", value.label)}
+          onClick={() => {
+            toggleModal(true);
+            trackAction && trackAction("Button clicked", {
+              buttonName: "Network selector",
+            });
+          }}
+        >
           <img src={valueIcon.default} alt="valueIcon" />
           {showCaret && <img src={selectorDropdowns} alt="selectorDropdowns" />}
         </div>

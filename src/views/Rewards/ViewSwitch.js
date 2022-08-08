@@ -4,11 +4,20 @@ import cx from "classnames";
 import WeekDropdown from "./WeekDropdown";
 
 export function LeaderboardSwitch(props) {
-  const { switchView, currentView, rewardsMessage, weeksRewardsData, setSelectedWeek } = props;
+  const { switchView, currentView, rewardsMessage, weeksRewardsData, setSelectedWeek, trackAction } = props;
 
   return (
     <Styles.ViewSwitchContainer>
-      <Styles.ViewSwitch onClick={switchView}>
+      <Styles.ViewSwitch
+        onClick={() => {
+          switchView();
+          trackAction &&
+            trackAction("Button clicked", {
+              buttonName: "Rewards panel",
+              view: currentView === "Leaderboard" ? "Rewards" : "Leaderboard",
+            });
+        }}
+      >
         <Styles.SwitchBackdrop
           className={cx({
             "leaderboard-selected": currentView === "Leaderboard",

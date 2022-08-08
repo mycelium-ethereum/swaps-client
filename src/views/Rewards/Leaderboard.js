@@ -46,7 +46,7 @@ function RewardsTableWrapper({ children }) {
   );
 }
 
-function TableRow({ position, account, userAccount, volume, reward }) {
+function TableRow({ position, account, userAccount, volume, reward, trackAction }) {
   const { ensName } = useENS(account);
 
   return (
@@ -70,14 +70,25 @@ function TableRow({ position, account, userAccount, volume, reward }) {
           "highlight-current": account === userAccount,
         })}
       >
-        {account === userAccount ? <ClaimButton>Claim ETH</ClaimButton> : null}
+        {account === userAccount ? (
+          <ClaimButton
+            onClick={() => {
+              // TODO: Add claim reward function
+              trackAction("Button clicked", {
+                buttonName: "Claim rewards",
+              });
+            }}
+          >
+            Claim ETH
+          </ClaimButton>
+        ) : null}
       </ClaimCell>
     </tr>
   );
 }
 
 export default function Leaderboard(props) {
-  const { weekData, userweekData, userAccount, ensName, currentView, selectedWeek, connectWallet } = props;
+  const { weekData, userweekData, userAccount, ensName, currentView, selectedWeek, connectWallet, trackAction } = props;
 
   return (
     <LeaderboardContainer hidden={currentView === "Personal"}>
@@ -92,6 +103,7 @@ export default function Leaderboard(props) {
               ensName={ensName}
               volume={userweekData.volume}
               reward={userweekData.reward}
+              trackAction={trackAction}
             />
           </RewardsTableWrapper>
         ) : userAccount ? (
@@ -114,7 +126,16 @@ export default function Leaderboard(props) {
             </RewardsTableWrapper>
             <ConnectWalletText>
               <span>Connect to wallet to view your rewards</span>
-              <RewardsButton className="App-cta large" onClick={connectWallet}>
+              <RewardsButton
+                className="App-cta large"
+                onClick={() => {
+                  connectWallet();
+                  trackAction &&
+                    trackAction("Button clicked", {
+                      buttonName: "Connect wallet on page",
+                    });
+                }}
+              >
                 Connect Wallet <WalletIcon src="/icons/wallet.svg" />
               </RewardsButton>
             </ConnectWalletText>
@@ -134,6 +155,7 @@ export default function Leaderboard(props) {
                   account={user_address}
                   volume={volume}
                   reward={reward}
+                  trackAction={trackAction}
                 />
               ))}
             </RewardsTableWrapper>

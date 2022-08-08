@@ -13,16 +13,13 @@ import {
   formatDateTime,
   usePrevious,
   getLiquidationPrice,
-  useLocalStorageSerializeKey
-} from '../../Helpers'
-import { useChartPrices } from '../../Api'
-import Tab from '../Tab/Tab'
+  useLocalStorageSerializeKey,
+} from "../../Helpers";
+import { useChartPrices } from "../../Api";
+import Tab from "../Tab/Tab";
 
-import {
-  getTokens,
-  getToken
-} from '../../data/Tokens'
-import ChartTokenSelector from './ChartTokenSelector'
+import { getTokens, getToken } from "../../data/Tokens";
+import ChartTokenSelector from "./ChartTokenSelector";
 
 const PRICE_LINE_TEXT_WIDTH = 15;
 
@@ -56,7 +53,7 @@ export function getChartToken(swapOption, fromToken, toToken, chainId) {
   if (toToken.isStable) {
     return fromToken;
   }
-  
+
   return toToken;
 }
 
@@ -135,8 +132,9 @@ export default function ExchangeTVChart(props) {
     positions,
     savedShouldShowPositionLines,
     orders,
-    setToTokenAddress
-  } = props
+    setToTokenAddress,
+    trackAction,
+  } = props;
   const [currentChart, setCurrentChart] = useState();
   const [currentSeries, setCurrentSeries] = useState();
 
@@ -147,17 +145,17 @@ export default function ExchangeTVChart(props) {
 
   const [hoveredCandlestick, setHoveredCandlestick] = useState();
 
-  const fromToken = getTokenInfo(infoTokens, fromTokenAddress)
-  const toToken = getTokenInfo(infoTokens, toTokenAddress)
+  const fromToken = getTokenInfo(infoTokens, fromTokenAddress);
+  const toToken = getTokenInfo(infoTokens, toTokenAddress);
 
   const [chartToken, setChartToken] = useState({
     maxPrice: null,
-    minPrice: null
-  })
+    minPrice: null,
+  });
   useEffect(() => {
-    const tmp = getChartToken(swapOption, fromToken, toToken, chainId)
-    setChartToken(tmp)
-  }, [swapOption, fromToken, toToken, chainId])
+    const tmp = getChartToken(swapOption, fromToken, toToken, chainId);
+    setChartToken(tmp);
+  }, [swapOption, fromToken, toToken, chainId]);
 
   const symbol = chartToken ? (chartToken.isWrapped ? chartToken.baseSymbol : chartToken.symbol) : undefined;
   const marketName = chartToken ? symbol + "_USD" : undefined;
@@ -419,10 +417,10 @@ export default function ExchangeTVChart(props) {
   }
 
   const onSelectToken = (token) => {
-    const tmp = getTokenInfo(infoTokens, token.address)
-    setChartToken(tmp)
-    setToTokenAddress(swapOption, token.address)
-  }
+    const tmp = getTokenInfo(infoTokens, token.address);
+    setChartToken(tmp);
+    setToTokenAddress(swapOption, token.address);
+  };
 
   return (
     <div className="ExchangeChart tv" ref={ref}>
@@ -437,40 +435,45 @@ export default function ExchangeTVChart(props) {
                 infoTokens={infoTokens}
                 onSelectToken={onSelectToken}
                 className="chart-token-selector"
+                trackAction={trackAction}
               />
             </div>
           </div>
-					<div>
-						<div className="ExchangeChart-main-price">{chartToken.maxPrice && formatAmount(chartToken.maxPrice, USD_DECIMALS, 2)}</div>
-						<div className="ExchangeChart-info-label">${chartToken.minPrice && formatAmount(chartToken.minPrice, USD_DECIMALS, 2)}</div>
-					</div>
-					<div>
-						<div className={cx({ positive: deltaPercentage > 0, negative: deltaPercentage < 0 })}>
-							{!deltaPercentageStr && "-"}
-							{deltaPercentageStr && deltaPercentageStr}
-						</div>
-						<div className="ExchangeChart-info-label">24h Change</div>
-					</div>
-					<div className="ExchangeChart-additional-info">
-						<div>
-							{!high && "-"}
-							{high && high.toFixed(2)}
-						</div>
-						<div className="ExchangeChart-info-label">24h High</div>
-					</div>
-					<div className="ExchangeChart-additional-info">
-						<div>
-							{!low && "-"}
-							{low && low.toFixed(2)}
-						</div>
-						<div className="ExchangeChart-info-label">24h Low</div>
-					</div>
+          <div>
+            <div className="ExchangeChart-main-price">
+              {chartToken.maxPrice && formatAmount(chartToken.maxPrice, USD_DECIMALS, 2)}
+            </div>
+            <div className="ExchangeChart-info-label">
+              ${chartToken.minPrice && formatAmount(chartToken.minPrice, USD_DECIMALS, 2)}
+            </div>
+          </div>
+          <div>
+            <div className={cx({ positive: deltaPercentage > 0, negative: deltaPercentage < 0 })}>
+              {!deltaPercentageStr && "-"}
+              {deltaPercentageStr && deltaPercentageStr}
+            </div>
+            <div className="ExchangeChart-info-label">24h Change</div>
+          </div>
+          <div className="ExchangeChart-additional-info">
+            <div>
+              {!high && "-"}
+              {high && high.toFixed(2)}
+            </div>
+            <div className="ExchangeChart-info-label">24h High</div>
+          </div>
+          <div className="ExchangeChart-additional-info">
+            <div>
+              {!low && "-"}
+              {low && low.toFixed(2)}
+            </div>
+            <div className="ExchangeChart-info-label">24h Low</div>
+          </div>
         </div>
       </div>
       <div className="ExchangeChart-bottom App-box App-box-border">
         <div className="ExchangeChart-bottom-header">
           <div className="ExchangeChart-bottom-controls">
-            <Tab options={Object.keys(CHART_PERIODS)} option={period} setOption={setPeriod} />
+            <Tab options={Object.keys(CHART_PERIODS)} option={period} setOption={setPeriod} trackAction={trackAction} />
           </div>
           {candleStatsHtml}
         </div>

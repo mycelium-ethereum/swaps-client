@@ -31,6 +31,8 @@ import {
   approveTokens,
   getUsd,
   adjustForDecimals,
+  getUserTokenBalances,
+  NETWORK_NAME,
   GLP_DECIMALS,
   USD_DECIMALS,
   BASIS_POINTS_DIVISOR,
@@ -89,7 +91,16 @@ function getStakingData(stakingInfo) {
 }
 
 export default function GlpSwap(props) {
-  const { savedSlippageAmount, isBuying, setPendingTxns, connectWallet, setIsBuying, trackPageWithTraits } = props;
+  const {
+    savedSlippageAmount,
+    isBuying,
+    setPendingTxns,
+    connectWallet,
+    setIsBuying,
+    trackPageWithTraits,
+    trackAction,
+    analytics,
+  } = props;
   const history = useHistory();
   const swapLabel = isBuying ? "BuyGlp" : "SellGlp";
   const tabLabel = isBuying ? "Buy MLP" : "Sell MLP";
@@ -545,7 +556,9 @@ export default function GlpSwap(props) {
       )} ${swapTokenInfo.symbol}!`,
       setPendingTxns,
     })
-      .then(async () => {})
+      .then(async () => {
+        trackMlpTrade(3, "Buy Tlp");
+      })
       .finally(() => {
         setIsSubmitting(false);
       });
@@ -572,7 +585,9 @@ export default function GlpSwap(props) {
       )} ${swapTokenInfo.symbol}!`,
       setPendingTxns,
     })
-      .then(async () => {})
+      .then(async () => {
+        trackMlpTrade(3, "Sell Tlp");
+      })
       .finally(() => {
         setIsSubmitting(false);
       });
@@ -649,6 +664,59 @@ export default function GlpSwap(props) {
     }
   };
 
+  const trackMlpTrade = (stage, tradeType) => {
+    let stageName = "";
+    switch (stage) {
+      case 1:
+        stageName = "Approve";
+        break;
+      case 2:
+        stageName = "Pre-confirmation";
+        break;
+      case 3:
+        stageName = "Post-confirmation";
+        break;
+      default:
+        stageName = "Approve";
+        break;
+    }
+
+    const actionName = `${stageName}`;
+    const isBuy = tradeType.includes("Buy");
+    try {
+      const feePercentage = formatAmount(feeBasisPoints, 2, 2, false, "-");
+      const feesUsd = (parseFloat(payBalance.replace("$", "")) * parseFloat(feePercentage)) / 100;
+      const feesEth = (swapValue * parseFloat(feePercentage)) / 100;
+      const amountToPay = isBuy ? swapValue : glpValue;
+      const amountToReceive = isBuy ? glpValue : swapValue;
+      const tokenToPay = isBuy ? swapTokenInfo.symbol : "TLP";
+      const tokenToReceive = isBuy ? "TLP" : swapTokenInfo.symbol;
+
+      const [userBalances, tokenPrices, poolBalances] = getUserTokenBalances(infoTokens);
+
+      const traits = {
+        tradeType: tradeType,
+        position: tabLabel.split(" ")[1],
+        tokenToPay: tokenToPay,
+        tokenToReceive: tokenToReceive,
+        amountToPay: parseFloat(amountToPay),
+        amountToReceive: parseFloat(amountToReceive),
+        balance: parseFloat(formatAmount(swapTokenBalance, swapToken.decimals, 4, false)),
+        balanceToken: swapToken.symbol,
+        feesUsd: feesUsd.toFixed(2),
+        feesEth: parseFloat(feesEth).toFixed(8),
+        walletAddress: account,
+        network: NETWORK_NAME[chainId],
+        ...userBalances,
+        ...tokenPrices,
+        ...poolBalances,
+      };
+      trackAction && trackAction(actionName, traits);
+    } catch (err) {
+      console.error(`Unable to track ${actionName} event`, err);
+    }
+  };
+
   const [pageTracked, setPageTracked] = useState(false);
 
   const dataElements = [chainId, isBuying, pageTracked, swapTokenAddress, history.location.hash];
@@ -656,25 +724,31 @@ export default function GlpSwap(props) {
 
   // Segment Analytics Page tracking
   useEffect(() => {
-    if (elementsLoaded) {
+    if (elementsLoaded && analytics && !pageTracked) {
       // If page hash is #redeem, then user is Buying
       const hash = history.location.hash.replace("#", "");
       const isBuying = hash === "redeem" ? false : true;
       // Swap pay and receive tokens depending on isBuying
-      const tokenToPay = isBuying ? getToken(chainId, swapTokenAddress).symbol : "MLP";
-      const tokenToReceive = isBuying ? "MLP" : getToken(chainId, swapTokenAddress).symbol;
-
-      if (!pageTracked) {
-        const traits = {
-          action: isBuying ? "Buy" : "Sell",
-          tokenToPay: tokenToPay,
-          tokenToReceive: tokenToReceive,
-        };
-        trackPageWithTraits(traits);
-        setPageTracked(true); // Prevent Page function being called twice
-      }
+      const tokenToPay = isBuying ? getToken(chainId, swapTokenAddress).symbol : "TLP";
+      const tokenToReceive = isBuying ? "TLP" : getToken(chainId, swapTokenAddress).symbol;
+      const traits = {
+        action: isBuying ? "Buy" : "Sell",
+        tokenToPay: tokenToPay,
+        tokenToReceive: tokenToReceive,
+      };
+      trackPageWithTraits(traits);
+      setPageTracked(true); // Prevent Page function being called twice
     }
-  }, [chainId, isBuying, pageTracked, swapTokenAddress, elementsLoaded, trackPageWithTraits, history.location.hash]);
+  }, [
+    chainId,
+    isBuying,
+    pageTracked,
+    swapTokenAddress,
+    elementsLoaded,
+    trackPageWithTraits,
+    history.location.hash,
+    analytics,
+  ]);
 
   return (
     <div className="GlpSwap">
@@ -802,6 +876,8 @@ export default function GlpSwap(props) {
               onClickMax={fillMaxAmount}
               selectedToken={swapToken}
               balance={payBalance}
+              trackAction={trackAction}
+              tabLabel={tabLabel}
             >
               <TokenSelector
                 label="Pay"
@@ -813,6 +889,7 @@ export default function GlpSwap(props) {
                 className="GlpSwap-from-token"
                 showSymbolImage={true}
                 showTokenImgInDropdown={true}
+                trackAction={trackAction}
               />
             </BuyInputSection>
           )}
@@ -844,6 +921,9 @@ export default function GlpSwap(props) {
                 onClick={() => {
                   setIsBuying(!isBuying);
                   switchSwapOption(isBuying ? "redeem" : "");
+                  trackAction && trackAction("Button clicked", {
+                    buttonName: `Swap action - ${isBuying ? "Sell TLP" : "Buy TLP"}`,
+                  });
                 }}
               />
             </div>
@@ -874,6 +954,8 @@ export default function GlpSwap(props) {
               onInputValueChange={onSwapValueChange}
               balance={receiveBalance}
               selectedToken={swapToken}
+              trackAction={trackAction}
+              tabLabel={tabLabel}
             >
               <TokenSelector
                 label="Receive"
@@ -885,6 +967,7 @@ export default function GlpSwap(props) {
                 className="GlpSwap-from-token"
                 showSymbolImage={true}
                 showTokenImgInDropdown={true}
+                trackAction={trackAction}
               />
             </BuyInputSection>
           )}
@@ -924,7 +1007,27 @@ export default function GlpSwap(props) {
             </div>
           </div>
           <div className="GlpSwap-cta Exchange-swap-button-container">
-            <button className="App-cta Exchange-swap-button" onClick={onClickPrimary} disabled={!isPrimaryEnabled()}>
+            <button
+              className="App-cta Exchange-swap-button"
+              onClick={() => {
+                const buttonText = getPrimaryText();
+                onClickPrimary();
+
+                if (buttonText.includes("Approve")) {
+                  trackMlpTrade(1, buttonText.split(" ")[1]); // Get token symbol
+                  trackAction && trackAction("Button clicked", {
+                    buttonName: "Approve",
+                    fromToken: buttonText.split(" ")[1],
+                  });
+                } else {
+                  trackMlpTrade(2, buttonText);
+                  trackAction && trackAction("Button clicked", {
+                    buttonName: buttonText,
+                  });
+                }
+              }}
+              disabled={!isPrimaryEnabled()}
+            >
               {getPrimaryText()}
             </button>
           </div>
@@ -1097,7 +1200,7 @@ export default function GlpSwap(props) {
                         <div className="App-card-info-subtitle">{token.symbol}</div>
                       </div>
                       <div>
-                        <AssetDropdown assetSymbol={token.symbol} assetInfo={token} />
+                        <AssetDropdown assetSymbol={token.symbol} assetInfo={token} trackAction={trackAction} />
                       </div>
                     </div>
                   </td>
@@ -1142,7 +1245,12 @@ export default function GlpSwap(props) {
                   <td>
                     <button
                       className={cx("App-button-option action-btn", isBuying ? "buying" : "selling")}
-                      onClick={() => selectToken(token)}
+                      onClick={() => {
+                        selectToken(token);
+                        trackAction && trackAction("Button clicked", {
+                          buttonName: isBuying ? "Buy with " + token.symbol : "Sell for " + token.symbol,
+                        });
+                      }}
                     >
                       {isBuying ? "Buy with " + token.symbol : "Sell for " + token.symbol}
                     </button>

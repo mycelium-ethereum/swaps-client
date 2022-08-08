@@ -10,7 +10,6 @@ import { ethers } from "ethers";
 import TraderRewards from "./TraderRewards";
 import Leaderboard from "./Leaderboard";
 import * as Styles from "./Rewards.styles";
-// import cx from "classnames";
 import { LeaderboardSwitch } from "./ViewSwitch";
 import Footer from "../../Footer";
 
@@ -29,8 +28,8 @@ const LeaderboardHeader = () => (
 );
 
 export default function Rewards(props) {
+  const { connectWallet, trackPageWithTraits, trackAction, analytics } = props;
   const [currentView, setCurrentView] = useState("Personal");
-  const { connectWallet, trackPageWithTraits } = props;
 
   const { chainId } = useChainId();
   const { active, account, library } = useWeb3React();
@@ -171,14 +170,14 @@ export default function Rewards(props) {
 
   // Segment Analytics Page tracking
   useEffect(() => {
-    if (!pageTracked && weeksRewardsData) {
+    if (!pageTracked && weeksRewardsData && analytics) {
       const traits = {
         week: weeksRewardsData[weeksRewardsData.length - 1].key,
       };
       trackPageWithTraits(traits);
       setPageTracked(true); // Prevent Page function being called twice
     }
-  }, [weeksRewardsData, pageTracked, trackPageWithTraits]);
+  }, [weeksRewardsData, pageTracked, trackPageWithTraits, analytics]);
 
   return (
     <Styles.StyledRewardsPage className="default-container page-layout">
@@ -194,6 +193,7 @@ export default function Rewards(props) {
         rewardsMessage={rewardsMessage}
         weeksRewardsData={weeksRewardsData}
         setSelectedWeek={setSelectedWeek}
+        trackAction={trackAction}
       />
       <TraderRewards
         active={active}
@@ -209,6 +209,7 @@ export default function Rewards(props) {
         userWeekData={userWeekData}
         rewardAmountEth={rewardAmountEth}
         currentView={currentView}
+        trackAction={trackAction}
       />
       <Leaderboard
         weekData={weekData}
@@ -218,6 +219,7 @@ export default function Rewards(props) {
         currentView={currentView}
         selectedWeek={selectedWeek}
         connectWallet={connectWallet}
+        trackAction={trackAction}
       />
       <Footer />
     </Styles.StyledRewardsPage>

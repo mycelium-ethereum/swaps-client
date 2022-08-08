@@ -19,6 +19,7 @@ export default function TraderRewards(props) {
     userWeekData,
     rewardAmountEth,
     currentView,
+    trackAction,
   } = props;
   return (
     <Styles.PersonalRewardsContainer hidden={currentView === "Leaderboard"}>
@@ -65,6 +66,7 @@ export default function TraderRewards(props) {
               weeksRewardsData={weeksRewardsData}
               setSelectedWeek={setSelectedWeek}
               rewardsMessage={rewardsMessage}
+              trackAction={trackAction}
             />
           ) : null}
           <Styles.RewardsWeekNextRewards>
@@ -84,7 +86,7 @@ export default function TraderRewards(props) {
             </div>
           </Styles.RewardsDataBox>
         </Styles.RewardsDataBoxes>
-        {active && <Styles.RewardsButton className="App-cta large"> Claim MYC </Styles.RewardsButton>}
+        {active && <Styles.RewardsButton className="App-cta large"> Claim ETH </Styles.RewardsButton>}
         {!active && (
           <Styles.RewardsButton className="App-cta large" onClick={() => connectWallet()}>
             Connect Wallet

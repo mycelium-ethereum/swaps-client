@@ -324,7 +324,7 @@ function ClaimModal(props) {
   );
 }
 
-export default function StakeV2({ setPendingTxns, connectWallet }) {
+export default function StakeV2({ setPendingTxns, connectWallet, trackAction }) {
   const { active, library, account } = useWeb3React();
   const { chainId } = useChainId();
 
@@ -653,24 +653,69 @@ export default function StakeV2({ setPendingTxns, connectWallet }) {
               </div>
               <div className="App-card-divider"></div>
               <div className="App-card-options">
-                <Link className="App-button-option App-card-option" to="/buy_mlp">
+                <Link
+                  className="App-button-option App-card-option"
+                  to="/buy_mlp"
+                  onClick={() =>
+                    trackAction &&
+                    trackAction("Button clicked", {
+                      buttonName: "Buy MLP",
+                    })
+                  }
+                >
                   Buy MLP
                 </Link>
-                <Link className="App-button-option App-card-option" to="/buy_mlp#redeem">
+                <Link
+                  className="App-button-option App-card-option"
+                  to="/buy_mlp#redeem"
+                  onClick={() =>
+                    trackAction &&
+                    trackAction("Button clicked", {
+                      buttonName: "Sell MLP",
+                    })
+                  }
+                >
                   Sell MLP
                 </Link>
                 {active && (
-                  <button className="App-button-option App-card-option" onClick={() => setIsCompoundModalVisible(true)}>
+                  <button
+                    className="App-button-option App-card-option"
+                    onClick={() => {
+                      setIsCompoundModalVisible(true);
+                      trackAction &&
+                        trackAction("Button clicked", {
+                          buttonName: "Compound",
+                        });
+                    }}
+                  >
                     Compound
                   </button>
                 )}
                 {active && (
-                  <button className="App-button-option App-card-option" onClick={() => setIsClaimModalVisible(true)}>
+                  <button
+                    className="App-button-option App-card-option"
+                    onClick={() => {
+                      setIsClaimModalVisible(true);
+                      trackAction &&
+                        trackAction("Button clicked", {
+                          buttonName: "Claim",
+                        });
+                    }}
+                  >
                     Claim
                   </button>
                 )}
                 {!active && (
-                  <button className="App-button-option App-card-option" onClick={() => connectWallet()}>
+                  <button
+                    className="App-button-option App-card-option"
+                    onClick={() => {
+                      connectWallet(true);
+                      trackAction &&
+                        trackAction("Button clicked", {
+                          buttonName: "Connect Wallet",
+                        });
+                    }}
+                  >
                     Connect Wallet
                   </button>
                 )}
