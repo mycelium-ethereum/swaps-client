@@ -58,7 +58,7 @@ export default function Rewards(props) {
   // If the full data has not been loaded, use current week data
   const weeksRewardsData = useMemo(() => {
     if (allWeeksRewardsData && selectedWeek) {
-      return allWeeksRewardsData;
+      return allWeeksRewardsData.sort((a, b) => a.week - b.week);
     } else if (currentRewardWeek) {
       return [currentRewardWeek];
     } else {
@@ -112,8 +112,12 @@ export default function Rewards(props) {
     if (!weeksRewardsData) {
       return undefined;
     }
-    const traderData = weeksRewardsData.traders?.find((trader) => trader.user_address === account);
+    // set to 0 if selected week is not defined, will choose the first element in the array
+    const selectedWeekActual = selectedWeek ? parseFloat(selectedWeek) - 1 : 0;
+    const selectedWeekData = weeksRewardsData[selectedWeekActual];
+    const traderData = selectedWeekData?.traders?.find((trader) => trader.user_address === account);
     const leaderboardPosition = weeksRewardsData.traders?.findIndex((trader) => trader.user_address === account);
+
     // trader's data found
     if (traderData) {
       traderData.position = leaderboardPosition;
