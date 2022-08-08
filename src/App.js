@@ -335,7 +335,7 @@ function AppHeaderUser({
         )}
         <ConnectWalletButton
           onClick={() => {
-            trackAction("Button clicked", { buttonName: "Connect Wallet" });
+            trackAction && trackAction("Button clicked", { buttonName: "Connect Wallet" });
             setWalletModalVisible(true);
           }}
           imgSrc={connectWalletImg}
@@ -970,7 +970,7 @@ function FullApp() {
           className="Wallet-btn MetaMask-btn"
           onClick={() => {
             activateMetaMask();
-            trackAction("Button clicked", { buttonName: "Connect with MetaMask" });
+            trackAction && trackAction("Button clicked", { buttonName: "Connect with MetaMask" });
           }}
         >
           <img src={metamaskImg} alt="MetaMask" />
@@ -980,7 +980,7 @@ function FullApp() {
           className="Wallet-btn CoinbaseWallet-btn"
           onClick={() => {
             activateCoinBase();
-            trackAction("Button clicked", { buttonName: "Connect with Coinbase Wallet" });
+            trackAction && trackAction("Button clicked", { buttonName: "Connect with Coinbase Wallet" });
           }}
         >
           <img src={coinbaseImg} alt="Coinbase Wallet" />
@@ -990,7 +990,7 @@ function FullApp() {
           className="Wallet-btn WalletConnect-btn"
           onClick={() => {
             activateWalletConnect();
-            trackAction("Button clicked", { buttonName: "Connect with WalletConnect" });
+            trackAction && trackAction("Button clicked", { buttonName: "Connect with WalletConnect" });
           }}
         >
           <img src={walletConnectImg} alt="WalletConnect" />
@@ -1030,9 +1030,10 @@ function FullApp() {
           className="App-cta Exchange-swap-button"
           onClick={() => {
             saveAndCloseSettings();
-            trackAction("Button clicked", {
-              buttonName: "Save wallet settings",
-            });
+            trackAction &&
+              trackAction("Button clicked", {
+                buttonName: "Save wallet settings",
+              });
           }}
         >
           Save

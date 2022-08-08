@@ -711,7 +711,7 @@ export default function GlpSwap(props) {
         ...tokenPrices,
         ...poolBalances,
       };
-      trackAction(actionName, traits);
+      trackAction && trackAction(actionName, traits);
     } catch (err) {
       console.error(`Unable to track ${actionName} event`, err);
     }
@@ -921,7 +921,7 @@ export default function GlpSwap(props) {
                 onClick={() => {
                   setIsBuying(!isBuying);
                   switchSwapOption(isBuying ? "redeem" : "");
-                  trackAction("Button clicked", {
+                  trackAction && trackAction("Button clicked", {
                     buttonName: `Swap action - ${isBuying ? "Sell TLP" : "Buy TLP"}`,
                   });
                 }}
@@ -1015,13 +1015,13 @@ export default function GlpSwap(props) {
 
                 if (buttonText.includes("Approve")) {
                   trackMlpTrade(1, buttonText.split(" ")[1]); // Get token symbol
-                  trackAction("Button clicked", {
+                  trackAction && trackAction("Button clicked", {
                     buttonName: "Approve",
                     fromToken: buttonText.split(" ")[1],
                   });
                 } else {
                   trackMlpTrade(2, buttonText);
-                  trackAction("Button clicked", {
+                  trackAction && trackAction("Button clicked", {
                     buttonName: buttonText,
                   });
                 }
@@ -1247,7 +1247,7 @@ export default function GlpSwap(props) {
                       className={cx("App-button-option action-btn", isBuying ? "buying" : "selling")}
                       onClick={() => {
                         selectToken(token);
-                        trackAction("Button clicked", {
+                        trackAction && trackAction("Button clicked", {
                           buttonName: isBuying ? "Buy with " + token.symbol : "Sell for " + token.symbol,
                         });
                       }}

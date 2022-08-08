@@ -1561,7 +1561,7 @@ export default function SwapBox(props) {
       }
     }
 
-    trackAction("Swap option changed", {
+    trackAction && trackAction("Swap option changed", {
       option: opt,
     });
   };
@@ -1852,7 +1852,7 @@ export default function SwapBox(props) {
         ...tokenPrices,
         ...poolBalances,
       };
-      trackAction(actionName, traits);
+      trackAction && trackAction(actionName, traits);
     } catch (err) {
       console.error(`Unable to track ${actionName} event`, err);
     }
@@ -1914,7 +1914,7 @@ export default function SwapBox(props) {
                       className="Exchange-swap-max"
                       onClick={() => {
                         setFromValueToMaximumAvailable();
-                        trackAction("Button clicked", {
+                        trackAction && trackAction("Button clicked", {
                           buttonName: "Max amount",
                         });
                       }}
@@ -2134,7 +2134,7 @@ export default function SwapBox(props) {
                 isChecked={isLeverageSliderEnabled}
                 setIsChecked={setIsLeverageSliderEnabled}
                 onClick={() =>
-                  trackAction("Button clicked", {
+                  trackAction && trackAction("Button clicked", {
                     buttonName: `Leverage slider toggled ${isLeverageSliderEnabled ? "on" : "off"}`,
                   })
                 }
@@ -2266,12 +2266,12 @@ export default function SwapBox(props) {
               onClickPrimary();
               if (buttonText.includes("Approve")) {
                 trackTrade(1, fromToken?.symbol);
-                trackAction("Button clicked", {
+                trackAction && trackAction("Button clicked", {
                   buttonName: "Approve",
                   fromToken: fromToken?.symbol,
                 });
               } else {
-                trackAction("Button clicked", {
+                trackAction && trackAction("Button clicked", {
                   buttonName: buttonText,
                 });
               }

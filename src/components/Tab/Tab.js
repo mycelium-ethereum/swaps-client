@@ -9,9 +9,10 @@ export default function Tab(props) {
   const onClick = (opt) => {
     if (setOption) {
       setOption(opt);
-      trackAction("Button clicked", {
-        buttonName: `Tab option - ${opt}`,
-      });
+      trackAction &&
+        trackAction("Button clicked", {
+          buttonName: `Tab option - ${opt}`,
+        });
     }
     if (onChange) {
       onChange(opt);

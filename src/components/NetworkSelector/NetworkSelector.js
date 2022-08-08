@@ -54,7 +54,7 @@ export default function NetworkSelector(props) {
     try {
       network = await props.onSelect(token);
       setSelectedLabel(network);
-      trackAction("Network changed", {
+      trackAction && trackAction("Network changed", {
         previousNetwork: prevLabel,
         currentNetwork: network,
       });
@@ -186,7 +186,7 @@ export default function NetworkSelector(props) {
           className={cx("Selector-box", value.label)}
           onClick={() => {
             toggleModal(true);
-            trackAction("Button clicked", {
+            trackAction && trackAction("Button clicked", {
               buttonName: "Network selector",
             });
           }}

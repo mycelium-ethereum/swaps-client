@@ -33,6 +33,7 @@ function AssetDropdown({ assetSymbol, assetInfo, trackAction }) {
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={() =>
+                  trackAction &&
                   trackAction("Button clicked", {
                     buttonName: `Open ${assetInfo.symbol} in Coingecko`,
                   })
@@ -53,6 +54,7 @@ function AssetDropdown({ assetSymbol, assetInfo, trackAction }) {
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={() =>
+                  trackAction &&
                   trackAction("Button clicked", {
                     buttonName: `Open ${assetInfo.symbol} in Arbitrum Explorer`,
                   })
@@ -69,6 +71,7 @@ function AssetDropdown({ assetSymbol, assetInfo, trackAction }) {
                 href={avalanche}
                 className="asset-item"
                 onClick={() =>
+                  trackAction &&
                   trackAction("Button clicked", {
                     buttonName: `Open ${assetInfo.symbol} in Avalanche Explorer`,
                   })
@@ -89,9 +92,10 @@ function AssetDropdown({ assetSymbol, assetInfo, trackAction }) {
                     ? { ...assetInfo, image: assetInfo.imageUrl }
                     : platformTokens[chainId][assetSymbol];
                   addTokenToMetamask(token);
-                  trackAction("Button clicked", {
-                    buttonName: `Add ${assetInfo.symbol} to Metamask`,
-                  });
+                  trackAction &&
+                    trackAction("Button clicked", {
+                      buttonName: `Add ${assetInfo.symbol} to Metamask`,
+                    });
                 }}
                 className="asset-item"
               >

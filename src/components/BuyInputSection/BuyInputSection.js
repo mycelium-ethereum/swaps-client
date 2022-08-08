@@ -50,9 +50,10 @@ export default function BuyInputSection(props) {
               className="Exchange-swap-max"
               onClick={() => {
                 onClickMax();
-                trackAction("Button clicked", {
-                  buttonName: `${tabLabel} - Max amount`,
-                });
+                trackAction &&
+                  trackAction("Button clicked", {
+                    buttonName: `${tabLabel} - Max amount`,
+                  });
               }}
             >
               MAX

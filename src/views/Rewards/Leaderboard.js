@@ -130,9 +130,10 @@ export default function Leaderboard(props) {
                 className="App-cta large"
                 onClick={() => {
                   connectWallet();
-                  trackAction("Button clicked", {
-                    buttonName: "Connect wallet on page",
-                  });
+                  trackAction &&
+                    trackAction("Button clicked", {
+                      buttonName: "Connect wallet on page",
+                    });
                 }}
               >
                 Connect Wallet <WalletIcon src="/icons/wallet.svg" />

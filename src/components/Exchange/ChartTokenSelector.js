@@ -37,6 +37,7 @@ export default function ChartTokenSelector(props) {
         <button
           className={cx("App-cta small transparent chart-token-selector", { "default-cursor": isSwap })}
           onClick={() =>
+            trackAction &&
             trackAction("Button clicked", {
               buttonName: "Market selector",
             })
@@ -54,9 +55,10 @@ export default function ChartTokenSelector(props) {
                 className="menu-item"
                 onClick={() => {
                   onSelect(option);
-                  trackAction("Change Market", {
-                    market: option,
-                  });
+                  trackAction &&
+                    trackAction("Change Market", {
+                      market: option,
+                    });
                 }}
               >
                 <span style={{ marginLeft: 5 }} className="token-label">

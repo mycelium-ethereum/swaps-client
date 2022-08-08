@@ -31,7 +31,7 @@ function AddressDropdown({ account, accountUrl, disconnectAccountAndCloseSetting
               className="menu-item"
               onClick={() => {
                 copyToClipboard(account);
-                trackAction("Button clicked", { buttonName: "Copy Address" });
+                trackAction && trackAction("Button clicked", { buttonName: "Copy Address" });
                 helperToast.success("Address copied to your clipboard");
               }}
             >
@@ -45,7 +45,7 @@ function AddressDropdown({ account, accountUrl, disconnectAccountAndCloseSetting
               target="_blank"
               rel="noopener noreferrer"
               className="menu-item"
-              onClick={() => trackAction("Button clicked", { buttonName: "View in Explorer" })}
+              onClick={() => trackAction && trackAction("Button clicked", { buttonName: "View in Explorer" })}
             >
               <img src={externalLink} alt="Open address in explorer" />
               <p>View in Explorer</p>
@@ -57,7 +57,7 @@ function AddressDropdown({ account, accountUrl, disconnectAccountAndCloseSetting
               className="menu-item"
               onClick={() => {
                 openSettings();
-                trackAction("Button clicked", { buttonName: "Open settings" });
+                trackAction && trackAction("Button clicked", { buttonName: "Open settings" });
               }}
             >
               <img src={settings} alt="Open settings" />
@@ -69,7 +69,7 @@ function AddressDropdown({ account, accountUrl, disconnectAccountAndCloseSetting
               className="menu-item"
               onClick={() => {
                 disconnectAccountAndCloseSettings();
-                trackAction("Button clicked", { buttonName: "Disconnect the wallet" });
+                trackAction && trackAction("Button clicked", { buttonName: "Disconnect the wallet" });
               }}
             >
               <img src={disconnect} alt="Disconnect the wallet" />

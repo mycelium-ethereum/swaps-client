@@ -37,6 +37,7 @@ export default function BuyGlp(props) {
               target="_blank"
               rel="noopener noreferrer"
               onClick={() =>
+                props.trackAction &&
                 props.trackAction("Button clicked", {
                   buttonName: "TLP tokens link",
                 })

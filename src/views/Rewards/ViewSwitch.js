@@ -11,10 +11,11 @@ export function LeaderboardSwitch(props) {
       <Styles.ViewSwitch
         onClick={() => {
           switchView();
-          trackAction("Button clicked", {
-            buttonName: "Rewards panel",
-            view: currentView === "Leaderboard" ? "Rewards" : "Leaderboard",
-          });
+          trackAction &&
+            trackAction("Button clicked", {
+              buttonName: "Rewards panel",
+              view: currentView === "Leaderboard" ? "Rewards" : "Leaderboard",
+            });
         }}
       >
         <Styles.SwitchBackdrop

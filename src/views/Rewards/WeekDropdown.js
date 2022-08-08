@@ -18,6 +18,7 @@ export default function WeekDropdown(props) {
                   "App-cta-selected": open,
                 })}
                 onClick={() =>
+                  trackAction &&
                   trackAction("Button clicked", {
                     buttonName: "Rewards week dropdown",
                   })
@@ -38,10 +39,11 @@ export default function WeekDropdown(props) {
                         onClick={() => {
                           const selectedWeek = parseFloat(rewardWeek.week) + 1;
                           setSelectedWeek(selectedWeek);
-                          trackAction("Button clicked", {
-                            buttonName: "Select rewards week",
-                            weekNo: selectedWeek,
-                          });
+                          trackAction &&
+                            trackAction("Button clicked", {
+                              buttonName: "Select rewards week",
+                              weekNo: selectedWeek,
+                            });
                         }}
                       >
                         Week {parseFloat(rewardWeek.week) + 1}

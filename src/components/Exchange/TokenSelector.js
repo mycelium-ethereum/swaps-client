@@ -107,7 +107,7 @@ export default function TokenSelector(props) {
                 className="TokenSelector-token-row"
                 onClick={() => {
                   onSelectToken(token);
-                  trackAction("Button clicked", {
+                  trackAction && trackAction("Button clicked", {
                     buttonName: `${props.label} Token Selection modal option - ${token.symbol}`,
                   });
                 }}
@@ -146,7 +146,7 @@ export default function TokenSelector(props) {
         className="TokenSelector-box"
         onClick={() => {
           setIsModalVisible(true);
-          trackAction("Button clicked", {
+          trackAction && trackAction("Button clicked", {
             buttonName: `Token selector box`,
           });
         }}

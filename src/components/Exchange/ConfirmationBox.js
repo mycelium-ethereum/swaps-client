@@ -18,7 +18,7 @@ import {
   SLIPPAGE_BPS_KEY,
   formatDateTime,
   calculatePositionDelta,
-  getSpread
+  getSpread,
 } from "../../Helpers";
 import { getConstant } from "../../Constants";
 import { getContract } from "../../Addresses";
@@ -631,9 +631,10 @@ export default function ConfirmationBox(props) {
           <button
             onClick={() => {
               onConfirmationClick();
-              trackAction("Button clicked", {
-                buttonName: `Confirmation modal - ${getPrimaryText()} Trade`,
-              });
+              trackAction &&
+                trackAction("Button clicked", {
+                  buttonName: `Confirmation modal - ${getPrimaryText()} Trade`,
+                });
               trackTrade(2, getPrimaryText());
             }}
             className="App-cta Confirmation-box-button"

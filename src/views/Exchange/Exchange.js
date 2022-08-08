@@ -824,9 +824,10 @@ export const Exchange = forwardRef((props, ref) => {
             option={listSection}
             onChange={(section) => {
               setListSection(section);
-              trackAction("Button clicked", {
-                buttonName: `Table view ${section}`,
-              });
+              trackAction &&
+                trackAction("Button clicked", {
+                  buttonName: `Table view ${section}`,
+                });
             }}
             type="inline"
             className="Exchange-list-tabs"
