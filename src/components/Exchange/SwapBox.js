@@ -1910,7 +1910,15 @@ export default function SwapBox(props) {
                     onChange={onFromValueChange}
                   />
                   {shouldShowMaxButton() && (
-                    <div className="Exchange-swap-max" onClick={setFromValueToMaximumAvailable}>
+                    <div
+                      className="Exchange-swap-max"
+                      onClick={() => {
+                        setFromValueToMaximumAvailable();
+                        trackAction("Button clicked", {
+                          buttonName: "Max amount",
+                        });
+                      }}
+                    >
                       MAX
                     </div>
                   )}
@@ -2122,7 +2130,15 @@ export default function SwapBox(props) {
         {(isLong || isShort) && (
           <div className="Exchange-leverage-box">
             <div className="Exchange-leverage-slider-settings">
-              <Checkbox isChecked={isLeverageSliderEnabled} setIsChecked={setIsLeverageSliderEnabled}>
+              <Checkbox
+                isChecked={isLeverageSliderEnabled}
+                setIsChecked={setIsLeverageSliderEnabled}
+                onClick={() =>
+                  trackAction("Button clicked", {
+                    buttonName: `Leverage slider toggled ${isLeverageSliderEnabled ? "on" : "off"}`,
+                  })
+                }
+              >
                 <span>Leverage slider</span>
               </Checkbox>
             </div>
