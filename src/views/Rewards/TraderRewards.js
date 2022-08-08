@@ -13,7 +13,7 @@ export default function TraderRewards(props) {
     totalRewardAmountEth,
     unclaimedRewardsEth,
     rewardsMessage,
-    rewardWeeks,
+    weeksRewardsData,
     setSelectedWeek,
     connectWallet,
     userWeekData,
@@ -60,8 +60,12 @@ export default function TraderRewards(props) {
       <Styles.RewardsData className="App-card">
         <Styles.AppCardTitle>Rewards data</Styles.AppCardTitle>
         <Styles.RewardsWeekSelect>
-          {!!rewardWeeks ? (
-            <WeekDropdown rewardWeeks={rewardWeeks} setSelectedWeek={setSelectedWeek} rewardsMessage={rewardsMessage} />
+          {!!weeksRewardsData ? (
+            <WeekDropdown
+              weeksRewardsData={weeksRewardsData}
+              setSelectedWeek={setSelectedWeek}
+              rewardsMessage={rewardsMessage}
+            />
           ) : null}
           <Styles.RewardsWeekNextRewards>
             Next rewards in <Styles.RewardsWeekCountdown>8d 13h 42m</Styles.RewardsWeekCountdown>
