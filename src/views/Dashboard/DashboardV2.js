@@ -45,7 +45,7 @@ import Footer from "../../Footer";
 
 import "./DashboardV2.css";
 
-import tcr40Icon from "../../img/ic_tcr_40.svg";
+import mycToken from "../../img/ic_myc.svg";
 import mlp40Icon from "../../img/ic_mlp_40.svg";
 import avalanche16Icon from "../../img/ic_avalanche_16.svg";
 import arbitrum16Icon from "../../img/ic_arbitrum_16.svg";
@@ -447,7 +447,7 @@ export default function DashboardV2() {
                     <TooltipComponent
                       handle={`$${formatAmount(tvl, USD_DECIMALS, 0, true)}`}
                       position="right-bottom"
-                      renderContent={() => `Assets Under Management: TCR staked (All chains) + MLP pool (${chainName})`}
+                      renderContent={() => `Assets Under Management: MYC staked (All chains) + MLP pool (${chainName})`}
                     />
                   </div>
                 </div>
@@ -511,11 +511,11 @@ export default function DashboardV2() {
                   <div className="App-card-title">
                     <div className="App-card-title-mark">
                       <div className="App-card-title-mark-icon">
-                        <img src={tcr40Icon} alt="tcr40Icon" />
+                        <img src={mycToken} alt="mycToken" />
                       </div>
                       <div className="App-card-title-mark-info">
-                        <div className="App-card-title-mark-title">TCR</div>
-                        <div className="App-card-title-mark-subtitle">TCR</div>
+                        <div className="App-card-title-mark-title">MYC</div>
+                        <div className="App-card-title-mark-subtitle">MYC</div>
                       </div>
                       <div>
                         <AssetDropdown assetSymbol="TCR" />
@@ -546,7 +546,7 @@ export default function DashboardV2() {
                     </div>
                     <div className="App-card-row">
                       <div className="label">Supply</div>
-                      <div>{formatAmount(totalTCRSupply, GMX_DECIMALS, 0, true)} TCR</div>
+                      <div>{formatAmount(totalTCRSupply, GMX_DECIMALS, 0, true)} MYC</div>
                     </div>
                     {/*<div className="App-card-row">
                       <div className="label">Total Staked</div>
@@ -558,9 +558,9 @@ export default function DashboardV2() {
                             handle={`$${formatAmount(stakedGmxSupplyUsd, USD_DECIMALS, 0, true)}`}
                             renderContent={() => (
                               <>
-                                Staked on Arbitrum: {formatAmount(arbitrumStakedGmx, GMX_DECIMALS, 0, true)} TCR
+                                Staked on Arbitrum: {formatAmount(arbitrumStakedGmx, GMX_DECIMALS, 0, true)} MYC
                                 <br />
-                                Staked on Avalanche: {formatAmount(avaxStakedGmx, GMX_DECIMALS, 0, true)} TCR
+                                Staked on Avalanche: {formatAmount(avaxStakedGmx, GMX_DECIMALS, 0, true)} MYC
                               </>
                             )}
                           />

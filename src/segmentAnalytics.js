@@ -1,15 +1,21 @@
 import { useEffect, useState } from "react";
 import { AnalyticsBrowser } from "@segment/analytics-next";
 import { useLocation } from "react-router-dom";
-import { ARBITRUM, ARBITRUM_TESTNET, CURRENT_PROVIDER_LOCALSTORAGE_KEY, hasUserConsented } from "./Helpers";
+import { NETWORK_NAME, CURRENT_PROVIDER_LOCALSTORAGE_KEY, hasUserConsented } from "./Helpers";
 import { useWeb3React } from "@web3-react/core";
+import platform from "platform";
+import {
+  getPreviousAccounts,
+  saveAccountToLocalStorage,
+  setCurrentAccount,
+  hasBeenIdentified,
+  hasChangedAccount,
+  getUrlParameters,
+  getWindowFeatures,
+} from "./Helpers";
 
 const writeKey = process.env.REACT_APP_SEGMENT_WRITE_KEY;
-
-const networkName = {
-  [ARBITRUM]: "Arbitrum",
-  [ARBITRUM_TESTNET]: "Rinkeby",
-};
+const customTrackPages = ["/trade", "/buy_mlp", "/rewards"]; //These pages are tracked through trackPageWithTraits() separately
 
 const IGNORE_IP_CONTEXT = {
   context: {
@@ -22,35 +28,65 @@ export const useAnalytics = () => {
   const location = useLocation();
   const [analytics, setAnalytics] = useState(undefined);
 
-  const trackPageWithTraits = (traits) => {
+  const trackAction = (actionName, traits) => {
     const hasConsented = hasUserConsented();
-    if (hasConsented) {
-      analytics?.page({ ...traits });
-    } else {
-      analytics?.page({
-        ...IGNORE_IP_CONTEXT,
-        ...traits,
-      });
+    const pageTitle = document.title;
+    const currentPageContext = { path: location.pathname, title: pageTitle };
+    try {
+      if (hasConsented) {
+        analytics?.track(actionName, { ...traits, ...currentPageContext });
+      } else {
+        analytics?.track(actionName, {
+          ...IGNORE_IP_CONTEXT,
+          ...traits,
+          ...currentPageContext,
+        });
+      }
+    } catch (err) {
+      console.error(`Failed to send custom ${actionName} Track action to Segment`, err);
     }
   };
 
-  const trackLogin = (chainId, gmxBalances, balanceEth) => {
+  const trackPageWithTraits = (traits) => {
+    const hasConsented = hasUserConsented();
+    const urlParams = getUrlParameters(location.search);
+    const windowTraits = getWindowFeatures();
+
+    try {
+      const os = { name: platform.description, version: platform.version };
+      if (hasConsented) {
+        analytics?.page({ ...traits, ...windowTraits, ...urlParams, context: { os } });
+      } else {
+        analytics?.page({
+          ...IGNORE_IP_CONTEXT,
+          ...traits,
+          ...windowTraits,
+          ...urlParams,
+          context: { os },
+        });
+      }
+    } catch (err) {
+      console.error("Failed to send Page with traits call to Segment", err);
+    }
+  };
+
+  const trackLogin = (chainId, gmxBalances, userBalances) => {
     const hasConsented = hasUserConsented();
     try {
       const provider = localStorage.getItem(CURRENT_PROVIDER_LOCALSTORAGE_KEY);
       const traits = {
         walletProvider: provider,
         walletAddress: account,
-        network: networkName[chainId] ?? `Unsupported (${chainId})`,
-        balanceEth: balanceEth,
+        network: NETWORK_NAME[chainId] ?? `Unsupported (${chainId})`,
+        ...userBalances,
         ...gmxBalances,
       };
       if (account && hasConsented) {
-        analytics?.track("userLoggedIn", {
+        analytics?.track("User logged in", {
           ...traits,
         });
       } else {
-        analytics?.track("userLoggedIn", {
+        analytics?.track("User logged in", {
           ...IGNORE_IP_CONTEXT,
           ...traits,
         });
@@ -62,43 +98,53 @@ export const useAnalytics = () => {
 
   // Identify call
   useEffect(() => {
-    const wasPreviouslyIdentified = window.localStorage.getItem("analyticsIdentified");
-    try {
-      if (account) {
-        // Prevent repeated Identify and Alias calls
-        if (!wasPreviouslyIdentified || wasPreviouslyIdentified !== "true") {
-          analytics?.alias(account); // Alias previous anonymousId to wallet address
-          analytics?.identify(account, {
+    if (account && analytics) {
+      try {
+        // Prevent repeated Identify calls
+        const accountIdentified = hasBeenIdentified(account);
+        const accountChanged = hasChangedAccount(account);
+        const prevAccounts = getPreviousAccounts();
+        const anonId = analytics.user().anonymousId();
+
+        if (
+          (prevAccounts && prevAccounts.length === 0) ||
+          !prevAccounts.includes(account) ||
+          (!accountIdentified && accountChanged)
+        ) {
+          analytics.identify(anonId, {
+            userId: anonId,
             walletAddress: account,
           });
-          window.localStorage.setItem("analyticsIdentified", "true");
+          setCurrentAccount(account);
+          saveAccountToLocalStorage(account);
         }
+      } catch (err) {
+        console.error("Failed to send Identify call to Segment", err);
       }
-    } catch (err) {
-      console.error("Failed to send Identify action to Segment", err);
     }
   }, [analytics, account]);
 
   // Page call
   useEffect(() => {
-    const customTrackPages = ["/trade", "/buy_tlp", "/rewards"];
-    if (!customTrackPages.includes(location.pathname)) {
-      const hasConsented = hasUserConsented();
-      const windowTraits = {
-        screenHeight: window.innerHeight || "unknown",
-        screenWidth: window.innerWidth || "unknown",
-        screenDensity: window.devicePixelRatio || "unknown",
-      };
-      if (hasConsented) {
-        analytics?.page({ ...windowTraits });
-      } else {
-        analytics?.page({
-          ...IGNORE_IP_CONTEXT,
-          ...windowTraits,
-        });
+    try {
+      if (!customTrackPages.includes(location.pathname)) {
+        const hasConsented = hasUserConsented();
+        const urlParams = getUrlParameters(location.search);
+        const windowTraits = getWindowFeatures();
+        if (hasConsented) {
+          analytics?.page({ ...windowTraits, ...urlParams });
+        } else {
+          analytics?.page({
+            ...IGNORE_IP_CONTEXT,
+            ...windowTraits,
+            ...urlParams,
+          });
+        }
       }
+    } catch (err) {
+      console.error("Failed to send Page call to Segment", err);
     }
-  }, [analytics, location.pathname]);
+  }, [analytics, location.pathname, location.search]);
 
   useEffect(() => {
     if (!writeKey) {
@@ -113,7 +159,9 @@ export const useAnalytics = () => {
   }, []);
 
   return {
+    analytics,
     trackLogin,
     trackPageWithTraits,
+    trackAction,
   };
 };

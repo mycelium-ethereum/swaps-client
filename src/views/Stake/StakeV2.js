@@ -108,10 +108,10 @@ function CompoundModal(props) {
 
   const getPrimaryText = () => {
     if (isApproving) {
-      return `Approving TCR...`;
+      return `Approving MYC...`;
     }
     if (needApproval) {
-      return `Approve TCR`;
+      return `Approve MYC`;
     }
     if (isCompounding) {
       return "Compounding...";
@@ -188,7 +188,7 @@ function CompoundModal(props) {
         <div className="CompoundModal-menu">
           <div>
             <Checkbox isChecked={shouldClaimMYC} setIsChecked={setShouldClaimMYC}>
-              Claim TCR Rewards
+              Claim MYC Rewards
             </Checkbox>
           </div>
           <div>
@@ -567,7 +567,7 @@ function VesterWithdrawModal(props) {
   );
 }
 
-export default function StakeV2({ setPendingTxns, connectWallet }) {
+export default function StakeV2({ setPendingTxns, connectWallet, trackAction }) {
   const { active, library, account } = useWeb3React();
   const { chainId } = useChainId();
 

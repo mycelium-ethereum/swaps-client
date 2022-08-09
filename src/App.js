@@ -11,7 +11,7 @@ import { Switch, Route, NavLink } from "react-router-dom";
 
 import { ThemeProvider } from "@tracer-protocol/tracer-ui";
 import { useAnalytics } from "./segmentAnalytics";
-import { getTokens } from "./data/Tokens";
+import { getTokens, getWhitelistedTokens } from "./data/Tokens";
 
 import {
   ARBITRUM,
@@ -43,6 +43,9 @@ import {
   getBalanceAndSupplyData,
   formatAmount,
   formatTitleCase,
+  getUserTokenBalances,
+  hasChangedAccount,
+  setCurrentAccount,
   SHOULD_EAGER_CONNECT_LOCALSTORAGE_KEY,
   CURRENT_PROVIDER_LOCALSTORAGE_KEY,
   REFERRAL_CODE_KEY,
@@ -104,6 +107,7 @@ import { Link } from "react-router-dom";
 import EventToastContainer from "./components/EventToast/EventToastContainer";
 import SEO from "./components/Common/SEO";
 import useRouteQuery from "./hooks/useRouteQuery";
+import { useInfoTokens } from "./Api";
 import { encodeReferralCode } from "./Api/referrals";
 
 import { getContract } from "./Addresses";
@@ -135,10 +139,10 @@ function inPreviewMode() {
   return false;
 }
 
-const arbWsProvider = new ethers.providers.WebSocketProvider("wss://arb1.arbitrum.io/ws");
-const arbTestnetWsProvider = new ethers.providers.WebSocketProvider(
-  "wss://arb-rinkeby.g.alchemy.com/v2/4TO9yKJtxrTsGrVksRe6JrPO3AEj2pgn"
-);
+// const arbWsProvider = new ethers.providers.WebSocketProvider("wss://arb1.arbitrum.io/ws");
+const arbWsProvider = new ethers.providers.JsonRpcProvider("https://arb1.arbitrum.io/rpc");
+// const arbTestnetWsProvider = new ethers.providers.WebSocketProvider("wss://rinkeby.arbitrum.io/ws");
+const arbTestnetWsProvider = new ethers.providers.JsonRpcProvider("https://rinkeby.arbitrum.io/rpc");
 const avaxWsProvider = new ethers.providers.JsonRpcProvider("https://api.avax.network/ext/bc/C/rpc");
 
 function getWsProvider(active, chainId) {
@@ -158,7 +162,7 @@ function getWsProvider(active, chainId) {
   }
 }
 
-function AppHeaderLinks({ small, openSettings, clickCloseIcon }) {
+function AppHeaderLinks({ small, openSettings, clickCloseIcon, trackAction }) {
   if (inPreviewMode()) {
     return (
       <div className="App-header-links preview">
@@ -191,7 +195,16 @@ function AppHeaderLinks({ small, openSettings, clickCloseIcon }) {
           <div className="App-header-menu-icon-block" onClick={() => clickCloseIcon()}>
             <FiX className="App-header-menu-icon" />
           </div>
-          <Link className="App-header-link-main" to="/">
+          <Link
+            className="App-header-link-main"
+            to="/"
+            onClick={() =>
+              trackAction &&
+              trackAction("Button clicked", {
+                buttonName: "Tracer Nav Logo",
+              })
+            }
+          >
             <img src={logoImg} alt="Tracer TRS Logo" />
           </Link>
         </div>
@@ -234,7 +247,7 @@ function AppHeaderLinks({ small, openSettings, clickCloseIcon }) {
           target="_blank"
           rel="noopener noreferrer"
         >
-          About
+          Docs
         </a>
       </div>
       {small && (
@@ -255,6 +268,7 @@ function AppHeaderUser({
   setWalletModalVisible,
   showNetworkSelectorModal,
   disconnectAccountAndCloseSettings,
+  trackAction,
 }) {
   const { chainId } = useChainId();
   const { active, account } = useWeb3React();
@@ -316,9 +330,16 @@ function AppHeaderUser({
             modalLabel="Select Network"
             small={small}
             showModal={showNetworkSelectorModal}
+            trackAction={trackAction}
           />
         )}
-        <ConnectWalletButton onClick={() => setWalletModalVisible(true)} imgSrc={connectWalletImg}>
+        <ConnectWalletButton
+          onClick={() => {
+            trackAction && trackAction("Button clicked", { buttonName: "Connect Wallet" });
+            setWalletModalVisible(true);
+          }}
+          imgSrc={connectWalletImg}
+        >
           {small ? "Connect" : "Connect Wallet"}
         </ConnectWalletButton>
       </div>
@@ -344,6 +365,7 @@ function AppHeaderUser({
           modalLabel="Select Network"
           small={small}
           showModal={showNetworkSelectorModal}
+          trackAction={trackAction}
         />
       )}
       <div className="App-header-user-address">
@@ -353,6 +375,7 @@ function AppHeaderUser({
           accountUrl={accountUrl}
           disconnectAccountAndCloseSettings={disconnectAccountAndCloseSettings}
           openSettings={openSettings}
+          trackAction={trackAction}
         />
       </div>
     </div>
@@ -361,7 +384,7 @@ function AppHeaderUser({
 
 function FullApp() {
   const [loggedInTracked, setLoggedInTracked] = useState(false);
-  const { trackLogin, trackPageWithTraits } = useAnalytics();
+  const { trackLogin, trackPageWithTraits, trackAction, analytics } = useAnalytics();
 
   const exchangeRef = useRef();
   const { connector, library, deactivate, activate, active, account } = useWeb3React();
@@ -369,13 +392,9 @@ function FullApp() {
   const readerAddress = getContract(chainId, "Reader");
   const tokens = getTokens(chainId);
   const tokenAddresses = tokens.map((token) => token.address);
-
-  const { data: tokenBalances } = useSWR(
-    [`FullApp:getTokenBalances:${active}`, chainId, readerAddress, "getTokenBalances", account || PLACEHOLDER_ACCOUNT],
-    {
-      fetcher: fetcher(library, ReaderV2, [tokenAddresses]),
-    }
-  );
+  const whitelistedTokens = getWhitelistedTokens(chainId);
+  const whitelistedTokenAddresses = whitelistedTokens.map((token) => token.address);
+  const nativeTokenAddress = getContract(chainId, "NATIVE_TOKEN");
 
   useEventToast();
   const [activatingConnector, setActivatingConnector] = useState();
@@ -388,30 +407,6 @@ function FullApp() {
   useInactiveListener(!triedEager || !!activatingConnector);
 
   const query = useRouteQuery();
-
-  // Track user wallet connect
-  useEffect(() => {
-    const sendTrackLoginData = async () => {
-      if (account && tokenBalances && !loggedInTracked) {
-        const MAX_DECIMALS = 16;
-        const { balanceData } = getBalanceAndSupplyData(tokenBalances);
-        // Format GMX token balances from BigNubmer to float
-        let gmxBalances = {};
-        Object.keys(balanceData).forEach((token) => {
-          if (balanceData[token]) {
-            const fieldName = `balance${formatTitleCase(token)}`;
-            gmxBalances[fieldName] = parseFloat(formatAmount(balanceData[token], MAX_DECIMALS, 4, true));
-          }
-        });
-        // Get user ETH balances
-        const balanceEth = await library.getBalance(account);
-        const formattedEthBalance = parseFloat(formatAmount(balanceEth, MAX_DECIMALS, 4, true)) / 100;
-        trackLogin(chainId, gmxBalances, formattedEthBalance);
-        setLoggedInTracked(true); // Only track once
-      }
-    };
-    sendTrackLoginData();
-  }, [account, chainId, tokenBalances, trackLogin, loggedInTracked, library]);
 
   useEffect(() => {
     let referralCode = query.get(REFERRAL_CODE_QUERY_PARAMS);
@@ -676,6 +671,48 @@ function FullApp() {
     };
   }, [active, chainId, vaultAddress, positionRouterAddress]);
 
+  const { data: tokenBalances } = useSWR(
+    [`FullApp:getTokenBalances:${active}`, chainId, readerAddress, "getTokenBalances", account || PLACEHOLDER_ACCOUNT],
+    {
+      fetcher: fetcher(library, ReaderV2, [tokenAddresses]),
+    }
+  );
+  const { data: fundingRateInfo } = useSWR([active, chainId, readerAddress, "getFundingRates"], {
+    fetcher: fetcher(library, ReaderV2, [vaultAddress, nativeTokenAddress, whitelistedTokenAddresses]),
+  });
+
+  const { infoTokens } = useInfoTokens(library, chainId, active, tokenBalances, fundingRateInfo);
+
+  // Track user wallet connect
+  useEffect(() => {
+    const accountChanged = hasChangedAccount(account);
+    if ((!loggedInTracked || accountChanged) && infoTokens) {
+      const sendTrackLoginData = async () => {
+        if (account && tokenBalances) {
+          const { balanceData } = getBalanceAndSupplyData(tokenBalances);
+
+          // Format GMX token balances from BigNumber to float
+          const tokenDecimals = tokens.map((token) => token.decimals);
+          let gmxBalances = {};
+          Object.keys(balanceData).forEach((token, i) => {
+            if (balanceData[token]) {
+              const fieldName = `balance${formatTitleCase(token)}`;
+              gmxBalances[fieldName] = parseFloat(formatAmount(balanceData[token], tokenDecimals[i], 4, true));
+            }
+          });
+
+          // Format user ERC20 token balances from BigNumber to float
+          const [userBalances] = getUserTokenBalances(infoTokens);
+
+          trackLogin(chainId, gmxBalances, userBalances);
+          setCurrentAccount(account);
+          setLoggedInTracked(true); // Only track once
+        }
+      };
+      sendTrackLoginData();
+    }
+  }, [account, chainId, tokenBalances, trackLogin, loggedInTracked, library, infoTokens, tokens]);
+
   return (
     <>
       <div className="App">
@@ -719,13 +756,22 @@ function FullApp() {
           <header>
             <div className="App-header large">
               <div className="App-header-container-left">
-                <Link className="App-header-link-main" to="/">
+                <Link
+                  className="App-header-link-main"
+                  to="/"
+                  onClick={() =>
+                    trackAction &&
+                    trackAction("Button clicked", {
+                      buttonName: "Tracer Nav Logo",
+                    })
+                  }
+                >
                   <img src={logoImg} className="big" alt="Tracer TRS Logo" />
                   <img src={logoSmallImg} className="small" alt="Tracer TRS Logo" />
                 </Link>
               </div>
               <div className="App-header-container-right">
-                <AppHeaderLinks />
+                <AppHeaderLinks trackAction={trackAction} />
                 <AppHeaderUser
                   disconnectAccountAndCloseSettings={disconnectAccountAndCloseSettings}
                   openSettings={openSettings}
@@ -733,6 +779,7 @@ function FullApp() {
                   walletModalVisible={walletModalVisible}
                   setWalletModalVisible={setWalletModalVisible}
                   showNetworkSelectorModal={showNetworkSelectorModal}
+                  trackAction={trackAction}
                 />
               </div>
             </div>
@@ -747,7 +794,16 @@ function FullApp() {
                     {!isDrawerVisible && <RiMenuLine className="App-header-menu-icon" />}
                     {isDrawerVisible && <FaTimes className="App-header-menu-icon" />}
                   </div>
-                  <div className="App-header-link-main clickable" onClick={() => setIsDrawerVisible(!isDrawerVisible)}>
+                  <div
+                    className="App-header-link-main clickable"
+                    onClick={() => {
+                      setIsDrawerVisible(!isDrawerVisible);
+                      trackAction &&
+                        trackAction("Button clicked", {
+                          buttonName: "Tracer Nav Logo",
+                        });
+                    }}
+                  >
                     <img src={logoImg} className="big" alt="Tracer TRS Logo" />
                     <img src={logoSmallImg} className="small" alt="Tracer TRS Logo" />
                   </div>
@@ -761,6 +817,7 @@ function FullApp() {
                     walletModalVisible={walletModalVisible}
                     setWalletModalVisible={setWalletModalVisible}
                     showNetworkSelectorModal={showNetworkSelectorModal}
+                    trackAction={trackAction}
                   />
                 </div>
               </div>
@@ -777,13 +834,18 @@ function FullApp() {
                 variants={slideVariants}
                 transition={{ duration: 0.2 }}
               >
-                <AppHeaderLinks small openSettings={openSettings} clickCloseIcon={() => setIsDrawerVisible(false)} />
+                <AppHeaderLinks
+                  small
+                  openSettings={openSettings}
+                  clickCloseIcon={() => setIsDrawerVisible(false)}
+                  trackAction={trackAction}
+                />
               </motion.div>
             )}
           </AnimatePresence>
           <Switch>
             <Route exact path="/">
-              <Home />
+              <Home trackAction={trackAction} />
             </Route>
             <Route exact path="/trade">
               <Exchange
@@ -797,7 +859,10 @@ function FullApp() {
                 savedShouldShowPositionLines={savedShouldShowPositionLines}
                 setSavedShouldShowPositionLines={setSavedShouldShowPositionLines}
                 connectWallet={connectWallet}
+                infoTokens={infoTokens}
                 trackPageWithTraits={trackPageWithTraits}
+                trackAction={trackAction}
+                analytics={analytics}
               />
             </Route>
             <Route exact path="/presale">
@@ -807,7 +872,7 @@ function FullApp() {
               <Dashboard />
             </Route>
             <Route exact path="/earn">
-              <Stake setPendingTxns={setPendingTxns} connectWallet={connectWallet} />
+              <Stake setPendingTxns={setPendingTxns} connectWallet={connectWallet} trackAction={trackAction} />
             </Route>
             <Route exact path="/buy">
               <Buy
@@ -822,6 +887,8 @@ function FullApp() {
                 setPendingTxns={setPendingTxns}
                 connectWallet={connectWallet}
                 trackPageWithTraits={trackPageWithTraits}
+                trackAction={trackAction}
+                analytics={analytics}
               />
             </Route>
             <Route exact path="/sell_mlp">
@@ -835,10 +902,15 @@ function FullApp() {
               <BuyGMX />
             </Route>
             <Route exact path="/rewards">
-              <Rewards connectWallet={connectWallet} trackPageWithTraits={trackPageWithTraits} />
+              <Rewards
+                connectWallet={connectWallet}
+                trackPageWithTraits={trackPageWithTraits}
+                trackAction={trackAction}
+                analytics={analytics}
+              />
             </Route>
             <Route exact path="/about">
-              <Home />
+              <Home trackAction={trackAction} />
             </Route>
             <Route exact path="/nft_wallet">
               <NftWallet />
@@ -894,15 +966,33 @@ function FullApp() {
         setIsVisible={setWalletModalVisible}
         label="Connect Wallet"
       >
-        <button className="Wallet-btn MetaMask-btn" onClick={activateMetaMask}>
+        <button
+          className="Wallet-btn MetaMask-btn"
+          onClick={() => {
+            activateMetaMask();
+            trackAction && trackAction("Button clicked", { buttonName: "Connect with MetaMask" });
+          }}
+        >
           <img src={metamaskImg} alt="MetaMask" />
           <div>MetaMask</div>
         </button>
-        <button className="Wallet-btn CoinbaseWallet-btn" onClick={activateCoinBase}>
+        <button
+          className="Wallet-btn CoinbaseWallet-btn"
+          onClick={() => {
+            activateCoinBase();
+            trackAction && trackAction("Button clicked", { buttonName: "Connect with Coinbase Wallet" });
+          }}
+        >
           <img src={coinbaseImg} alt="Coinbase Wallet" />
           <div>Coinbase Wallet</div>
         </button>
-        <button className="Wallet-btn WalletConnect-btn" onClick={activateWalletConnect}>
+        <button
+          className="Wallet-btn WalletConnect-btn"
+          onClick={() => {
+            activateWalletConnect();
+            trackAction && trackAction("Button clicked", { buttonName: "Connect with WalletConnect" });
+          }}
+        >
           <img src={walletConnectImg} alt="WalletConnect" />
           <div>WalletConnect</div>
         </button>
@@ -936,7 +1026,16 @@ function FullApp() {
             Include PnL in leverage display
           </Checkbox>
         </div>
-        <button className="App-cta Exchange-swap-button" onClick={saveAndCloseSettings}>
+        <button
+          className="App-cta Exchange-swap-button"
+          onClick={() => {
+            saveAndCloseSettings();
+            trackAction &&
+              trackAction("Button clicked", {
+                buttonName: "Save wallet settings",
+              });
+          }}
+        >
           Save
         </button>
       </Modal>

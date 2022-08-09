@@ -61,6 +61,9 @@ import {
   adjustForDecimals,
   REFERRAL_CODE_KEY,
   isHashZero,
+  NETWORK_NAME,
+  getSpread,
+  getUserTokenBalances,
 } from "../../Helpers";
 import { getConstant } from "../../Constants";
 import * as Api from "../../Api";
@@ -164,6 +167,7 @@ export default function SwapBox(props) {
     setIsWaitingForPositionRouterApproval,
     isPluginApproving,
     isPositionRouterApproving,
+    trackAction,
   } = props;
 
   const [fromValue, setFromValue] = useState("");
@@ -1307,6 +1311,7 @@ export default function SwapBox(props) {
         setPendingTxns,
       })
         .then(() => {
+          trackTrade(3, "Swap");
           setIsConfirming(false);
         })
         .finally(() => {
@@ -1342,6 +1347,7 @@ export default function SwapBox(props) {
       setPendingTxns,
     })
       .then(async () => {
+        trackTrade(3, "Swap");
         setIsConfirming(false);
       })
       .finally(() => {
@@ -1392,6 +1398,7 @@ export default function SwapBox(props) {
       }
     )
       .then(() => {
+        trackTrade(3, "Limit");
         setIsConfirming(false);
       })
       .finally(() => {
@@ -1512,6 +1519,7 @@ export default function SwapBox(props) {
       successMsg,
     })
       .then(async () => {
+        trackTrade(3, `${isLong ? "Long" : "Short"}`);
         setIsConfirming(false);
 
         const key = getPositionKey(account, path[path.length - 1], indexTokenAddress, isLong);
@@ -1552,6 +1560,10 @@ export default function SwapBox(props) {
         setShortCollateralAddress(stableToken.address);
       }
     }
+
+    trackAction && trackAction("Swap option changed", {
+      option: opt,
+    });
   };
 
   const onConfirmationClick = () => {
@@ -1744,6 +1756,108 @@ export default function SwapBox(props) {
     return fromValue !== formatAmountFree(maxAvailableAmount, fromToken.decimals, fromToken.decimals);
   }
 
+  const determineLiquidationPrice = () => {
+    switch (true) {
+      case !!existingLiquidationPrice:
+        return formatAmount(existingLiquidationPrice, USD_DECIMALS, 2, false);
+      case !!displayLiquidationPrice:
+        return formatAmount(displayLiquidationPrice, USD_DECIMALS, 2, false);
+      default:
+        return 0;
+    }
+  };
+
+  const determineBorrowFee = () => {
+    let borrowFee = 0;
+    switch (true) {
+      case isLong && toTokenInfo:
+        borrowFee = parseFloat(formatAmount(toTokenInfo.fundingRate, 4, 4));
+        break;
+      case isShort && shortCollateralToken:
+        borrowFee = parseFloat(formatAmount(shortCollateralToken.fundingRate, 4, 4));
+        break;
+      default:
+        borrowFee = 0;
+        break;
+    }
+    if (
+      (isLong && toTokenInfo && toTokenInfo.fundingRate) ||
+      (isShort && shortCollateralToken && shortCollateralToken.fundingRate)
+    ) {
+      return `${borrowFee}% / 1h`;
+    } else {
+      return borrowFee;
+    }
+  };
+
+  const trackTrade = (stage, tradeType) => {
+    let stageName = "";
+    switch (stage) {
+      case 1:
+        stageName = "Approve";
+        break;
+      case 2:
+        stageName = "Pre-confirmation";
+        break;
+      case 3:
+        stageName = "Post-confirmation";
+        break;
+      default:
+        stageName = "Approve";
+        break;
+    }
+
+    const actionName = `${stageName}`;
+
+    try {
+      const fromToken = getToken(chainId, fromTokenAddress);
+      const toToken = getToken(chainId, toTokenAddress);
+      const leverage = (isLong || isShort) && hasLeverageOption && parseFloat(leverageOption).toFixed(2);
+      const market = swapOption !== "Swap" ? `${toToken.symbol}/USD` : "No market - swap"; //No market for Swap
+      const collateralAfterFees = feesUsd ? fromUsdMin.sub(feesUsd) : "No collateral - swap";
+      const spread = getSpread(fromTokenInfo, toTokenInfo, isLong, nativeTokenAddress);
+      const entryPrice =
+        isLong || isShort ? formatAmount(entryMarkPrice, USD_DECIMALS, 2, false) : "No entry price - swap";
+      let liqPrice = parseFloat(determineLiquidationPrice());
+      liqPrice = liqPrice < 0 ? 0 : liqPrice;
+
+      // Format user ERC20 token balances from BigNumber to float
+      const [userBalances, tokenPrices, poolBalances] = getUserTokenBalances(infoTokens);
+
+      const traits = {
+        tradeType: tradeType,
+        position: swapOption,
+        market: market,
+        tokenToPay: fromToken.symbol,
+        tokenToReceive: toToken.symbol,
+        amountToPay: parseFloat(fromValue),
+        amountToReceive: parseFloat(toValue),
+        fromCurrencyBalance: parseFloat(formatAmount(fromBalance, fromToken.decimals, 4, false)),
+        fromCurrencyToken: fromToken.symbol,
+        leverage: parseFloat(leverage),
+        feesUsd: parseFloat(formatAmount(feesUsd, 4, 4, false)),
+        [`fees${fromToken.symbol}`]: parseFloat(formatAmount(fees, fromToken.decimals, 4, false)),
+        walletAddress: account,
+        network: NETWORK_NAME[chainId],
+        profitsIn: toToken.symbol,
+        liqPrice: liqPrice,
+        collateral: `$${parseFloat(formatAmount(collateralAfterFees, USD_DECIMALS, 2, false))}`,
+        spreadIsHigh: spread.isHigh,
+        spreadValue: parseFloat(formatAmount(spread.value, 4, 4, true)),
+        entryPrice: parseFloat(entryPrice),
+        borrowFee: determineBorrowFee(),
+        allowedSlippage: parseFloat(formatAmount(allowedSlippage, 2, 2)),
+        upToOnePercentSlippageEnabled: isHigherSlippageAllowed,
+        ...userBalances,
+        ...tokenPrices,
+        ...poolBalances,
+      };
+      trackAction && trackAction(actionName, traits);
+    } catch (err) {
+      console.error(`Unable to track ${actionName} event`, err);
+    }
+  };
+
   return (
     <div className="Exchange-swap-box">
       {/* <div className="Exchange-swap-wallet-box App-box">
@@ -1796,7 +1910,15 @@ export default function SwapBox(props) {
                     onChange={onFromValueChange}
                   />
                   {shouldShowMaxButton() && (
-                    <div className="Exchange-swap-max" onClick={setFromValueToMaximumAvailable}>
+                    <div
+                      className="Exchange-swap-max"
+                      onClick={() => {
+                        setFromValueToMaximumAvailable();
+                        trackAction && trackAction("Button clicked", {
+                          buttonName: "Max amount",
+                        });
+                      }}
+                    >
                       MAX
                     </div>
                   )}
@@ -1811,6 +1933,7 @@ export default function SwapBox(props) {
                     infoTokens={infoTokens}
                     showMintingCap={false}
                     showTokenImgInDropdown={true}
+                    trackAction={trackAction}
                   />
                 </div>
               </div>
@@ -1857,6 +1980,7 @@ export default function SwapBox(props) {
                     tokens={toTokens}
                     infoTokens={infoTokens}
                     showTokenImgInDropdown={true}
+                    trackAction={trackAction}
                   />
                 </div>
               </div>
@@ -1907,6 +2031,7 @@ export default function SwapBox(props) {
                   onSelectToken={onSelectToToken}
                   tokens={toTokens}
                   infoTokens={infoTokens}
+                  trackAction={trackAction}
                 />
               </div>
             </div>
@@ -2005,7 +2130,15 @@ export default function SwapBox(props) {
         {(isLong || isShort) && (
           <div className="Exchange-leverage-box">
             <div className="Exchange-leverage-slider-settings">
-              <Checkbox isChecked={isLeverageSliderEnabled} setIsChecked={setIsLeverageSliderEnabled}>
+              <Checkbox
+                isChecked={isLeverageSliderEnabled}
+                setIsChecked={setIsLeverageSliderEnabled}
+                onClick={() =>
+                  trackAction && trackAction("Button clicked", {
+                    buttonName: `Leverage slider toggled ${isLeverageSliderEnabled ? "on" : "off"}`,
+                  })
+                }
+              >
                 <span>Leverage slider</span>
               </Checkbox>
             </div>
@@ -2039,6 +2172,7 @@ export default function SwapBox(props) {
                     onSelectToken={onSelectShortCollateralAddress}
                     tokens={stableTokens}
                     showTokenImgInDropdown={true}
+                    trackAction={trackAction}
                   />
                 </div>
               </div>
@@ -2125,7 +2259,25 @@ export default function SwapBox(props) {
           </div>
         )}
         <div className="Exchange-swap-button-container">
-          <button className="App-cta Exchange-swap-button" onClick={onClickPrimary} disabled={!isPrimaryEnabled()}>
+          <button
+            className="App-cta Exchange-swap-button"
+            onClick={() => {
+              const buttonText = getPrimaryText();
+              onClickPrimary();
+              if (buttonText.includes("Approve")) {
+                trackTrade(1, fromToken?.symbol);
+                trackAction && trackAction("Button clicked", {
+                  buttonName: "Approve",
+                  fromToken: fromToken?.symbol,
+                });
+              } else {
+                trackAction && trackAction("Button clicked", {
+                  buttonName: buttonText,
+                });
+              }
+            }}
+            disabled={!isPrimaryEnabled()}
+          >
             {getPrimaryText()}
           </button>
         </div>
@@ -2339,6 +2491,8 @@ export default function SwapBox(props) {
           collateralTokenAddress={collateralTokenAddress}
           infoTokens={infoTokens}
           chainId={chainId}
+          trackAction={trackAction}
+          trackTrade={trackTrade}
         />
       )}
     </div>

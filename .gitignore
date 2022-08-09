@@ -10,7 +10,6 @@
 
 # production
 /build
-public/~partytown
 
 # misc
 .DS_Store
@@ -32,3 +31,5 @@ package-lock.json
 !.yarn/sdks
 !.yarn/versions
 /.idea/
+
+.env

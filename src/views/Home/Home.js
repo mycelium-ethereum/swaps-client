@@ -1,8 +1,6 @@
 import React, { useCallback } from "react";
 import Footer from "../../Footer";
-import { 
-  NavLink 
-} from "react-router-dom";
+import { NavLink } from "react-router-dom";
 
 import "./Home.css";
 
@@ -32,8 +30,8 @@ import { useWeb3React } from "@web3-react/core";
 
 import { useUserStat } from "../../Api";
 
-export default function Home() {
-
+export default function Home(props) {
+  const { trackAction } = props;
   const { chainId } = useChainId();
   const { active } = useWeb3React();
 
@@ -108,7 +106,17 @@ export default function Home() {
             <div className="Home-description">
               Trade BTC, ETH, AVAX and other top cryptocurrencies with up to 30x leverage directly from your wallet
             </div>
-            <NavLink activeClassName="active" to="/trade" className="default-btn">
+            <NavLink
+              activeClassName="active"
+              to="/trade"
+              className="default-btn"
+              onClick={() =>
+                trackAction &&
+                trackAction("Button clicked", {
+                  buttonName: "Launch Exchange",
+                })
+              }
+            >
               Launch Exchange
             </NavLink>
           </div>

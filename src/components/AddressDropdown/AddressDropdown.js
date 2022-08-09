@@ -9,7 +9,7 @@ import disconnect from "../../img/ic_sign_out_16.svg";
 import { FaChevronDown } from "react-icons/fa";
 import Davatar from "@davatar/react";
 
-function AddressDropdown({ account, accountUrl, disconnectAccountAndCloseSettings, openSettings }) {
+function AddressDropdown({ account, accountUrl, disconnectAccountAndCloseSettings, openSettings, trackAction }) {
   const useBreakpoint = createBreakpoint({ L: 600, M: 550, S: 400 });
   const breakpoint = useBreakpoint();
   const [, copyToClipboard] = useCopyToClipboard();
@@ -31,6 +31,7 @@ function AddressDropdown({ account, accountUrl, disconnectAccountAndCloseSetting
               className="menu-item"
               onClick={() => {
                 copyToClipboard(account);
+                trackAction && trackAction("Button clicked", { buttonName: "Copy Address" });
                 helperToast.success("Address copied to your clipboard");
               }}
             >
@@ -39,20 +40,38 @@ function AddressDropdown({ account, accountUrl, disconnectAccountAndCloseSetting
             </div>
           </Menu.Item>
           <Menu.Item>
-            <a href={accountUrl} target="_blank" rel="noopener noreferrer" className="menu-item">
+            <a
+              href={accountUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="menu-item"
+              onClick={() => trackAction && trackAction("Button clicked", { buttonName: "View in Explorer" })}
+            >
               <img src={externalLink} alt="Open address in explorer" />
               <p>View in Explorer</p>
             </a>
           </Menu.Item>
 
           <Menu.Item>
-            <div className="menu-item" onClick={openSettings}>
+            <div
+              className="menu-item"
+              onClick={() => {
+                openSettings();
+                trackAction && trackAction("Button clicked", { buttonName: "Open settings" });
+              }}
+            >
               <img src={settings} alt="Open settings" />
               <p>Settings</p>
             </div>
           </Menu.Item>
           <Menu.Item>
-            <div className="menu-item" onClick={disconnectAccountAndCloseSettings}>
+            <div
+              className="menu-item"
+              onClick={() => {
+                disconnectAccountAndCloseSettings();
+                trackAction && trackAction("Button clicked", { buttonName: "Disconnect the wallet" });
+              }}
+            >
               <img src={disconnect} alt="Disconnect the wallet" />
               <p>Disconnect</p>
             </div>

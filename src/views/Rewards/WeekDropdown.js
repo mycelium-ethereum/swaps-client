@@ -5,7 +5,7 @@ import { FaChevronDown } from "react-icons/fa";
 import cx from "classnames";
 
 export default function WeekDropdown(props) {
-  const { rewardWeeks, setSelectedWeek, rewardsMessage } = props;
+  const { weeksRewardsData, setSelectedWeek, rewardsMessage, trackAction } = props;
 
   return (
     <Styles.RewardsWeekSelectMenu>
@@ -17,6 +17,12 @@ export default function WeekDropdown(props) {
                 className={cx("App-cta transparent", {
                   "App-cta-selected": open,
                 })}
+                onClick={() =>
+                  trackAction &&
+                  trackAction("Button clicked", {
+                    buttonName: "Rewards week dropdown",
+                  })
+                }
               >
                 {rewardsMessage}
                 <FaChevronDown />
@@ -24,11 +30,22 @@ export default function WeekDropdown(props) {
             </Menu.Button>
             <div className="hide-overflow">
               <Menu.Items as="div" className="menu-items">
-                {rewardWeeks
+                {weeksRewardsData
                   .sort((a, b) => b.week - a.week)
                   .map((rewardWeek) => (
                     <Menu.Item>
-                      <div className="menu-item large" onClick={() => setSelectedWeek(parseFloat(rewardWeek.week) + 1)}>
+                      <div
+                        className="menu-item large"
+                        onClick={() => {
+                          const selectedWeek = parseFloat(rewardWeek.week) + 1;
+                          setSelectedWeek(selectedWeek);
+                          trackAction &&
+                            trackAction("Button clicked", {
+                              buttonName: "Select rewards week",
+                              weekNo: selectedWeek,
+                            });
+                        }}
+                      >
                         Week {parseFloat(rewardWeek.week) + 1}
                       </div>
                     </Menu.Item>
