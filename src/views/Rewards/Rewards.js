@@ -10,7 +10,6 @@ import { ethers } from "ethers";
 import TraderRewards from "./TraderRewards";
 import Leaderboard from "./Leaderboard";
 import * as Styles from "./Rewards.styles";
-// import cx from "classnames";
 import { LeaderboardSwitch } from "./ViewSwitch";
 import Footer from "../../Footer";
 
@@ -41,7 +40,7 @@ export default function Rewards(props) {
   const { infoTokens } = useInfoTokens(library, chainId, active, undefined, undefined);
 
   // Fetch all week data from server
-  const { data: allweeksRewardsData, error: failedFetchingRewards } = useSWR(
+  const { data: allWeeksRewardsData, error: failedFetchingRewards } = useSWR(
     [getTracerServerUrl(chainId, "/rewards")],
     {
       fetcher: (...args) => fetch(...args).then((res) => res.json()),
@@ -58,14 +57,14 @@ export default function Rewards(props) {
 
   // If the full data has not been loaded, use current week data
   const weeksRewardsData = useMemo(() => {
-    if (allweeksRewardsData && selectedWeek) {
-      return allweeksRewardsData;
+    if (allWeeksRewardsData && selectedWeek) {
+      return allWeeksRewardsData.sort((a, b) => a.week - b.week);
     } else if (currentRewardWeek) {
       return [currentRewardWeek];
     } else {
       return undefined;
     }
-  }, [currentRewardWeek, allweeksRewardsData, selectedWeek]);
+  }, [currentRewardWeek, allWeeksRewardsData, selectedWeek]);
 
   // Get the data for the current user
   const userData = useMemo(
@@ -113,8 +112,12 @@ export default function Rewards(props) {
     if (!weeksRewardsData) {
       return undefined;
     }
-    const traderData = weeksRewardsData.traders?.find((trader) => trader.user_address === account);
+    // set to 0 if selected week is not defined, will choose the first element in the array
+    const selectedWeekActual = selectedWeek ? parseFloat(selectedWeek) - 1 : 0;
+    const selectedWeekData = weeksRewardsData[selectedWeekActual];
+    const traderData = selectedWeekData?.traders?.find((trader) => trader.user_address === account);
     const leaderboardPosition = weeksRewardsData.traders?.findIndex((trader) => trader.user_address === account);
+
     // trader's data found
     if (traderData) {
       traderData.position = leaderboardPosition;

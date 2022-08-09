@@ -39,7 +39,7 @@ export default function TraderRewards(props) {
         <Styles.AccountBannerRewards>
           <div className="App-card-row">
             <div className="label">Total Volume Traded</div>
-            <div> ${formatAmount(userData?.totalTradingVolume, 0, 2, true)}</div>
+            <div> ${formatAmount(userData?.totalTradingVolume, USD_DECIMALS, 2, true)}</div>
           </div>
           <div className="App-card-row">
             <div className="label">Total Rewards</div>
@@ -74,7 +74,7 @@ export default function TraderRewards(props) {
         <Styles.RewardsDataBoxes>
           <Styles.RewardsDataBox>
             <Styles.RewardsDataBoxTitle>Volume Traded </Styles.RewardsDataBoxTitle>
-            <Styles.LargeText> {`$${formatAmount(userWeekData?.volume, 0, 2, true)}`}</Styles.LargeText>
+            <Styles.LargeText> {`$${formatAmount(userWeekData?.volume, USD_DECIMALS, 2, true)}`}</Styles.LargeText>
           </Styles.RewardsDataBox>
           <Styles.RewardsDataBox className="claimable">
             <Styles.RewardsDataBoxTitle>Claimable Rewards </Styles.RewardsDataBoxTitle>
