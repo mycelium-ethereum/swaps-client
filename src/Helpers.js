@@ -148,6 +148,8 @@ export const GLPPOOLCOLORS = {
   CTM: "#F8B500",
 };
 
+export const HIGH_SPREAD_THRESHOLD = expandDecimals(1, USD_DECIMALS).div(100); // 1%;
+
 export const ICONLINKS = {
   421611: {
     TCR: {
@@ -597,7 +599,7 @@ export function getExchangeRateDisplay(rate, tokenA, tokenB, opts = {}) {
   if (opts.omitSymbols) {
     return rateValue;
   }
-  return `${rateValue} ${tokenA.symbol} / ${tokenB.symbol}`;
+  return `${rateValue} ${tokenA.symbol} / ${tokenB.symbol}`;
 }
 
 const adjustForDecimalsFactory = (n) => (number) => {
@@ -2814,8 +2816,113 @@ export function hasUserConsented() {
   return consent && consent === "true";
 }
 
-export function formatTitleCase(string) {
-  return string[0].toUpperCase() + string.slice(1);
+export function formatTitleCase(string, isLowerCase = false) {
+  return `${string[0].toUpperCase()}${isLowerCase ? string.slice(1).toLowerCase() : string.slice(1)}`;
+}
+
+export const NETWORK_NAME = {
+  [ARBITRUM]: "Arbitrum",
+  [ARBITRUM_TESTNET]: "Testnet",
+};
+
+export function getSpread(fromTokenInfo, toTokenInfo, isLong, nativeTokenAddress) {
+  if (fromTokenInfo && fromTokenInfo.maxPrice && toTokenInfo && toTokenInfo.minPrice) {
+    const fromDiff = fromTokenInfo.maxPrice.sub(fromTokenInfo.minPrice);
+    const fromSpread = fromDiff.mul(PRECISION).div(fromTokenInfo.maxPrice);
+    const toDiff = toTokenInfo.maxPrice.sub(toTokenInfo.minPrice);
+    const toSpread = toDiff.mul(PRECISION).div(toTokenInfo.maxPrice);
+
+    let value = fromSpread.add(toSpread);
+
+    const fromTokenAddress = fromTokenInfo.isNative ? nativeTokenAddress : fromTokenInfo.address;
+    const toTokenAddress = toTokenInfo.isNative ? nativeTokenAddress : toTokenInfo.address;
+
+    if (isLong && fromTokenAddress === toTokenAddress) {
+      value = fromSpread;
+    }
+
+    return {
+      value,
+      isHigh: value.gt(HIGH_SPREAD_THRESHOLD),
+    };
+  }
+}
+
+export function getUserTokenBalances(infoTokens) {
+  let userBalances = {};
+  let tokenPrices = {};
+  let poolBalances = {};
+  Object.keys(infoTokens).forEach((token) => {
+    if (infoTokens[token]) {
+      const tokenName = formatTitleCase(infoTokens[token].symbol, true);
+      const balanceFieldName = `balance${tokenName}`;
+      const priceFieldName = `price${tokenName}`;
+      const poolBalanceFieldName = `poolBalance${tokenName}`;
+      userBalances[balanceFieldName] = parseFloat(
+        formatAmount(infoTokens[token].balance, infoTokens[token].decimals, infoTokens[token].decimals, false)
+      );
+      tokenPrices[priceFieldName] = parseFloat(formatAmount(infoTokens[token].maxPrice, USD_DECIMALS, 2, false));
+      poolBalances[poolBalanceFieldName] = parseFloat(
+        formatAmount(infoTokens[token].poolAmount, infoTokens[token].decimals, 2, false)
+      );
+    }
+  });
+  return [userBalances, tokenPrices, poolBalances];
+}
+
+export function saveAccountToLocalStorage(address) {
+  const prevIdentifiedAccounts = window.localStorage.getItem("identifiedAddresses");
+  if (!prevIdentifiedAccounts) {
+    // Create new localStorage variable to store imported accounts
+    localStorage.setItem("identifiedAddresses", JSON.stringify([address]));
+  } else {
+    const parsedAccounts = JSON.parse(prevIdentifiedAccounts);
+    if (!parsedAccounts.includes(address)) {
+      parsedAccounts.push(address);
+    }
+    localStorage.setItem("identifiedAddresses", JSON.stringify(parsedAccounts));
+  }
+}
+
+export function getPreviousAccounts() {
+  const prevIdentifiedAccounts = window.localStorage.getItem("identifiedAddresses");
+  if (prevIdentifiedAccounts) {
+    return JSON.parse(prevIdentifiedAccounts);
+  } else {
+    return [];
+  }
+}
+
+export function setCurrentAccount(account) {
+  window.localStorage.setItem("walletAddress", account);
+}
+
+export function hasBeenIdentified(account) {
+  const prevIdentifiedAccounts = window.localStorage.getItem("identifiedAddresses");
+  const formattedAddresses = JSON.parse(prevIdentifiedAccounts) || [];
+  return Boolean(formattedAddresses.includes(account));
+}
+
+export function hasChangedAccount(account) {
+  const prevAccount = window.localStorage.getItem("walletAddress");
+  return Boolean(prevAccount && prevAccount !== account);
+}
+
+export function getUrlParameters(searchString) {
+  const queryString = searchString;
+  const urlParams = new URLSearchParams(queryString);
+  const keys = urlParams.keys();
+  const params = {};
+  for (const key of keys) params[key] = urlParams.get(key);
+  return params;
+}
+
+export function getWindowFeatures() {
+  return {
+    screenHeight: window?.innerHeight || "unknown",
+    screenWidth: window?.innerWidth || "unknown",
+    screenDensity: window?.devicePixelRatio || "unknown",
+  };
 }
 
 const defaultTruncateLength = 10;

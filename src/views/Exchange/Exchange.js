@@ -30,7 +30,7 @@ import {
   getPageTitle,
 } from "../../Helpers";
 import { getConstant } from "../../Constants";
-import { approvePlugin, useInfoTokens } from "../../Api";
+import { approvePlugin } from "../../Api";
 
 import { getContract } from "../../Addresses";
 import { getTokens, getToken, getWhitelistedTokens, getTokenBySymbol } from "../../data/Tokens";
@@ -363,7 +363,10 @@ export const Exchange = forwardRef((props, ref) => {
     savedShouldShowPositionLines,
     setSavedShouldShowPositionLines,
     connectWallet,
+    infoTokens,
     trackPageWithTraits,
+    trackAction,
+    analytics,
   } = props;
   const [showBanner, setShowBanner] = useLocalStorageSerializeKey("showBanner", true);
   const [bannerHidden, setBannerHidden] = useLocalStorageSerializeKey("bannerHidden", null);
@@ -406,7 +409,6 @@ export const Exchange = forwardRef((props, ref) => {
   const usdgAddress = getContract(chainId, "USDG");
 
   const whitelistedTokens = getWhitelistedTokens(chainId);
-  const whitelistedTokenAddresses = whitelistedTokens.map((token) => token.address);
 
   const positionQuery = getPositionQuery(whitelistedTokens, nativeTokenAddress);
 
@@ -477,11 +479,6 @@ export const Exchange = forwardRef((props, ref) => {
 
   const tokens = getTokens(chainId);
 
-  const tokenAddresses = tokens.map((token) => token.address);
-  const { data: tokenBalances } = useSWR(active && [active, chainId, readerAddress, "getTokenBalances", account], {
-    fetcher: fetcher(library, Reader, [tokenAddresses]),
-  });
-
   const { data: positionData, error: positionDataError } = useSWR(
     active && [active, chainId, readerAddress, "getPositions", vaultAddress, account],
     {
@@ -494,10 +491,6 @@ export const Exchange = forwardRef((props, ref) => {
   );
 
   const positionsDataIsLoading = active && !positionData && !positionDataError;
-
-  const { data: fundingRateInfo } = useSWR([active, chainId, readerAddress, "getFundingRates"], {
-    fetcher: fetcher(library, Reader, [vaultAddress, nativeTokenAddress, whitelistedTokenAddresses]),
-  });
 
   const { data: totalTokenWeights } = useSWR(
     [`Exchange:totalTokenWeights:${active}`, chainId, vaultAddress, "totalTokenWeights"],
@@ -525,8 +518,6 @@ export const Exchange = forwardRef((props, ref) => {
       fetcher: fetcher(library, Router),
     }
   );
-
-  const { infoTokens } = useInfoTokens(library, chainId, active, tokenBalances, fundingRateInfo);
 
   useEffect(() => {
     const fromToken = getTokenInfo(infoTokens, fromTokenAddress);
@@ -749,7 +740,8 @@ export const Exchange = forwardRef((props, ref) => {
   const [tableViewSelection] = useLocalStorage("List-section-v2");
   const [isLeverageSliderEnabled] = useLocalStorage(JSON.stringify([chainId, "Exchange-swap-leverage-slider-enabled"]));
   const [leverageOption] = useLocalStorage(JSON.stringify([chainId, "Exchange-swap-leverage-option"]));
-  const tableView = !!tableViewSelection && Object.keys(tableViewSelection).length > 0 ? tableViewSelection[chainId] : "Positions"; // localStorage item "List-section-v2" will return undefined if no selection has been made previously
+  const tableView =
+    !!tableViewSelection && Object.keys(tableViewSelection).length > 0 ? tableViewSelection[chainId] : "Positions"; // localStorage item "List-section-v2" will return undefined if no selection has been made previously
   const dataElements = [
     chartPeriod,
     tokenSelection,
@@ -766,7 +758,7 @@ export const Exchange = forwardRef((props, ref) => {
 
   // Segment Analytics Page tracking
   useEffect(() => {
-    if (elementsLoaded) {
+    if (elementsLoaded && analytics && !pageTracked) {
       // Get Chart token selection
       const chartToken = getChartToken(
         swapOption,
@@ -782,20 +774,18 @@ export const Exchange = forwardRef((props, ref) => {
       // Get leverage option if leverage slider enabled
       const leverage = isLeverageSliderEnabled ? { leverage: parseInt(leverageOption) } : null;
 
-      if (!pageTracked) {
-        const traits = {
-          graphTime: chartPeriod,
-          tableView: tableView,
-          market: marketFormatted,
-          marketPosition: swapOption,
-          tokenToPay: tokenToPay,
-          tokenToReceive: tokenToReceive,
-          leverageSliderEnabled: isLeverageSliderEnabled,
-          ...leverage,
-        };
-        trackPageWithTraits(traits);
-        setPageTracked(true); // Prevent Page function being called twice
-      }
+      const traits = {
+        graphTime: chartPeriod,
+        tableView: tableView,
+        market: marketFormatted,
+        marketPosition: swapOption,
+        tokenToPay: tokenToPay,
+        tokenToReceive: tokenToReceive,
+        leverageSliderEnabled: isLeverageSliderEnabled,
+        ...leverage,
+      };
+      trackPageWithTraits(traits);
+      setPageTracked(true); // Prevent Page function being called twice
     }
   }, [
     elementsLoaded,
@@ -808,6 +798,7 @@ export const Exchange = forwardRef((props, ref) => {
     tableView,
     isLeverageSliderEnabled,
     leverageOption,
+    analytics,
   ]);
 
   const LIST_SECTIONS = ["Positions", flagOrdersEnabled ? "Orders" : undefined, "Trades"].filter(Boolean);
@@ -831,7 +822,13 @@ export const Exchange = forwardRef((props, ref) => {
             options={LIST_SECTIONS}
             optionLabels={LIST_SECTIONS_LABELS}
             option={listSection}
-            onChange={(section) => setListSection(section)}
+            onChange={(section) => {
+              setListSection(section);
+              trackAction &&
+                trackAction("Button clicked", {
+                  buttonName: `Table view ${section}`,
+                });
+            }}
             type="inline"
             className="Exchange-list-tabs"
           />
@@ -918,6 +915,7 @@ export const Exchange = forwardRef((props, ref) => {
         savedShouldShowPositionLines={savedShouldShowPositionLines}
         orders={orders}
         setToTokenAddress={setToTokenAddress}
+        trackAction={trackAction}
       />
     );
   };
@@ -973,6 +971,7 @@ export const Exchange = forwardRef((props, ref) => {
             savedSlippageAmount={savedSlippageAmount}
             totalTokenWeights={totalTokenWeights}
             usdgSupply={usdgSupply}
+            trackAction={trackAction}
           />
           <div className="Exchange-wallet-tokens">
             <div className="Exchange-wallet-tokens-content">

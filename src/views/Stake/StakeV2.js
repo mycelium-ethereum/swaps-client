@@ -106,10 +106,10 @@ function CompoundModal(props) {
 
   const getPrimaryText = () => {
     if (isApproving) {
-      return `Approving TCR...`;
+      return `Approving MYC...`;
     }
     if (needApproval) {
-      return `Approve TCR`;
+      return `Approve MYC`;
     }
     if (isCompounding) {
       return "Compounding...";
@@ -185,12 +185,12 @@ function CompoundModal(props) {
           </div>
           <div>
             <Checkbox isChecked={shouldClaimTCR} setIsChecked={setShouldClaimTCR} disabled={shouldStakeTCR}>
-              Claim TCR Rewards
+              Claim MYC Rewards
             </Checkbox>
           </div>
           <div>
             <Checkbox isChecked={shouldStakeTCR} setIsChecked={toggleShouldStakeTCR}>
-              Stake TCR Rewards
+              Stake MYC Rewards
             </Checkbox>
           </div>
           <div>
@@ -300,7 +300,7 @@ function ClaimModal(props) {
         <div className="CompoundModal-menu">
           <div>
             <Checkbox isChecked={shouldClaimTCR} setIsChecked={setShouldClaimTCR}>
-              Claim TCR Rewards
+              Claim ETH Rewards
             </Checkbox>
           </div>
           <div>
@@ -324,7 +324,7 @@ function ClaimModal(props) {
   );
 }
 
-export default function StakeV2({ setPendingTxns, connectWallet }) {
+export default function StakeV2({ setPendingTxns, connectWallet, trackAction }) {
   const { active, library, account } = useWeb3React();
   const { chainId } = useChainId();
 
@@ -582,7 +582,7 @@ export default function StakeV2({ setPendingTxns, connectWallet }) {
                   </StakeV2Styled.RewardsBannerTextWrap>
                   <StakeV2Styled.RewardsBannerTextWrap>
                     <StakeV2Styled.RewardsBannerText large inline>
-                      {formatKeyAmount(processedData, "stakedGlpTrackerRewards", 18, 4)} TCR
+                      {formatKeyAmount(processedData, "stakedGlpTrackerRewards", 18, 4)} MYC
                     </StakeV2Styled.RewardsBannerText>{" "}
                     <StakeV2Styled.RewardsBannerText inline>
                       ($
@@ -607,7 +607,7 @@ export default function StakeV2({ setPendingTxns, connectWallet }) {
                             <span>{formatKeyAmount(processedData, "glpAprForNativeToken", 2, 2, true)}%</span>
                           </div>
                           <div className="Tooltip-row">
-                            <span className="label">TCR APR</span>
+                            <span className="label">esMYC APR</span>
                             <span>{formatKeyAmount(processedData, "glpAprForEsGmx", 2, 2, true)}%</span>
                           </div>
                         </>
@@ -653,24 +653,69 @@ export default function StakeV2({ setPendingTxns, connectWallet }) {
               </div>
               <div className="App-card-divider"></div>
               <div className="App-card-options">
-                <Link className="App-button-option App-card-option" to="/buy_mlp">
+                <Link
+                  className="App-button-option App-card-option"
+                  to="/buy_mlp"
+                  onClick={() =>
+                    trackAction &&
+                    trackAction("Button clicked", {
+                      buttonName: "Buy MLP",
+                    })
+                  }
+                >
                   Buy MLP
                 </Link>
-                <Link className="App-button-option App-card-option" to="/buy_mlp#redeem">
+                <Link
+                  className="App-button-option App-card-option"
+                  to="/buy_mlp#redeem"
+                  onClick={() =>
+                    trackAction &&
+                    trackAction("Button clicked", {
+                      buttonName: "Sell MLP",
+                    })
+                  }
+                >
                   Sell MLP
                 </Link>
                 {active && (
-                  <button className="App-button-option App-card-option" onClick={() => setIsCompoundModalVisible(true)}>
+                  <button
+                    className="App-button-option App-card-option"
+                    onClick={() => {
+                      setIsCompoundModalVisible(true);
+                      trackAction &&
+                        trackAction("Button clicked", {
+                          buttonName: "Compound",
+                        });
+                    }}
+                  >
                     Compound
                   </button>
                 )}
                 {active && (
-                  <button className="App-button-option App-card-option" onClick={() => setIsClaimModalVisible(true)}>
+                  <button
+                    className="App-button-option App-card-option"
+                    onClick={() => {
+                      setIsClaimModalVisible(true);
+                      trackAction &&
+                        trackAction("Button clicked", {
+                          buttonName: "Claim",
+                        });
+                    }}
+                  >
                     Claim
                   </button>
                 )}
                 {!active && (
-                  <button className="App-button-option App-card-option" onClick={() => connectWallet()}>
+                  <button
+                    className="App-button-option App-card-option"
+                    onClick={() => {
+                      connectWallet(true);
+                      trackAction &&
+                        trackAction("Button clicked", {
+                          buttonName: "Connect Wallet",
+                        });
+                    }}
+                  >
                     Connect Wallet
                   </button>
                 )}

@@ -4,7 +4,6 @@
   "private": true,
   "dependencies": {
     "@apollo/client": "^3.3.19",
-    "@builder.io/partytown": "^0.6.2",
     "@davatar/react": "^1.8.1",
     "@ethersproject/providers": "^5.0.23",
     "@ethersproject/units": "^5.0.10",
@@ -29,6 +28,7 @@
     "hex-to-rgba": "^2.0.1",
     "krasulya-lightweight-charts": "^3.4.3",
     "lodash": "^4.17.21",
+    "platform": "^1.3.6",
     "rc-slider": "^9.7.2",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
@@ -52,8 +52,7 @@
   "scripts": {
     "start": "PORT=3010 react-scripts start",
     "start-win": "set PORT=3010&react-scripts start",
-    "build": "npm run partytown && react-scripts build",
-    "partytown": "partytown copylib public/~partytown",
+    "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "lint": "node node_modules/.bin/eslint src",

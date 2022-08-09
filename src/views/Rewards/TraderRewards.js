@@ -13,12 +13,13 @@ export default function TraderRewards(props) {
     totalRewardAmountEth,
     unclaimedRewardsEth,
     rewardsMessage,
-    rewardWeeks,
+    weeksRewardsData,
     setSelectedWeek,
     connectWallet,
     userWeekData,
     rewardAmountEth,
     currentView,
+    trackAction,
   } = props;
   return (
     <Styles.PersonalRewardsContainer hidden={currentView === "Leaderboard"}>
@@ -60,8 +61,13 @@ export default function TraderRewards(props) {
       <Styles.RewardsData className="App-card">
         <Styles.AppCardTitle>Rewards data</Styles.AppCardTitle>
         <Styles.RewardsWeekSelect>
-          {!!rewardWeeks ? (
-            <WeekDropdown rewardWeeks={rewardWeeks} setSelectedWeek={setSelectedWeek} rewardsMessage={rewardsMessage} />
+          {!!weeksRewardsData ? (
+            <WeekDropdown
+              weeksRewardsData={weeksRewardsData}
+              setSelectedWeek={setSelectedWeek}
+              rewardsMessage={rewardsMessage}
+              trackAction={trackAction}
+            />
           ) : null}
           <Styles.RewardsWeekNextRewards>
             Next rewards in <Styles.RewardsWeekCountdown>8d 13h 42m</Styles.RewardsWeekCountdown>
@@ -80,7 +86,7 @@ export default function TraderRewards(props) {
             </div>
           </Styles.RewardsDataBox>
         </Styles.RewardsDataBoxes>
-        {active && <Styles.RewardsButton className="App-cta large"> Claim TCR </Styles.RewardsButton>}
+        {active && <Styles.RewardsButton className="App-cta large"> Claim ETH </Styles.RewardsButton>}
         {!active && (
           <Styles.RewardsButton className="App-cta large" onClick={() => connectWallet()}>
             Connect Wallet

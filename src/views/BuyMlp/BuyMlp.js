@@ -23,7 +23,7 @@ export default function BuyGlp(props) {
   return (
     <div className="default-container buy-tlp-content page-layout">
       <div className="section-title-block">
-        {/* 
+        {/*
           <div className="section-title-icon">
             <img src={buyGLPIcon} alt="buyGLPIcon" />
           </div>
@@ -36,6 +36,12 @@ export default function BuyGlp(props) {
               href="https://tracer-1.gitbook.io/tracer-perpetual-swaps/6VOYVKGbCCw0I8cj7vdF/protocol-design/shared-liquidity-pool/tlp-token-pricing"
               target="_blank"
               rel="noopener noreferrer"
+              onClick={() =>
+                props.trackAction &&
+                props.trackAction("Button clicked", {
+                  buttonName: "TLP tokens link",
+                })
+              }
             >
               MLP tokens
             </a>{" "}

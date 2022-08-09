@@ -49,7 +49,7 @@ export default function Modal(props) {
               position: "fixed",
             }}
             onClick={() => setIsVisible(false)}
-          ></div>
+          />
           <div className="Modal-content">
             <div className="Modal-title-bar">
               <div className="Modal-title">{props.label}</div>
