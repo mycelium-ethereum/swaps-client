@@ -1,6 +1,7 @@
 import React from "react";
 import { useENS, truncateMiddleEthAddress, formatAmount, USD_DECIMALS } from "../../Helpers";
 import Davatar from "@davatar/react";
+import Jazzicon, { jsNumberForAddress } from 'react-jazzicon'
 import cx from "classnames";
 import {
   ConnectWalletText,
@@ -27,7 +28,7 @@ import {
   ClaimButton,
   WalletIcon,
 } from "./Rewards.styles";
-const DEFAULT_LISTINGS_COUNT = 50;
+
 const ARBISCAN_URL = "https://arbiscan.io/address/";
 const headings = ["Rank", "User", "Volume", "Reward", ""];
 
@@ -54,7 +55,7 @@ function TableRow({ position, account, userAccount, volume, reward, trackAction 
       <RankCell>{position}</RankCell>
       <UserCell>
         <div>
-          {account ? <Davatar size={32} address={account} /> : <EmptyAvatar />}
+          {account ? <Jazzicon diameter={32} seed={jsNumberForAddress(account)} /> : <EmptyAvatar />}
           <UserDetails>
             <a href={`${ARBISCAN_URL}${account}`} rel="noopener noreferrer" target="_blank">
               <span>{truncateMiddleEthAddress(account)}</span>
@@ -89,6 +90,7 @@ function TableRow({ position, account, userAccount, volume, reward, trackAction 
 
 export default function Leaderboard(props) {
   const { weekData, userweekData, userAccount, ensName, currentView, selectedWeek, connectWallet, trackAction } = props;
+  console.log(weekData);
 
   return (
     <LeaderboardContainer hidden={currentView === "Personal"}>
@@ -148,7 +150,7 @@ export default function Leaderboard(props) {
         <ScrollContainer>
           {weekData?.traders?.length > 1 ? (
             <RewardsTableWrapper>
-              {weekData?.traders?.slice(0, DEFAULT_LISTINGS_COUNT).map(({ user_address, volume, reward }, index) => (
+              {weekData?.traders?.map(({ user_address, volume, reward }, index) => (
                 <TableRow
                   key={user_address}
                   position={index + 1}

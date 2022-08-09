@@ -1,5 +1,5 @@
 import React from "react";
-import { ETH_DECIMALS, formatAmount, shortenAddress, USD_DECIMALS } from "../../Helpers";
+import { ETH_DECIMALS, formatAmount, shortenAddress, USD_DECIMALS, formatDate } from "../../Helpers";
 import * as Styles from "./Rewards.styles";
 import Davatar from "@davatar/react";
 import WeekDropdown from "./WeekDropdown";
@@ -13,13 +13,14 @@ export default function TraderRewards(props) {
     totalRewardAmountEth,
     unclaimedRewardsEth,
     rewardsMessage,
-    weeksRewardsData,
+    allWeeksRewardsData,
     setSelectedWeek,
     connectWallet,
     userWeekData,
     rewardAmountEth,
     currentView,
     trackAction,
+    nextRewards
   } = props;
   return (
     <Styles.PersonalRewardsContainer hidden={currentView === "Leaderboard"}>
@@ -40,20 +41,20 @@ export default function TraderRewards(props) {
         <Styles.AccountBannerRewards>
           <div className="App-card-row">
             <div className="label">Total Volume Traded</div>
-            <div> ${formatAmount(userData?.totalTradingVolume, 0, 2, true)}</div>
+            <div> ${formatAmount(userData?.totalTradingVolume, USD_DECIMALS, 2, true)}</div>
           </div>
           <div className="App-card-row">
             <div className="label">Total Rewards</div>
             <div>
-              {formatAmount(userData?.totalRewards, ETH_DECIMALS, 2, true)} ETH($
-              {formatAmount(totalRewardAmountEth, USD_DECIMALS + ETH_DECIMALS, 2, true)})
+              {formatAmount(userData?.totalRewards, USD_DECIMALS, 2, true)} ETH($
+              {formatAmount(totalRewardAmountEth, USD_DECIMALS * 2, 2, true)})
             </div>
           </div>
           <div className="App-card-row">
             <div className="label">Unclaimed Rewards</div>
             <div>
               {formatAmount(userData?.unclaimedRewards, ETH_DECIMALS, 2, true)} ETH($
-              {formatAmount(unclaimedRewardsEth, USD_DECIMALS + ETH_DECIMALS, 2, true)})
+              {formatAmount(unclaimedRewardsEth, USD_DECIMALS * 2, 2, true)})
             </div>
           </div>
         </Styles.AccountBannerRewards>
@@ -61,17 +62,19 @@ export default function TraderRewards(props) {
       <Styles.RewardsData className="App-card">
         <Styles.AppCardTitle>Rewards data</Styles.AppCardTitle>
         <Styles.RewardsWeekSelect>
-          {!!weeksRewardsData ? (
+          {!!allWeeksRewardsData ? (
             <WeekDropdown
-              weeksRewardsData={weeksRewardsData}
+              allWeeksRewardsData={allWeeksRewardsData}
               setSelectedWeek={setSelectedWeek}
               rewardsMessage={rewardsMessage}
               trackAction={trackAction}
             />
           ) : null}
-          <Styles.RewardsWeekNextRewards>
-            Next rewards in <Styles.RewardsWeekCountdown>8d 13h 42m</Styles.RewardsWeekCountdown>
-          </Styles.RewardsWeekNextRewards>
+          {nextRewards && (
+            <Styles.RewardsWeekNextRewards>
+              Next rewards in <Styles.RewardsWeekCountdown>{nextRewards}</Styles.RewardsWeekCountdown>
+            </Styles.RewardsWeekNextRewards>
+          )}
         </Styles.RewardsWeekSelect>
         <Styles.RewardsDataBoxes>
           <Styles.RewardsDataBox>

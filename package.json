@@ -35,6 +35,7 @@
     "react-helmet": "^6.1.0",
     "react-hot-toast": "^2.2.0",
     "react-icons": "^4.3.0",
+    "react-jazzicon": "^1.0.4",
     "react-router-dom": "^5.2.0",
     "react-scripts": "4.0.3",
     "react-select": "^5.2.1",

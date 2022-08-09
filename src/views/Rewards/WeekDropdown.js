@@ -5,7 +5,7 @@ import { FaChevronDown } from "react-icons/fa";
 import cx from "classnames";
 
 export default function WeekDropdown(props) {
-  const { weeksRewardsData, setSelectedWeek, rewardsMessage, trackAction } = props;
+  const { allWeeksRewardsData, setSelectedWeek, rewardsMessage, trackAction } = props;
 
   return (
     <Styles.RewardsWeekSelectMenu>
@@ -30,14 +30,17 @@ export default function WeekDropdown(props) {
             </Menu.Button>
             <div className="hide-overflow">
               <Menu.Items as="div" className="menu-items">
-                {weeksRewardsData
+                {allWeeksRewardsData
                   .sort((a, b) => b.week - a.week)
-                  .map((rewardWeek) => (
+                  .map((rewardWeek, index) => (
                     <Menu.Item>
                       <div
                         className="menu-item large"
                         onClick={() => {
-                          const selectedWeek = parseFloat(rewardWeek.week) + 1;
+                          let selectedWeek = parseFloat(rewardWeek.week);
+                          if (index === 0) {
+                            selectedWeek = "latest"
+                          }
                           setSelectedWeek(selectedWeek);
                           trackAction &&
                             trackAction("Button clicked", {
@@ -46,7 +49,7 @@ export default function WeekDropdown(props) {
                             });
                         }}
                       >
-                        Week {parseFloat(rewardWeek.week) + 1}
+                        {index === 0 ? "Current week" : `Week ${parseFloat(rewardWeek.week) + 1}`}
                       </div>
                     </Menu.Item>
                   ))}

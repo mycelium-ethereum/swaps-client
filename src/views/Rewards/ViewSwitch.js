@@ -4,7 +4,7 @@ import cx from "classnames";
 import WeekDropdown from "./WeekDropdown";
 
 export function LeaderboardSwitch(props) {
-  const { switchView, currentView, rewardsMessage, weeksRewardsData, setSelectedWeek, trackAction } = props;
+  const { switchView, currentView, rewardsMessage, allWeeksRewardsData, setSelectedWeek, trackAction } = props;
 
   return (
     <Styles.ViewSwitchContainer>
@@ -38,9 +38,9 @@ export function LeaderboardSwitch(props) {
           Leaderboard
         </Styles.ViewOption>
       </Styles.ViewSwitch>
-      {currentView === "Leaderboard" && !!weeksRewardsData ? (
+      {currentView === "Leaderboard" && !!allWeeksRewardsData ? (
         <WeekDropdown
-          weeksRewardsData={weeksRewardsData}
+          allWeeksRewardsData={allWeeksRewardsData}
           setSelectedWeek={setSelectedWeek}
           rewardsMessage={rewardsMessage}
         />
