@@ -36,6 +36,8 @@ export default function Rewards(props) {
   const { ensName } = useENS(account);
 
   const [selectedWeek, setSelectedWeek] = useState("latest");
+  const [pageTracked, setPageTracked] = useState(false);
+  const [nextRewards, setNextRewards] = useState(undefined);
 
   const { infoTokens } = useInfoTokens(library, chainId, active, undefined, undefined);
 
@@ -142,19 +144,24 @@ export default function Rewards(props) {
     if (allWeeksRewardsData?.length === 0) {
       rewardsMessage = "No rewards for network";
     } else if (selectedWeek === "latest") {
-      rewardsMessage = `Current week`;
+      rewardsMessage = `Week ${currentRewardWeek.week}`;
     } else {
       rewardsMessage = `Week ${selectedWeek + 1}`;
     }
   }
 
-  const [pageTracked, setPageTracked] = useState(false);
-
-  const nextRewards = currentRewardWeek?.end;
-
   const switchView = () => {
     setCurrentView(currentView === "Personal" ? "Leaderboard" : "Personal");
   };
+
+  useEffect(() => {
+    if (!!currentRewardWeek && nextRewards === undefined) {
+      // this will load latest first and set next rewards
+      setNextRewards(currentRewardWeek.end);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentRewardWeek])
+
 
   // Segment Analytics Page tracking
   useEffect(() => {

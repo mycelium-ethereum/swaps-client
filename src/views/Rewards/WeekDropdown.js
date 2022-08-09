@@ -49,7 +49,7 @@ export default function WeekDropdown(props) {
                             });
                         }}
                       >
-                        {index === 0 ? "Current week" : `Week ${parseFloat(rewardWeek.week) + 1}`}
+                        Week {parseFloat(rewardWeek.week) + 1}
                       </div>
                     </Menu.Item>
                   ))}

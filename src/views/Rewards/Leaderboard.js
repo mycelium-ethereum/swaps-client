@@ -1,7 +1,7 @@
 import React from "react";
-import { useENS, truncateMiddleEthAddress, formatAmount, USD_DECIMALS } from "../../Helpers";
-import Davatar from "@davatar/react";
-import Jazzicon, { jsNumberForAddress } from 'react-jazzicon'
+import { truncateMiddleEthAddress, formatAmount, USD_DECIMALS } from "../../Helpers";
+import Jazzicon, { jsNumberForAddress } from "react-jazzicon";
+import Davatar from '@davatar/react';
 import cx from "classnames";
 import {
   ConnectWalletText,
@@ -20,7 +20,6 @@ import {
   ScrollContainer,
   RankCell,
   UserCell,
-  EmptyAvatar,
   UserDetails,
   VolumeCell,
   RewardCell,
@@ -47,15 +46,14 @@ function RewardsTableWrapper({ children }) {
   );
 }
 
-function TableRow({ position, account, userAccount, volume, reward, trackAction }) {
-  const { ensName } = useENS(account);
+function TableRow({ position, account, userAccount, volume, ensName, reward, trackAction }) {
 
   return (
     <tr>
       <RankCell>{position}</RankCell>
       <UserCell>
         <div>
-          {account ? <Jazzicon diameter={32} seed={jsNumberForAddress(account)} /> : <EmptyAvatar />}
+          { ensName ? <Davatar size={40} address={account} /> : <Jazzicon diameter={40} seed={jsNumberForAddress(account)} />}
           <UserDetails>
             <a href={`${ARBISCAN_URL}${account}`} rel="noopener noreferrer" target="_blank">
               <span>{truncateMiddleEthAddress(account)}</span>
@@ -89,22 +87,21 @@ function TableRow({ position, account, userAccount, volume, reward, trackAction 
 }
 
 export default function Leaderboard(props) {
-  const { weekData, userweekData, userAccount, ensName, currentView, selectedWeek, connectWallet, trackAction } = props;
-  console.log(weekData);
+  const { weekData, userWeekData, userAccount, ensName, currentView, selectedWeek, connectWallet, trackAction } = props;
 
   return (
     <LeaderboardContainer hidden={currentView === "Personal"}>
       <Title>Your rewards</Title>
       <PersonalRewardsTableContainer>
         <RewardsTableBorder />
-        {userAccount && userweekData && userweekData.position ? (
+        {userAccount && userWeekData && userWeekData.position ? (
           <RewardsTableWrapper>
             <TableRow
-              position={userweekData.position}
+              position={userWeekData.position}
               account={userAccount}
               ensName={ensName}
-              volume={userweekData.volume}
-              reward={userweekData.reward}
+              volume={userWeekData.volume}
+              reward={userWeekData.reward}
               trackAction={trackAction}
             />
           </RewardsTableWrapper>

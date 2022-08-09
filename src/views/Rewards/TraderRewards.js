@@ -1,7 +1,8 @@
 import React from "react";
-import { ETH_DECIMALS, formatAmount, shortenAddress, USD_DECIMALS, formatDate } from "../../Helpers";
+import { ETH_DECIMALS, formatAmount, shortenAddress, USD_DECIMALS, formatTimeTill } from "../../Helpers";
 import * as Styles from "./Rewards.styles";
-import Davatar from "@davatar/react";
+import Davatar from '@davatar/react';
+import { EmptyAvatar } from './Rewards.styles'
 import WeekDropdown from "./WeekDropdown";
 
 export default function TraderRewards(props) {
@@ -27,7 +28,7 @@ export default function TraderRewards(props) {
       <Styles.AccountBanner className="App-card">
         {active && (
           <Styles.AccountBannerAddresses>
-            <Davatar size={40} address={account} />
+            {account ? <Davatar size={40} address ={account} /> : <EmptyAvatar />}
             <Styles.AppCardTitle>{ensName || shortenAddress(account, 13)}</Styles.AppCardTitle>
             <Styles.AccountBannerShortenedAddress> Wallet address </Styles.AccountBannerShortenedAddress>
           </Styles.AccountBannerAddresses>
@@ -72,14 +73,14 @@ export default function TraderRewards(props) {
           ) : null}
           {nextRewards && (
             <Styles.RewardsWeekNextRewards>
-              Next rewards in <Styles.RewardsWeekCountdown>{nextRewards}</Styles.RewardsWeekCountdown>
+              Next rewards in <Styles.RewardsWeekCountdown>{formatTimeTill(nextRewards / 1000)}</Styles.RewardsWeekCountdown>
             </Styles.RewardsWeekNextRewards>
           )}
         </Styles.RewardsWeekSelect>
         <Styles.RewardsDataBoxes>
           <Styles.RewardsDataBox>
             <Styles.RewardsDataBoxTitle>Volume Traded </Styles.RewardsDataBoxTitle>
-            <Styles.LargeText> {`$${formatAmount(userWeekData?.volume, 0, 2, true)}`}</Styles.LargeText>
+            <Styles.LargeText> {`$${formatAmount(userWeekData?.volume, USD_DECIMALS, 2, true)}`}</Styles.LargeText>
           </Styles.RewardsDataBox>
           <Styles.RewardsDataBox className="claimable">
             <Styles.RewardsDataBoxTitle>Claimable Rewards </Styles.RewardsDataBoxTitle>
