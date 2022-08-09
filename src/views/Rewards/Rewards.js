@@ -71,7 +71,7 @@ export default function Rewards(props) {
     () =>
       weeksRewardsData?.reduce(
         (totals, week) => {
-          const trader = week.traders.find((trader) => trader.user_address === account);
+          const trader = week.traders?.find((trader) => trader.user_address === account);
           if (!trader) {
             return totals;
           }
@@ -103,8 +103,7 @@ export default function Rewards(props) {
     if (!allWeeksRewardsData) {
       return undefined;
     }
-    allWeeksRewardsData.traders.sort((a, b) => b.volume - a.volume); // Sort traders by highest to lowest in volume
-    return allWeeksRewardsData;
+    return allWeeksRewardsData.traders?.sort((a, b) => b.volume - a.volume); // Sort traders by highest to lowest in volume
   }, [weeksRewardsData, selectedWeek]);
 
   // Get volume, position and reward from user week data
