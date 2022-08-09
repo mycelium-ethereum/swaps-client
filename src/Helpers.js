@@ -1422,6 +1422,10 @@ export function shortenAddress(address, length) {
 export function formatTimeTill(time) {
   const dateNow = new Date() / 1000;
 
+  if (time < dateNow) {
+    return '0d 0h 0s'
+  }
+
   const secondsTill = Math.floor((time - dateNow));
   let minutes = Math.floor(secondsTill/60);
   let hours = Math.floor(minutes/60);

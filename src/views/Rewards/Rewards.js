@@ -48,7 +48,6 @@ export default function Rewards(props) {
       fetcher: (...args) => fetch(...args).then((res) => res.json()),
     }
   );
-  console.log(allWeeksRewardsData);
 
   // Fetch only the latest week's data from server
   const { data: currentRewardWeek, error: failedFetchingWeekRewards } = useSWR(
@@ -70,7 +69,8 @@ export default function Rewards(props) {
           return {
             totalTradingVolume: totals.totalTradingVolume.add(trader.volume),
             totalRewards: totals.totalRewards.add(trader.reward),
-            unclaimedRewards: totals.unclaimedRewards.add(trader?.claimed ? trader.amount : 0),
+            // TODO calc what has been claimed
+            unclaimedRewards: totals.unclaimedRewards.add(trader.reward),
           };
         },
         {
@@ -84,7 +84,6 @@ export default function Rewards(props) {
 
   // Extract week data from full API response
   const weekData = useMemo(() => {
-    console.log("current", currentRewardWeek);
     if (!currentRewardWeek) {
       return undefined;
     }
@@ -109,7 +108,10 @@ export default function Rewards(props) {
     // trader's data found
     if (traderData) {
       traderData.position = leaderboardPosition;
-      return traderData;
+      return ({
+        volume: ethers.BigNumber.from(traderData.volume),
+        reward: ethers.BigNumber.from(traderData.reward)
+      });
     } else {
       // trader not found but data exists so user has no rewards
       return {
@@ -122,15 +124,15 @@ export default function Rewards(props) {
   const eth = getTokenInfo(infoTokens, ethers.constants.AddressZero);
   const ethPrice = eth?.maxPrimaryPrice;
 
-  let rewardAmountEth = 0;
-  if (ethPrice && userWeekData) {
-    rewardAmountEth = ethPrice.mul(userWeekData.reward);
+  let rewardAmountUsd;
+  if (ethPrice && userWeekData?.reward) {
+    rewardAmountUsd = userWeekData.reward?.mul(ethPrice)
   }
 
-  let unclaimedRewardsEth, totalRewardAmountEth;
+  let unclaimedRewardsUsd, totalRewardAmountUsd;
   if (ethPrice && userData) {
-    unclaimedRewardsEth = ethPrice.mul(userData.unclaimedRewards);
-    totalRewardAmountEth = ethPrice.mul(userData.totalRewards);
+    unclaimedRewardsUsd = userData.totalRewards.mul(ethPrice);
+    totalRewardAmountUsd = userData.totalRewards.mul(ethPrice);
   }
 
   let rewardsMessage = "";
@@ -144,7 +146,7 @@ export default function Rewards(props) {
     if (allWeeksRewardsData?.length === 0) {
       rewardsMessage = "No rewards for network";
     } else if (selectedWeek === "latest") {
-      rewardsMessage = `Week ${currentRewardWeek.week}`;
+      rewardsMessage = `Week ${Number.parseInt(currentRewardWeek.week) + 1}`;
     } else {
       rewardsMessage = `Week ${selectedWeek + 1}`;
     }
@@ -195,17 +197,18 @@ export default function Rewards(props) {
         account={account}
         ensName={ensName}
         userData={userData}
-        totalRewardAmountEth={totalRewardAmountEth}
-        unclaimedRewardsEth={unclaimedRewardsEth}
+        totalRewardAmountUsd={totalRewardAmountUsd}
+        unclaimedRewardsUsd={unclaimedRewardsUsd}
         rewardsMessage={rewardsMessage}
         allWeeksRewardsData={allWeeksRewardsData}
         setSelectedWeek={setSelectedWeek}
         connectWallet={connectWallet}
         userWeekData={userWeekData}
-        rewardAmountEth={rewardAmountEth}
+        rewardAmountUsd={rewardAmountUsd}
         currentView={currentView}
         trackAction={trackAction}
         nextRewards={nextRewards}
+        latestWeek={selectedWeek === "latest"}
       />
       <Leaderboard
         weekData={weekData}
