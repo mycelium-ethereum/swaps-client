@@ -1,22 +1,22 @@
-.BuyGMXMLP {
+.BuyMYCMLP {
     justify-content: space-between;
 }
 
-.BuyGMXMLP-container {
+.BuyMYCMLP-container {
     padding: 3rem 0 2rem 0;
     width: 100%;
 }
 
-.BuyGMXMLP-container .section-title-content {
+.BuyMYCMLP-container .section-title-content {
     justify-content: flex-start;
 }
 
-.BuyGMXMLP.page-layout .footer {
+.BuyMYCMLP.page-layout .footer {
     padding: 1rem 2rem;
 }
 
 @media (max-width: 400px) {
-    .BuyGMXMLP-container {
+    .BuyMYCMLP-container {
         padding-left: 16px!important;
         padding-right: 16px!important;
     }

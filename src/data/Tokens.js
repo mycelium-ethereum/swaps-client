@@ -323,15 +323,15 @@ const TOKENS = {
 const ADDITIONAL_TOKENS = {
   42161: [
     {
-      name: "GMX",
-      symbol: "GMX",
-      address: getContract(42161, "GMX"),
+      name: "MYC",
+      symbol: "MYC",
+      address: getContract(42161, "MYC"),
       decimals: 18,
     },
     {
-      name: "Escrowed GMX",
-      symbol: "esGMX",
-      address: getContract(42161, "ES_GMX"),
+      name: "Escrowed MYC",
+      symbol: "esMYC",
+      address: getContract(42161, "ES_MYC"),
       decimals: 18,
     },
     {
@@ -343,15 +343,15 @@ const ADDITIONAL_TOKENS = {
   ],
   43114: [
     {
-      name: "GMX",
-      symbol: "GMX",
-      address: getContract(43114, "GMX"),
+      name: "MYC",
+      symbol: "MYC",
+      address: getContract(43114, "MYC"),
       decimals: 18,
     },
     {
-      name: "Escrowed GMX",
-      symbol: "esGMX",
-      address: getContract(43114, "ES_GMX"),
+      name: "Escrowed MYC",
+      symbol: "esMYC",
+      address: getContract(43114, "ES_MYC"),
       decimals: 18,
     },
     {

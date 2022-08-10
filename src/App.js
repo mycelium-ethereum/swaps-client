@@ -56,23 +56,22 @@ import {
 import ReaderV2 from "./abis/ReaderV2.json";
 
 import Home from "./views/Home/Home";
-import Presale from "./views/Presale/Presale";
 import Dashboard from "./views/Dashboard/Dashboard";
 import Stake from "./views/Stake/Stake";
 import { Exchange } from "./views/Exchange/Exchange";
 import Actions from "./views/Actions/Actions";
 import OrdersOverview from "./views/OrdersOverview/OrdersOverview";
 import PositionsOverview from "./views/PositionsOverview/PositionsOverview";
-import BuyGMX from "./views/BuyGMX/BuyGMX";
+import BuyMYC from "./views/BuyMYC/BuyMYC";
 import BuyMlp from "./views/BuyMlp/BuyMlp";
 import SellMlp from "./views/SellMlp/SellMlp";
 import Buy from "./views/Buy/Buy";
 import Rewards from "./views/Rewards/Rewards";
-import NftWallet from "./views/NftWallet/NftWallet";
-import ClaimEsGmx from "./views/ClaimEsGmx/ClaimEsGmx";
-import BeginAccountTransfer from "./views/BeginAccountTransfer/BeginAccountTransfer";
-import CompleteAccountTransfer from "./views/CompleteAccountTransfer/CompleteAccountTransfer";
-import Debug from "./views/Debug/Debug";
+// import NftWallet from "./views/NftWallet/NftWallet";
+// import ClaimEsMyc from "./views/ClaimEsMyc/ClaimEsMyc";
+// import BeginAccountTransfer from "./views/BeginAccountTransfer/BeginAccountTransfer";
+// import CompleteAccountTransfer from "./views/CompleteAccountTransfer/CompleteAccountTransfer";
+// import Debug from "./views/Debug/Debug";
 import ConsentModal from "./components/ConsentModal/ConsentModal";
 
 import cx from "classnames";
@@ -96,7 +95,7 @@ import logoImg from "./img/logo_MYC.svg";
 import logoSmallImg from "./img/logo_MYC_small.svg";
 import connectWalletImg from "./img/ic_wallet_24.svg";
 
-// import logoImg from './img/gmx-logo-final-white-small.png'
+// import logoImg from './img/mlp-logo-final-white-small.png'
 import metamaskImg from "./img/metamask.png";
 import coinbaseImg from "./img/coinbaseWallet.png";
 import walletConnectImg from "./img/walletconnect-circle-blue.svg";
@@ -462,7 +461,7 @@ function FullApp() {
           <a href="https://metamask.io" target="_blank" rel="noopener noreferrer">
             Install MetaMask
           </a>
-          {userOnMobileDevice ? ", and use GMX with its built-in browser" : " to start using GMX"}.
+          {userOnMobileDevice ? ", and use MYC with its built-in browser" : " to start using MYC"}.
         </div>
       );
       return false;
@@ -479,7 +478,7 @@ function FullApp() {
           <a href="https://www.coinbase.com/wallet" target="_blank" rel="noopener noreferrer">
             Install Coinbase Wallet
           </a>
-          {userOnMobileDevice ? ", and use GMX with its built-in browser" : " to start using GMX"}.
+          {userOnMobileDevice ? ", and use MYC with its built-in browser" : " to start using MYC"}.
         </div>
       );
       return false;
@@ -691,20 +690,20 @@ function FullApp() {
         if (account && tokenBalances) {
           const { balanceData } = getBalanceAndSupplyData(tokenBalances);
 
-          // Format GMX token balances from BigNumber to float
+          // Format MYC token balances from BigNumber to float
           const tokenDecimals = tokens.map((token) => token.decimals);
-          let gmxBalances = {};
+          let mlpBalances = {};
           Object.keys(balanceData).forEach((token, i) => {
             if (balanceData[token]) {
               const fieldName = `balance${formatTitleCase(token)}`;
-              gmxBalances[fieldName] = parseFloat(formatAmount(balanceData[token], tokenDecimals[i], 4, true));
+              mlpBalances[fieldName] = parseFloat(formatAmount(balanceData[token], tokenDecimals[i], 4, true));
             }
           });
 
           // Format user ERC20 token balances from BigNumber to float
           const [userBalances] = getUserTokenBalances(infoTokens);
 
-          trackLogin(chainId, gmxBalances, userBalances);
+          trackLogin(chainId, mlpBalances, userBalances);
           setCurrentAccount(account);
           setLoggedInTracked(true); // Only track once
         }
@@ -865,9 +864,6 @@ function FullApp() {
                 analytics={analytics}
               />
             </Route>
-            <Route exact path="/presale">
-              <Presale />
-            </Route>
             <Route exact path="/dashboard">
               <Dashboard />
             </Route>
@@ -898,8 +894,8 @@ function FullApp() {
                 connectWallet={connectWallet}
               />
             </Route>
-            <Route exact path="/buy_gmx">
-              <BuyGMX />
+            <Route exact path="/buy_myc">
+              <BuyMYC />
             </Route>
             <Route exact path="/rewards">
               <Rewards
@@ -912,12 +908,16 @@ function FullApp() {
             <Route exact path="/about">
               <Home trackAction={trackAction} />
             </Route>
+            {/*
             <Route exact path="/nft_wallet">
               <NftWallet />
             </Route>
-            <Route exact path="/claim_es_gmx">
-              <ClaimEsGmx setPendingTxns={setPendingTxns} />
+            */}
+            {/*
+            <Route exact path="/claim_es_mlp">
+              <ClaimEsMyc setPendingTxns={setPendingTxns} />
             </Route>
+            */}
             <Route exact path="/actions/:account">
               <Actions />
             </Route>
@@ -930,6 +930,7 @@ function FullApp() {
             <Route exact path="/actions">
               <Actions />
             </Route>
+            {/*
             <Route exact path="/begin_account_transfer">
               <BeginAccountTransfer setPendingTxns={setPendingTxns} />
             </Route>
@@ -939,7 +940,7 @@ function FullApp() {
             <Route exact path="/debug">
               <Debug />
             </Route>
-            {/* <Route exact path="/referral-terms">
+            <Route exact path="/referral-terms">
               <ReferralTerms />
             </Route> */}
             <Route path="*">
@@ -1084,7 +1085,7 @@ function PreviewApp() {
               <div className="App-header-container-left">
                 <NavLink exact activeClassName="active" className="App-header-link-main" to="/">
                   <img src={logoImg} alt="Tracer TRS Logo" />
-                  GMX
+                  MYC
                 </NavLink>
               </div>
               <div className="App-header-container-right">

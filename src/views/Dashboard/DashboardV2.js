@@ -23,7 +23,7 @@ import {
   getChainName,
   useChainId,
   USD_DECIMALS,
-  GMX_DECIMALS,
+  MYC_DECIMALS,
   MLP_DECIMALS,
   BASIS_POINTS_DIVISOR,
   ARBITRUM,
@@ -200,9 +200,9 @@ export default function DashboardV2() {
     active
   );
 
-  let gmxMarketCap;
+  let mycMarketCap;
   if (tcrPrice && totalTCRSupply) {
-    gmxMarketCap = tcrPrice.mul(totalTCRSupply).div(expandDecimals(1, GMX_DECIMALS));
+    mycMarketCap = tcrPrice.mul(totalTCRSupply).div(expandDecimals(1, MYC_DECIMALS));
   }
 
   let aum;
@@ -310,8 +310,8 @@ export default function DashboardV2() {
 
   // TODO change this to TCR liquidity
   // let stakedPercent = 0;
-  // if (totalTCRSupply && !totalTCRSupply.isZero() && !totalStakedGmx.isZero()) {
-  // stakedPercent = totalStakedGmx.mul(100).div(totalTCRSupply).toNumber();
+  // if (totalTCRSupply && !totalTCRSupply.isZero() && !totalStakedMyc.isZero()) {
+  // stakedPercent = totalStakedMyc.mul(100).div(totalTCRSupply).toNumber();
   // }
 
   let arbitrumLiquidityPercent = 0;
@@ -325,7 +325,7 @@ export default function DashboardV2() {
   }
 
   let notStakedPercent = 100 - arbitrumLiquidityPercent - mainnetLiquidityPercent; // - stakedPercent;
-  let gmxDistributionData = [
+  let mycDistributionData = [
     // {
     // name: "staked",
     // value: stakedPercent,
@@ -381,19 +381,19 @@ export default function DashboardV2() {
     else return -1;
   });
 
-  gmxDistributionData = gmxDistributionData.sort(function (a, b) {
+  mycDistributionData = mycDistributionData.sort(function (a, b) {
     if (a.value < b.value) return 1;
     else return -1;
   });
 
-  const [gmxActiveIndex, setGMXActiveIndex] = useState(null);
+  const [mycActiveIndex, setMYCActiveIndex] = useState(null);
 
-  const onGMXDistributionChartEnter = (_, index) => {
-    setGMXActiveIndex(index);
+  const onMYCDistributionChartEnter = (_, index) => {
+    setMYCActiveIndex(index);
   };
 
-  const onGMXDistributionChartLeave = (_, index) => {
-    setGMXActiveIndex(null);
+  const onMYCDistributionChartLeave = (_, index) => {
+    setMYCActiveIndex(null);
   };
 
   const [mlpActiveIndex, setMLPActiveIndex] = useState(null);
@@ -505,7 +505,7 @@ export default function DashboardV2() {
             <div className="Page-description">Platform and MLP index tokens.</div>
           </div>
           <div className="DashboardV2-token-cards">
-            <div className="stats-wrapper stats-wrapper--gmx">
+            <div className="stats-wrapper stats-wrapper--myc">
               <div className="App-card">
                 <div className="stats-block">
                   <div className="App-card-title">
@@ -546,7 +546,7 @@ export default function DashboardV2() {
                     </div>
                     <div className="App-card-row">
                       <div className="label">Supply</div>
-                      <div>{formatAmount(totalTCRSupply, GMX_DECIMALS, 0, true)} MYC</div>
+                      <div>{formatAmount(totalTCRSupply, MYC_DECIMALS, 0, true)} MYC</div>
                     </div>
                     {/*<div className="App-card-row">
                       <div className="label">Total Staked</div>
@@ -555,12 +555,12 @@ export default function DashboardV2() {
                           <TooltipComponent
                             position="right-bottom"
                             className="nowrap"
-                            handle={`$${formatAmount(stakedGmxSupplyUsd, USD_DECIMALS, 0, true)}`}
+                            handle={`$${formatAmount(stakedMycSupplyUsd, USD_DECIMALS, 0, true)}`}
                             renderContent={() => (
                               <>
-                                Staked on Arbitrum: {formatAmount(arbitrumStakedGmx, GMX_DECIMALS, 0, true)} MYC
+                                Staked on Arbitrum: {formatAmount(arbitrumStakedMyc, MYC_DECIMALS, 0, true)} MYC
                                 <br />
-                                Staked on Avalanche: {formatAmount(avaxStakedGmx, GMX_DECIMALS, 0, true)} MYC
+                                Staked on Avalanche: {formatAmount(avaxStakedMyc, MYC_DECIMALS, 0, true)} MYC
                               </>
                             )}
                           />
@@ -569,15 +569,15 @@ export default function DashboardV2() {
                     </div>*/}
                     <div className="App-card-row">
                       <div className="label">Market Cap</div>
-                      <div>${formatAmount(gmxMarketCap, USD_DECIMALS, 0, true)}</div>
+                      <div>${formatAmount(mycMarketCap, USD_DECIMALS, 0, true)}</div>
                     </div>
                   </div>
                 </div>
-                <div className="stats-piechart" onMouseLeave={onGMXDistributionChartLeave}>
-                  {gmxDistributionData.length > 0 && (
+                <div className="stats-piechart" onMouseLeave={onMYCDistributionChartLeave}>
+                  {mycDistributionData.length > 0 && (
                     <PieChart width={210} height={210}>
                       <Pie
-                        data={gmxDistributionData}
+                        data={mycDistributionData}
                         cx={100}
                         cy={100}
                         innerRadius={73}
@@ -587,23 +587,23 @@ export default function DashboardV2() {
                         startAngle={90}
                         endAngle={-270}
                         paddingAngle={2}
-                        onMouseEnter={onGMXDistributionChartEnter}
-                        onMouseOut={onGMXDistributionChartLeave}
-                        onMouseLeave={onGMXDistributionChartLeave}
+                        onMouseEnter={onMYCDistributionChartEnter}
+                        onMouseOut={onMYCDistributionChartLeave}
+                        onMouseLeave={onMYCDistributionChartLeave}
                       >
-                        {gmxDistributionData.map((entry, index) => (
+                        {mycDistributionData.map((entry, index) => (
                           <Cell
                             key={`cell-${index}`}
                             fill={entry.color}
                             style={{
                               filter:
-                                gmxActiveIndex === index
+                                mycActiveIndex === index
                                   ? `drop-shadow(0px 0px 6px ${hexToRgba(entry.color, 0.7)})`
                                   : "none",
                               cursor: "pointer",
                             }}
                             stroke={entry.color}
-                            strokeWidth={gmxActiveIndex === index ? 1 : 1}
+                            strokeWidth={mycActiveIndex === index ? 1 : 1}
                           />
                         ))}
                       </Pie>

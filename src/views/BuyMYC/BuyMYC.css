@@ -1,14 +1,14 @@
-.BuyGMXMLP {
+.BuyMYCMLP {
   justify-content: space-between;
 }
 
-.BuyGMXMLP-container {
+.BuyMYCMLP-container {
   padding-top: 3rem;
   padding-bottom: 2rem;
   width: 100%;
 }
 
-.BuyGMXMLP-panel {
+.BuyMYCMLP-panel {
   padding-top: 0;
   padding-bottom: 2.5rem;
   border-bottom-left-radius: 8px;
@@ -16,35 +16,35 @@
   display: flex;
   justify-content: space-between;
 }
-.BuyGMXMLP-panel .App-card:first-child {
+.BuyMYCMLP-panel .App-card:first-child {
   margin-right: 20px;
 }
 
-.BuyGMXMLP-panel .App-card {
+.BuyMYCMLP-panel .App-card {
   max-width: 37.677rem;
   width: 100%;
   height: fit-content;
 }
-.BuyGMXMLP-panel .App-card {
+.BuyMYCMLP-panel .App-card {
   max-width: 37.677rem;
   width: 100%;
   height: fit-content;
 }
 
-.BuyGMXMLP-panel .App-card.no-height {
+.BuyMYCMLP-panel .App-card.no-height {
   height: unset;
 }
 
-.BuyGMXMLP-panel:last-child {
+.BuyMYCMLP-panel:last-child {
   padding-bottom: 0;
 }
 
-.BuyGMXMLP-description {
+.BuyMYCMLP-description {
   letter-spacing: 0px;
   color: #a9a9b0;
 }
 
-.BuyGMXMLP-description a {
+.BuyMYCMLP-description a {
   text-decoration: none;
   position: relative;
 }
@@ -55,7 +55,7 @@
   grid-template-columns: 1fr 1fr;
   margin-top: 1rem;
 }
-.buy-gmx {
+.buy-myc {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -77,7 +77,7 @@
   margin: 2rem 0;
 }
 
-.GMX-btn {
+.MYC-btn {
   display: flex;
   align-items: center;
   background: #ffffff0a;
@@ -89,21 +89,21 @@
   margin: 2rem 0;
 }
 
-.GMX-btn:hover {
+.MYC-btn:hover {
   background: #ffffff14;
 }
 
-.GMX-btn:focus,
-.GMX-btn:active {
+.MYC-btn:focus,
+.MYC-btn:active {
   background: #ffffff1f;
 }
 
-.GMX-btn-icon-block {
+.MYC-btn-icon-block {
   display: flex;
   margin-right: 0.75rem;
 }
 
-.GMX-btn-icon {
+.MYC-btn-icon {
   display: flex;
   position: relative;
   width: 30px;
@@ -112,21 +112,21 @@
   justify-content: center;
 }
 
-.GMX-btn-icon-network {
+.MYC-btn-icon-network {
   position: absolute;
   bottom: 0;
   right: 0;
   display: flex;
 }
 
-.GMX-btn-label {
+.MYC-btn-label {
   letter-spacing: 0px;
   color: #ffffff;
   font-size: 1.1875rem;
   line-height: 1.5rem;
 }
 
-.GMX-block-section {
+.MYC-block-section {
   display: flex;
   justify-content: center;
 }
@@ -139,8 +139,8 @@
   display: none !important;
 }
 
-.BuyGMXMLP-panel .buy-card:first-child,
-.BuyGMXMLP-panel .section-title-block:first-child {
+.BuyMYCMLP-panel .buy-card:first-child,
+.BuyMYCMLP-panel .section-title-block:first-child {
   margin-right: 20px;
 }
 
@@ -166,18 +166,18 @@
   .section-title-block {
     margin-bottom: 1rem !important;
   }
-  .BuyGMXMLP-panel {
+  .BuyMYCMLP-panel {
     flex-direction: column;
   }
-  .BuyGMXMLP-panel .App-card:first-child {
+  .BuyMYCMLP-panel .App-card:first-child {
     margin-right: 0;
     margin-bottom: 20px;
   }
-  .BuyGMXMLP-panel .App-card {
+  .BuyMYCMLP-panel .App-card {
     max-width: 100%;
   }
-  .BuyGMXMLP-panel .buy-card:first-child,
-  .BuyGMXMLP-panel .section-title-block:first-child {
+  .BuyMYCMLP-panel .buy-card:first-child,
+  .BuyMYCMLP-panel .section-title-block:first-child {
     margin-right: 0;
     margin-bottom: 20px;
   }
@@ -190,12 +190,12 @@
 }
 
 @media (max-width: 400px) {
-  .BuyGMXMLP-container {
+  .BuyMYCMLP-container {
     padding-left: 16px !important;
     padding-right: 16px !important;
   }
 
-  .BuyGMXMLP-description {
+  .BuyMYCMLP-description {
     font-size: 1rem;
     line-height: 1.3rem;
   }

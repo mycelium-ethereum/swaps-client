@@ -22,7 +22,6 @@ import {
   getPositionKey,
   getPositionContractKey,
   getLeverage,
-  useLocalStorageSerializeKey,
   useLocalStorageByChainId,
   getDeltaStr,
   useChainId,
@@ -47,7 +46,6 @@ import PositionsList from "../../components/Exchange/PositionsList";
 import OrdersList from "../../components/Exchange/OrdersList";
 import TradeHistory from "../../components/Exchange/TradeHistory";
 import ExchangeWalletTokens from "../../components/Exchange/ExchangeWalletTokens";
-import ExchangeBanner from "../../components/Exchange/ExchangeBanner";
 import Tab from "../../components/Tab/Tab";
 import Footer from "../../Footer";
 
@@ -368,34 +366,13 @@ export const Exchange = forwardRef((props, ref) => {
     trackAction,
     analytics,
   } = props;
-  const [showBanner, setShowBanner] = useLocalStorageSerializeKey("showBanner", true);
-  const [bannerHidden, setBannerHidden] = useLocalStorageSerializeKey("bannerHidden", null);
 
   const [pendingPositions, setPendingPositions] = useState({});
   const [updatedPositions, setUpdatedPositions] = useState({});
 
-  const hideBanner = () => {
-    const hiddenLimit = new Date(new Date().getTime() + 2 * 24 * 60 * 60 * 1000);
-    setBannerHidden(hiddenLimit);
-    setShowBanner(false);
-  };
-
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
-
-  useEffect(() => {
-    if (new Date() > new Date("2021-11-30")) {
-      setShowBanner(false);
-    } else {
-      if (bannerHidden && new Date(bannerHidden) > new Date()) {
-        setShowBanner(false);
-      } else {
-        setBannerHidden(null);
-        setShowBanner(true);
-      }
-    }
-  }, [showBanner, bannerHidden, setBannerHidden, setShowBanner]);
 
   const { active, account, library } = useWeb3React();
   const { chainId } = useChainId();
@@ -922,7 +899,6 @@ export const Exchange = forwardRef((props, ref) => {
 
   return (
     <div className="Exchange page-layout">
-      {showBanner && <ExchangeBanner hideBanner={hideBanner} />}
       <div className="Exchange-content">
         <div className="Exchange-left">
           {renderChart()}

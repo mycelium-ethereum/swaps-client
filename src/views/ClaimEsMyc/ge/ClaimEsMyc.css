@@ -1,30 +1,30 @@
-.ClaimEsGmx input {
+.ClaimEsMyc input {
   border: 1px solid rgba(255, 255, 255, 0.2);
   font-size: 1rem;
   width: 100%;
   box-sizing: border-box;
 }
 
-.ClaimEsGmx label {
+.ClaimEsMyc label {
   display: block;
   margin-bottom: 0.5rem;
 }
 
-.ClaimEsGmx-content {
+.ClaimEsMyc-content {
   padding: 3rem;
   padding-top: 1rem;
   max-width: 25rem;
 }
 
-.ClaimEsGmx-row {
+.ClaimEsMyc-row {
   margin-bottom: 1rem;
 }
 
-.ClaimEsGmx button {
+.ClaimEsMyc button {
   margin-top: 0.5rem;
 }
 
-.ClaimEsGmx-vesting-options .Checkbox.btn-lg {
+.ClaimEsMyc-vesting-options .Checkbox.btn-lg {
   font-size: 1.2rem;
   margin-bottom: 0.5rem;
   display: block;
@@ -33,54 +33,54 @@
   padding-top: 0.3rem;
 }
 
-.ClaimEsGmx-vesting-options .Checkbox.btn-lg.selected.arbitrum {
+.ClaimEsMyc-vesting-options .Checkbox.btn-lg.selected.arbitrum {
   background: rgba(41, 160, 240, 0.2);
 }
 
-.ClaimEsGmx-vesting-options .Checkbox.btn-lg.selected.avalanche {
+.ClaimEsMyc-vesting-options .Checkbox.btn-lg.selected.avalanche {
   background: rgba(232, 65, 65, 0.2);
 }
 
-.ClaimEsGmx-vesting-options .Checkbox img {
+.ClaimEsMyc-vesting-options .Checkbox img {
   height: 1rem;
 }
 
-.ClaimEsGmx-option-label {
+.ClaimEsMyc-option-label {
   display: inline-block;
   width: 18rem;
   text-align: center;
   opacity: 0.7;
 }
 
-.ClaimEsGmx-vesting-options .Checkbox.selected .ClaimEsGmx-option-label {
+.ClaimEsMyc-vesting-options .Checkbox.selected .ClaimEsMyc-option-label {
   opacity: 1;
 }
 
-.ClaimEsGmx-vesting-options .Checkbox.arbitrum .Checkbox-icon.active {
+.ClaimEsMyc-vesting-options .Checkbox.arbitrum .Checkbox-icon.active {
   color: #29a0f0;
 }
 
-.ClaimEsGmx-vesting-options .Checkbox.avalanche .Checkbox-icon.active {
+.ClaimEsMyc-vesting-options .Checkbox.avalanche .Checkbox-icon.active {
   color: #e84141;
 }
 
-.ClaimEsGmx button {
+.ClaimEsMyc button {
   max-width: 23rem;
 }
 
-.ClaimEsGmx-input-label {
+.ClaimEsMyc-input-label {
   margin-bottom: 0.5rem;
 }
 
-.ClaimEsGmx input {
+.ClaimEsMyc input {
   width: 23rem;
 }
 
-.ClaimEsGmx-input-container {
+.ClaimEsMyc-input-container {
   position: relative;
 }
 
-.ClaimEsGmx-max-button {
+.ClaimEsMyc-max-button {
   position: absolute;
   padding: 0.3rem 0.5rem;
   background: linear-gradient(
@@ -97,7 +97,7 @@
   color: rgba(255, 255, 255, 0.7);
 }
 
-.ClaimEsGmx-max-button:hover {
+.ClaimEsMyc-max-button:hover {
   color: rgba(255, 255, 255, 1);
   background: var(--action-hover);
 }

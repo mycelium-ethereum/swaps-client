@@ -34,46 +34,46 @@ export default function APRLabel({ chainId, label }) {
 
   const vaultAddress = getContract(chainId, "Vault");
   const nativeTokenAddress = getContract(chainId, "NATIVE_TOKEN");
-  const gmxAddress = getContract(chainId, "GMX");
-  const esGmxAddress = getContract(chainId, "ES_GMX");
-  const bnGmxAddress = getContract(chainId, "BN_GMX");
+  const mycAddress = getContract(chainId, "MYC");
+  const esMycAddress = getContract(chainId, "ES_MYC");
+  const bnMycAddress = getContract(chainId, "BN_MYC");
   const glpAddress = getContract(chainId, "MLP");
 
-  const stakedGmxTrackerAddress = getContract(chainId, "StakedGmxTracker");
-  const bonusGmxTrackerAddress = getContract(chainId, "BonusGmxTracker");
-  const feeGmxTrackerAddress = getContract(chainId, "FeeGmxTracker");
+  const stakedMycTrackerAddress = getContract(chainId, "StakedMycTracker");
+  const bonusMycTrackerAddress = getContract(chainId, "BonusMycTracker");
+  const feeMycTrackerAddress = getContract(chainId, "FeeMycTracker");
 
   const stakedGlpTrackerAddress = getContract(chainId, "StakedMlpTracker");
   const feeGlpTrackerAddress = getContract(chainId, "FeeMlpTracker");
 
   const glpManagerAddress = getContract(chainId, "MlpManager");
 
-  const gmxVesterAddress = getContract(chainId, "GmxVester");
+  const mycVesterAddress = getContract(chainId, "MycVester");
   const glpVesterAddress = getContract(chainId, "MlpVester");
 
-  const vesterAddresses = [gmxVesterAddress, glpVesterAddress];
+  const vesterAddresses = [mycVesterAddress, glpVesterAddress];
 
-  const walletTokens = [gmxAddress, esGmxAddress, glpAddress, stakedGmxTrackerAddress];
+  const walletTokens = [mycAddress, esMycAddress, glpAddress, stakedMycTrackerAddress];
   const depositTokens = [
-    gmxAddress,
-    esGmxAddress,
-    stakedGmxTrackerAddress,
-    bonusGmxTrackerAddress,
-    bnGmxAddress,
+    mycAddress,
+    esMycAddress,
+    stakedMycTrackerAddress,
+    bonusMycTrackerAddress,
+    bnMycAddress,
     glpAddress,
   ];
   const rewardTrackersForDepositBalances = [
-    stakedGmxTrackerAddress,
-    stakedGmxTrackerAddress,
-    bonusGmxTrackerAddress,
-    feeGmxTrackerAddress,
-    feeGmxTrackerAddress,
+    stakedMycTrackerAddress,
+    stakedMycTrackerAddress,
+    bonusMycTrackerAddress,
+    feeMycTrackerAddress,
+    feeMycTrackerAddress,
     feeGlpTrackerAddress,
   ];
   const rewardTrackersForStakingInfo = [
-    stakedGmxTrackerAddress,
-    bonusGmxTrackerAddress,
-    feeGmxTrackerAddress,
+    stakedMycTrackerAddress,
+    bonusMycTrackerAddress,
+    feeMycTrackerAddress,
     stakedGlpTrackerAddress,
     feeGlpTrackerAddress,
   ];
@@ -99,8 +99,8 @@ export default function APRLabel({ chainId, label }) {
     }
   );
 
-  const { data: stakedGmxSupply } = useSWR(
-    [`StakeV2:stakedGmxSupply:${active}`, chainId, gmxAddress, "balanceOf", stakedGmxTrackerAddress],
+  const { data: stakedMycSupply } = useSWR(
+    [`StakeV2:stakedMycSupply:${active}`, chainId, mycAddress, "balanceOf", stakedMycTrackerAddress],
     {
       fetcher: fetcher(undefined, Token),
     }
@@ -126,8 +126,8 @@ export default function APRLabel({ chainId, label }) {
 
   const { tcrPrice } = useTCRPrice(chainId, {}, active);
 
-  const gmxSupplyUrl = getServerUrl(chainId, "/gmx_supply");
-  const { data: gmxSupply } = useSWR([gmxSupplyUrl], {
+  const mycSupplyUrl = getServerUrl(chainId, "/myc_supply");
+  const { data: mycSupply } = useSWR([mycSupplyUrl], {
     fetcher: (...args) => fetch(...args).then((res) => res.text()),
   });
 
@@ -149,9 +149,9 @@ export default function APRLabel({ chainId, label }) {
     vestingData,
     aum,
     nativeTokenPrice,
-    stakedGmxSupply,
+    stakedMycSupply,
     tcrPrice,
-    gmxSupply
+    mycSupply
   );
 
   return <>{`${formatKeyAmount(processedData, label, 2, 2, true)}%`}</>;

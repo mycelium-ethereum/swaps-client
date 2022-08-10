@@ -87,13 +87,13 @@ function CompoundModal(props) {
     true
   );
 
-  const gmxAddress = getContract(chainId, "GMX");
-  const stakedGmxTrackerAddress = getContract(chainId, "StakedGmxTracker");
+  const mycAddress = getContract(chainId, "MYC");
+  const stakedMycTrackerAddress = getContract(chainId, "StakedMycTracker");
 
   const [isApproving, setIsApproving] = useState(false);
 
   const { data: tokenAllowance } = useSWR(
-    active && [active, chainId, gmxAddress, "allowance", account, stakedGmxTrackerAddress],
+    active && [active, chainId, mycAddress, "allowance", account, stakedMycTrackerAddress],
     {
       fetcher: fetcher(library, Token),
     }
@@ -123,8 +123,8 @@ function CompoundModal(props) {
       approveTokens({
         setIsApproving,
         library,
-        tokenAddress: gmxAddress,
-        spender: stakedGmxTrackerAddress,
+        tokenAddress: mycAddress,
+        spender: stakedMycTrackerAddress,
         chainId,
       });
       return;
@@ -140,8 +140,8 @@ function CompoundModal(props) {
       [
         shouldClaimTCR || shouldStakeTCR,
         shouldStakeTCR,
-        false, // shouldClaimEsGMX
-        false, // shouldStakeEsGmx,
+        false, // shouldClaimEsMYC
+        false, // shouldStakeEsMyc,
         shouldStakeMultiplierPoints,
         shouldClaimWeth || shouldConvertWeth,
         shouldConvertWeth,
@@ -267,8 +267,8 @@ function ClaimModal(props) {
       [
         shouldClaimTCR,
         false, // shouldStakeTCR
-        false, // shouldClaimEsGmx,
-        false, // shouldStakeEsGmx
+        false, // shouldClaimEsMyc,
+        false, // shouldStakeEsMyc
         false, // shouldStakeMultiplierPoints
         shouldClaimWeth,
         shouldConvertWeth,
@@ -340,49 +340,49 @@ export default function StakeV2({ setPendingTxns, connectWallet, trackAction }) 
 
   const vaultAddress = getContract(chainId, "Vault");
   const nativeTokenAddress = getContract(chainId, "NATIVE_TOKEN");
-  const gmxAddress = getContract(chainId, "GMX");
-  const esGmxAddress = getContract(chainId, "ES_GMX");
-  const bnGmxAddress = getContract(chainId, "BN_GMX");
+  const mycAddress = getContract(chainId, "MYC");
+  const esMycAddress = getContract(chainId, "ES_MYC");
+  const bnMycAddress = getContract(chainId, "BN_MYC");
   const glpAddress = getContract(chainId, "MLP");
 
-  const stakedGmxTrackerAddress = getContract(chainId, "StakedGmxTracker");
-  const bonusGmxTrackerAddress = getContract(chainId, "BonusGmxTracker");
-  const feeGmxTrackerAddress = getContract(chainId, "FeeGmxTracker");
+  const stakedMycTrackerAddress = getContract(chainId, "StakedMycTracker");
+  const bonusMycTrackerAddress = getContract(chainId, "BonusMycTracker");
+  const feeMycTrackerAddress = getContract(chainId, "FeeMycTracker");
 
   const stakedGlpTrackerAddress = getContract(chainId, "StakedMlpTracker");
   const feeGlpTrackerAddress = getContract(chainId, "FeeMlpTracker");
 
   const glpManagerAddress = getContract(chainId, "MlpManager");
 
-  const gmxVesterAddress = getContract(chainId, "GmxVester");
+  const mycVesterAddress = getContract(chainId, "MycVester");
   const glpVesterAddress = getContract(chainId, "MlpVester");
 
-  const vesterAddresses = [gmxVesterAddress, glpVesterAddress];
+  const vesterAddresses = [mycVesterAddress, glpVesterAddress];
 
   const nativeTokenSymbol = getConstant(chainId, "nativeTokenSymbol");
   const wrappedTokenSymbol = getConstant(chainId, "wrappedTokenSymbol");
 
-  const walletTokens = [gmxAddress, esGmxAddress, glpAddress, stakedGmxTrackerAddress];
+  const walletTokens = [mycAddress, esMycAddress, glpAddress, stakedMycTrackerAddress];
   const depositTokens = [
-    gmxAddress,
-    esGmxAddress,
-    stakedGmxTrackerAddress,
-    bonusGmxTrackerAddress,
-    bnGmxAddress,
+    mycAddress,
+    esMycAddress,
+    stakedMycTrackerAddress,
+    bonusMycTrackerAddress,
+    bnMycAddress,
     glpAddress,
   ];
   const rewardTrackersForDepositBalances = [
-    stakedGmxTrackerAddress,
-    stakedGmxTrackerAddress,
-    bonusGmxTrackerAddress,
-    feeGmxTrackerAddress,
-    feeGmxTrackerAddress,
+    stakedMycTrackerAddress,
+    stakedMycTrackerAddress,
+    bonusMycTrackerAddress,
+    feeMycTrackerAddress,
+    feeMycTrackerAddress,
     feeGlpTrackerAddress,
   ];
   const rewardTrackersForStakingInfo = [
-    stakedGmxTrackerAddress,
-    bonusGmxTrackerAddress,
-    feeGmxTrackerAddress,
+    stakedMycTrackerAddress,
+    bonusMycTrackerAddress,
+    feeMycTrackerAddress,
     stakedGlpTrackerAddress,
     feeGlpTrackerAddress,
   ];
@@ -420,8 +420,8 @@ export default function StakeV2({ setPendingTxns, connectWallet, trackAction }) 
     }
   );
 
-  const { data: stakedGmxSupply } = useSWR(
-    [`StakeV2:stakedGmxSupply:${active}`, chainId, gmxAddress, "balanceOf", stakedGmxTrackerAddress],
+  const { data: stakedMycSupply } = useSWR(
+    [`StakeV2:stakedMycSupply:${active}`, chainId, mycAddress, "balanceOf", stakedMycTrackerAddress],
     {
       fetcher: fetcher(library, Token),
     }
@@ -453,8 +453,8 @@ export default function StakeV2({ setPendingTxns, connectWallet, trackAction }) 
 
   const { tcrPrice } = useTCRPrice(chainId, { arbitrum: chainId === ARBITRUM ? library : undefined }, active);
 
-  const gmxSupplyUrl = getServerUrl(chainId, "/gmx_supply");
-  const { data: gmxSupply } = useSWR([gmxSupplyUrl], {
+  const mycSupplyUrl = getServerUrl(chainId, "/myc_supply");
+  const { data: mycSupply } = useSWR([mycSupplyUrl], {
     fetcher: (...args) => fetch(...args).then((res) => res.text()),
   });
 
@@ -471,7 +471,7 @@ export default function StakeV2({ setPendingTxns, connectWallet, trackAction }) 
     glpVester: {
       claimable: mlpVesterRewards
     },
-    gmxVester: {
+    mycVester: {
       claimable: ethers.BigNumber.from(0)
     }
   } : undefined;
@@ -484,14 +484,14 @@ export default function StakeV2({ setPendingTxns, connectWallet, trackAction }) 
     vestingData,
     aum,
     nativeTokenPrice,
-    stakedGmxSupply,
+    stakedMycSupply,
     tcrPrice,
-    gmxSupply
+    mycSupply
   );
 
   let totalRewardTokens;
-  if (processedData && processedData.bnGmxInFeeGmx && processedData.bonusGmxInFeeGmx) {
-    totalRewardTokens = processedData.bnGmxInFeeGmx.add(processedData.bonusGmxInFeeGmx);
+  if (processedData && processedData.bnMycInFeeMyc && processedData.bonusMycInFeeMyc) {
+    totalRewardTokens = processedData.bnMycInFeeMyc.add(processedData.bonusMycInFeeMyc);
   }
 
   let totalRewardTokensAndGlp;
@@ -505,23 +505,23 @@ export default function StakeV2({ setPendingTxns, connectWallet, trackAction }) 
 
   let earnMsg;
   if (totalRewardTokensAndGlp && totalRewardTokensAndGlp.gt(0)) {
-    let gmxAmountStr;
-    if (processedData.gmxInStakedGmx && processedData.gmxInStakedGmx.gt(0)) {
-      gmxAmountStr = formatAmount(processedData.gmxInStakedGmx, 18, 2, true) + " GMX";
+    let mycAmountStr;
+    if (processedData.mycInStakedMyc && processedData.mycInStakedMyc.gt(0)) {
+      mycAmountStr = formatAmount(processedData.mycInStakedMyc, 18, 2, true) + " MYC";
     }
-    let esGmxAmountStr;
-    if (processedData.esGmxInStakedGmx && processedData.esGmxInStakedGmx.gt(0)) {
-      esGmxAmountStr = formatAmount(processedData.esGmxInStakedGmx, 18, 2, true) + " esGMX";
+    let esMycAmountStr;
+    if (processedData.esMycInStakedMyc && processedData.esMycInStakedMyc.gt(0)) {
+      esMycAmountStr = formatAmount(processedData.esMycInStakedMyc, 18, 2, true) + " esMYC";
     }
     let mpAmountStr;
-    if (processedData.bonusGmxInFeeGmx && processedData.bnGmxInFeeGmx.gt(0)) {
-      mpAmountStr = formatAmount(processedData.bnGmxInFeeGmx, 18, 2, true) + " MP";
+    if (processedData.bonusMycInFeeMyc && processedData.bnMycInFeeMyc.gt(0)) {
+      mpAmountStr = formatAmount(processedData.bnMycInFeeMyc, 18, 2, true) + " MP";
     }
     let glpStr;
     if (processedData.glpBalance && processedData.glpBalance.gt(0)) {
       glpStr = formatAmount(processedData.glpBalance, 18, 2, true) + " MLP";
     }
-    const amountStr = [gmxAmountStr, esGmxAmountStr, mpAmountStr, glpStr].filter((s) => s).join(", ");
+    const amountStr = [mycAmountStr, esMycAmountStr, mpAmountStr, glpStr].filter((s) => s).join(", ");
     earnMsg = (
       <div>
         You are earning {nativeTokenSymbol} rewards with {formatAmount(totalRewardTokensAndGlp, 18, 2, true)} tokens.
@@ -623,7 +623,7 @@ export default function StakeV2({ setPendingTxns, connectWallet, trackAction }) 
                           </div>
                           <div className="Tooltip-row">
                             <span className="label">esMYC APR</span>
-                            <span>{formatKeyAmount(processedData, "glpAprForEsGmx", 2, 2, true)}%</span>
+                            <span>{formatKeyAmount(processedData, "glpAprForEsMyc", 2, 2, true)}%</span>
                           </div>
                         </>
                       );

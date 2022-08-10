@@ -47,13 +47,13 @@ export default function BeginAccountTransfer(props) {
     parsedReceiver = receiver;
   }
 
-  const gmxAddress = getContract(chainId, "GMX");
-  const gmxVesterAddress = getContract(chainId, "GmxVester");
+  const mlpAddress = getContract(chainId, "MYC");
+  const mlpVesterAddress = getContract(chainId, "MycVester");
   const glpVesterAddress = getContract(chainId, "MlpVester");
 
   const rewardRouterAddress = getContract(chainId, "RewardRouter");
 
-  const { data: gmxVesterBalance } = useSWR([active, chainId, gmxVesterAddress, "balanceOf", account], {
+  const { data: mlpVesterBalance } = useSWR([active, chainId, mlpVesterAddress, "balanceOf", account], {
     fetcher: fetcher(library, Token),
   });
 
@@ -61,9 +61,9 @@ export default function BeginAccountTransfer(props) {
     fetcher: fetcher(library, Token),
   });
 
-  const stakedGmxTrackerAddress = getContract(chainId, "StakedGmxTracker");
-  const { data: cumulativeGmxRewards } = useSWR(
-    [active, chainId, stakedGmxTrackerAddress, "cumulativeRewards", parsedReceiver],
+  const stakedMycTrackerAddress = getContract(chainId, "StakedMycTracker");
+  const { data: cumulativeMycRewards } = useSWR(
+    [active, chainId, stakedMycTrackerAddress, "cumulativeRewards", parsedReceiver],
     {
       fetcher: fetcher(library, RewardTracker),
     }
@@ -77,8 +77,8 @@ export default function BeginAccountTransfer(props) {
     }
   );
 
-  const { data: transferredCumulativeGmxRewards } = useSWR(
-    [active, chainId, gmxVesterAddress, "transferredCumulativeRewards", parsedReceiver],
+  const { data: transferredCumulativeMycRewards } = useSWR(
+    [active, chainId, mlpVesterAddress, "transferredCumulativeRewards", parsedReceiver],
     {
       fetcher: fetcher(library, Vester),
     }
@@ -95,24 +95,24 @@ export default function BeginAccountTransfer(props) {
     fetcher: fetcher(library, RewardRouter),
   });
 
-  const { data: gmxAllowance } = useSWR([active, chainId, gmxAddress, "allowance", account, stakedGmxTrackerAddress], {
+  const { data: mlpAllowance } = useSWR([active, chainId, mlpAddress, "allowance", account, stakedMycTrackerAddress], {
     fetcher: fetcher(library, Token),
   });
 
-  const { data: gmxStaked } = useSWR(
-    [active, chainId, stakedGmxTrackerAddress, "depositBalances", account, gmxAddress],
+  const { data: mlpStaked } = useSWR(
+    [active, chainId, stakedMycTrackerAddress, "depositBalances", account, mlpAddress],
     {
       fetcher: fetcher(library, RewardTracker),
     }
   );
 
-  const needApproval = gmxAllowance && gmxStaked && gmxStaked.gt(gmxAllowance);
+  const needApproval = mlpAllowance && mlpStaked && mlpStaked.gt(mlpAllowance);
 
-  const hasVestedGmx = gmxVesterBalance && gmxVesterBalance.gt(0);
+  const hasVestedMyc = mlpVesterBalance && mlpVesterBalance.gt(0);
   const hasVestedGlp = glpVesterBalance && glpVesterBalance.gt(0);
-  const hasStakedGmx =
-    (cumulativeGmxRewards && cumulativeGmxRewards.gt(0)) ||
-    (transferredCumulativeGmxRewards && transferredCumulativeGmxRewards.gt(0));
+  const hasStakedMyc =
+    (cumulativeMycRewards && cumulativeMycRewards.gt(0)) ||
+    (transferredCumulativeMycRewards && transferredCumulativeMycRewards.gt(0));
   const hasStakedGlp =
     (cumulativeGlpRewards && cumulativeGlpRewards.gt(0)) ||
     (transferredCumulativeGlpRewards && transferredCumulativeGlpRewards.gt(0));
@@ -122,8 +122,8 @@ export default function BeginAccountTransfer(props) {
     if (!account) {
       return "Wallet is not connected";
     }
-    if (hasVestedGmx) {
-      return "Vested GMX not withdrawn";
+    if (hasVestedMyc) {
+      return "Vested MYC not withdrawn";
     }
     if (hasVestedGlp) {
       return "Vested MLP not withdrawn";
@@ -134,7 +134,7 @@ export default function BeginAccountTransfer(props) {
     if (!ethers.utils.isAddress(receiver)) {
       return "Invalid Receiver Address";
     }
-    if (hasStakedGmx || hasStakedGlp) {
+    if (hasStakedMyc || hasStakedGlp) {
       return "Invalid Receiver";
     }
     if ((parsedReceiver || "").toString().toLowerCase() === (account || "").toString().toLowerCase()) {
@@ -169,7 +169,7 @@ export default function BeginAccountTransfer(props) {
       return error;
     }
     if (needApproval) {
-      return "Approve GMX";
+      return "Approve MYC";
     }
     if (isApproving) {
       return "Approving...";
@@ -186,8 +186,8 @@ export default function BeginAccountTransfer(props) {
       approveTokens({
         setIsApproving,
         library,
-        tokenAddress: gmxAddress,
-        spender: stakedGmxTrackerAddress,
+        tokenAddress: mlpAddress,
+        spender: stakedMycTrackerAddress,
         chainId,
       });
       return;
@@ -231,9 +231,9 @@ export default function BeginAccountTransfer(props) {
         <div className="Page-description">
           Please only use this for full account transfers.
           <br />
-          This will transfer all your GMX, esGMX, MLP and Multiplier Points to your new account.
+          This will transfer all your MYC, esMYC, MLP and Multiplier Points to your new account.
           <br />
-          Transfers are only supported if the receiving account has not staked GMX or MLP tokens before.
+          Transfers are only supported if the receiving account has not staked MYC or MLP tokens before.
           <br />
           Transfers are one-way, you will not be able to transfer staked tokens back to the sending account.
         </div>
@@ -257,13 +257,13 @@ export default function BeginAccountTransfer(props) {
             </div>
           </div>
           <div className="BeginAccountTransfer-validations">
-            <ValidationRow isValid={!hasVestedGmx}>
-              Sender has withdrawn all tokens from GMX Vesting Vault
+            <ValidationRow isValid={!hasVestedMyc}>
+              Sender has withdrawn all tokens from MYC Vesting Vault
             </ValidationRow>
             <ValidationRow isValid={!hasVestedGlp}>
               Sender has withdrawn all tokens from MLP Vesting Vault
             </ValidationRow>
-            <ValidationRow isValid={!hasStakedGmx}>Receiver has not staked GMX tokens before</ValidationRow>
+            <ValidationRow isValid={!hasStakedMyc}>Receiver has not staked MYC tokens before</ValidationRow>
             <ValidationRow isValid={!hasStakedGlp}>Receiver has not staked MLP tokens before</ValidationRow>
           </div>
           <div className="input-row">

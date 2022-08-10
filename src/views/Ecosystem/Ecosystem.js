@@ -16,11 +16,11 @@ export default function Ecosystem() {
         <div>
           <div className="Page-title-section">
             <div className="Page-title">Official Pages</div>
-            <div className="Page-description">Official GMX ecosystem pages.</div>
+            <div className="Page-description">Official MYC ecosystem pages.</div>
           </div>
           <div className="DashboardV2-projects">
             <div className="App-card">
-              <div className="App-card-title">GMX Governance</div>
+              <div className="App-card-title">MYC Governance</div>
               <div className="App-card-divider"></div>
               <div className="App-card-content">
                 <div className="App-card-row">
@@ -33,13 +33,13 @@ export default function Ecosystem() {
                 </div>
                 <div className="App-card-row">
                   <div className="label">About</div>
-                  <div>GMX Governance page</div>
+                  <div>MYC Governance page</div>
                 </div>
               </div>
             </div>
             <div className="App-card">
               <div className="App-card-title">
-                GMX Stats
+                MYC Stats
                 <div className="App-card-title-icon">
                   <img src={arbitrumIcon} alt="arbitrumIcon" />
                   <img src={avalancheIcon} alt="avalancheIcon" />
@@ -57,12 +57,12 @@ export default function Ecosystem() {
                 </div>
                 <div className="App-card-row">
                   <div className="label">About</div>
-                  <div>GMX Stats page</div>
+                  <div>MYC Stats page</div>
                 </div>
               </div>
             </div>
             <div className="App-card">
-              <div className="App-card-title">GMX Proposals Voting</div>
+              <div className="App-card-title">MYC Proposals Voting</div>
               <div className="App-card-divider"></div>
               <div className="App-card-content">
                 <div className="App-card-row">
@@ -75,19 +75,19 @@ export default function Ecosystem() {
                 </div>
                 <div className="App-card-row">
                   <div className="label">About</div>
-                  <div>GMX Proposals Voting page</div>
+                  <div>MYC Proposals Voting page</div>
                 </div>
               </div>
             </div>
           </div>
           <div className="Page-title-section">
             <div className="Page-title">Community Projects</div>
-            <div className="Page-description">Projects developed by the GMX community.</div>
+            <div className="Page-description">Projects developed by the MYC community.</div>
           </div>
           <div className="DashboardV2-projects">
             <div className="App-card">
               <div className="App-card-title">
-                GMX Blueberry Club
+                MYC Blueberry Club
                 <div className="App-card-title-icon">
                   <img src={arbitrumIcon} alt="arbitrumIcon" />
                 </div>
@@ -104,7 +104,7 @@ export default function Ecosystem() {
                 </div>
                 <div className="App-card-row">
                   <div className="label">About</div>
-                  <div>GMX Blueberry NFTs</div>
+                  <div>MYC Blueberry NFTs</div>
                 </div>
                 <div className="App-card-row">
                   <div className="label">Creator</div>
@@ -118,7 +118,7 @@ export default function Ecosystem() {
             </div>
             <div className="App-card">
               <div className="App-card-title">
-                GMX Leaderboard
+                MYC Leaderboard
                 <div className="App-card-title-icon">
                   <img src={arbitrumIcon} alt="arbitrumIcon" />
                 </div>
@@ -135,7 +135,7 @@ export default function Ecosystem() {
                 </div>
                 <div className="App-card-row">
                   <div className="label">About</div>
-                  <div>Leaderboard for GMX traders</div>
+                  <div>Leaderboard for MYC traders</div>
                 </div>
                 <div className="App-card-row">
                   <div className="label">Creator</div>
@@ -149,7 +149,7 @@ export default function Ecosystem() {
             </div>
             <div className="App-card">
               <div className="App-card-title">
-                GMX Positions Bot
+                MYC Positions Bot
                 <div className="App-card-title-icon">
                   <img src={arbitrumIcon} alt="arbitrumIcon" />
                   <img src={avalancheIcon} alt="avalancheIcon" />
@@ -160,14 +160,14 @@ export default function Ecosystem() {
                 <div className="App-card-row">
                   <div className="label">Link</div>
                   <div>
-                    <a href="https://t.me/GMXPositions" target="_blank" rel="noopener noreferrer">
-                      https://t.me/GMXPositions
+                    <a href="https://t.me/MYCPositions" target="_blank" rel="noopener noreferrer">
+                      https://t.me/MYCPositions
                     </a>
                   </div>
                 </div>
                 <div className="App-card-row">
                   <div className="label">About</div>
-                  <div>Telegram bot for GMX position updates</div>
+                  <div>Telegram bot for MYC position updates</div>
                 </div>
                 <div className="App-card-row">
                   <div className="label">Creator</div>
@@ -181,7 +181,7 @@ export default function Ecosystem() {
             </div>
             <div className="App-card">
               <div className="App-card-title">
-                GMX Terminal
+                MYC Terminal
                 <div className="App-card-title-icon">
                   <img src={arbitrumIcon} alt="arbitrumIcon" />
                 </div>
@@ -198,7 +198,7 @@ export default function Ecosystem() {
                 </div>
                 <div className="App-card-row">
                   <div className="label">About</div>
-                  <div>GMX explorer for stats and traders</div>
+                  <div>MYC explorer for stats and traders</div>
                 </div>
                 <div className="App-card-row">
                   <div className="label">Creator</div>
@@ -212,7 +212,7 @@ export default function Ecosystem() {
             </div>
             <div className="App-card">
               <div className="App-card-title">
-                GMX Analytics
+                MYC Analytics
                 <div className="App-card-title-icon">
                   <img src={arbitrumIcon} alt="arbitrumIcon" />
                   <img src={avalancheIcon} alt="avalancheIcon" />
@@ -244,7 +244,7 @@ export default function Ecosystem() {
             </div>
             <div className="App-card">
               <div className="App-card-title">
-                GMX Charts
+                MYC Charts
                 <div className="App-card-title-icon">
                   <img src={arbitrumIcon} alt="arbitrumIcon" />
                 </div>
@@ -261,7 +261,7 @@ export default function Ecosystem() {
                 </div>
                 <div className="App-card-row">
                   <div className="label">About</div>
-                  <div>GMX price and staking charts</div>
+                  <div>MYC price and staking charts</div>
                 </div>
                 <div className="App-card-row">
                   <div className="label">Creator</div>
@@ -275,7 +275,7 @@ export default function Ecosystem() {
             </div>
             <div className="App-card">
               <div className="App-card-title">
-                GMX Returns Calculator
+                MYC Returns Calculator
                 <div className="App-card-title-icon">
                   <img src={arbitrumIcon} alt="arbitrumIcon" />
                   <img src={avalancheIcon} alt="avalancheIcon" />
@@ -297,7 +297,7 @@ export default function Ecosystem() {
                 </div>
                 <div className="App-card-row">
                   <div className="label">About</div>
-                  <div>Returns calculator for GMX and MLP</div>
+                  <div>Returns calculator for MYC and MLP</div>
                 </div>
                 <div className="App-card-row">
                   <div className="label">Creator</div>
@@ -311,7 +311,7 @@ export default function Ecosystem() {
             </div>
             <div className="App-card">
               <div className="App-card-title">
-                GMX Compound Calculator
+                MYC Compound Calculator
                 <div className="App-card-title-icon">
                   <img src={avalancheIcon} alt="avalancheIcon" />
                 </div>
@@ -350,7 +350,7 @@ export default function Ecosystem() {
             </div>
             <div className="App-card">
               <div className="App-card-title">
-                GMX Feedback
+                MYC Feedback
                 <div className="App-card-title-icon">
                   <img src={arbitrumIcon} alt="arbitrumIcon" />
                   <img src={avalancheIcon} alt="avalancheIcon" />
@@ -368,7 +368,7 @@ export default function Ecosystem() {
                 </div>
                 <div className="App-card-row">
                   <div className="label">About</div>
-                  <div>GMX feedback and feature requests</div>
+                  <div>MYC feedback and feature requests</div>
                 </div>
                 <div className="App-card-row">
                   <div className="label">Creator</div>
@@ -383,7 +383,7 @@ export default function Ecosystem() {
           </div>
           <div className="Page-title-section">
             <div className="Page-title">Partnerships and Integrations</div>
-            <div className="Page-description">Projects supporting GMX.</div>
+            <div className="Page-description">Projects supporting MYC.</div>
           </div>
           <div className="DashboardV2-projects">
             <div className="App-card">
@@ -412,7 +412,7 @@ export default function Ecosystem() {
                   <div className="label">Announcement</div>
                   <div>
                     <a
-                      href="https://twitter.com/GMX_IO/status/1439711532884152324"
+                      href="https://twitter.com/MYC_IO/status/1439711532884152324"
                       target="_blank"
                       rel="noopener noreferrer"
                     >
@@ -448,7 +448,7 @@ export default function Ecosystem() {
                   <div className="label">Announcement</div>
                   <div>
                     <a
-                      href="https://twitter.com/GMX_IO/status/1438899138549145605"
+                      href="https://twitter.com/MYC_IO/status/1438899138549145605"
                       target="_blank"
                       rel="noopener noreferrer"
                     >
@@ -484,7 +484,7 @@ export default function Ecosystem() {
                   <div className="label">Announcement</div>
                   <div>
                     <a
-                      href="https://twitter.com/GMX_IO/status/1484601407378378754"
+                      href="https://twitter.com/MYC_IO/status/1484601407378378754"
                       target="_blank"
                       rel="noopener noreferrer"
                     >
@@ -520,7 +520,7 @@ export default function Ecosystem() {
                   <div className="label">Announcement</div>
                   <div>
                     <a
-                      href="https://twitter.com/GMX_IO/status/1495780826016989191"
+                      href="https://twitter.com/MYC_IO/status/1495780826016989191"
                       target="_blank"
                       rel="noopener noreferrer"
                     >
@@ -556,7 +556,7 @@ export default function Ecosystem() {
                   <div className="label">Announcement</div>
                   <div>
                     <a
-                      href="https://twitter.com/GMX_IO/status/1482445801523716099"
+                      href="https://twitter.com/MYC_IO/status/1482445801523716099"
                       target="_blank"
                       rel="noopener noreferrer"
                     >
@@ -592,7 +592,7 @@ export default function Ecosystem() {
                   <div className="label">Announcement</div>
                   <div>
                     <a
-                      href="https://twitter.com/GMX_IO/status/1482788805635678212"
+                      href="https://twitter.com/MYC_IO/status/1482788805635678212"
                       target="_blank"
                       rel="noopener noreferrer"
                     >
@@ -652,7 +652,7 @@ export default function Ecosystem() {
                   <div className="label">Announcement</div>
                   <div>
                     <a
-                      href="https://twitter.com/GMX_IO/status/1438124768033660938"
+                      href="https://twitter.com/MYC_IO/status/1438124768033660938"
                       target="_blank"
                       rel="noopener noreferrer"
                     >

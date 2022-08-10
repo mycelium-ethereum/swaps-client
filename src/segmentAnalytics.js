@@ -70,7 +70,7 @@ export const useAnalytics = () => {
     }
   };
 
-  const trackLogin = (chainId, gmxBalances, userBalances) => {
+  const trackLogin = (chainId, mycBalances, userBalances) => {
     const hasConsented = hasUserConsented();
     try {
       const provider = localStorage.getItem(CURRENT_PROVIDER_LOCALSTORAGE_KEY);
@@ -79,7 +79,7 @@ export const useAnalytics = () => {
         walletAddress: account,
         network: NETWORK_NAME[chainId] ?? `Unsupported (${chainId})`,
         ...userBalances,
-        ...gmxBalances,
+        ...mycBalances,
       };
       if (account && hasConsented) {
         analytics?.track("User logged in", {
