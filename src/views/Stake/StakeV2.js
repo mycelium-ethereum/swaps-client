@@ -89,12 +89,12 @@ function CompoundModal(props) {
   );
 
   const mycAddress = getContract(chainId, "MYC");
-  const stakedMycTrackerAddress = getContract(chainId, "StakedMycTracker");
+  const stakedMlpTrackerAddress = getContract(chainId, "StakedMlpTracker");
 
   const [isApproving, setIsApproving] = useState(false);
 
   const { data: tokenAllowance } = useSWR(
-    active && [active, chainId, mycAddress, "allowance", account, stakedMycTrackerAddress],
+    active && [active, chainId, mycAddress, "allowance", account, stakedMlpTrackerAddress],
     {
       fetcher: fetcher(library, Token),
     }
@@ -125,7 +125,7 @@ function CompoundModal(props) {
         setIsApproving,
         library,
         tokenAddress: mycAddress,
-        spender: stakedMycTrackerAddress,
+        spender: stakedMlpTrackerAddress,
         chainId,
       });
       return;
@@ -779,7 +779,7 @@ export default function StakeV2({ setPendingTxns, connectWallet, trackAction }) 
       helperToast.error("Loading vesting data, please wait.");
       return;
     }
-    let remainingVestableAmount = vestingData.mycVester.maxVestableAmount.sub(vestingData.mycVester.vestedAmount);
+    let remainingVestableAmount = vestingData.mlpVester.maxVestableAmount.sub(vestingData.mlpVester.vestedAmount);
     if (processedData.esMycBalance.lt(remainingVestableAmount)) {
       remainingVestableAmount = processedData.esMycBalance;
     }
@@ -789,25 +789,25 @@ export default function StakeV2({ setPendingTxns, connectWallet, trackAction }) 
     setVesterDepositStakeTokenLabel("staked MYC + esMYC + Multiplier Points");
     setVesterDepositMaxAmount(remainingVestableAmount);
     setVesterDepositBalance(processedData.esMycBalance);
-    setVesterDepositEscrowedBalance(vestingData.mycVester.escrowedBalance);
-    setVesterDepositVestedAmount(vestingData.mycVester.vestedAmount);
-    setVesterDepositMaxVestableAmount(vestingData.mycVester.maxVestableAmount);
-    setVesterDepositAverageStakedAmount(vestingData.mycVester.averageStakedAmount);
-    setVesterDepositReserveAmount(vestingData.mycVester.pairAmount);
+    setVesterDepositEscrowedBalance(vestingData.mlpVester.escrowedBalance);
+    setVesterDepositVestedAmount(vestingData.mlpVester.vestedAmount);
+    setVesterDepositMaxVestableAmount(vestingData.mlpVester.maxVestableAmount);
+    setVesterDepositAverageStakedAmount(vestingData.mlpVester.averageStakedAmount);
+    setVesterDepositReserveAmount(vestingData.mlpVester.pairAmount);
     setVesterDepositMaxReserveAmount(totalRewardTokens);
     setVesterDepositValue("");
-    setVesterDepositAddress(mycVesterAddress);
+    setVesterDepositAddress(mlpVesterAddress);
   };
 
   const showMycVesterWithdrawModal = () => {
-    if (!vestingData || !vestingData.mycVesterVestedAmount || vestingData.mycVesterVestedAmount.eq(0)) {
+    if (!vestingData || !vestingData.mlpVesterVestedAmount || vestingData.mlpVesterVestedAmount.eq(0)) {
       helperToast.error("You have not deposited any tokens for vesting.");
       return;
     }
 
     setIsVesterWithdrawModalVisible(true);
     setVesterWithdrawTitle("Withdraw from MYC Vault");
-    setVesterWithdrawAddress(mycVesterAddress);
+    setVesterWithdrawAddress(mlpVesterAddress);
   };
 
   return (
@@ -1041,7 +1041,7 @@ export default function StakeV2({ setPendingTxns, connectWallet, trackAction }) 
                 <div className="App-card-row">
                   <div className="label">Reserved for Vesting</div>
                   <div>
-                    {formatKeyAmount(vestingData, "mycVesterPairAmount", 18, 2, true)} /{" "}
+                    {formatKeyAmount(vestingData, "mlpVesterPairAmount", 18, 2, true)} /{" "}
                     {formatAmount(totalRewardTokens, 18, 2, true)}
                   </div>
                 </div>
@@ -1049,9 +1049,9 @@ export default function StakeV2({ setPendingTxns, connectWallet, trackAction }) 
                   <div className="label">Vesting Status</div>
                   <div>
                     <Tooltip
-                      handle={`${formatKeyAmount(vestingData, "mycVesterClaimSum", 18, 4, true)} / ${formatKeyAmount(
+                      handle={`${formatKeyAmount(vestingData, "mlpVesterClaimSum", 18, 4, true)} / ${formatKeyAmount(
                         vestingData,
-                        "mycVesterVestedAmount",
+                        "mlpVesterVestedAmount",
                         18,
                         4,
                         true
@@ -1060,9 +1060,9 @@ export default function StakeV2({ setPendingTxns, connectWallet, trackAction }) 
                       renderContent={() => {
                         return (
                           <>
-                            {formatKeyAmount(vestingData, "mycVesterClaimSum", 18, 4, true)} tokens have been converted
+                            {formatKeyAmount(vestingData, "mlpVesterClaimSum", 18, 4, true)} tokens have been converted
                             to MYC from the&nbsp;
-                            {formatKeyAmount(vestingData, "mycVesterVestedAmount", 18, 4, true)} esMYC deposited for
+                            {formatKeyAmount(vestingData, "mlpVesterVestedAmount", 18, 4, true)} esMYC deposited for
                             vesting.
                           </>
                         );
@@ -1074,12 +1074,12 @@ export default function StakeV2({ setPendingTxns, connectWallet, trackAction }) 
                   <div className="label">Claimable</div>
                   <div>
                     <Tooltip
-                      handle={`${formatKeyAmount(vestingData, "mycVesterClaimable", 18, 4, true)} MYC`}
+                      handle={`${formatKeyAmount(vestingData, "mlpVesterClaimable", 18, 4, true)} MYC`}
                       position="right-bottom"
                       renderContent={() =>
                         `${formatKeyAmount(
                           vestingData,
-                          "mycVesterClaimable",
+                          "mlpVesterClaimable",
                           18,
                           4,
                           true
