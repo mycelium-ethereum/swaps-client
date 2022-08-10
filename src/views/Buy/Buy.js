@@ -12,7 +12,7 @@ export default function BuyMYCMLP(props) {
   }, []);
 
   return (
-    <SEO title={getPageTitle("Buy MLP")}>
+    <SEO title={getPageTitle("Buy MLP or MYC")}>
       <div className="BuyMYCMLP page-layout">
         <div className="BuyMYCMLP-container default-container">
           <div className="section-title-block">

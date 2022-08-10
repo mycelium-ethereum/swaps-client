@@ -38,7 +38,7 @@ export function getVestingDataV2(vestingInfo) {
     return;
   }
 
-  const keys = ["mycVester", "glpVester"];
+  const keys = ["mycVester", "mlpVester"];
   const data = {};
   const propsLength = 12;
 
@@ -221,7 +221,7 @@ export default function ClaimEsMyc({ setPendingTxns }) {
     const result = getVestingValues({
       minRatio: bigNumberify(320),
       amount,
-      vestingDataItem: arbVestingData.glpVester,
+      vestingDataItem: arbVestingData.mlpVester,
     });
 
     if (result) {
@@ -249,7 +249,7 @@ export default function ClaimEsMyc({ setPendingTxns }) {
     const result = getVestingValues({
       minRatio: bigNumberify(320),
       amount,
-      vestingDataItem: avaxVestingData.glpVester,
+      vestingDataItem: avaxVestingData.mlpVester,
     });
 
     if (result) {

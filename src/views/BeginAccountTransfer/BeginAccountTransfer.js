@@ -49,7 +49,7 @@ export default function BeginAccountTransfer(props) {
 
   const mlpAddress = getContract(chainId, "MYC");
   const mlpVesterAddress = getContract(chainId, "MycVester");
-  const glpVesterAddress = getContract(chainId, "MlpVester");
+  const mlpVesterAddress = getContract(chainId, "MlpVester");
 
   const rewardRouterAddress = getContract(chainId, "RewardRouter");
 
@@ -57,7 +57,7 @@ export default function BeginAccountTransfer(props) {
     fetcher: fetcher(library, Token),
   });
 
-  const { data: glpVesterBalance } = useSWR([active, chainId, glpVesterAddress, "balanceOf", account], {
+  const { data: mlpVesterBalance } = useSWR([active, chainId, mlpVesterAddress, "balanceOf", account], {
     fetcher: fetcher(library, Token),
   });
 
@@ -69,9 +69,9 @@ export default function BeginAccountTransfer(props) {
     }
   );
 
-  const stakedGlpTrackerAddress = getContract(chainId, "StakedMlpTracker");
-  const { data: cumulativeGlpRewards } = useSWR(
-    [active, chainId, stakedGlpTrackerAddress, "cumulativeRewards", parsedReceiver],
+  const stakedMlpTrackerAddress = getContract(chainId, "StakedMlpTracker");
+  const { data: cumulativeMlpRewards } = useSWR(
+    [active, chainId, stakedMlpTrackerAddress, "cumulativeRewards", parsedReceiver],
     {
       fetcher: fetcher(library, RewardTracker),
     }
@@ -84,8 +84,8 @@ export default function BeginAccountTransfer(props) {
     }
   );
 
-  const { data: transferredCumulativeGlpRewards } = useSWR(
-    [active, chainId, glpVesterAddress, "transferredCumulativeRewards", parsedReceiver],
+  const { data: transferredCumulativeMlpRewards } = useSWR(
+    [active, chainId, mlpVesterAddress, "transferredCumulativeRewards", parsedReceiver],
     {
       fetcher: fetcher(library, Vester),
     }
@@ -109,13 +109,13 @@ export default function BeginAccountTransfer(props) {
   const needApproval = mlpAllowance && mlpStaked && mlpStaked.gt(mlpAllowance);
 
   const hasVestedMyc = mlpVesterBalance && mlpVesterBalance.gt(0);
-  const hasVestedGlp = glpVesterBalance && glpVesterBalance.gt(0);
+  const hasVestedMlp = mlpVesterBalance && mlpVesterBalance.gt(0);
   const hasStakedMyc =
     (cumulativeMycRewards && cumulativeMycRewards.gt(0)) ||
     (transferredCumulativeMycRewards && transferredCumulativeMycRewards.gt(0));
-  const hasStakedGlp =
-    (cumulativeGlpRewards && cumulativeGlpRewards.gt(0)) ||
-    (transferredCumulativeGlpRewards && transferredCumulativeGlpRewards.gt(0));
+  const hasStakedMlp =
+    (cumulativeMlpRewards && cumulativeMlpRewards.gt(0)) ||
+    (transferredCumulativeMlpRewards && transferredCumulativeMlpRewards.gt(0));
   const hasPendingReceiver = pendingReceiver && pendingReceiver !== ethers.constants.AddressZero;
 
   const getError = () => {
@@ -125,7 +125,7 @@ export default function BeginAccountTransfer(props) {
     if (hasVestedMyc) {
       return "Vested MYC not withdrawn";
     }
-    if (hasVestedGlp) {
+    if (hasVestedMlp) {
       return "Vested MLP not withdrawn";
     }
     if (!receiver || receiver.length === 0) {
@@ -134,7 +134,7 @@ export default function BeginAccountTransfer(props) {
     if (!ethers.utils.isAddress(receiver)) {
       return "Invalid Receiver Address";
     }
-    if (hasStakedMyc || hasStakedGlp) {
+    if (hasStakedMyc || hasStakedMlp) {
       return "Invalid Receiver";
     }
     if ((parsedReceiver || "").toString().toLowerCase() === (account || "").toString().toLowerCase()) {
@@ -260,11 +260,11 @@ export default function BeginAccountTransfer(props) {
             <ValidationRow isValid={!hasVestedMyc}>
               Sender has withdrawn all tokens from MYC Vesting Vault
             </ValidationRow>
-            <ValidationRow isValid={!hasVestedGlp}>
+            <ValidationRow isValid={!hasVestedMlp}>
               Sender has withdrawn all tokens from MLP Vesting Vault
             </ValidationRow>
             <ValidationRow isValid={!hasStakedMyc}>Receiver has not staked MYC tokens before</ValidationRow>
-            <ValidationRow isValid={!hasStakedGlp}>Receiver has not staked MLP tokens before</ValidationRow>
+            <ValidationRow isValid={!hasStakedMlp}>Receiver has not staked MLP tokens before</ValidationRow>
           </div>
           <div className="input-row">
             <button

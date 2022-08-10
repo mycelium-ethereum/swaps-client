@@ -343,33 +343,33 @@ export default function StakeV2({ setPendingTxns, connectWallet, trackAction }) 
   const mycAddress = getContract(chainId, "MYC");
   const esMycAddress = getContract(chainId, "ES_MYC");
   const bnMycAddress = getContract(chainId, "BN_MYC");
-  const glpAddress = getContract(chainId, "MLP");
+  const mlpAddress = getContract(chainId, "MLP");
 
   const stakedMycTrackerAddress = getContract(chainId, "StakedMycTracker");
   const bonusMycTrackerAddress = getContract(chainId, "BonusMycTracker");
   const feeMycTrackerAddress = getContract(chainId, "FeeMycTracker");
 
-  const stakedGlpTrackerAddress = getContract(chainId, "StakedMlpTracker");
-  const feeGlpTrackerAddress = getContract(chainId, "FeeMlpTracker");
+  const stakedMlpTrackerAddress = getContract(chainId, "StakedMlpTracker");
+  const feeMlpTrackerAddress = getContract(chainId, "FeeMlpTracker");
 
-  const glpManagerAddress = getContract(chainId, "MlpManager");
+  const mlpManagerAddress = getContract(chainId, "MlpManager");
 
   const mycVesterAddress = getContract(chainId, "MycVester");
-  const glpVesterAddress = getContract(chainId, "MlpVester");
+  const mlpVesterAddress = getContract(chainId, "MlpVester");
 
-  const vesterAddresses = [mycVesterAddress, glpVesterAddress];
+  const vesterAddresses = [mycVesterAddress, mlpVesterAddress];
 
   const nativeTokenSymbol = getConstant(chainId, "nativeTokenSymbol");
   const wrappedTokenSymbol = getConstant(chainId, "wrappedTokenSymbol");
 
-  const walletTokens = [mycAddress, esMycAddress, glpAddress, stakedMycTrackerAddress];
+  const walletTokens = [mycAddress, esMycAddress, mlpAddress, stakedMycTrackerAddress];
   const depositTokens = [
     mycAddress,
     esMycAddress,
     stakedMycTrackerAddress,
     bonusMycTrackerAddress,
     bnMycAddress,
-    glpAddress,
+    mlpAddress,
   ];
   const rewardTrackersForDepositBalances = [
     stakedMycTrackerAddress,
@@ -377,14 +377,14 @@ export default function StakeV2({ setPendingTxns, connectWallet, trackAction }) 
     bonusMycTrackerAddress,
     feeMycTrackerAddress,
     feeMycTrackerAddress,
-    feeGlpTrackerAddress,
+    feeMlpTrackerAddress,
   ];
   const rewardTrackersForStakingInfo = [
     stakedMycTrackerAddress,
     bonusMycTrackerAddress,
     feeMycTrackerAddress,
-    stakedGlpTrackerAddress,
-    feeGlpTrackerAddress,
+    stakedMlpTrackerAddress,
+    feeMlpTrackerAddress,
   ];
 
   const { data: walletBalances } = useSWR(
@@ -427,7 +427,7 @@ export default function StakeV2({ setPendingTxns, connectWallet, trackAction }) 
     }
   );
 
-  const { data: aums } = useSWR([`StakeV2:getAums:${active}`, chainId, glpManagerAddress, "getAums"], {
+  const { data: aums } = useSWR([`StakeV2:getAums:${active}`, chainId, mlpManagerAddress, "getAums"], {
     fetcher: fetcher(library, MlpManager),
   });
 
@@ -445,7 +445,7 @@ export default function StakeV2({ setPendingTxns, connectWallet, trackAction }) 
     // }
   // );
   const { data: mlpVesterRewards } = useSWR(
-    [`StakeV2:claimable:${active}`, chainId, glpVesterAddress, "claimable", account || PLACEHOLDER_ACCOUNT],
+    [`StakeV2:claimable:${active}`, chainId, mlpVesterAddress, "claimable", account || PLACEHOLDER_ACCOUNT],
     {
       fetcher: fetcher(library, Vester),
     }
@@ -453,7 +453,7 @@ export default function StakeV2({ setPendingTxns, connectWallet, trackAction }) 
 
   const { tcrPrice } = useTCRPrice(chainId, { arbitrum: chainId === ARBITRUM ? library : undefined }, active);
 
-  const mycSupplyUrl = getServerUrl(chainId, "/myc_supply");
+  const mycSupplyUrl = getServerUrl(chainId, "/gmx_supply");
   const { data: mycSupply } = useSWR([mycSupplyUrl], {
     fetcher: (...args) => fetch(...args).then((res) => res.text()),
   });
@@ -468,7 +468,7 @@ export default function StakeV2({ setPendingTxns, connectWallet, trackAction }) 
   const stakingData = getStakingData(stakingInfo);
   // const vestingData = getVestingData(vestingInfo);
   const vestingData = mlpVesterRewards ? {
-    glpVester: {
+    mlpVester: {
       claimable: mlpVesterRewards
     },
     mycVester: {
@@ -494,9 +494,9 @@ export default function StakeV2({ setPendingTxns, connectWallet, trackAction }) 
     totalRewardTokens = processedData.bnMycInFeeMyc.add(processedData.bonusMycInFeeMyc);
   }
 
-  let totalRewardTokensAndGlp;
-  if (totalRewardTokens && processedData && processedData.glpBalance) {
-    totalRewardTokensAndGlp = totalRewardTokens.add(processedData.glpBalance);
+  let totalRewardTokensAndMlp;
+  if (totalRewardTokens && processedData && processedData.mlpBalance) {
+    totalRewardTokensAndMlp = totalRewardTokens.add(processedData.mlpBalance);
   }
 
   useEffect(() => {
@@ -504,7 +504,7 @@ export default function StakeV2({ setPendingTxns, connectWallet, trackAction }) 
   }, []);
 
   let earnMsg;
-  if (totalRewardTokensAndGlp && totalRewardTokensAndGlp.gt(0)) {
+  if (totalRewardTokensAndMlp && totalRewardTokensAndMlp.gt(0)) {
     let mycAmountStr;
     if (processedData.mycInStakedMyc && processedData.mycInStakedMyc.gt(0)) {
       mycAmountStr = formatAmount(processedData.mycInStakedMyc, 18, 2, true) + " MYC";
@@ -517,14 +517,14 @@ export default function StakeV2({ setPendingTxns, connectWallet, trackAction }) 
     if (processedData.bonusMycInFeeMyc && processedData.bnMycInFeeMyc.gt(0)) {
       mpAmountStr = formatAmount(processedData.bnMycInFeeMyc, 18, 2, true) + " MP";
     }
-    let glpStr;
-    if (processedData.glpBalance && processedData.glpBalance.gt(0)) {
-      glpStr = formatAmount(processedData.glpBalance, 18, 2, true) + " MLP";
+    let mlpStr;
+    if (processedData.mlpBalance && processedData.mlpBalance.gt(0)) {
+      mlpStr = formatAmount(processedData.mlpBalance, 18, 2, true) + " MLP";
     }
-    const amountStr = [mycAmountStr, esMycAmountStr, mpAmountStr, glpStr].filter((s) => s).join(", ");
+    const amountStr = [mycAmountStr, esMycAmountStr, mpAmountStr, mlpStr].filter((s) => s).join(", ");
     earnMsg = (
       <div>
-        You are earning {nativeTokenSymbol} rewards with {formatAmount(totalRewardTokensAndGlp, 18, 2, true)} tokens.
+        You are earning {nativeTokenSymbol} rewards with {formatAmount(totalRewardTokensAndMlp, 18, 2, true)} tokens.
         <br />
         Tokens: {amountStr}.
       </div>
@@ -587,21 +587,21 @@ export default function StakeV2({ setPendingTxns, connectWallet, trackAction }) 
                 <div>
                   <StakeV2Styled.RewardsBannerTextWrap>
                     <StakeV2Styled.RewardsBannerText large inline>
-                      {formatKeyAmount(processedData, "feeGlpTrackerRewards", 18, 4)} {nativeTokenSymbol} (
+                      {formatKeyAmount(processedData, "feeMlpTrackerRewards", 18, 4)} {nativeTokenSymbol} (
                       {wrappedTokenSymbol})
                     </StakeV2Styled.RewardsBannerText>{" "}
                     <StakeV2Styled.RewardsBannerText inline>
                       ($
-                      {formatKeyAmount(processedData, "feeGlpTrackerRewardsUsd", USD_DECIMALS, 2, true)})
+                      {formatKeyAmount(processedData, "feeMlpTrackerRewardsUsd", USD_DECIMALS, 2, true)})
                     </StakeV2Styled.RewardsBannerText>
                   </StakeV2Styled.RewardsBannerTextWrap>
                   <StakeV2Styled.RewardsBannerTextWrap>
                     <StakeV2Styled.RewardsBannerText large inline>
-                      {formatKeyAmount(processedData, "stakedGlpTrackerRewards", 18, 4)} MYC
+                      {formatKeyAmount(processedData, "stakedMlpTrackerRewards", 18, 4)} MYC
                     </StakeV2Styled.RewardsBannerText>{" "}
                     <StakeV2Styled.RewardsBannerText inline>
                       ($
-                      {formatKeyAmount(processedData, "stakedGlpTrackerRewardsUsd", USD_DECIMALS, 2, true)})
+                      {formatKeyAmount(processedData, "stakedMlpTrackerRewardsUsd", USD_DECIMALS, 2, true)})
                     </StakeV2Styled.RewardsBannerText>
                   </StakeV2Styled.RewardsBannerTextWrap>
                 </div>
@@ -610,7 +610,7 @@ export default function StakeV2({ setPendingTxns, connectWallet, trackAction }) 
                 <StakeV2Styled.RewardsBannerText secondary>APR</StakeV2Styled.RewardsBannerText>
                 <StakeV2Styled.RewardsBannerText large inline>
                   <Tooltip
-                    handle={`${formatKeyAmount(processedData, "glpAprTotal", 2, 2, true)}%`}
+                    handle={`${formatKeyAmount(processedData, "mlpAprTotal", 2, 2, true)}%`}
                     position="right-bottom"
                     renderContent={() => {
                       return (
@@ -619,11 +619,11 @@ export default function StakeV2({ setPendingTxns, connectWallet, trackAction }) 
                             <span className="label">
                               {nativeTokenSymbol} ({wrappedTokenSymbol}) APR
                             </span>
-                            <span>{formatKeyAmount(processedData, "glpAprForNativeToken", 2, 2, true)}%</span>
+                            <span>{formatKeyAmount(processedData, "mlpAprForNativeToken", 2, 2, true)}%</span>
                           </div>
                           <div className="Tooltip-row">
                             <span className="label">esMYC APR</span>
-                            <span>{formatKeyAmount(processedData, "glpAprForEsMyc", 2, 2, true)}%</span>
+                            <span>{formatKeyAmount(processedData, "mlpAprForEsMyc", 2, 2, true)}%</span>
                           </div>
                         </>
                       );
@@ -635,35 +635,35 @@ export default function StakeV2({ setPendingTxns, connectWallet, trackAction }) 
             <div className="App-card-content">
               <div className="App-card-row">
                 <div className="label">Price</div>
-                <div>${formatKeyAmount(processedData, "glpPrice", USD_DECIMALS, 3, true)}</div>
+                <div>${formatKeyAmount(processedData, "mlpPrice", USD_DECIMALS, 3, true)}</div>
               </div>
               <div className="App-card-row">
                 <div className="label">Wallet</div>
                 <div>
-                  {formatKeyAmount(processedData, "glpBalance", MLP_DECIMALS, 2, true)} MLP ($
-                  {formatKeyAmount(processedData, "glpBalanceUsd", USD_DECIMALS, 2, true)})
+                  {formatKeyAmount(processedData, "mlpBalance", MLP_DECIMALS, 2, true)} MLP ($
+                  {formatKeyAmount(processedData, "mlpBalanceUsd", USD_DECIMALS, 2, true)})
                 </div>
               </div>
               <div className="App-card-row">
                 <div className="label">Staked</div>
                 <div>
-                  {formatKeyAmount(processedData, "glpBalance", MLP_DECIMALS, 2, true)} MLP ($
-                  {formatKeyAmount(processedData, "glpBalanceUsd", USD_DECIMALS, 2, true)})
+                  {formatKeyAmount(processedData, "mlpBalance", MLP_DECIMALS, 2, true)} MLP ($
+                  {formatKeyAmount(processedData, "mlpBalanceUsd", USD_DECIMALS, 2, true)})
                 </div>
               </div>
               <div className="App-card-divider"></div>
               <div className="App-card-row">
                 <div className="label">Total Staked</div>
                 <div>
-                  {formatKeyAmount(processedData, "glpSupply", 18, 2, true)} MLP ($
-                  {formatKeyAmount(processedData, "glpSupplyUsd", USD_DECIMALS, 2, true)})
+                  {formatKeyAmount(processedData, "mlpSupply", 18, 2, true)} MLP ($
+                  {formatKeyAmount(processedData, "mlpSupplyUsd", USD_DECIMALS, 2, true)})
                 </div>
               </div>
               <div className="App-card-row">
                 <div className="label">Total Supply</div>
                 <div>
-                  {formatKeyAmount(processedData, "glpSupply", 18, 2, true)} MLP ($
-                  {formatKeyAmount(processedData, "glpSupplyUsd", USD_DECIMALS, 2, true)})
+                  {formatKeyAmount(processedData, "mlpSupply", 18, 2, true)} MLP ($
+                  {formatKeyAmount(processedData, "mlpSupplyUsd", USD_DECIMALS, 2, true)})
                 </div>
               </div>
               <div className="App-card-divider"></div>

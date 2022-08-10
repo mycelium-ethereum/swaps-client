@@ -69,7 +69,7 @@ export default function TokenCard() {
             MLP is the liquidity provider token. Accrues 70% of the platform's generated fees.
           </div>
           <div className="Home-token-card-option-apr">
-            Arbitrum APR: <APRLabel chainId={ARBITRUM} label="glpAprTotal" key="ARBITRUM" />
+            Arbitrum APR: <APRLabel chainId={ARBITRUM} label="mlpAprTotal" key="ARBITRUM" />
           </div>
           <div className="Home-token-card-option-action">
             <div className="buy">
