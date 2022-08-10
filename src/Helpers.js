@@ -2057,7 +2057,7 @@ export function getExplorerUrl(chainId) {
   } else if (chainId === TESTNET) {
     return "https://testnet.bscscan.com/";
   } else if (chainId === ARBITRUM_TESTNET) {
-    return "https://rinkeby-explorer.arbitrum.io/";
+    return "https://testnet.arbiscan.io/";
   } else if (chainId === ARBITRUM) {
     return "https://arbiscan.io/";
   } else if (chainId === AVALANCHE) {
@@ -2252,7 +2252,7 @@ const NETWORK_METADATA = {
       decimals: 18,
     },
     rpcUrls: ARBITRUM_TESTNET_RPC_PROVIDERS,
-    blockExplorerUrls: ["https://rinkeby-explorer.arbitrum.io/"],
+    blockExplorerUrls: [getExplorerUrl(ARBITRUM_TESTNET)],
   },
   [ARBITRUM]: {
     chainId: "0x" + ARBITRUM.toString(16),
