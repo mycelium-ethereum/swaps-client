@@ -89,12 +89,12 @@ function CompoundModal(props) {
   );
 
   const mycAddress = getContract(chainId, "MYC");
-  const stakedMlpTrackerAddress = getContract(chainId, "StakedMlpTracker");
+  const stakedMycTrackerAddress = getContract(chainId, "StakedMycTracker");
 
   const [isApproving, setIsApproving] = useState(false);
 
   const { data: tokenAllowance } = useSWR(
-    active && [active, chainId, mycAddress, "allowance", account, stakedMlpTrackerAddress],
+    active && [active, chainId, mycAddress, "allowance", account, stakedMycTrackerAddress],
     {
       fetcher: fetcher(library, Token),
     }
@@ -125,7 +125,7 @@ function CompoundModal(props) {
         setIsApproving,
         library,
         tokenAddress: mycAddress,
-        spender: stakedMlpTrackerAddress,
+        spender: stakedMycTrackerAddress,
         chainId,
       });
       return;
