@@ -48,14 +48,9 @@ export default function BeginAccountTransfer(props) {
   }
 
   const mlpAddress = getContract(chainId, "MYC");
-  const mlpVesterAddress = getContract(chainId, "MycVester");
   const mlpVesterAddress = getContract(chainId, "MlpVester");
 
   const rewardRouterAddress = getContract(chainId, "RewardRouter");
-
-  const { data: mlpVesterBalance } = useSWR([active, chainId, mlpVesterAddress, "balanceOf", account], {
-    fetcher: fetcher(library, Token),
-  });
 
   const { data: mlpVesterBalance } = useSWR([active, chainId, mlpVesterAddress, "balanceOf", account], {
     fetcher: fetcher(library, Token),
