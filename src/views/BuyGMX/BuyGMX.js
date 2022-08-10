@@ -38,8 +38,8 @@ export default function BuyGMX() {
   }, []);
 
   return (
-    <div className="BuyGMXGLP page-layout">
-      <div className="BuyGMXGLP-container default-container">
+    <div className="BuyGMXMLP page-layout">
+      <div className="BuyGMXMLP-container default-container">
         {chainId === ARBITRUM && (
           <div className="section-title-block">
             <div className="section-title-content">
@@ -57,12 +57,12 @@ export default function BuyGMX() {
           </div>
         )}
         {chainId === ARBITRUM && (
-          <div className="BuyGMXGLP-panel">
+          <div className="BuyGMXMLP-panel">
             <div className="App-card no-height">
               <div className="App-card-title">Buy ETH</div>
               <div className="App-card-divider"></div>
               <div className="App-card-content">
-                <div className="BuyGMXGLP-description">
+                <div className="BuyGMXMLP-description">
                   You can buy ETH directly on{" "}
                   <a href="https://arbitrum.io/" target="_blank" rel="noopener noreferrer">
                     Arbitrum
@@ -83,7 +83,7 @@ export default function BuyGMX() {
               <div className="App-card-title">Transfer ETH</div>
               <div className="App-card-divider"></div>
               <div className="App-card-content">
-                <div className="BuyGMXGLP-description">
+                <div className="BuyGMXMLP-description">
                   You can transfer ETH from other networks to Arbitrum using any of the below options:
                 </div>
                 <div className="bridge-options">
@@ -129,12 +129,12 @@ export default function BuyGMX() {
           </div>
         )}
         {chainId === AVALANCHE && (
-          <div className="BuyGMXGLP-panel">
+          <div className="BuyGMXMLP-panel">
             <div className="App-card no-height">
               <div className="App-card-title">Buy AVAX</div>
               <div className="App-card-divider"></div>
               <div className="App-card-content">
-                <div className="BuyGMXGLP-description">
+                <div className="BuyGMXMLP-description">
                   You can buy AVAX directly on{" "}
                   <a href="https://www.avax.network/" target="_blank" rel="noopener noreferrer">
                     Avalanche
@@ -155,7 +155,7 @@ export default function BuyGMX() {
               <div className="App-card-title">Transfer AVAX</div>
               <div className="App-card-divider"></div>
               <div className="App-card-content">
-                <div className="BuyGMXGLP-description">
+                <div className="BuyGMXMLP-description">
                   You can transfer AVAX to Avalanche using any of the below options. <br />
                   <br />
                   Using the Avalanche or Synapse bridges, you can also transfer any other supported cryptocurrency, and
@@ -180,14 +180,14 @@ export default function BuyGMX() {
           </div>
         )}
         {chainId === AVALANCHE && (
-          <div className="BuyGMXGLP-panel">
+          <div className="BuyGMXMLP-panel">
             <div className="buy-card">
               <div className="section-title-content">
                 <div className="card-title">Buy GMX</div>
               </div>
               <div className="App-card no-height">
                 <div className="App-card-content no-title">
-                  <div className="BuyGMXGLP-description better-rates-description">
+                  <div className="BuyGMXMLP-description better-rates-description">
                     After you have ETH, set your network to{" "}
                     <a href="https://arbitrum.io/bridge-tutorial/" target="_blank" rel="noopener noreferrer">
                       Arbitrum
@@ -210,14 +210,14 @@ export default function BuyGMX() {
         )}
 
         {chainId === ARBITRUM && (
-          <div className="BuyGMXGLP-panel">
+          <div className="BuyGMXMLP-panel">
             <div className="buy-card">
               <div className="section-title-content">
                 <div className="card-title">Buy GMX</div>
               </div>
               <div className="App-card no-height">
                 <div className="App-card-content no-title">
-                  <div className="BuyGMXGLP-description better-rates-description">
+                  <div className="BuyGMXMLP-description better-rates-description">
                     After you have ETH, set your network to{" "}
                     <a href="https://arbitrum.io/bridge-tutorial/" target="_blank" rel="noopener noreferrer">
                       Arbitrum
@@ -242,7 +242,7 @@ export default function BuyGMX() {
               </div>
               <div className="App-card no-height">
                 <div className="App-card-content no-title">
-                  <div className="BuyGMXGLP-description">
+                  <div className="BuyGMXMLP-description">
                     GMX bonds can be bought on Olympus Pro with a discount and a small vesting period:
                   </div>
                   <div className="buy-gmx">

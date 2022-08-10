@@ -1,14 +1,14 @@
-.BuyGMXGLP {
+.BuyGMXMLP {
   justify-content: space-between;
 }
 
-.BuyGMXGLP-container {
+.BuyGMXMLP-container {
   padding-top: 3rem;
   padding-bottom: 2rem;
   width: 100%;
 }
 
-.BuyGMXGLP-panel {
+.BuyGMXMLP-panel {
   padding-top: 0;
   padding-bottom: 2.5rem;
   border-bottom-left-radius: 8px;
@@ -16,35 +16,35 @@
   display: flex;
   justify-content: space-between;
 }
-.BuyGMXGLP-panel .App-card:first-child {
+.BuyGMXMLP-panel .App-card:first-child {
   margin-right: 20px;
 }
 
-.BuyGMXGLP-panel .App-card {
+.BuyGMXMLP-panel .App-card {
   max-width: 37.677rem;
   width: 100%;
   height: fit-content;
 }
-.BuyGMXGLP-panel .App-card {
+.BuyGMXMLP-panel .App-card {
   max-width: 37.677rem;
   width: 100%;
   height: fit-content;
 }
 
-.BuyGMXGLP-panel .App-card.no-height {
+.BuyGMXMLP-panel .App-card.no-height {
   height: unset;
 }
 
-.BuyGMXGLP-panel:last-child {
+.BuyGMXMLP-panel:last-child {
   padding-bottom: 0;
 }
 
-.BuyGMXGLP-description {
+.BuyGMXMLP-description {
   letter-spacing: 0px;
   color: #a9a9b0;
 }
 
-.BuyGMXGLP-description a {
+.BuyGMXMLP-description a {
   text-decoration: none;
   position: relative;
 }
@@ -139,8 +139,8 @@
   display: none !important;
 }
 
-.BuyGMXGLP-panel .buy-card:first-child,
-.BuyGMXGLP-panel .section-title-block:first-child {
+.BuyGMXMLP-panel .buy-card:first-child,
+.BuyGMXMLP-panel .section-title-block:first-child {
   margin-right: 20px;
 }
 
@@ -166,18 +166,18 @@
   .section-title-block {
     margin-bottom: 1rem !important;
   }
-  .BuyGMXGLP-panel {
+  .BuyGMXMLP-panel {
     flex-direction: column;
   }
-  .BuyGMXGLP-panel .App-card:first-child {
+  .BuyGMXMLP-panel .App-card:first-child {
     margin-right: 0;
     margin-bottom: 20px;
   }
-  .BuyGMXGLP-panel .App-card {
+  .BuyGMXMLP-panel .App-card {
     max-width: 100%;
   }
-  .BuyGMXGLP-panel .buy-card:first-child,
-  .BuyGMXGLP-panel .section-title-block:first-child {
+  .BuyGMXMLP-panel .buy-card:first-child,
+  .BuyGMXMLP-panel .section-title-block:first-child {
     margin-right: 0;
     margin-bottom: 20px;
   }
@@ -190,12 +190,12 @@
 }
 
 @media (max-width: 400px) {
-  .BuyGMXGLP-container {
+  .BuyGMXMLP-container {
     padding-left: 16px !important;
     padding-right: 16px !important;
   }
 
-  .BuyGMXGLP-description {
+  .BuyGMXMLP-description {
     font-size: 1rem;
     line-height: 1.3rem;
   }

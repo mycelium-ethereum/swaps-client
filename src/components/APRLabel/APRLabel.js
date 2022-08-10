@@ -18,7 +18,7 @@ import Vault from "../../abis/Vault.json";
 import ReaderV2 from "../../abis/ReaderV2.json";
 import RewardReader from "../../abis/RewardReader.json";
 import Token from "../../abis/Token.json";
-import GlpManager from "../../abis/GlpManager.json";
+import MlpManager from "../../abis/MlpManager.json";
 
 import { useWeb3React } from "@web3-react/core";
 
@@ -37,19 +37,19 @@ export default function APRLabel({ chainId, label }) {
   const gmxAddress = getContract(chainId, "GMX");
   const esGmxAddress = getContract(chainId, "ES_GMX");
   const bnGmxAddress = getContract(chainId, "BN_GMX");
-  const glpAddress = getContract(chainId, "GLP");
+  const glpAddress = getContract(chainId, "MLP");
 
   const stakedGmxTrackerAddress = getContract(chainId, "StakedGmxTracker");
   const bonusGmxTrackerAddress = getContract(chainId, "BonusGmxTracker");
   const feeGmxTrackerAddress = getContract(chainId, "FeeGmxTracker");
 
-  const stakedGlpTrackerAddress = getContract(chainId, "StakedGlpTracker");
-  const feeGlpTrackerAddress = getContract(chainId, "FeeGlpTracker");
+  const stakedGlpTrackerAddress = getContract(chainId, "StakedMlpTracker");
+  const feeGlpTrackerAddress = getContract(chainId, "FeeMlpTracker");
 
-  const glpManagerAddress = getContract(chainId, "GlpManager");
+  const glpManagerAddress = getContract(chainId, "MlpManager");
 
   const gmxVesterAddress = getContract(chainId, "GmxVester");
-  const glpVesterAddress = getContract(chainId, "GlpVester");
+  const glpVesterAddress = getContract(chainId, "MlpVester");
 
   const vesterAddresses = [gmxVesterAddress, glpVesterAddress];
 
@@ -107,7 +107,7 @@ export default function APRLabel({ chainId, label }) {
   );
 
   const { data: aums } = useSWR([`StakeV2:getAums:${active}`, chainId, glpManagerAddress, "getAums"], {
-    fetcher: fetcher(undefined, GlpManager),
+    fetcher: fetcher(undefined, MlpManager),
   });
 
   const { data: nativeTokenPrice } = useSWR(

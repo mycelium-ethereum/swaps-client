@@ -13,7 +13,7 @@ import Vester from "../../abis/Vester.json";
 import RewardRouter from "../../abis/RewardRouter.json";
 import RewardReader from "../../abis/RewardReader.json";
 import Token from "../../abis/Token.json";
-import GlpManager from "../../abis/GlpManager.json";
+import MlpManager from "../../abis/MlpManager.json";
 
 import { ethers } from "ethers";
 import {
@@ -25,7 +25,7 @@ import {
   getServerUrl,
   useLocalStorageSerializeKey,
   useChainId,
-  GLP_DECIMALS,
+  MLP_DECIMALS,
   USD_DECIMALS,
   ARBITRUM,
   PLACEHOLDER_ACCOUNT,
@@ -343,19 +343,19 @@ export default function StakeV2({ setPendingTxns, connectWallet, trackAction }) 
   const gmxAddress = getContract(chainId, "GMX");
   const esGmxAddress = getContract(chainId, "ES_GMX");
   const bnGmxAddress = getContract(chainId, "BN_GMX");
-  const glpAddress = getContract(chainId, "GLP");
+  const glpAddress = getContract(chainId, "MLP");
 
   const stakedGmxTrackerAddress = getContract(chainId, "StakedGmxTracker");
   const bonusGmxTrackerAddress = getContract(chainId, "BonusGmxTracker");
   const feeGmxTrackerAddress = getContract(chainId, "FeeGmxTracker");
 
-  const stakedGlpTrackerAddress = getContract(chainId, "StakedGlpTracker");
-  const feeGlpTrackerAddress = getContract(chainId, "FeeGlpTracker");
+  const stakedGlpTrackerAddress = getContract(chainId, "StakedMlpTracker");
+  const feeGlpTrackerAddress = getContract(chainId, "FeeMlpTracker");
 
-  const glpManagerAddress = getContract(chainId, "GlpManager");
+  const glpManagerAddress = getContract(chainId, "MlpManager");
 
   const gmxVesterAddress = getContract(chainId, "GmxVester");
-  const glpVesterAddress = getContract(chainId, "GlpVester");
+  const glpVesterAddress = getContract(chainId, "MlpVester");
 
   const vesterAddresses = [gmxVesterAddress, glpVesterAddress];
 
@@ -428,7 +428,7 @@ export default function StakeV2({ setPendingTxns, connectWallet, trackAction }) 
   );
 
   const { data: aums } = useSWR([`StakeV2:getAums:${active}`, chainId, glpManagerAddress, "getAums"], {
-    fetcher: fetcher(library, GlpManager),
+    fetcher: fetcher(library, MlpManager),
   });
 
   const { data: nativeTokenPrice } = useSWR(
@@ -640,14 +640,14 @@ export default function StakeV2({ setPendingTxns, connectWallet, trackAction }) 
               <div className="App-card-row">
                 <div className="label">Wallet</div>
                 <div>
-                  {formatKeyAmount(processedData, "glpBalance", GLP_DECIMALS, 2, true)} MLP ($
+                  {formatKeyAmount(processedData, "glpBalance", MLP_DECIMALS, 2, true)} MLP ($
                   {formatKeyAmount(processedData, "glpBalanceUsd", USD_DECIMALS, 2, true)})
                 </div>
               </div>
               <div className="App-card-row">
                 <div className="label">Staked</div>
                 <div>
-                  {formatKeyAmount(processedData, "glpBalance", GLP_DECIMALS, 2, true)} MLP ($
+                  {formatKeyAmount(processedData, "glpBalance", MLP_DECIMALS, 2, true)} MLP ($
                   {formatKeyAmount(processedData, "glpBalanceUsd", USD_DECIMALS, 2, true)})
                 </div>
               </div>

@@ -297,7 +297,7 @@ export default function Ecosystem() {
                 </div>
                 <div className="App-card-row">
                   <div className="label">About</div>
-                  <div>Returns calculator for GMX and GLP</div>
+                  <div>Returns calculator for GMX and MLP</div>
                 </div>
                 <div className="App-card-row">
                   <div className="label">Creator</div>

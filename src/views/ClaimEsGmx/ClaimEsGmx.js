@@ -29,9 +29,9 @@ import arbitrumIcon from "../../img/ic_arbitrum_96.svg";
 import avaIcon from "../../img/ic_avalanche_96.svg";
 
 const VEST_WITH_GMX_ARB = "VEST_WITH_GMX_ARB";
-const VEST_WITH_GLP_ARB = "VEST_WITH_GLP_ARB";
+const VEST_WITH_MLP_ARB = "VEST_WITH_MLP_ARB";
 const VEST_WITH_GMX_AVAX = "VEST_WITH_GMX_AVAX";
-const VEST_WITH_GLP_AVAX = "VEST_WITH_GLP_AVAX";
+const VEST_WITH_MLP_AVAX = "VEST_WITH_MLP_AVAX";
 
 export function getVestingDataV2(vestingInfo) {
   if (!vestingInfo || vestingInfo.length === 0) {
@@ -157,8 +157,8 @@ export default function ClaimEsGmx({ setPendingTxns }) {
   const arbRewardReaderAddress = getContract(ARBITRUM, "RewardReader");
   const avaxRewardReaderAddress = getContract(AVALANCHE, "RewardReader");
 
-  const arbVesterAdddresses = [getContract(ARBITRUM, "GmxVester"), getContract(ARBITRUM, "GlpVester")];
-  const avaxVesterAdddresses = [getContract(AVALANCHE, "GmxVester"), getContract(AVALANCHE, "GlpVester")];
+  const arbVesterAdddresses = [getContract(ARBITRUM, "GmxVester"), getContract(ARBITRUM, "MlpVester")];
+  const avaxVesterAdddresses = [getContract(AVALANCHE, "GmxVester"), getContract(AVALANCHE, "MlpVester")];
 
   const { data: arbVestingInfo } = useSWR(
     [
@@ -217,7 +217,7 @@ export default function ClaimEsGmx({ setPendingTxns }) {
     }
   }
 
-  if (selectedOption === VEST_WITH_GLP_ARB && arbVestingData) {
+  if (selectedOption === VEST_WITH_MLP_ARB && arbVestingData) {
     const result = getVestingValues({
       minRatio: bigNumberify(320),
       amount,
@@ -229,7 +229,7 @@ export default function ClaimEsGmx({ setPendingTxns }) {
         result);
     }
 
-    stakingToken = "GLP";
+    stakingToken = "MLP";
   }
 
   if (selectedOption === VEST_WITH_GMX_AVAX && avaxVestingData) {
@@ -245,7 +245,7 @@ export default function ClaimEsGmx({ setPendingTxns }) {
     }
   }
 
-  if (selectedOption === VEST_WITH_GLP_AVAX && avaxVestingData) {
+  if (selectedOption === VEST_WITH_MLP_AVAX && avaxVestingData) {
     const result = getVestingValues({
       minRatio: bigNumberify(320),
       amount,
@@ -257,7 +257,7 @@ export default function ClaimEsGmx({ setPendingTxns }) {
         result);
     }
 
-    stakingToken = "GLP";
+    stakingToken = "MLP";
   }
 
   const getError = () => {
@@ -307,7 +307,7 @@ export default function ClaimEsGmx({ setPendingTxns }) {
       receiver = "0x544a6ec142Aa9A7F75235fE111F61eF2EbdC250a";
     }
 
-    if (selectedOption === VEST_WITH_GLP_ARB) {
+    if (selectedOption === VEST_WITH_MLP_ARB) {
       receiver = "0x9d8f6f6eE45275A5Ca3C6f6269c5622b1F9ED515";
     }
 
@@ -315,7 +315,7 @@ export default function ClaimEsGmx({ setPendingTxns }) {
       receiver = "0x171a321A78dAE0CDC0Ba3409194df955DEEcA746";
     }
 
-    if (selectedOption === VEST_WITH_GLP_AVAX) {
+    if (selectedOption === VEST_WITH_MLP_AVAX) {
       receiver = "0x28863Dd19fb52DF38A9f2C6dfed40eeB996e3818";
     }
 
@@ -384,10 +384,10 @@ export default function ClaimEsGmx({ setPendingTxns }) {
               </Checkbox>
               <Checkbox
                 className="arbitrum btn btn-primary btn-left btn-lg"
-                isChecked={selectedOption === VEST_WITH_GLP_ARB}
-                setIsChecked={() => setSelectedOption(VEST_WITH_GLP_ARB)}
+                isChecked={selectedOption === VEST_WITH_MLP_ARB}
+                setIsChecked={() => setSelectedOption(VEST_WITH_MLP_ARB)}
               >
-                <div className="ClaimEsGmx-option-label">Vest with GLP on Arbitrum</div>
+                <div className="ClaimEsGmx-option-label">Vest with MLP on Arbitrum</div>
                 <img src={arbitrumIcon} alt="arbitrum" />
               </Checkbox>
               <Checkbox
@@ -400,10 +400,10 @@ export default function ClaimEsGmx({ setPendingTxns }) {
               </Checkbox>
               <Checkbox
                 className="avalanche btn btn-primary btn-left btn-lg"
-                isChecked={selectedOption === VEST_WITH_GLP_AVAX}
-                setIsChecked={() => setSelectedOption(VEST_WITH_GLP_AVAX)}
+                isChecked={selectedOption === VEST_WITH_MLP_AVAX}
+                setIsChecked={() => setSelectedOption(VEST_WITH_MLP_AVAX)}
               >
-                <div className="ClaimEsGmx-option-label avalanche">Vest with GLP on Avalanche</div>
+                <div className="ClaimEsGmx-option-label avalanche">Vest with MLP on Avalanche</div>
                 <img src={avaIcon} alt="avalanche" />
               </Checkbox>
             </div>

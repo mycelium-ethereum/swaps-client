@@ -6,15 +6,15 @@ import buyGMXIcon from "../../img/buy_gmx.svg";
 import SEO from "../../components/Common/SEO";
 import { getPageTitle } from "../../Helpers";
 
-export default function BuyGMXGLP(props) {
+export default function BuyGMXMLP(props) {
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
 
   return (
     <SEO title={getPageTitle("Buy MLP")}>
-      <div className="BuyGMXGLP page-layout">
-        <div className="BuyGMXGLP-container default-container">
+      <div className="BuyGMXMLP page-layout">
+        <div className="BuyGMXMLP-container default-container">
           <div className="section-title-block">
             <div className="section-title-icon">
               <img src={buyGMXIcon} alt="buyGMXIcon" />

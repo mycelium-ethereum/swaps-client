@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { Link, useHistory } from "react-router-dom";
 
-import GlpSwap from "../../components/Glp/GlpSwap";
+import MlpSwap from "../../components/Mlp/MlpSwap";
 import Footer from "../../Footer";
 import "./BuyMlp.css";
 
 import { useChainId } from "../../Helpers";
 import { getNativeToken } from "../../data/Tokens";
 
-export default function BuyGlp(props) {
+export default function BuyMlp(props) {
   const { chainId } = useChainId();
   const history = useHistory();
   const [isBuying, setIsBuying] = useState(true);
@@ -25,7 +25,7 @@ export default function BuyGlp(props) {
       <div className="section-title-block">
         {/*
           <div className="section-title-icon">
-            <img src={buyGLPIcon} alt="buyGLPIcon" />
+            <img src={buyMLPIcon} alt="buyMLPIcon" />
           </div>
         */}
         <div className="section-title-content">
@@ -53,7 +53,7 @@ export default function BuyGlp(props) {
           </div>
         </div>
       </div>
-      <GlpSwap {...props} isBuying={isBuying} setIsBuying={setIsBuying} />
+      <MlpSwap {...props} isBuying={isBuying} setIsBuying={setIsBuying} />
       <Footer />
     </div>
   );
