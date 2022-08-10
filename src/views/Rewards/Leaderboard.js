@@ -26,6 +26,8 @@ import {
   ClaimCell,
   ClaimButton,
   WalletIcon,
+  TopFiftyRow,
+  TopFiftyRowCell,
 } from "./Rewards.styles";
 const DEFAULT_LISTINGS_COUNT = 50;
 const ARBISCAN_URL = "https://arbiscan.io/address/";
@@ -46,44 +48,56 @@ function RewardsTableWrapper({ children }) {
   );
 }
 
-function TableRow({ position, account, userAccount, volume, reward, trackAction }) {
-  const { ensName } = useENS(account);
-
+function TopFiftyIndicatorRow() {
   return (
-    <tr>
-      <RankCell>{position}</RankCell>
-      <UserCell>
-        <div>
-          {account ? <Davatar size={32} address={account} /> : <EmptyAvatar />}
-          <UserDetails>
-            <a href={`${ARBISCAN_URL}${account}`} rel="noopener noreferrer" target="_blank">
-              <span>{truncateMiddleEthAddress(account)}</span>
-            </a>
-            <span>{ensName}</span>
-          </UserDetails>
-        </div>
-      </UserCell>
-      <VolumeCell>${formatAmount(volume, USD_DECIMALS, 2, true)}</VolumeCell>
-      <RewardCell>${formatAmount(reward, USD_DECIMALS, 2, true)}</RewardCell>
-      <ClaimCell
+    <TopFiftyRow>
+      <TopFiftyRowCell colSpan={5} className="">
+        <span>Top 50% of traders</span>
+      </TopFiftyRowCell>
+    </TopFiftyRow>
+  );
+}
+
+function TableRow({ totalTraders, position, account, userAccount, volume, reward, trackAction }) {
+  const { ensName } = useENS(account);
+  return (
+    <>
+      {position === Math.ceil(totalTraders / 2) + 1 ? <TopFiftyIndicatorRow /> : null}
+      <tr
         className={cx({
           "highlight-current": account === userAccount,
         })}
       >
-        {account === userAccount ? (
-          <ClaimButton
-            onClick={() => {
-              // TODO: Add claim reward function
-              trackAction("Button clicked", {
-                buttonName: "Claim rewards",
-              });
-            }}
-          >
-            Claim ETH
-          </ClaimButton>
-        ) : null}
-      </ClaimCell>
-    </tr>
+        <RankCell>{position}</RankCell>
+        <UserCell>
+          <div>
+            {account ? <Davatar size={32} address={account} /> : <EmptyAvatar />}
+            <UserDetails>
+              <a href={`${ARBISCAN_URL}${account}`} rel="noopener noreferrer" target="_blank">
+                <span>{truncateMiddleEthAddress(account)}</span>
+              </a>
+              <span>{ensName}</span>
+            </UserDetails>
+          </div>
+        </UserCell>
+        <VolumeCell>${formatAmount(volume, USD_DECIMALS, 2, true)}</VolumeCell>
+        <RewardCell>${formatAmount(reward, USD_DECIMALS, 2, true)}</RewardCell>
+        <ClaimCell>
+          {account === userAccount ? (
+            <ClaimButton
+              onClick={() => {
+                // TODO: Add claim reward function
+                trackAction("Button clicked", {
+                  buttonName: "Claim rewards",
+                });
+              }}
+            >
+              Claim ETH
+            </ClaimButton>
+          ) : null}
+        </ClaimCell>
+      </tr>
+    </>
   );
 }
 
@@ -151,6 +165,7 @@ export default function Leaderboard(props) {
               {weekData?.traders?.slice(0, DEFAULT_LISTINGS_COUNT).map(({ user_address, volume, reward }, index) => (
                 <TableRow
                   key={user_address}
+                  totalTraders={weekData.traders.length}
                   position={index + 1}
                   account={user_address}
                   volume={volume}
