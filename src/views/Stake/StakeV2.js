@@ -81,7 +81,7 @@ function CompoundModal(props) {
   );
   const [shouldConvertWeth, setShouldConvertWeth] = useLocalStorageSerializeKey(
     [chainId, "StakeV2-compound-should-convert-weth"],
-    true
+    false
   );
   const [shouldBuyMlpWithEth, setShouldBuyMlpWithEth] = useLocalStorageSerializeKey(
     [chainId, "StakeV2-compound-should-buy-mlp"],
@@ -134,9 +134,6 @@ function CompoundModal(props) {
     setIsCompounding(true);
 
     const contract = new ethers.Contract(rewardRouterAddress, RewardRouter.abi, library.getSigner());
-    contract.feeMycTracker().then((res) => {
-      console.log(res);
-    })
     callContract(
       chainId,
       contract,
