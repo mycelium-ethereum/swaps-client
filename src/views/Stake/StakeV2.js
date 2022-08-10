@@ -9,6 +9,7 @@ import Footer from "../../Footer";
 
 import Vault from "../../abis/Vault.json";
 import ReaderV2 from "../../abis/ReaderV2.json";
+import Vester from "../../abis/Vester.json";
 import RewardRouter from "../../abis/RewardRouter.json";
 import RewardReader from "../../abis/RewardReader.json";
 import Token from "../../abis/Token.json";
@@ -30,7 +31,7 @@ import {
   PLACEHOLDER_ACCOUNT,
   getBalanceAndSupplyData,
   getDepositBalanceData,
-  getVestingData,
+  // getVestingData,
   getStakingData,
   getProcessedData,
 } from "../../Helpers";
@@ -437,10 +438,16 @@ export default function StakeV2({ setPendingTxns, connectWallet, trackAction }) 
     }
   );
 
-  const { data: vestingInfo } = useSWR(
-    [`StakeV2:vestingInfo:${active}`, chainId, readerAddress, "getVestingInfo", account || PLACEHOLDER_ACCOUNT],
+  // const { data: vestingInfo } = useSWR(
+    // [`StakeV2:vestingInfo:${active}`, chainId, readerAddress, "getVestingInfo", account || PLACEHOLDER_ACCOUNT],
+    // {
+      // fetcher: fetcher(library, ReaderV2, [vesterAddresses]),
+    // }
+  // );
+  const { data: mlpVesterRewards } = useSWR(
+    [`StakeV2:claimable:${active}`, chainId, glpVesterAddress, "claimable", account || PLACEHOLDER_ACCOUNT],
     {
-      fetcher: fetcher(library, ReaderV2, [vesterAddresses]),
+      fetcher: fetcher(library, Vester),
     }
   );
 
@@ -459,7 +466,15 @@ export default function StakeV2({ setPendingTxns, connectWallet, trackAction }) 
   const { balanceData, supplyData } = getBalanceAndSupplyData(walletBalances);
   const depositBalanceData = getDepositBalanceData(depositBalances);
   const stakingData = getStakingData(stakingInfo);
-  const vestingData = getVestingData(vestingInfo);
+  // const vestingData = getVestingData(vestingInfo);
+  const vestingData = mlpVesterRewards ? {
+    glpVester: {
+      claimable: mlpVesterRewards
+    },
+    gmxVester: {
+      claimable: ethers.BigNumber.from(0)
+    }
+  } : undefined;
 
   const processedData = getProcessedData(
     balanceData,
