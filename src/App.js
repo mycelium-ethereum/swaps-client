@@ -68,7 +68,6 @@ import SellMlp from "./views/SellMlp/SellMlp";
 import Buy from "./views/Buy/Buy";
 import Rewards from "./views/Rewards/Rewards";
 // import NftWallet from "./views/NftWallet/NftWallet";
-// import ClaimEsMyc from "./views/ClaimEsMyc/ClaimEsMyc";
 // import BeginAccountTransfer from "./views/BeginAccountTransfer/BeginAccountTransfer";
 // import CompleteAccountTransfer from "./views/CompleteAccountTransfer/CompleteAccountTransfer";
 // import Debug from "./views/Debug/Debug";
@@ -911,11 +910,6 @@ function FullApp() {
             {/*
             <Route exact path="/nft_wallet">
               <NftWallet />
-            </Route>
-            */}
-            {/*
-            <Route exact path="/claim_es_mlp">
-              <ClaimEsMyc setPendingTxns={setPendingTxns} />
             </Route>
             */}
             <Route exact path="/actions/:account">
