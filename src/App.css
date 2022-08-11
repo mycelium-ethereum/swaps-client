@@ -85,7 +85,7 @@
   line-height: 18px;
   font-weight: normal;
   letter-spacing: 0.1px;
-  color: var(--action-stroke);
+  color: var(--action-active);
   padding: 15px 16px;
   text-decoration: none;
   display: block;
