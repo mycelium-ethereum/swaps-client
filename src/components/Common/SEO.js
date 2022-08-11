@@ -13,7 +13,7 @@ function SEO(props) {
       <Helmet>
         <title>{meta.title}</title>
         <meta name="robots" content="follow, index" />
-        <meta content={meta.description} name="description" />
+        <meta name="description" content={meta.description} />
         <meta property="og:type" content={meta.type} />
         <meta property="og:site_name" content="Mycelium Perpetual Swaps" />
         <meta property="og:description" content={meta.description} />
