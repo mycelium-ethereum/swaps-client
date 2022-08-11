@@ -40,7 +40,7 @@ import {
 } from "../Helpers";
 import { getTokens, getTokenBySymbol, getWhitelistedTokens } from "../data/Tokens";
 
-import { nissohGraphClient, arbitrumGraphClient, avalancheGraphClient } from "./common";
+import { nissohGraphClient, arbitrumGraphClient, avalancheGraphClient, arbitrumTestnetGraphClient } from "./common";
 import { getTracerServerUrl } from "./rewards";
 export * from "./prices";
 
@@ -50,11 +50,32 @@ function getMycGraphClient(chainId) {
   if (chainId === ARBITRUM) {
     return arbitrumGraphClient;
   } else if (chainId === ARBITRUM_TESTNET) {
-    return arbitrumGraphClient;
+    return arbitrumTestnetGraphClient;
   } else if (chainId === AVALANCHE) {
     return avalancheGraphClient;
   }
   throw new Error(`Unsupported chain ${chainId}`);
+}
+
+export function useFees(chainId) {
+  const query = gql(`{
+    feeStat(id: "total") {
+      swap
+      marginAndLiquidation
+      mint
+      burn
+    }
+  }`);
+
+  const [res, setRes] = useState();
+
+  useEffect(() => {
+    getMycGraphClient(chainId).query({ query }).then(setRes).catch(console.warn);
+  }, [setRes, query, chainId]);
+
+  console.log(res);
+
+  return res ? res.data.feeStat : null;
 }
 
 export function useAllOrdersStats(chainId) {

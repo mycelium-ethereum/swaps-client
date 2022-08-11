@@ -33,7 +33,7 @@ import {
   getPageTitle,
   ARBITRUM_TESTNET,
 } from "../../Helpers";
-import { useTotalTCRInLiquidity, useTCRPrice, useTotalTCRSupply, useInfoTokens } from "../../Api";
+import { useTotalTCRInLiquidity, useTCRPrice, useTotalTCRSupply, useInfoTokens, useFees } from "../../Api";
 
 import { getContract } from "../../Addresses";
 
@@ -143,13 +143,21 @@ export default function DashboardV2() {
 
   const currentFeesUsd = getCurrentFeesUsd(whitelistedTokenAddresses, fees, infoTokens);
 
+  let totalFeesDistributed;
+  const allFees = useFees(chainId);
+
   const feeHistory = getFeeHistory(chainId);
-  const shouldIncludeCurrrentFees = feeHistory.length && parseInt(Date.now() / 1000) - feeHistory[0].to > 60 * 60;
-  let totalFeesDistributed = shouldIncludeCurrrentFees
-    ? parseFloat(bigNumberify(formatAmount(currentFeesUsd, USD_DECIMALS - 2, 0, false)).toNumber()) / 100
-    : 0;
-  for (let i = 0; i < feeHistory.length; i++) {
-    totalFeesDistributed += parseFloat(feeHistory[i].feeUsd);
+  // this is a buffer for when the manually update fees, it gives them an hour window to update
+  // const shouldIncludeCurrrentFees = feeHistory.length && parseInt(Date.now() / 1000) - feeHistory[0].to > 60 * 60;
+  // let totalFeesDistributed = shouldIncludeCurrrentFees
+    // ? parseFloat(bigNumberify(formatAmount(currentFeesUsd, USD_DECIMALS - 2, 0, false)).toNumber()) / 100
+    // : 0;
+  // for (let i = 0; i < feeHistory.length; i++) {
+    // totalFeesDistributed += parseFloat(feeHistory[i].feeUsd);
+  // }
+
+  if (allFees) {
+    totalFeesDistributed = bigNumberify(allFees.mint).add(allFees.burn).add(allFees.marginAndLiquidation).add(allFees.swap);
   }
 
   const { tcrPrice, tcrPriceFromMainnet, tcrPriceFromArbitrum } = useTCRPrice(
@@ -451,7 +459,7 @@ export default function DashboardV2() {
               <div className="App-card-content">
                 <div className="App-card-row">
                   <div className="label">Total Fees</div>
-                  <div>${numberWithCommas(totalFeesDistributed.toFixed(0))}</div>
+                  <div>${formatAmount(totalFeesDistributed, USD_DECIMALS, 0, true)}</div>
                 </div>
                 <div className="App-card-row">
                   <div className="label">Total Volume</div>
