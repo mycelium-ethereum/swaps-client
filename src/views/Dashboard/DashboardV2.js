@@ -81,14 +81,12 @@ export default function DashboardV2() {
 
   const chainName = getChainName(chainId);
 
-  // TODO swap to chainId when tracer server supports testnet /positionStats
-  const positionStatsUrl = getTracerServerUrl(42161, "/positionStats");
+  const positionStatsUrl = getTracerServerUrl(chainId, "/positionStats");
   const { data: positionStats } = useSWR([positionStatsUrl], {
     fetcher: (...args) => fetch(...args).then((res) => res.json()),
   });
 
-  // TODO swap to chainId when tracer server supports testnet /volume
-  const mycTotalVolumeUrl = getTracerServerUrl(42161, "/volume");
+  const mycTotalVolumeUrl = getTracerServerUrl(chainId, "/volume");
   const { data: mycTotalVolume } = useSWR([mycTotalVolumeUrl], {
     fetcher: (...args) => fetch(...args).then((res) => res.json()),
   });
