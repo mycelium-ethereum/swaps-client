@@ -55,7 +55,6 @@ import {
 } from "./Helpers";
 import ReaderV2 from "./abis/ReaderV2.json";
 
-import Home from "./views/Home/Home";
 import Dashboard from "./views/Dashboard/Dashboard";
 import Stake from "./views/Stake/Stake";
 import { Exchange } from "./views/Exchange/Exchange";
@@ -212,13 +211,6 @@ function AppHeaderLinks({ small, openSettings, clickCloseIcon, trackAction }) {
           Home
         </NavLink>
       </div>
-      {small && (
-        <div className="App-header-link-container">
-          <NavLink activeClassName="active" to="/trade">
-            Trade
-          </NavLink>
-        </div>
-      )}
       <div className="App-header-link-container">
         <NavLink activeClassName="active" to="/dashboard">
           Dashboard
@@ -314,7 +306,7 @@ function AppHeaderUser({
     return (
       <div className="App-header-user">
         <div className="App-header-user-link">
-          <NavLink activeClassName="active" className="default-btn trade-link" to="/trade">
+          <NavLink exact activeClassName="active" className="default-btn trade-link" to="/">
             Trade
           </NavLink>
         </div>
@@ -349,7 +341,7 @@ function AppHeaderUser({
   return (
     <div className="App-header-user">
       <div className="App-header-user-link">
-        <NavLink activeClassName="active" className="default-btn trade-link" to="/trade">
+        <NavLink exact activeClassName="active" className="default-btn trade-link" to="/">
           Trade
         </NavLink>
       </div>
@@ -843,9 +835,6 @@ function FullApp() {
           </AnimatePresence>
           <Switch>
             <Route exact path="/">
-              <Home trackAction={trackAction} />
-            </Route>
-            <Route exact path="/trade">
               <Exchange
                 ref={exchangeRef}
                 savedShowPnlAfterFees={savedShowPnlAfterFees}
@@ -903,9 +892,6 @@ function FullApp() {
                 trackAction={trackAction}
                 analytics={analytics}
               />
-            </Route>
-            <Route exact path="/about">
-              <Home trackAction={trackAction} />
             </Route>
             {/*
             <Route exact path="/nft_wallet">
@@ -1122,9 +1108,6 @@ function PreviewApp() {
             </div>
           </header>
           <Switch>
-            <Route exact path="/">
-              <Home />
-            </Route>
             <Route exact path="/earn">
               <Stake />
             </Route>
