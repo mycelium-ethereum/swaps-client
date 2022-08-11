@@ -843,7 +843,23 @@ function FullApp() {
           </AnimatePresence>
           <Switch>
             <Route exact path="/">
-              <Home trackAction={trackAction} />
+              {/* <Home trackAction={trackAction} /> */}
+              <Exchange
+                ref={exchangeRef}
+                savedShowPnlAfterFees={savedShowPnlAfterFees}
+                savedIsPnlInLeverage={savedIsPnlInLeverage}
+                setSavedIsPnlInLeverage={setSavedIsPnlInLeverage}
+                savedSlippageAmount={savedSlippageAmount}
+                setPendingTxns={setPendingTxns}
+                pendingTxns={pendingTxns}
+                savedShouldShowPositionLines={savedShouldShowPositionLines}
+                setSavedShouldShowPositionLines={setSavedShouldShowPositionLines}
+                connectWallet={connectWallet}
+                infoTokens={infoTokens}
+                trackPageWithTraits={trackPageWithTraits}
+                trackAction={trackAction}
+                analytics={analytics}
+              />
             </Route>
             <Route exact path="/trade">
               <Exchange
