@@ -136,7 +136,7 @@ function CompoundModal(props) {
     const contract = new ethers.Contract(rewardRouterAddress, RewardRouter.abi, library.getSigner());
     contract.feeGmxTracker().then((res) => {
       console.log(res);
-    })
+    });
     callContract(
       chainId,
       contract,
@@ -178,7 +178,7 @@ function CompoundModal(props) {
     if (value) {
       setShouldClaimWeth(true);
       setShouldConvertWeth(false);
-    } 
+    }
     setShouldBuyMlpWithEth(value);
   };
 
@@ -192,7 +192,11 @@ function CompoundModal(props) {
             </Checkbox>
           </div>
           <div>
-            <Checkbox isChecked={shouldClaimWeth} setIsChecked={setShouldClaimWeth} disabled={shouldConvertWeth || shouldBuyMlpWithEth}>
+            <Checkbox
+              isChecked={shouldClaimWeth}
+              setIsChecked={setShouldClaimWeth}
+              disabled={shouldConvertWeth || shouldBuyMlpWithEth}
+            >
               Claim {wrappedTokenSymbol} Rewards
             </Checkbox>
           </div>
@@ -930,7 +934,7 @@ export default function StakeV2({ setPendingTxns, connectWallet, trackAction }) 
                               <span>{formatKeyAmount(processedData, "glpAprForNativeToken", 2, 2, true)}%</span>
                             </div>
                             <div className="Tooltip-row">
-                              <span className="label">MYC APR</span>
+                              <span className="label">esMYC APR</span>
                               <span>{formatKeyAmount(processedData, "glpAprForEsGmx", 2, 2, true)}%</span>
                             </div>
                           </>
@@ -983,7 +987,10 @@ export default function StakeV2({ setPendingTxns, connectWallet, trackAction }) 
                     Sell MLP
                   </Link>
                   {active && (
-                    <button className="App-button-option App-card-option" onClick={() => setIsCompoundModalVisible(true)}>
+                    <button
+                      className="App-button-option App-card-option"
+                      onClick={() => setIsCompoundModalVisible(true)}
+                    >
                       Compound
                     </button>
                   )}
@@ -1025,12 +1032,11 @@ export default function StakeV2({ setPendingTxns, connectWallet, trackAction }) 
                   <div>
                     <StakeV2Styled.RewardsBannerTextWrap>
                       <StakeV2Styled.RewardsBannerText large inline>
-                        {formatKeyAmount(processedData, "gmxInStakedGmx", GMX_DECIMALS, 2, true)} MYC
+                        {formatKeyAmount(processedData, "gmxInStakedGmx", GMX_DECIMALS, 2, true)} esMYC
                       </StakeV2Styled.RewardsBannerText>{" "}
                       <StakeV2Styled.RewardsBannerText inline>
                         ($
-                        {formatKeyAmount(processedData, "gmxInStakedGmxUsd", USD_DECIMALS, 2, true)}
-                        )
+                        {formatKeyAmount(processedData, "gmxInStakedGmxUsd", USD_DECIMALS, 2, true)})
                       </StakeV2Styled.RewardsBannerText>
                     </StakeV2Styled.RewardsBannerTextWrap>
                   </div>
