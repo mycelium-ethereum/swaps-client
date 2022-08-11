@@ -12,7 +12,10 @@ export default function BuyMYCMLP(props) {
   }, []);
 
   return (
-    <SEO title={getPageTitle("Buy MLP or MYC")}>
+    <SEO
+      title={getPageTitle("Buy")}
+      description="Buy MLP tokens to provide liquidity to Mycelium’s Perpetual Swaps. MLP tokens represent a share in a yield bearing diversified pool of blue-chip crypto assets."
+    >
       <div className="BuyMYCMLP page-layout">
         <div className="BuyMYCMLP-container default-container">
           <div className="section-title-block">
