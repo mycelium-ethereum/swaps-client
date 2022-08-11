@@ -71,7 +71,7 @@ export default function BuyMYC() {
                 </div>
                 <div className="direct-purchase-options">
                   <Button
-                    href="https://myc.banxa.com?coinType=ETH&fiatType=USD&fiatAmount=500&blockchain=arbitrum"
+                    href="https://gmx.banxa.com?coinType=ETH&fiatType=USD&fiatAmount=500&blockchain=arbitrum"
                     imgSrc={Banxa}
                   >
                     Banxa
@@ -143,7 +143,7 @@ export default function BuyMYC() {
                 </div>
                 <div className="direct-purchase-options">
                   <Button
-                    href="https://myc.banxa.com?coinType=AVAX&fiatType=USD&fiatAmount=500&blockchain=avalanche"
+                    href="https://gmx.banxa.com?coinType=AVAX&fiatType=USD&fiatAmount=500&blockchain=avalanche"
                     imgSrc={Banxa}
                   >
                     Banxa

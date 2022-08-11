@@ -1016,7 +1016,7 @@ export default function StakeV2({ setPendingTxns, connectWallet, trackAction }) 
                 Convert esMYC tokens to MYC tokens.
                 <br />
                 Please read the{" "}
-                <a href="https://mycio.gitbook.io/myc/rewards#vesting" target="_blank" rel="noopener noreferrer">
+                <a href="https://tracer-1.gitbook.io/mycelium-perpetual-swaps/6VOYVKGbCCw0I8cj7vdF/protocol-design/mycelium-liquidity-pool-mlp/mlp-rewards/esmyc-escrowed-myc" target="_blank" rel="noopener noreferrer">
                   vesting details
                 </a>{" "}
                 before using the vaults.
