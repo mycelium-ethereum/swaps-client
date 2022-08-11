@@ -1,4 +1,4 @@
-.GlpSwap-content {
+.MlpSwap-content {
   display: flex;
   justify-content: space-between;
   border-bottom-left-radius: 8px;
@@ -29,16 +29,16 @@
   color: #f89191;
 }
 
-.GlpSwap-from-token .Modal {
+.MlpSwap-from-token .Modal {
   align-items: flex-start;
   justify-content: flex-end;
 }
 
-.GlpSwap-from-token .Modal .Modal-content {
+.MlpSwap-from-token .Modal .Modal-content {
   width: 27rem;
 }
 
-.GlpSwap-from-token .Modal-content {
+.MlpSwap-from-token .Modal-content {
   position: absolute;
   width: 25rem;
   max-height: 100vh;
@@ -47,7 +47,7 @@
   top: 0;
   bottom: 0;
 }
-.GlpSwap-from-token .Modal-content .Modal-body {
+.MlpSwap-from-token .Modal-content .Modal-body {
   padding-right: 5px;
   max-height: calc(100vh - 5rem);
   overflow-y: auto;
@@ -55,29 +55,29 @@
   -webkit-overflow-scrolling: auto;
 }
 
-.GlpSwap-content .GlpSwap-stats-card,
-.GlpSwap-content .GlpSwap-box {
+.MlpSwap-content .MlpSwap-stats-card,
+.MlpSwap-content .MlpSwap-box {
   width: 100%;
 }
 
-.GlpSwap-content .GlpSwap-stats-card {
+.MlpSwap-content .MlpSwap-stats-card {
   max-width: 45.935rem;
   margin-right: 1rem;
 }
 
-.GlpSwap-stats-card .App-card-row .label {
+.MlpSwap-stats-card .App-card-row .label {
   color: var(--text-secondary);
   opacity: 1;
 }
 
-.GlpSwap-content .GlpSwap-box {
+.MlpSwap-content .MlpSwap-box {
   max-width: 30.935rem;
   border-radius: 4px;
   padding: 1rem;
   padding-top: 0;
 }
 
-.GlpSwap-box .Exchange-swap-option-tabs {
+.MlpSwap-box .Exchange-swap-option-tabs {
   margin: 1rem 0;
 }
 
@@ -117,7 +117,7 @@
   color: #a9a9b0;
 }
 
-.GlpSwap-token-list {
+.MlpSwap-token-list {
   border: 1px solid var(--cell-stroke);
   border-radius: 4px;
   padding: 1rem;
@@ -125,18 +125,18 @@
   text-align: left;
 }
 
-.GlpSwap-token-list-content {
+.MlpSwap-token-list-content {
   display: grid;
   padding: 1rem;
   padding-top: 0;
   text-align: left;
 }
 
-.GlpSwap-box .App-card-title {
+.MlpSwap-box .App-card-title {
   margin-bottom: 0.5rem;
 }
 
-.GlpSwap-box .Exchange-info-row {
+.MlpSwap-box .Exchange-info-row {
   height: 1rem;
   margin-bottom: 0.5rem;
   display: flex;
@@ -144,19 +144,19 @@
   align-items: center;
 }
 
-.GlpSwap-box .Exchange-info-row .Exchange-info-label {
+.MlpSwap-box .Exchange-info-row .Exchange-info-label {
   margin-right: 0.5rem;
   color: #a9a9b0;
   opacity: 1;
 }
 
-.GlpSwap-cta {
+.MlpSwap-cta {
   margin: 0 auto;
   text-align: center;
   padding-top: 0;
 }
 
-.GlpSwap-cta .Exchange-swap-button {
+.MlpSwap-cta .Exchange-swap-button {
   margin: 0 auto;
   justify-content: center;
   min-height: 3.097rem;
@@ -234,28 +234,28 @@
 }
 
 @media (max-width: 900px) {
-  .GlpSwap-content {
+  .MlpSwap-content {
     flex-wrap: wrap;
   }
 
-  .GlpSwap-content .GlpSwap-stats-card {
+  .MlpSwap-content .MlpSwap-stats-card {
     margin: 0;
     margin-bottom: 2rem;
     max-width: 100%;
   }
 
-  .GlpSwap-content .GlpSwap-box {
+  .MlpSwap-content .MlpSwap-box {
     margin: 0;
     max-width: 100%;
   }
 }
 
 @media (max-width: 1100px) {
-  .GlpSwap-from-token .Modal {
+  .MlpSwap-from-token .Modal {
     align-items: center;
     justify-content: center;
   }
-  .GlpSwap-from-token .Modal .Modal-content {
+  .MlpSwap-from-token .Modal .Modal-content {
     width: 27rem;
     position: absolute;
     max-height: 80vh;
@@ -264,20 +264,20 @@
     top: auto;
     bottom: auto;
   }
-  .GlpSwap-from-token .Modal .Modal-content .Modal-body {
+  .MlpSwap-from-token .Modal .Modal-content .Modal-body {
     overflow-y: auto;
     max-height: calc(80vh - 5.5rem);
     padding-right: 5px;
     margin: 1rem calc(1rem - 5px) 1rem 1rem;
   }
 
-  .GlpSwap-token-list {
+  .MlpSwap-token-list {
     border: none;
     background-color: transparent;
     padding: 0;
   }
 
-  .GlpSwap-token-list-content {
+  .MlpSwap-token-list-content {
     padding: 0;
   }
 

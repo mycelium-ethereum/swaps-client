@@ -1,7 +1,7 @@
 import React, { useCallback } from "react";
 import { Link } from "react-router-dom";
 
-import gmxBigIcon from "../../img/ic_gmx_custom.svg";
+import mycBigIcon from "../../img/ic_myc_custom.svg";
 import mlpBigIcon from "../../img/ic_mlp_custom.svg";
 
 import { ARBITRUM, switchNetwork, useChainId } from "../../Helpers";
@@ -34,18 +34,18 @@ export default function TokenCard() {
     <div className="Home-token-card-options">
       <div className="Home-token-card-option">
         <div className="Home-token-card-option-icon">
-          <img src={gmxBigIcon} alt="gmxBigIcon" /> TCR
+          <img src={mycBigIcon} alt="mycBigIcon" /> MYC
         </div>
         <div className="Home-token-card-option-info">
           <div className="Home-token-card-option-title">
-            TCR is the utility and governance token. Accrues 30% of the platform's generated fees.
+            MYC is the utility and governance token. Accrues 30% of the platform's generated fees.
           </div>
           <div className="Home-token-card-option-apr">
-            Arbitrum APR: <APRLabel chainId={ARBITRUM} label="gmxAprTotal" />
+            Arbitrum APR: <APRLabel chainId={ARBITRUM} label="mycAprTotal" />
           </div>
           <div className="Home-token-card-option-action">
             <div className="buy">
-              <Link to="/buy_gmx" className="default-btn" onClick={() => changeNetwork(ARBITRUM)}>
+              <Link to="/buy_myc" className="default-btn" onClick={() => changeNetwork(ARBITRUM)}>
                 Buy on Arbitrum
               </Link>
             </div>
@@ -69,7 +69,7 @@ export default function TokenCard() {
             MLP is the liquidity provider token. Accrues 70% of the platform's generated fees.
           </div>
           <div className="Home-token-card-option-apr">
-            Arbitrum APR: <APRLabel chainId={ARBITRUM} label="glpAprTotal" key="ARBITRUM" />
+            Arbitrum APR: <APRLabel chainId={ARBITRUM} label="mlpAprTotal" key="ARBITRUM" />
           </div>
           <div className="Home-token-card-option-action">
             <div className="buy">

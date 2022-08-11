@@ -8,8 +8,8 @@ export default function Debug() {
   const { active, library } = useWeb3React();
   const { chainId } = useChainId();
 
-  // const poolAddress = "0x80A9ae39310abf666A87C743d6ebBD0E8C42158E" // GMX/WETH
-  const poolAddress = "0x5ab703d58b73475cd83ce2dbada8f2e6c977e7ed"; // GM/USD
+  // const poolAddress = "0x80A9ae39310abf666A87C743d6ebBD0E8C42158E" // MYC/WETH
+  const poolAddress = "0x5ab703d58b73475cd83ce2dbada8f2e6c977e7ed"; // MYC/USD
 
   const { data: uniPoolSlot0, mutate: updateUniPoolSlot0 } = useSWR(
     [`Debug:uniPoolSlot0:${active}`, chainId, poolAddress, "slot0"],

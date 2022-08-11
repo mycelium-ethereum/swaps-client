@@ -5,7 +5,6 @@ function SEO(props) {
   const meta = {
     title: "Mycelium Perpetual Swaps",
     description: `Trade spot or perpetual BTC, ETH and other top cryptocurrencies with up to 30x leverage directly from your wallet on Arbitrum.`,
-    image: "https://gmx.io/og.png",
     type: "exchange",
     ...customMeta,
   };
