@@ -909,7 +909,7 @@ export default function StakeV2({ setPendingTxns, connectWallet, trackAction }) 
                     </StakeV2Styled.RewardsBannerTextWrap>
                     <StakeV2Styled.RewardsBannerTextWrap>
                       <StakeV2Styled.RewardsBannerText large inline>
-                        {formatKeyAmount(processedData, "stakedGlpTrackerRewards", 18, 4)} MYC
+                        {formatKeyAmount(processedData, "stakedGlpTrackerRewards", 18, 4)} esMYC
                       </StakeV2Styled.RewardsBannerText>{" "}
                       <StakeV2Styled.RewardsBannerText inline>
                         ($

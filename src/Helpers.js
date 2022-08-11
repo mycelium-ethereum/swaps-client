@@ -2780,7 +2780,7 @@ export function sleep(ms) {
 }
 
 export function getPageTitle(data) {
-  return `${data} | Tracer Perpetual Swaps`;
+  return `${data} | Mycelium Perpetual Swaps`;
 }
 
 export function isHashZero(value) {
