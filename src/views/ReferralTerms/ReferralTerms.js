@@ -90,8 +90,8 @@ export default function ReferralTerms(props) {
               <p className="body-text">
                 The Rebates and Discounts percentages for the default tier Tier 1, and instructions to upgrade to Tier 2
                 and Tier 3, are contained in{" "}
-                <a target="_blank" rel="noopener noreferrer" href="https://docs.tracer.finance">
-                  https://docs.tracer.finance
+                <a target="_blank" rel="noopener noreferrer" href="https://swaps.docs.mycelium.xyz/">
+                  https://swaps.docs.mycelium.xyz/
                 </a>
               </p>
             </div>

@@ -232,11 +232,7 @@ function AppHeaderLinks({ small, openSettings, clickCloseIcon, trackAction }) {
         </NavLink>
       </div>
       <div className="App-header-link-container">
-        <a
-          href="https://tracer-1.gitbook.io/tracer-perpetual-swaps/6VOYVKGbCCw0I8cj7vdF/perpetual-swaps/tracers-perpetual-swaps"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
+        <a href="https://swaps.docs.mycelium.xyz/" target="_blank" rel="noopener noreferrer">
           Docs
         </a>
       </div>
