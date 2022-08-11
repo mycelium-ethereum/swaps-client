@@ -26,8 +26,8 @@ export default function Ecosystem() {
                 <div className="App-card-row">
                   <div className="label">Link</div>
                   <div>
-                    <a href="https://gov.gmx.io/" target="_blank" rel="noopener noreferrer">
-                      https://gov.gmx.io/
+                    <a href="#" target="_blank" rel="noopener noreferrer">
+                      https://gov.mycelium.xyz/
                     </a>
                   </div>
                 </div>
@@ -50,8 +50,8 @@ export default function Ecosystem() {
                 <div className="App-card-row">
                   <div className="label">Link</div>
                   <div>
-                    <a href="https://stats.gmx.io/" target="_blank" rel="noopener noreferrer">
-                      https://stats.gmx.io/
+                    <a href="https://stats.mycelium.xyz/" target="_blank" rel="noopener noreferrer">
+                      https://stats.mycelium.xyz/
                     </a>
                   </div>
                 </div>
@@ -68,8 +68,8 @@ export default function Ecosystem() {
                 <div className="App-card-row">
                   <div className="label">Link</div>
                   <div>
-                    <a href="https://snapshot.org/#/gmx.eth" target="_blank" rel="noopener noreferrer">
-                      https://snapshot.org/#/gmx.eth
+                    <a href="https://snapshot.org/#/tracer.eth" target="_blank" rel="noopener noreferrer">
+                      https://snapshot.org/#/tracer.eth
                     </a>
                   </div>
                 </div>
@@ -80,6 +80,7 @@ export default function Ecosystem() {
               </div>
             </div>
           </div>
+          {/*
           <div className="Page-title-section">
             <div className="Page-title">Community Projects</div>
             <div className="Page-description">Projects developed by the MYC community.</div>
@@ -663,6 +664,7 @@ export default function Ecosystem() {
               </div>
             </div>
           </div>
+          */}
         </div>
         <Footer />
       </div>
