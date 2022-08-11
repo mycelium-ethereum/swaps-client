@@ -94,7 +94,11 @@ import logoImg from "./img/logo_MYC.svg";
 import logoSmallImg from "./img/logo_MYC_small.svg";
 import connectWalletImg from "./img/ic_wallet_24.svg";
 
+
 // import logoImg from './img/mlp-logo-final-white-small.png'
+import mycSwapsLogo from "./img/myc_swaps.svg";
+import mycPoolsLogo from "./img/myc_pools.svg";
+
 import metamaskImg from "./img/metamask.png";
 import coinbaseImg from "./img/coinbaseWallet.png";
 import walletConnectImg from "./img/walletconnect-circle-blue.svg";
@@ -215,6 +219,7 @@ function AppHeaderLinks({ small, openSettings, clickCloseIcon, trackAction }) {
       {small && (
         <div className="App-header-link-container">
           <NavLink activeClassName="active" to="/trade">
+            <img src={mycSwapsLogo} />
             Trade
           </NavLink>
         </div>
