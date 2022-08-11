@@ -262,13 +262,6 @@ export const RewardsTableContainer = styled.div`
   margin-bottom: 74px;
 `;
 
-export const ScrollContainer = styled.div`
-  position: relative;
-  overflow-x: hidden;
-  overflow-y: auto;
-  max-height: 491px;
-`;
-
 export const RewardsTable = styled.table`
   position: relative;
   z-index: 1;

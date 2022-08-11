@@ -1,7 +1,8 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useENS, truncateMiddleEthAddress, formatAmount, USD_DECIMALS } from "../../Helpers";
-import Davatar from "@davatar/react";
+import Jazzicon, { jsNumberForAddress } from "react-jazzicon";
 import cx from "classnames";
+import InfiniteScroll from "react-infinite-scroll-component";
 import {
   ConnectWalletText,
   ConnectWalletOverlay,
@@ -16,7 +17,6 @@ import {
   FullWidthText,
   LeaderboardTitle,
   RewardsTableContainer,
-  ScrollContainer,
   RankCell,
   UserCell,
   EmptyAvatar,
@@ -71,12 +71,12 @@ function TableRow({ totalTraders, position, account, userAccount, volume, reward
         <RankCell>{position}</RankCell>
         <UserCell>
           <div>
-            {account ? <Davatar size={32} address={account} /> : <EmptyAvatar />}
+            {account ? <Jazzicon diameter={32} seed={jsNumberForAddress(account)} /> : <EmptyAvatar />}
             <UserDetails>
               <a href={`${ARBISCAN_URL}${account}`} rel="noopener noreferrer" target="_blank">
                 <span>{truncateMiddleEthAddress(account)}</span>
               </a>
-              <span>{ensName}</span>
+              {/* <span>{ensName}</span> */}
             </UserDetails>
           </div>
         </UserCell>
@@ -103,6 +103,25 @@ function TableRow({ totalTraders, position, account, userAccount, volume, reward
 
 export default function Leaderboard(props) {
   const { weekData, userweekData, userAccount, ensName, currentView, selectedWeek, connectWallet, trackAction } = props;
+  const [hasMore, setHasMore] = useState(true);
+  const [index, setIndex] = useState(DEFAULT_LISTINGS_COUNT);
+
+  const fetchMoreData = () => {
+    let newIndex = index + DEFAULT_LISTINGS_COUNT;
+    console.log(newIndex);
+    if (newIndex >= weekData?.traders.length) {
+      setHasMore(false);
+      setIndex(weekData?.traders.length);
+      return;
+    }
+    setTimeout(() => {
+      setIndex(newIndex);
+    }, 1000);
+  };
+
+  useEffect(() => {
+    setIndex(DEFAULT_LISTINGS_COUNT);
+  }, [selectedWeek]);
 
   return (
     <LeaderboardContainer hidden={currentView === "Personal"}>
@@ -159,13 +178,19 @@ export default function Leaderboard(props) {
       <LeaderboardTitle>Leaderboard</LeaderboardTitle>
       <RewardsTableContainer>
         <RewardsTableBorder />
-        <ScrollContainer>
-          {weekData?.traders?.length > 1 ? (
+        {weekData?.traders?.length > 1 ? (
+          <InfiniteScroll
+            dataLength={weekData?.traders?.length}
+            next={fetchMoreData}
+            hasMore={hasMore}
+            height={490}
+            style={{ position: "relative" }}
+          >
             <RewardsTableWrapper>
-              {weekData?.traders?.slice(0, DEFAULT_LISTINGS_COUNT).map(({ user_address, volume, reward }, index) => (
+              {weekData.traders.slice(0, index).map(({ user_address, volume, reward }, index) => (
                 <TableRow
                   key={user_address}
-                  totalTraders={weekData.traders.length}
+                  totalTraders={weekData?.traders.length}
                   position={index + 1}
                   account={user_address}
                   volume={volume}
@@ -174,16 +199,16 @@ export default function Leaderboard(props) {
                 />
               ))}
             </RewardsTableWrapper>
-          ) : (!weekData?.traders || weekData?.traders?.length === 0) && selectedWeek ? (
-            <FullWidthText>
-              <p>No data available for Week {selectedWeek}</p>
-            </FullWidthText>
-          ) : (
-            <FullWidthText>
-              <p>Loading week data...</p>
-            </FullWidthText>
-          )}
-        </ScrollContainer>
+          </InfiniteScroll>
+        ) : (!weekData?.traders || weekData?.traders?.length === 0) && selectedWeek ? (
+          <FullWidthText>
+            <p>No data available for Week {selectedWeek}</p>
+          </FullWidthText>
+        ) : (
+          <FullWidthText>
+            <p>Loading week data...</p>
+          </FullWidthText>
+        )}
       </RewardsTableContainer>
     </LeaderboardContainer>
   );

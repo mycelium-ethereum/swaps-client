@@ -1,7 +1,7 @@
 import React from "react";
 import { ETH_DECIMALS, formatAmount, shortenAddress, USD_DECIMALS } from "../../Helpers";
 import * as Styles from "./Rewards.styles";
-import Davatar from "@davatar/react";
+import Jazzicon, { jsNumberForAddress } from "react-jazzicon";
 import WeekDropdown from "./WeekDropdown";
 
 export default function TraderRewards(props) {
@@ -26,7 +26,7 @@ export default function TraderRewards(props) {
       <Styles.AccountBanner className="App-card">
         {active && (
           <Styles.AccountBannerAddresses>
-            <Davatar size={40} address={account} />
+            <Jazzicon diameter={40} seed={jsNumberForAddress(account)} />
             <Styles.AppCardTitle>{ensName || shortenAddress(account, 13)}</Styles.AppCardTitle>
             <Styles.AccountBannerShortenedAddress> Wallet address </Styles.AccountBannerShortenedAddress>
           </Styles.AccountBannerAddresses>

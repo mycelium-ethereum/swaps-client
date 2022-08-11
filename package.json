@@ -4,7 +4,6 @@
   "private": true,
   "dependencies": {
     "@apollo/client": "^3.3.19",
-    "@davatar/react": "^1.8.1",
     "@ethersproject/providers": "^5.0.23",
     "@ethersproject/units": "^5.0.10",
     "@headlessui/react": "dev",
@@ -35,6 +34,8 @@
     "react-helmet": "^6.1.0",
     "react-hot-toast": "^2.2.0",
     "react-icons": "^4.3.0",
+    "react-infinite-scroll-component": "^6.1.0",
+    "react-jazzicon": "^1.0.4",
     "react-router-dom": "^5.2.0",
     "react-scripts": "4.0.3",
     "react-select": "^5.2.1",

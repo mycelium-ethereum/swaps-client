@@ -7,7 +7,7 @@ import copy from "../../img/ic_copy_16.svg";
 import settings from "../../img/ic_settings_16.svg";
 import disconnect from "../../img/ic_sign_out_16.svg";
 import { FaChevronDown } from "react-icons/fa";
-import Davatar from "@davatar/react";
+import Jazzicon, { jsNumberForAddress } from "react-jazzicon";
 
 function AddressDropdown({ account, accountUrl, disconnectAccountAndCloseSettings, openSettings, trackAction }) {
   const useBreakpoint = createBreakpoint({ L: 600, M: 550, S: 400 });
@@ -19,7 +19,7 @@ function AddressDropdown({ account, accountUrl, disconnectAccountAndCloseSetting
     <Menu>
       <Menu.Button as="div">
         <button className="App-cta small transparent address-btn">
-          <Davatar size={20} address={account} />
+          <Jazzicon diameter={20} seed={jsNumberForAddress(account)} />
           <span className="user-address">{ensName || shortenAddress(account, breakpoint === "S" ? 9 : 13)}</span>
           <FaChevronDown />
         </button>
