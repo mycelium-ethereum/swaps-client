@@ -175,7 +175,7 @@ function CompoundModal(props) {
     if (value) {
       setShouldClaimWeth(true);
       setShouldConvertWeth(false);
-    } 
+    }
     setShouldBuyMlpWithEth(value);
   };
 
@@ -189,7 +189,11 @@ function CompoundModal(props) {
             </Checkbox>
           </div>
           <div>
-            <Checkbox isChecked={shouldClaimWeth} setIsChecked={setShouldClaimWeth} disabled={shouldConvertWeth || shouldBuyMlpWithEth}>
+            <Checkbox
+              isChecked={shouldClaimWeth}
+              setIsChecked={setShouldClaimWeth}
+              disabled={shouldConvertWeth || shouldBuyMlpWithEth}
+            >
               Claim {wrappedTokenSymbol} Rewards
             </Checkbox>
           </div>
@@ -906,7 +910,7 @@ export default function StakeV2({ setPendingTxns, connectWallet, trackAction }) 
                     </StakeV2Styled.RewardsBannerTextWrap>
                     <StakeV2Styled.RewardsBannerTextWrap>
                       <StakeV2Styled.RewardsBannerText large inline>
-                        {formatKeyAmount(processedData, "stakedMlpTrackerRewards", 18, 4)} MYC
+                        {formatKeyAmount(processedData, "stakedMlpTrackerRewards", 18, 4)} esMYC
                       </StakeV2Styled.RewardsBannerText>{" "}
                       <StakeV2Styled.RewardsBannerText inline>
                         ($
@@ -931,7 +935,7 @@ export default function StakeV2({ setPendingTxns, connectWallet, trackAction }) 
                               <span>{formatKeyAmount(processedData, "mlpAprForNativeToken", 2, 2, true)}%</span>
                             </div>
                             <div className="Tooltip-row">
-                              <span className="label">MYC APR</span>
+                              <span className="label">esMYC APR</span>
                               <span>{formatKeyAmount(processedData, "mlpAprForEsMyc", 2, 2, true)}%</span>
                             </div>
                           </>
@@ -984,7 +988,10 @@ export default function StakeV2({ setPendingTxns, connectWallet, trackAction }) 
                     Sell MLP
                   </Link>
                   {active && (
-                    <button className="App-button-option App-card-option" onClick={() => setIsCompoundModalVisible(true)}>
+                    <button
+                      className="App-button-option App-card-option"
+                      onClick={() => setIsCompoundModalVisible(true)}
+                    >
                       Compound
                     </button>
                   )}
@@ -1026,7 +1033,7 @@ export default function StakeV2({ setPendingTxns, connectWallet, trackAction }) 
                   <div>
                     <StakeV2Styled.RewardsBannerTextWrap>
                       <StakeV2Styled.RewardsBannerText large inline>
-                        {formatKeyAmount(processedData, "mycInStakedMyc", MYC_DECIMALS, 2, true)} MYC
+                        {formatKeyAmount(processedData, "mycInStakedMyc", MYC_DECIMALS, 2, true)} esMYC
                       </StakeV2Styled.RewardsBannerText>{" "}
                       <StakeV2Styled.RewardsBannerText inline>
                         ($
