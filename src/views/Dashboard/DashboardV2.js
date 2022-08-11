@@ -88,6 +88,7 @@ export default function DashboardV2() {
     fetcher: (...args) => fetch(...args).then((res) => res.json()),
   });
 
+  // TODO swap to chainId when tracer server supports testnet /volume
   const mycTotalVolumeUrl = getTracerServerUrl(42161, "/volume");
   const { data: mycTotalVolume } = useSWR([mycTotalVolumeUrl], {
     fetcher: (...args) => fetch(...args).then((res) => res.json()),
