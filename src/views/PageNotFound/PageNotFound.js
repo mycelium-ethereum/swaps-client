@@ -14,7 +14,7 @@ function PageNotFound() {
           <h2>Oops, page not found!</h2>
           <p className="go-back">
             <span>Return to </span>
-            <Link to="/">Homepage</Link> <span>or </span> <Link to="/trade">Trade</Link>
+            <Link to="/">Home</Link>
           </p>
         </div>
         <Footer />
