@@ -930,7 +930,6 @@ function FullApp() {
         </div>
       </div>
       <ToastContainer
-        limit={1}
         transition={Zoom}
         position="bottom-right"
         autoClose={7000}
