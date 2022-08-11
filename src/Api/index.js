@@ -73,8 +73,6 @@ export function useFees(chainId) {
     getMycGraphClient(chainId).query({ query }).then(setRes).catch(console.warn);
   }, [setRes, query, chainId]);
 
-  console.log(res);
-
   return res ? res.data.feeStat : null;
 }
 

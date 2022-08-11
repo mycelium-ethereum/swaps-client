@@ -17,9 +17,7 @@ import {
   formatKeyAmount,
   expandDecimals,
   bigNumberify,
-  numberWithCommas,
   formatDate,
-  getServerUrl,
   getChainName,
   useChainId,
   USD_DECIMALS,
@@ -83,7 +81,8 @@ export default function DashboardV2() {
 
   const chainName = getChainName(chainId);
 
-  const positionStatsUrl = getServerUrl(chainId, "/position_stats");
+  // TODO swap to chainId when tracer server supports testnet /positionStats
+  const positionStatsUrl = getTracerServerUrl(42161, "/positionStats");
   const { data: positionStats } = useSWR([positionStatsUrl], {
     fetcher: (...args) => fetch(...args).then((res) => res.json()),
   });
