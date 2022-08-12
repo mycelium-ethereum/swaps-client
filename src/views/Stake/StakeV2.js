@@ -882,7 +882,7 @@ export default function StakeV2({ setPendingTxns, connectWallet, trackAction }) 
               <div className="Page-description">
                 Stake{" "}
                 <a
-                  href="https://swaps.docs.mycelium.xyz/protocol-design/mycelium-liquidity-pool-mlp/mlp-token#pricing"
+                  href="https://swaps.docs.mycelium.xyz/protocol-design/mycelium-liquidity-pool-mlp/mlp-token"
                   target="_blank"
                   rel="noopener noreferrer"
                 >

@@ -38,7 +38,7 @@ export default function BuyMlp(props) {
             <div className="Page-description">
               Purchase{" "}
               <a
-                href="https://swaps.docs.mycelium.xyz/protocol-design/mycelium-liquidity-pool-mlp/mlp-token#pricing"
+                href="https://swaps.docs.mycelium.xyz/protocol-design/mycelium-liquidity-pool-mlp/mlp-token"
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={() =>
