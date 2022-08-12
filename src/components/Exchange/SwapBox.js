@@ -2329,7 +2329,7 @@ export default function SwapBox(props) {
                       <br />
                       <br />
                       <a
-                        href="https://tracer-1.gitbook.io/tracer-perpetual-swaps/6VOYVKGbCCw0I8cj7vdF/protocol-design/trading/fees"
+                        href="https://swaps.docs.mycelium.xyz/quick-start-guide/2.-how-to-trade"
                         target="_blank"
                         rel="noopener noreferrer"
                       >
@@ -2358,7 +2358,7 @@ export default function SwapBox(props) {
                       <br />
                       <br />
                       <a
-                        href="https://tracer-1.gitbook.io/tracer-perpetual-swaps/6VOYVKGbCCw0I8cj7vdF/protocol-design/trading/fees"
+                        href="https://swaps.docs.mycelium.xyz/quick-start-guide/2.-how-to-trade"
                         target="_blank"
                         rel="noopener noreferrer"
                       >
@@ -2395,7 +2395,7 @@ export default function SwapBox(props) {
                       )}
                       <br />
                       <a
-                        href="https://tracer-1.gitbook.io/tracer-perpetual-swaps/6VOYVKGbCCw0I8cj7vdF/protocol-design/trading/fees"
+                        href="https://swaps.docs.mycelium.xyz/protocol-design/trading/fees#borrowing-fees"
                         target="_blank"
                         rel="noopener noreferrer"
                       >
@@ -2442,7 +2442,7 @@ export default function SwapBox(props) {
         <div className="Exchange-info-row">
           <div className="Exchange-info-label-button">
             <a
-              href="https://tracer-1.gitbook.io/tracer-perpetual-swaps/6VOYVKGbCCw0I8cj7vdF/quick-start-guide/3.-trading"
+              href="https://swaps.docs.mycelium.xyz/quick-start-guide/2.-how-to-trade"
               target="_blank"
               rel="noopener noreferrer"
             >
