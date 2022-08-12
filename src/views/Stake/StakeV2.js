@@ -39,7 +39,6 @@ import {
   getStakingData,
   getProcessedData,
   getPageTitle,
-  MYC_DECIMALS,
 } from "../../Helpers";
 import { callContract, useTCRPrice } from "../../Api";
 import { getConstant } from "../../Constants";
@@ -73,10 +72,6 @@ function CompoundModal(props) {
   const [isCompounding, setIsCompounding] = useState(false);
   const [shouldClaimEsMyc, setShouldClaimEsMyc] = useLocalStorageSerializeKey(
     [chainId, "StakeV2-compound-should-claim-myc"],
-    true
-  );
-  const [shouldStakeEsMyc, setShouldStakeEsMyc] = useLocalStorageSerializeKey(
-    [chainId, "StakeV2-claim-should-stake-myc"],
     true
   );
   const [shouldClaimWeth, setShouldClaimWeth] = useLocalStorageSerializeKey(
@@ -145,8 +140,8 @@ function CompoundModal(props) {
       [
         false, // shouldClaimMYC,
         false, // shouldStakeMYC,
-        shouldClaimEsMyc || shouldStakeEsMyc,
-        shouldStakeEsMyc,
+        shouldClaimEsMyc,
+        false, // shouldStakeEsMyc,
         false, // shouldStakeMultiplierPoints,
         shouldClaimWeth || shouldConvertWeth || shouldBuyMlpWithEth,
         shouldConvertWeth,
@@ -183,26 +178,13 @@ function CompoundModal(props) {
     setShouldBuyMlpWithEth(value);
   };
 
-  const toggleShouldStakeEsMyc = (value) => {
-    if (value) {
-      setShouldClaimEsMyc(true);
-    }
-    setShouldStakeEsMyc(value);
-  };
-
-
   return (
     <div className="StakeModal">
       <Modal isVisible={isVisible} setIsVisible={setIsVisible} label="Compound Rewards">
         <div className="CompoundModal-menu">
           <div>
-            <Checkbox isChecked={shouldClaimEsMyc} setIsChecked={setShouldClaimEsMyc} disabled={shouldStakeEsMyc}>
+            <Checkbox isChecked={shouldClaimEsMyc} setIsChecked={setShouldClaimEsMyc}>
               Claim esMYC Rewards
-            </Checkbox>
-          </div>
-          <div>
-            <Checkbox isChecked={shouldStakeEsMyc} setIsChecked={toggleShouldStakeEsMyc}>
-              Stake esMYC Rewards
             </Checkbox>
           </div>
           <div>
@@ -1053,11 +1035,11 @@ export default function StakeV2({ setPendingTxns, connectWallet, trackAction }) 
                   <div>
                     <StakeV2Styled.RewardsBannerTextWrap>
                       <StakeV2Styled.RewardsBannerText large inline>
-                        {formatKeyAmount(processedData, "mycInStakedMyc", MYC_DECIMALS, 2, true)} esMYC
+                        {formatKeyAmount(vestingData, "mlpVesterVestedAmount", 18, 4, true)} esMYC
                       </StakeV2Styled.RewardsBannerText>{" "}
                       <StakeV2Styled.RewardsBannerText inline>
                         ($
-                        {formatKeyAmount(processedData, "mycInStakedMycUsd", USD_DECIMALS, 2, true)}
+                        {formatKeyAmount(processedData, "mlpVesterVestedAmountUsd", USD_DECIMALS, 2, true)}
                         )
                       </StakeV2Styled.RewardsBannerText>
                     </StakeV2Styled.RewardsBannerTextWrap>

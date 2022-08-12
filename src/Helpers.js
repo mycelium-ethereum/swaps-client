@@ -2736,6 +2736,7 @@ export function getProcessedData(
   data.mlpVesterRewards = vestingData.mlpVester.claimable;
   data.totalVesterRewards = data.mycVesterRewards.add(data.mlpVesterRewards);
   data.totalVesterRewardsUsd = data.totalVesterRewards.mul(mycPrice).div(expandDecimals(1, 18));
+  data.mlpVesterVestedAmountUsd = vestingData.mlpVesterVestedAmount.mul(mycPrice).div(expandDecimals(1, 18));
 
   data.totalNativeTokenRewards = data.feeMycTrackerRewards.add(data.feeMlpTrackerRewards);
   data.totalNativeTokenRewardsUsd = data.feeMycTrackerRewardsUsd.add(data.feeMlpTrackerRewardsUsd);
