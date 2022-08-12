@@ -81,6 +81,7 @@ export const RewardsDataBox = styled.div`
   justify-content: center;
   align-items: center;
   flex-direction: column;
+  text-align: center;
   padding: 2rem;
   font-size: 16px;
 

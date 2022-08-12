@@ -39,7 +39,6 @@ import {
   getStakingData,
   getProcessedData,
   getPageTitle,
-  MYC_DECIMALS,
 } from "../../Helpers";
 import { callContract, useTCRPrice } from "../../Api";
 import { getConstant } from "../../Constants";
@@ -71,7 +70,7 @@ function CompoundModal(props) {
     wrappedTokenSymbol,
   } = props;
   const [isCompounding, setIsCompounding] = useState(false);
-  const [shouldClaimMYC, setShouldClaimMYC] = useLocalStorageSerializeKey(
+  const [shouldClaimEsMyc, setShouldClaimEsMyc] = useLocalStorageSerializeKey(
     [chainId, "StakeV2-compound-should-claim-myc"],
     true
   );
@@ -139,9 +138,9 @@ function CompoundModal(props) {
       contract,
       "handleRewards",
       [
-        shouldClaimMYC,
+        false, // shouldClaimMYC,
         false, // shouldStakeMYC,
-        false, // shouldClaimEsMyc
+        shouldClaimEsMyc,
         false, // shouldStakeEsMyc,
         false, // shouldStakeMultiplierPoints,
         shouldClaimWeth || shouldConvertWeth || shouldBuyMlpWithEth,
@@ -184,8 +183,8 @@ function CompoundModal(props) {
       <Modal isVisible={isVisible} setIsVisible={setIsVisible} label="Compound Rewards">
         <div className="CompoundModal-menu">
           <div>
-            <Checkbox isChecked={shouldClaimMYC} setIsChecked={setShouldClaimMYC}>
-              Claim MYC Rewards
+            <Checkbox isChecked={shouldClaimEsMyc} setIsChecked={setShouldClaimEsMyc}>
+              Claim esMYC Rewards
             </Checkbox>
           </div>
           <div>
@@ -230,7 +229,7 @@ function ClaimModal(props) {
     wrappedTokenSymbol,
   } = props;
   const [isClaiming, setIsClaiming] = useState(false);
-  const [shouldClaimMYC, setShouldClaimMYC] = useLocalStorageSerializeKey(
+  const [shouldClaimEsMyc, setShouldClaimEsMyc] = useLocalStorageSerializeKey(
     [chainId, "StakeV2-claim-should-claim-myc"],
     true
   );
@@ -263,9 +262,9 @@ function ClaimModal(props) {
       contract,
       "handleRewards",
       [
-        shouldClaimMYC,
+        false, // shouldClaimMYC,
         false, // shouldStakeMYC
-        false, // shouldClaimEsMyc,
+        shouldClaimEsMyc, // shouldClaimEsMyc,
         false, // shouldStakeEsMyc
         false, // shouldStakeMultiplierPoints
         shouldClaimWeth,
@@ -299,8 +298,8 @@ function ClaimModal(props) {
       <Modal isVisible={isVisible} setIsVisible={setIsVisible} label="Claim Rewards">
         <div className="CompoundModal-menu">
           <div>
-            <Checkbox isChecked={shouldClaimMYC} setIsChecked={setShouldClaimMYC}>
-              Claim MYC Rewards
+            <Checkbox isChecked={shouldClaimEsMyc} setIsChecked={setShouldClaimEsMyc}>
+              Claim esMYC Rewards
             </Checkbox>
           </div>
           <div>
@@ -416,7 +415,10 @@ function VesterDepositModal(props) {
   };
 
   return (
-    <SEO title={getPageTitle("Earn")}>
+    <SEO
+      title={getPageTitle("Earn")}
+      description="Claim fees and liquidity mining rewards earned via providing liquidity to the Mycelium Perpetual Swap liquidity pool."
+    >
       <div className="StakeModal">
         <Modal isVisible={isVisible} setIsVisible={setIsVisible} label={title} className="non-scrollable">
           <div className="Exchange-swap-section">
@@ -1033,11 +1035,11 @@ export default function StakeV2({ setPendingTxns, connectWallet, trackAction }) 
                   <div>
                     <StakeV2Styled.RewardsBannerTextWrap>
                       <StakeV2Styled.RewardsBannerText large inline>
-                        {formatKeyAmount(processedData, "mycInStakedMyc", MYC_DECIMALS, 2, true)} esMYC
+                        {formatKeyAmount(vestingData, "mlpVesterVestedAmount", 18, 4, true)} esMYC
                       </StakeV2Styled.RewardsBannerText>{" "}
                       <StakeV2Styled.RewardsBannerText inline>
                         ($
-                        {formatKeyAmount(processedData, "mycInStakedMycUsd", USD_DECIMALS, 2, true)}
+                        {formatKeyAmount(processedData, "mlpVesterVestedAmountUsd", USD_DECIMALS, 2, true)}
                         )
                       </StakeV2Styled.RewardsBannerText>
                     </StakeV2Styled.RewardsBannerTextWrap>

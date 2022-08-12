@@ -2,10 +2,9 @@
   position: relative;
   overflow: hidden;
   min-height: 100%;
-  background-repeat: no-repeat;
   background-position-y: bottom;
   background-image: url("./img/background_mesh.svg");
-  background-size: contain;
+  background-size: cover;
 }
 
 .App-header-backdrop {
@@ -89,7 +88,7 @@
   line-height: 18px;
   font-weight: normal;
   letter-spacing: 0.1px;
-  color: var(--action-stroke);
+  color: var(--action-active);
   padding: 15px 16px;
   text-decoration: none;
   display: block;

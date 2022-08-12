@@ -273,7 +273,7 @@ export default function DashboardV2() {
                     buy MLP
                   </Link>{" "}
                   with {tokenInfo.symbol},&nbsp; and to{" "}
-                  <Link to="/trade" target="_blank" rel="noopener noreferrer">
+                  <Link to="/" target="_blank" rel="noopener noreferrer">
                     swap
                   </Link>{" "}
                   {tokenInfo.symbol} for other tokens.
@@ -285,7 +285,7 @@ export default function DashboardV2() {
                   <br />
                   <br />
                   Get lower fees to{" "}
-                  <Link to="/trade" target="_blank" rel="noopener noreferrer">
+                  <Link to="/" target="_blank" rel="noopener noreferrer">
                     swap
                   </Link>{" "}
                   tokens for {tokenInfo.symbol}.
@@ -420,7 +420,10 @@ export default function DashboardV2() {
   };
 
   return (
-    <SEO title={getPageTitle("Dashboard")}>
+    <SEO
+      title={getPageTitle("Dashboard")}
+      description="View stats on Mycelium Perpetual Swaps, the MYC token, the MLP token and the MLP liquidity pool."
+    >
       <div className="default-container DashboardV2 page-layout">
         <div className="section-title-block">
           <div className="section-title-content">

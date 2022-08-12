@@ -95,7 +95,7 @@ export const STABLE_TAX_BASIS_POINTS = 5;
 export const MINT_BURN_FEE_BASIS_POINTS = 25;
 export const SWAP_FEE_BASIS_POINTS = 25;
 export const STABLE_SWAP_FEE_BASIS_POINTS = 1;
-export const MARGIN_FEE_BASIS_POINTS = 10;
+export const MARGIN_FEE_BASIS_POINTS = 3;
 
 export const LIQUIDATION_FEE = expandDecimals(5, USD_DECIMALS);
 
@@ -323,7 +323,8 @@ export const platformTokens = {
       symbol: "MLP",
       decimals: 18,
       address: getContract(ARBITRUM, "StakedMlpTracker"), // address of fsMLP token because user only holds fsMLP
-      imageUrl: "https://raw.githubusercontent.com/mycelium-ethereum/myc-assets/master/assets/tokens/MLP.png?token=GHSAT0AAAAAABRXE63EVTN6JZDCPGAATEOOYXTHT4Q"
+      imageUrl:
+        "https://raw.githubusercontent.com/mycelium-ethereum/myc-assets/master/assets/tokens/MLP.png?token=GHSAT0AAAAAABRXE63EVTN6JZDCPGAATEOOYXTHT4Q",
     },
     MYC: {
       name: "MYC",
@@ -393,11 +394,9 @@ export function deserialize(data) {
 
 export const helperToast = {
   success: (content) => {
-    toast.dismiss();
     toast.success(content);
   },
   error: (content) => {
-    toast.dismiss();
     toast.error(content);
   },
 };
@@ -1394,6 +1393,23 @@ export function shortenAddress(address, length) {
   }
   let left = Math.floor((length - 3) / 2) + 1;
   return address.substring(0, left) + "..." + address.substring(address.length - (length - (left + 3)), address.length);
+}
+
+export function formatTimeTill(time) {
+  const dateNow = new Date() / 1000;
+
+  if (time < dateNow) {
+    return '0d 0h 0s'
+  }
+
+  const secondsTill = Math.floor((time - dateNow));
+  let minutes = Math.floor(secondsTill/60);
+  let hours = Math.floor(minutes/60);
+  const days = Math.floor(hours/24);
+
+  hours = hours-(days*24);
+  minutes = minutes-(days*24*60)-(hours*60);
+  return `${days}d ${hours}h ${minutes}m`
 }
 
 export function formatDateTime(time) {
@@ -2720,6 +2736,7 @@ export function getProcessedData(
   data.mlpVesterRewards = vestingData.mlpVester.claimable;
   data.totalVesterRewards = data.mycVesterRewards.add(data.mlpVesterRewards);
   data.totalVesterRewardsUsd = data.totalVesterRewards.mul(mycPrice).div(expandDecimals(1, 18));
+  data.mlpVesterVestedAmountUsd = vestingData.mlpVesterVestedAmount.mul(mycPrice).div(expandDecimals(1, 18));
 
   data.totalNativeTokenRewards = data.feeMycTrackerRewards.add(data.feeMlpTrackerRewards);
   data.totalNativeTokenRewardsUsd = data.feeMycTrackerRewardsUsd.add(data.feeMlpTrackerRewardsUsd);

@@ -2,7 +2,7 @@ import React, { useState, useMemo, useEffect } from "react";
 
 import useSWR from "swr";
 
-import { getTokenInfo, useChainId, useENS } from "../../Helpers";
+import { getPageTitle, getTokenInfo, useChainId, useENS } from "../../Helpers";
 import { useWeb3React } from "@web3-react/core";
 import { getTracerServerUrl } from "../../Api/rewards";
 import { useInfoTokens } from "../../Api";
@@ -12,6 +12,7 @@ import Leaderboard from "./Leaderboard";
 import * as Styles from "./Rewards.styles";
 import { LeaderboardSwitch } from "./ViewSwitch";
 import Footer from "../../Footer";
+import SEO from "../../components/Common/SEO";
 
 const PersonalHeader = () => (
   <div className="Page-title-section mt-0">
@@ -35,12 +36,14 @@ export default function Rewards(props) {
   const { active, account, library } = useWeb3React();
   const { ensName } = useENS(account);
 
-  const [selectedWeek, setSelectedWeek] = useState(undefined);
+  const [selectedWeek, setSelectedWeek] = useState("latest");
+  const [pageTracked, setPageTracked] = useState(false);
+  const [nextRewards, setNextRewards] = useState(undefined);
 
   const { infoTokens } = useInfoTokens(library, chainId, active, undefined, undefined);
 
   // Fetch all week data from server
-  const { data: allweeksRewardsData, error: failedFetchingRewards } = useSWR(
+  const { data: allWeeksRewardsData, error: failedFetchingRewards } = useSWR(
     [getTracerServerUrl(chainId, "/rewards")],
     {
       fetcher: (...args) => fetch(...args).then((res) => res.json()),
@@ -49,27 +52,16 @@ export default function Rewards(props) {
 
   // Fetch only the latest week's data from server
   const { data: currentRewardWeek, error: failedFetchingWeekRewards } = useSWR(
-    [`${getTracerServerUrl(chainId, "/rewards")}&week=latest`],
+    [getTracerServerUrl(chainId, "/rewards"), selectedWeek],
     {
-      fetcher: (...args) => fetch(...args).then((res) => res.json()),
+      fetcher: (url, week) => fetch(`${url}&week=${week}`).then((res) => res.json()),
     }
   );
-
-  // If the full data has not been loaded, use current week data
-  const weeksRewardsData = useMemo(() => {
-    if (allweeksRewardsData && selectedWeek) {
-      return allweeksRewardsData;
-    } else if (currentRewardWeek) {
-      return [currentRewardWeek];
-    } else {
-      return undefined;
-    }
-  }, [currentRewardWeek, allweeksRewardsData, selectedWeek]);
 
   // Get the data for the current user
   const userData = useMemo(
     () =>
-      weeksRewardsData?.reduce(
+      allWeeksRewardsData?.reduce(
         (totals, week) => {
           const trader = week.traders?.find((trader) => trader.user_address === account);
           if (!trader) {
@@ -78,7 +70,8 @@ export default function Rewards(props) {
           return {
             totalTradingVolume: totals.totalTradingVolume.add(trader.volume),
             totalRewards: totals.totalRewards.add(trader.reward),
-            unclaimedRewards: totals.unclaimedRewards.add(trader?.claimed ? trader.amount : 0),
+            // TODO calc what has been claimed
+            unclaimedRewards: totals.unclaimedRewards.add(trader.reward),
           };
         },
         {
@@ -87,141 +80,151 @@ export default function Rewards(props) {
           unclaimedRewards: ethers.BigNumber.from(0),
         }
       ),
-    [weeksRewardsData, account]
+    [allWeeksRewardsData, account]
   );
 
   // Extract week data from full API response
   const weekData = useMemo(() => {
-    if (!weeksRewardsData) {
+    if (!currentRewardWeek) {
       return undefined;
     }
-    if (!!weeksRewardsData?.message) {
+    if (!!currentRewardWeek?.message) {
       return undefined;
     }
-    const selectedWeekActual = selectedWeek && parseFloat(selectedWeek) - 1;
-    const allWeeksRewardsData = weeksRewardsData?.find((week) => week.week === selectedWeekActual?.toString());
+    const allWeeksRewardsData = currentRewardWeek;
     if (!allWeeksRewardsData) {
       return undefined;
     }
     allWeeksRewardsData.traders?.sort((a, b) => b.volume - a.volume); // Sort traders by highest to lowest in volume
     return allWeeksRewardsData;
-  }, [weeksRewardsData, selectedWeek]);
+  }, [currentRewardWeek]);
 
   // Get volume, position and reward from user week data
   const userWeekData = useMemo(() => {
-    if (!weeksRewardsData) {
+    if (!currentRewardWeek) {
       return undefined;
     }
-    const traderData = weeksRewardsData.traders?.find((trader) => trader.user_address === account);
-    const leaderboardPosition = weeksRewardsData.traders?.findIndex((trader) => trader.user_address === account);
+    const traderData = currentRewardWeek.traders?.find((trader) => trader.user_address === account);
+    const leaderboardPosition = currentRewardWeek.traders?.findIndex((trader) => trader.user_address === account);
     // trader's data found
     if (traderData) {
       traderData.position = leaderboardPosition;
-      return traderData;
+      return ({
+        volume: ethers.BigNumber.from(traderData.volume),
+        reward: ethers.BigNumber.from(traderData.reward),
+        position: leaderboardPosition
+      });
     } else {
       // trader not found but data exists so user has no rewards
       return {
         volume: ethers.BigNumber.from(0),
         reward: ethers.BigNumber.from(0),
+        rewardAmountUsd: ethers.BigNumber.from(0)
       };
     }
-  }, [account, weeksRewardsData]);
+  }, [account, currentRewardWeek]);
 
   const eth = getTokenInfo(infoTokens, ethers.constants.AddressZero);
   const ethPrice = eth?.maxPrimaryPrice;
 
-  let rewardAmountEth = 0;
-  if (ethPrice && userWeekData) {
-    rewardAmountEth = ethPrice.mul(userWeekData.reward);
+  if (ethPrice && userWeekData?.reward) {
+    userWeekData.rewardAmountUsd = userWeekData.reward?.mul(ethPrice)
   }
 
-  let unclaimedRewardsEth, totalRewardAmountEth;
+  let unclaimedRewardsUsd, totalRewardAmountUsd;
   if (ethPrice && userData) {
-    unclaimedRewardsEth = ethPrice.mul(userData.unclaimedRewards);
-    totalRewardAmountEth = ethPrice.mul(userData.totalRewards);
-  }
-
-  if (!currentRewardWeek && selectedWeek !== undefined) {
-    setSelectedWeek(undefined);
-  } else if (!!currentRewardWeek && selectedWeek === undefined) {
-    setSelectedWeek(parseFloat(currentRewardWeek.week) + 1);
+    unclaimedRewardsUsd = userData.totalRewards.mul(ethPrice);
+    totalRewardAmountUsd = userData.totalRewards.mul(ethPrice);
   }
 
   let rewardsMessage = "";
-  if (!weeksRewardsData) {
+  if (!currentRewardWeek) {
     rewardsMessage = "Fetching rewards";
   } else if (!!failedFetchingWeekRewards) {
     rewardsMessage = "Failed fetching current week rewards";
   } else if (!!failedFetchingRewards) {
     rewardsMessage = "Failed fetching rewards";
   } else {
-    if (weeksRewardsData?.length === 0) {
+    if (allWeeksRewardsData?.length === 0) {
       rewardsMessage = "No rewards for network";
+    } else if (selectedWeek === "latest") {
+      rewardsMessage = `Week ${Number.parseInt(currentRewardWeek.week) + 1}`;
     } else {
-      rewardsMessage = `Week ${selectedWeek}`;
+      rewardsMessage = `Week ${selectedWeek + 1}`;
     }
   }
-
-  const [pageTracked, setPageTracked] = useState(false);
 
   const switchView = () => {
     setCurrentView(currentView === "Personal" ? "Leaderboard" : "Personal");
   };
 
+  useEffect(() => {
+    if (!!currentRewardWeek && nextRewards === undefined) {
+      // this will load latest first and set next rewards
+      setNextRewards(currentRewardWeek.end);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentRewardWeek])
+
+
   // Segment Analytics Page tracking
   useEffect(() => {
-    if (!pageTracked && weeksRewardsData && analytics) {
+    if (!pageTracked && currentRewardWeek && analytics) {
       const traits = {
-        week: weeksRewardsData[weeksRewardsData.length - 1].key,
+        week: currentRewardWeek.key
       };
       trackPageWithTraits(traits);
       setPageTracked(true); // Prevent Page function being called twice
     }
-  }, [weeksRewardsData, pageTracked, trackPageWithTraits, analytics]);
+  }, [currentRewardWeek, pageTracked, trackPageWithTraits, analytics]);
 
   return (
-    <Styles.StyledRewardsPage className="default-container page-layout">
-      {
-        {
+    <SEO
+      title={getPageTitle("Rewards")}
+      description="Claim fees earned via being in the top 50% of traders on Mycelium Perpetual Swaps."
+    >
+      <Styles.StyledRewardsPage className="default-container page-layout">
+        {{
           Personal: <PersonalHeader />,
           Leaderboard: <LeaderboardHeader />,
-        }[currentView]
-      }
-      <LeaderboardSwitch
-        switchView={switchView}
-        currentView={currentView}
-        rewardsMessage={rewardsMessage}
-        weeksRewardsData={weeksRewardsData}
-        setSelectedWeek={setSelectedWeek}
-        trackAction={trackAction}
-      />
-      <TraderRewards
-        active={active}
-        account={account}
-        ensName={ensName}
-        userData={userData}
-        totalRewardAmountEth={totalRewardAmountEth}
-        unclaimedRewardsEth={unclaimedRewardsEth}
-        rewardsMessage={rewardsMessage}
-        weeksRewardsData={weeksRewardsData}
-        setSelectedWeek={setSelectedWeek}
-        connectWallet={connectWallet}
-        userWeekData={userWeekData}
-        rewardAmountEth={rewardAmountEth}
-        currentView={currentView}
-        trackAction={trackAction}
-      />
-      <Leaderboard
-        weekData={weekData}
-        userWeekData={userWeekData}
-        userAccount={account}
-        ensName={ensName}
-        currentView={currentView}
-        selectedWeek={selectedWeek}
-        connectWallet={connectWallet}
-        trackAction={trackAction}
-      />
-      <Footer />
-    </Styles.StyledRewardsPage>
+        }[currentView]}
+        <LeaderboardSwitch
+          switchView={switchView}
+          currentView={currentView}
+          rewardsMessage={rewardsMessage}
+          allWeeksRewardsData={allWeeksRewardsData}
+          setSelectedWeek={setSelectedWeek}
+          trackAction={trackAction}
+        />
+        <TraderRewards
+          active={active}
+          account={account}
+          ensName={ensName}
+          userData={userData}
+          totalRewardAmountUsd={totalRewardAmountUsd}
+          unclaimedRewardsUsd={unclaimedRewardsUsd}
+          rewardsMessage={rewardsMessage}
+          allWeeksRewardsData={allWeeksRewardsData}
+          setSelectedWeek={setSelectedWeek}
+          connectWallet={connectWallet}
+          userWeekData={userWeekData}
+          currentView={currentView}
+          trackAction={trackAction}
+          nextRewards={nextRewards}
+          latestWeek={selectedWeek === "latest"}
+        />
+        <Leaderboard
+          weekData={weekData}
+          userWeekData={userWeekData}
+          userAccount={account}
+          ensName={ensName}
+          currentView={currentView}
+          selectedWeek={selectedWeek}
+          connectWallet={connectWallet}
+          trackAction={trackAction}
+        />
+        <Footer />
+      </Styles.StyledRewardsPage>
+    </SEO>
   );
 }
