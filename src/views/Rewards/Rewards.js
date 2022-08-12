@@ -2,7 +2,7 @@ import React, { useState, useMemo, useEffect } from "react";
 
 import useSWR from "swr";
 
-import { getTokenInfo, useChainId, useENS } from "../../Helpers";
+import { getPageTitle, getTokenInfo, useChainId, useENS } from "../../Helpers";
 import { useWeb3React } from "@web3-react/core";
 import { getTracerServerUrl } from "../../Api/rewards";
 import { useInfoTokens } from "../../Api";
@@ -12,6 +12,7 @@ import Leaderboard from "./Leaderboard";
 import * as Styles from "./Rewards.styles";
 import { LeaderboardSwitch } from "./ViewSwitch";
 import Footer from "../../Footer";
+import SEO from "../../components/Common/SEO";
 
 const PersonalHeader = () => (
   <div className="Page-title-section mt-0">
@@ -110,13 +111,15 @@ export default function Rewards(props) {
       traderData.position = leaderboardPosition;
       return ({
         volume: ethers.BigNumber.from(traderData.volume),
-        reward: ethers.BigNumber.from(traderData.reward)
+        reward: ethers.BigNumber.from(traderData.reward),
+        position: leaderboardPosition
       });
     } else {
       // trader not found but data exists so user has no rewards
       return {
         volume: ethers.BigNumber.from(0),
         reward: ethers.BigNumber.from(0),
+        rewardAmountUsd: ethers.BigNumber.from(0)
       };
     }
   }, [account, currentRewardWeek]);
@@ -124,9 +127,8 @@ export default function Rewards(props) {
   const eth = getTokenInfo(infoTokens, ethers.constants.AddressZero);
   const ethPrice = eth?.maxPrimaryPrice;
 
-  let rewardAmountUsd;
   if (ethPrice && userWeekData?.reward) {
-    rewardAmountUsd = userWeekData.reward?.mul(ethPrice)
+    userWeekData.rewardAmountUsd = userWeekData.reward?.mul(ethPrice)
   }
 
   let unclaimedRewardsUsd, totalRewardAmountUsd;
@@ -177,50 +179,52 @@ export default function Rewards(props) {
   }, [currentRewardWeek, pageTracked, trackPageWithTraits, analytics]);
 
   return (
-    <Styles.StyledRewardsPage className="default-container page-layout">
-      {
-        {
+    <SEO
+      title={getPageTitle("Rewards")}
+      description="Claim fees earned via being in the top 50% of traders on Mycelium Perpetual Swaps."
+    >
+      <Styles.StyledRewardsPage className="default-container page-layout">
+        {{
           Personal: <PersonalHeader />,
           Leaderboard: <LeaderboardHeader />,
-        }[currentView]
-      }
-      <LeaderboardSwitch
-        switchView={switchView}
-        currentView={currentView}
-        rewardsMessage={rewardsMessage}
-        allWeeksRewardsData={allWeeksRewardsData}
-        setSelectedWeek={setSelectedWeek}
-        trackAction={trackAction}
-      />
-      <TraderRewards
-        active={active}
-        account={account}
-        ensName={ensName}
-        userData={userData}
-        totalRewardAmountUsd={totalRewardAmountUsd}
-        unclaimedRewardsUsd={unclaimedRewardsUsd}
-        rewardsMessage={rewardsMessage}
-        allWeeksRewardsData={allWeeksRewardsData}
-        setSelectedWeek={setSelectedWeek}
-        connectWallet={connectWallet}
-        userWeekData={userWeekData}
-        rewardAmountUsd={rewardAmountUsd}
-        currentView={currentView}
-        trackAction={trackAction}
-        nextRewards={nextRewards}
-        latestWeek={selectedWeek === "latest"}
-      />
-      <Leaderboard
-        weekData={weekData}
-        userWeekData={userWeekData}
-        userAccount={account}
-        ensName={ensName}
-        currentView={currentView}
-        selectedWeek={selectedWeek}
-        connectWallet={connectWallet}
-        trackAction={trackAction}
-      />
-      <Footer />
-    </Styles.StyledRewardsPage>
+        }[currentView]}
+        <LeaderboardSwitch
+          switchView={switchView}
+          currentView={currentView}
+          rewardsMessage={rewardsMessage}
+          allWeeksRewardsData={allWeeksRewardsData}
+          setSelectedWeek={setSelectedWeek}
+          trackAction={trackAction}
+        />
+        <TraderRewards
+          active={active}
+          account={account}
+          ensName={ensName}
+          userData={userData}
+          totalRewardAmountUsd={totalRewardAmountUsd}
+          unclaimedRewardsUsd={unclaimedRewardsUsd}
+          rewardsMessage={rewardsMessage}
+          allWeeksRewardsData={allWeeksRewardsData}
+          setSelectedWeek={setSelectedWeek}
+          connectWallet={connectWallet}
+          userWeekData={userWeekData}
+          currentView={currentView}
+          trackAction={trackAction}
+          nextRewards={nextRewards}
+          latestWeek={selectedWeek === "latest"}
+        />
+        <Leaderboard
+          weekData={weekData}
+          userWeekData={userWeekData}
+          userAccount={account}
+          ensName={ensName}
+          currentView={currentView}
+          selectedWeek={selectedWeek}
+          connectWallet={connectWallet}
+          trackAction={trackAction}
+        />
+        <Footer />
+      </Styles.StyledRewardsPage>
+    </SEO>
   );
 }

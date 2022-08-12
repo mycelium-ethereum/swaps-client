@@ -15,7 +15,7 @@ import {
 } from "./Helpers";
 
 const writeKey = process.env.REACT_APP_SEGMENT_WRITE_KEY;
-const customTrackPages = ["/trade", "/buy_mlp", "/rewards"]; //These pages are tracked through trackPageWithTraits() separately
+const customTrackPages = ["/", "/buy_mlp", "/rewards"]; //These pages are tracked through trackPageWithTraits() separately
 
 const IGNORE_IP_CONTEXT = {
   context: {
@@ -70,7 +70,7 @@ export const useAnalytics = () => {
     }
   };
 
-  const trackLogin = (chainId, gmxBalances, userBalances) => {
+  const trackLogin = (chainId, mycBalances, userBalances) => {
     const hasConsented = hasUserConsented();
     try {
       const provider = localStorage.getItem(CURRENT_PROVIDER_LOCALSTORAGE_KEY);
@@ -79,7 +79,7 @@ export const useAnalytics = () => {
         walletAddress: account,
         network: NETWORK_NAME[chainId] ?? `Unsupported (${chainId})`,
         ...userBalances,
-        ...gmxBalances,
+        ...mycBalances,
       };
       if (account && hasConsented) {
         analytics?.track("User logged in", {

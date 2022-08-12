@@ -18,7 +18,6 @@ export default function TraderRewards(props) {
     setSelectedWeek,
     connectWallet,
     userWeekData,
-    rewardAmountUsd,
     currentView,
     trackAction,
     nextRewards,
@@ -90,7 +89,7 @@ export default function TraderRewards(props) {
             <Styles.RewardsDataBoxTitle>Claimable Rewards </Styles.RewardsDataBoxTitle>
             <div>
               <Styles.LargeText>{`${formatAmount(userWeekData?.reward, ETH_DECIMALS, 4, true)} ETH`}</Styles.LargeText>
-              <span> {` ($${formatAmount(rewardAmountUsd, ETH_DECIMALS + USD_DECIMALS, 2, true)})`}</span>
+              <span> {` ($${formatAmount(userWeekData?.rewardAmountUsd, ETH_DECIMALS + USD_DECIMALS, 2, true)})`}</span>
             </div>
           </Styles.RewardsDataBox>
         </Styles.RewardsDataBoxes>

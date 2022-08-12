@@ -1,5 +1,5 @@
 import React from "react";
-import { truncateMiddleEthAddress, formatAmount, USD_DECIMALS } from "../../Helpers";
+import { truncateMiddleEthAddress, formatAmount, USD_DECIMALS, ETH_DECIMALS } from "../../Helpers";
 import Jazzicon, { jsNumberForAddress } from "react-jazzicon";
 import Davatar from '@davatar/react';
 import cx from "classnames";
@@ -46,7 +46,7 @@ function RewardsTableWrapper({ children }) {
   );
 }
 
-function TableRow({ position, account, userAccount, volume, ensName, reward, trackAction }) {
+function TableRow({ position, account, userAccount, volume, ensName, reward, rewardAmountUsd, trackAction }) {
 
   return (
     <tr>
@@ -63,7 +63,7 @@ function TableRow({ position, account, userAccount, volume, ensName, reward, tra
         </div>
       </UserCell>
       <VolumeCell>${formatAmount(volume, USD_DECIMALS, 2, true)}</VolumeCell>
-      <RewardCell>${formatAmount(reward, USD_DECIMALS, 2, true)}</RewardCell>
+      <RewardCell>{formatAmount(reward, ETH_DECIMALS, 4, true)} ETH {rewardAmountUsd && `($${formatAmount(rewardAmountUsd, ETH_DECIMALS + USD_DECIMALS, 2, true)})`}</RewardCell>
       <ClaimCell
         className={cx({
           "highlight-current": account === userAccount,
@@ -88,6 +88,7 @@ function TableRow({ position, account, userAccount, volume, ensName, reward, tra
 
 export default function Leaderboard(props) {
   const { weekData, userWeekData, userAccount, ensName, currentView, selectedWeek, connectWallet, trackAction } = props;
+  console.log(userWeekData);
 
   return (
     <LeaderboardContainer hidden={currentView === "Personal"}>
@@ -102,6 +103,7 @@ export default function Leaderboard(props) {
               ensName={ensName}
               volume={userWeekData.volume}
               reward={userWeekData.reward}
+              rewardAmountUsd={userWeekData.rewardAmountUsd}
               trackAction={trackAction}
             />
           </RewardsTableWrapper>
@@ -147,13 +149,14 @@ export default function Leaderboard(props) {
         <ScrollContainer>
           {weekData?.traders?.length > 1 ? (
             <RewardsTableWrapper>
-              {weekData?.traders?.map(({ user_address, volume, reward }, index) => (
+              {weekData?.traders?.map(({ user_address, volume, reward, rewardAmountUsd }, index) => (
                 <TableRow
                   key={user_address}
                   position={index + 1}
                   account={user_address}
                   volume={volume}
                   reward={reward}
+                  rewardAmountUsd={rewardAmountUsd}
                   trackAction={trackAction}
                 />
               ))}

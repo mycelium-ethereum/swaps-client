@@ -3,10 +3,16 @@
   padding-right: 1rem;
 }
 
+.StakeV2.Page {
+  max-width: 76rem;
+}
+
 .StakeV2 .Page-title-section {
   position: relative;
   z-index: 2;
   padding-left: 0;
+  min-height: 75px;
+  margin-bottom: 1rem;
 }
 
 .VesterDepositModal-info-rows {
@@ -26,7 +32,7 @@
   padding-bottom: 0;
 }
 
-.StakeV2-buy-gmx-modal .Modal-content {
+.StakeV2-buy-myc-modal .Modal-content {
   max-width: 30rem;
 }
 
@@ -64,7 +70,7 @@
 
 .StakeV2-cards {
   display: grid;
-  grid-template-columns: 1fr;
+  grid-template-columns: 1fr 1fr;
   grid-gap: 1rem;
   margin-top: 0.5rem;
   padding-top: 1rem;
@@ -75,7 +81,7 @@
   justify-content: start;
 }
 
-.StakeV2-gmx-card .App-card-row a.label{
+.StakeV2-myc-card .App-card-row a.label{
   color: var(--text-secondary);
 }
 
@@ -87,7 +93,6 @@
   margin-left: auto;
   margin-right: auto;
   width: 100%;
-  max-width: 45rem;
 }
 
 @media (max-width: 900px) {

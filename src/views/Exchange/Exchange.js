@@ -22,7 +22,6 @@ import {
   getPositionKey,
   getPositionContractKey,
   getLeverage,
-  useLocalStorageSerializeKey,
   useLocalStorageByChainId,
   getDeltaStr,
   useChainId,
@@ -47,11 +46,11 @@ import PositionsList from "../../components/Exchange/PositionsList";
 import OrdersList from "../../components/Exchange/OrdersList";
 import TradeHistory from "../../components/Exchange/TradeHistory";
 import ExchangeWalletTokens from "../../components/Exchange/ExchangeWalletTokens";
-import ExchangeBanner from "../../components/Exchange/ExchangeBanner";
 import Tab from "../../components/Tab/Tab";
 import Footer from "../../Footer";
 
 import "./Exchange.css";
+import SEO from "../../components/Common/SEO";
 const { AddressZero } = ethers.constants;
 
 const PENDING_POSITION_VALID_DURATION = 600 * 1000;
@@ -368,34 +367,13 @@ export const Exchange = forwardRef((props, ref) => {
     trackAction,
     analytics,
   } = props;
-  const [showBanner, setShowBanner] = useLocalStorageSerializeKey("showBanner", true);
-  const [bannerHidden, setBannerHidden] = useLocalStorageSerializeKey("bannerHidden", null);
 
   const [pendingPositions, setPendingPositions] = useState({});
   const [updatedPositions, setUpdatedPositions] = useState({});
 
-  const hideBanner = () => {
-    const hiddenLimit = new Date(new Date().getTime() + 2 * 24 * 60 * 60 * 1000);
-    setBannerHidden(hiddenLimit);
-    setShowBanner(false);
-  };
-
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
-
-  useEffect(() => {
-    if (new Date() > new Date("2021-11-30")) {
-      setShowBanner(false);
-    } else {
-      if (bannerHidden && new Date(bannerHidden) > new Date()) {
-        setShowBanner(false);
-      } else {
-        setBannerHidden(null);
-        setShowBanner(true);
-      }
-    }
-  }, [showBanner, bannerHidden, setBannerHidden, setShowBanner]);
 
   const { active, account, library } = useWeb3React();
   const { chainId } = useChainId();
@@ -921,67 +899,70 @@ export const Exchange = forwardRef((props, ref) => {
   };
 
   return (
-    <div className="Exchange page-layout">
-      {showBanner && <ExchangeBanner hideBanner={hideBanner} />}
-      <div className="Exchange-content">
-        <div className="Exchange-left">
-          {renderChart()}
-          <div className="Exchange-lists large">{getListSection()}</div>
-        </div>
-        <div className="Exchange-right">
-          <SwapBox
-            pendingPositions={pendingPositions}
-            setPendingPositions={setPendingPositions}
-            setIsWaitingForPluginApproval={setIsWaitingForPluginApproval}
-            setIsWaitingForPositionRouterApproval={setIsWaitingForPositionRouterApproval}
-            approveOrderBook={approveOrderBook}
-            approvePositionRouter={approvePositionRouter}
-            isPluginApproving={isPluginApproving}
-            isPositionRouterApproving={isPositionRouterApproving}
-            isWaitingForPluginApproval={isWaitingForPluginApproval}
-            isWaitingForPositionRouterApproval={isWaitingForPositionRouterApproval}
-            orderBookApproved={orderBookApproved}
-            positionRouterApproved={positionRouterApproved}
-            orders={orders}
-            flagOrdersEnabled={flagOrdersEnabled}
-            chainId={chainId}
-            infoTokens={infoTokens}
-            active={active}
-            connectWallet={connectWallet}
-            library={library}
-            account={account}
-            positionsMap={positionsMap}
-            fromTokenAddress={fromTokenAddress}
-            setFromTokenAddress={setFromTokenAddress}
-            toTokenAddress={toTokenAddress}
-            setToTokenAddress={setToTokenAddress}
-            swapOption={swapOption}
-            setSwapOption={setSwapOption}
-            pendingTxns={pendingTxns}
-            setPendingTxns={setPendingTxns}
-            tokenSelection={tokenSelection}
-            setTokenSelection={setTokenSelection}
-            isConfirming={isConfirming}
-            setIsConfirming={setIsConfirming}
-            isPendingConfirmation={isPendingConfirmation}
-            setIsPendingConfirmation={setIsPendingConfirmation}
-            savedIsPnlInLeverage={savedIsPnlInLeverage}
-            setSavedIsPnlInLeverage={setSavedIsPnlInLeverage}
-            nativeTokenAddress={nativeTokenAddress}
-            savedSlippageAmount={savedSlippageAmount}
-            totalTokenWeights={totalTokenWeights}
-            usdgSupply={usdgSupply}
-            trackAction={trackAction}
-          />
-          <div className="Exchange-wallet-tokens">
-            <div className="Exchange-wallet-tokens-content">
-              <ExchangeWalletTokens tokens={tokens} infoTokens={infoTokens} onSelectToken={onSelectWalletToken} />
+    <SEO
+      description="Trade Mycelium Perpetual Swaps to gain leveraged long or short exposure to crypto assets with low fees and zero price impact."
+    >
+      <div className="Exchange page-layout">
+        <div className="Exchange-content">
+          <div className="Exchange-left">
+            {renderChart()}
+            <div className="Exchange-lists large">{getListSection()}</div>
+          </div>
+          <div className="Exchange-right">
+            <SwapBox
+              pendingPositions={pendingPositions}
+              setPendingPositions={setPendingPositions}
+              setIsWaitingForPluginApproval={setIsWaitingForPluginApproval}
+              setIsWaitingForPositionRouterApproval={setIsWaitingForPositionRouterApproval}
+              approveOrderBook={approveOrderBook}
+              approvePositionRouter={approvePositionRouter}
+              isPluginApproving={isPluginApproving}
+              isPositionRouterApproving={isPositionRouterApproving}
+              isWaitingForPluginApproval={isWaitingForPluginApproval}
+              isWaitingForPositionRouterApproval={isWaitingForPositionRouterApproval}
+              orderBookApproved={orderBookApproved}
+              positionRouterApproved={positionRouterApproved}
+              orders={orders}
+              flagOrdersEnabled={flagOrdersEnabled}
+              chainId={chainId}
+              infoTokens={infoTokens}
+              active={active}
+              connectWallet={connectWallet}
+              library={library}
+              account={account}
+              positionsMap={positionsMap}
+              fromTokenAddress={fromTokenAddress}
+              setFromTokenAddress={setFromTokenAddress}
+              toTokenAddress={toTokenAddress}
+              setToTokenAddress={setToTokenAddress}
+              swapOption={swapOption}
+              setSwapOption={setSwapOption}
+              pendingTxns={pendingTxns}
+              setPendingTxns={setPendingTxns}
+              tokenSelection={tokenSelection}
+              setTokenSelection={setTokenSelection}
+              isConfirming={isConfirming}
+              setIsConfirming={setIsConfirming}
+              isPendingConfirmation={isPendingConfirmation}
+              setIsPendingConfirmation={setIsPendingConfirmation}
+              savedIsPnlInLeverage={savedIsPnlInLeverage}
+              setSavedIsPnlInLeverage={setSavedIsPnlInLeverage}
+              nativeTokenAddress={nativeTokenAddress}
+              savedSlippageAmount={savedSlippageAmount}
+              totalTokenWeights={totalTokenWeights}
+              usdgSupply={usdgSupply}
+              trackAction={trackAction}
+            />
+            <div className="Exchange-wallet-tokens">
+              <div className="Exchange-wallet-tokens-content">
+                <ExchangeWalletTokens tokens={tokens} infoTokens={infoTokens} onSelectToken={onSelectWalletToken} />
+              </div>
             </div>
           </div>
+          <div className="Exchange-lists small">{getListSection()}</div>
         </div>
-        <div className="Exchange-lists small">{getListSection()}</div>
+        <Footer />
       </div>
-      <Footer />
-    </div>
+    </SEO>
   );
 });

@@ -86,8 +86,8 @@ export const DUST_BNB = "2000000000000000";
 export const DUST_USD = expandDecimals(1, USD_DECIMALS);
 export const PRECISION = expandDecimals(1, 30);
 export const ETH_DECIMALS = 18;
-export const GLP_DECIMALS = 18;
-export const GMX_DECIMALS = 18;
+export const MLP_DECIMALS = 18;
+export const MYC_DECIMALS = 18;
 export const DEFAULT_MAX_USDG_AMOUNT = expandDecimals(200 * 1000 * 1000, 18);
 
 export const TAX_BASIS_POINTS = 50;
@@ -99,7 +99,7 @@ export const MARGIN_FEE_BASIS_POINTS = 10;
 
 export const LIQUIDATION_FEE = expandDecimals(5, USD_DECIMALS);
 
-export const GLP_COOLDOWN_DURATION = 15 * 60;
+export const MLP_COOLDOWN_DURATION = 15 * 60;
 export const THRESHOLD_REDEMPTION_VALUE = expandDecimals(993, 27); // 0.993
 export const FUNDING_RATE_PRECISION = 1000000;
 
@@ -122,7 +122,7 @@ export const SLIPPAGE_BPS_KEY = "Exchange-swap-slippage-basis-points-v3";
 export const IS_PNL_IN_LEVERAGE_KEY = "Exchange-swap-is-pnl-in-leverage";
 export const SHOW_PNL_AFTER_FEES_KEY = "Exchange-swap-show-pnl-after-fees";
 export const SHOULD_SHOW_POSITION_LINES_KEY = "Exchange-swap-should-show-position-lines";
-export const REFERRAL_CODE_KEY = "GMX-referralCode";
+export const REFERRAL_CODE_KEY = "MYC-referralCode";
 export const REFERRAL_CODE_QUERY_PARAMS = "ref";
 export const REFERRALS_SELECTED_TAB_KEY = "Referrals-selected-tab";
 export const MAX_REFERRAL_CODE_LENGTH = 20;
@@ -132,7 +132,7 @@ export const TRIGGER_PREFIX_BELOW = "<";
 
 export const MIN_PROFIT_BIPS = 0;
 
-export const GLPPOOLCOLORS = {
+export const MLP_POOL_COLORS = {
   ETH: "#6062a6",
   BTC: "#F7931A",
   USDC: "#2775CA",
@@ -157,14 +157,11 @@ export const ICONLINKS = {
       arbitrum: `https://arbiscan.io/address/${getContract(ARBITRUM_TESTNET, "TCR")}`,
     },
     MLP: {
-      arbitrum: `https://arbiscan.io/address/${getContract(ARBITRUM_TESTNET, "StakedGlpTracker")}`,
+      arbitrum: `https://arbiscan.io/address/${getContract(ARBITRUM_TESTNET, "StakedMlpTracker")}`,
     },
-    GMX: {
-      coingecko: "https://www.coingecko.com/en/coins/gmx",
+    MYC: {
+      coingecko: "https://www.coingecko.com/en/coins/myc",
       arbitrum: "https://arbiscan.io/address/0xfc5a1a6eb076a2c7ad06ed22c90d7e710e35ad0a",
-    },
-    GLP: {
-      arbitrum: "https://arbiscan.io/token/0x1aDDD80E6039594eE970E5872D247bf0414C8903",
     },
     ETH: {
       coingecko: "https://www.coingecko.com/en/coins/ethereum",
@@ -214,14 +211,11 @@ export const ICONLINKS = {
       arbitrum: `https://arbiscan.io/address/${getContract(ARBITRUM, "TCR")}`,
     },
     MLP: {
-      arbitrum: `https://arbiscan.io/address/${getContract(ARBITRUM, "StakedGlpTracker")}`,
+      arbitrum: `https://arbiscan.io/address/${getContract(ARBITRUM, "StakedMlpTracker")}`,
     },
-    GMX: {
-      coingecko: "https://www.coingecko.com/en/coins/gmx",
+    MYC: {
+      coingecko: "https://www.coingecko.com/en/coins/myc",
       arbitrum: "https://arbiscan.io/address/0xfc5a1a6eb076a2c7ad06ed22c90d7e710e35ad0a",
-    },
-    GLP: {
-      arbitrum: "https://arbiscan.io/token/0x1aDDD80E6039594eE970E5872D247bf0414C8903",
     },
     ETH: {
       coingecko: "https://www.coingecko.com/en/coins/ethereum",
@@ -265,14 +259,11 @@ export const ICONLINKS = {
       arbitrum: `https://arbiscan.io/address/${getContract(ARBITRUM_TESTNET, "TCR")}`,
     },
     MLP: {
-      arbitrum: `https://arbiscan.io/address/${getContract(ARBITRUM_TESTNET, "StakedGlpTracker")}`,
+      arbitrum: `https://arbiscan.io/address/${getContract(ARBITRUM_TESTNET, "StakedMlpTracker")}`,
     },
-    GMX: {
-      coingecko: "https://www.coingecko.com/en/coins/gmx",
+    MYC: {
+      coingecko: "https://www.coingecko.com/en/coins/myc",
       avalanche: "https://snowtrace.io/address/0x62edc0692bd897d2295872a9ffcac5425011c661",
-    },
-    GLP: {
-      avalanche: "https://snowtrace.io/address/0x9e295B5B976a184B14aD8cd72413aD846C299660",
     },
     AVAX: {
       coingecko: "https://www.coingecko.com/en/coins/avalanche",
@@ -314,7 +305,7 @@ export const platformTokens = {
       name: "TCR LP",
       symbol: "MLP",
       decimals: 18,
-      address: getContract(ARBITRUM_TESTNET, "StakedGlpTracker"), // address of fsGLP token because user only holds fsGLP
+      address: getContract(ARBITRUM_TESTNET, "StakedMlpTracker"), // address of fsMLP token because user only holds fsMLP
       imageUrl: "https://i.imgur.com/1xbBwPe.png",
     },
   },
@@ -328,25 +319,19 @@ export const platformTokens = {
       imageUrl: "https://assets.coingecko.com/coins/images/18271/small/tracer_logo.png?1631176676",
     },
     MLP: {
-      name: "TCR LP",
+      name: "MYC LP",
       symbol: "MLP",
       decimals: 18,
-      address: getContract(ARBITRUM, "StakedGlpTracker"), // address of fsGLP token because user only holds fsGLP
-      imageUrl: "https://github.com/gmx-io/gmx-assets/blob/main/GMX-Assets/PNG/GLP_LOGO%20ONLY.png?raw=true",
+      address: getContract(ARBITRUM, "StakedMlpTracker"), // address of fsMLP token because user only holds fsMLP
+      imageUrl:
+        "https://raw.githubusercontent.com/mycelium-ethereum/myc-assets/master/assets/tokens/MLP.png?token=GHSAT0AAAAAABRXE63EVTN6JZDCPGAATEOOYXTHT4Q",
     },
-    GMX: {
-      name: "GMX",
-      symbol: "GMX",
+    MYC: {
+      name: "MYC",
+      symbol: "MYC",
       decimals: 18,
-      address: getContract(ARBITRUM, "GMX"),
-      imageUrl: "https://assets.coingecko.com/coins/images/18323/small/arbit.png?1631532468",
-    },
-    GLP: {
-      name: "GMX LP",
-      symbol: "GLP",
-      decimals: 18,
-      address: getContract(ARBITRUM, "StakedGlpTracker"), // address of fsGLP token because user only holds fsGLP
-      imageUrl: "https://github.com/gmx-io/gmx-assets/blob/main/GMX-Assets/PNG/GLP_LOGO%20ONLY.png?raw=true",
+      address: getContract(ARBITRUM, "MYC"),
+      imageUrl: "https://raw.githubusercontent.com/mycelium-ethereum/myc-assets/master/assets/tokens/MYC.png?token=GHSAT0AAAAAABRXE63FIEAXHG7FTKRWOL3UYXTH2IA",
     },
   },
   43114: {
@@ -359,25 +344,18 @@ export const platformTokens = {
       imageUrl: "https://assets.coingecko.com/coins/images/18271/small/tracer_logo.png?1631176676",
     },
     MLP: {
-      name: "TCR LP",
+      name: "MYC LP",
       symbol: "MLP",
       decimals: 18,
-      address: getContract(ARBITRUM, "StakedGlpTracker"), // address of fsGLP token because user only holds fsGLP
-      imageUrl: "https://github.com/gmx-io/gmx-assets/blob/main/GMX-Assets/PNG/GLP_LOGO%20ONLY.png?raw=true",
+      address: getContract(ARBITRUM, "StakedMlpTracker"), // address of fsMLP token because user only holds fsMLP
+      imageUrl: "https://raw.githubusercontent.com/mycelium-ethereum/myc-assets/master/assets/tokens/MLP.png?token=GHSAT0AAAAAABRXE63EVTN6JZDCPGAATEOOYXTHT4Q"
     },
-    GMX: {
-      name: "GMX",
-      symbol: "GMX",
+    MYC: {
+      name: "MYC",
+      symbol: "MYC",
       decimals: 18,
-      address: getContract(AVALANCHE, "GMX"),
+      address: getContract(AVALANCHE, "MYC"),
       imageUrl: "https://assets.coingecko.com/coins/images/18323/small/arbit.png?1631532468",
-    },
-    GLP: {
-      name: "GMX LP",
-      symbol: "GLP",
-      decimals: 18,
-      address: getContract(AVALANCHE, "StakedGlpTracker"), // address of fsGLP token because user only holds fsGLP
-      imageUrl: "https://github.com/gmx-io/gmx-assets/blob/main/GMX-Assets/PNG/GLP_LOGO%20ONLY.png?raw=true",
     },
   },
 };
@@ -416,11 +394,9 @@ export function deserialize(data) {
 
 export const helperToast = {
   success: (content) => {
-    toast.dismiss();
     toast.success(content);
   },
   error: (content) => {
-    toast.dismiss();
     toast.error(content);
   },
 };
@@ -673,9 +649,9 @@ export function getFeeBasisPoints(
   return feeBasisPoints.add(taxBps).toNumber();
 }
 
-export function getBuyGlpToAmount(fromAmount, swapTokenAddress, infoTokens, glpPrice, usdgSupply, totalTokenWeights) {
+export function getBuyMlpToAmount(fromAmount, swapTokenAddress, infoTokens, mlpPrice, usdgSupply, totalTokenWeights) {
   const defaultValue = { amount: bigNumberify(0), feeBasisPoints: 0 };
-  if (!fromAmount || !swapTokenAddress || !infoTokens || !glpPrice || !usdgSupply || !totalTokenWeights) {
+  if (!fromAmount || !swapTokenAddress || !infoTokens || !mlpPrice || !usdgSupply || !totalTokenWeights) {
     return defaultValue;
   }
 
@@ -684,8 +660,8 @@ export function getBuyGlpToAmount(fromAmount, swapTokenAddress, infoTokens, glpP
     return defaultValue;
   }
 
-  let glpAmount = fromAmount.mul(swapToken.minPrice).div(glpPrice);
-  glpAmount = adjustForDecimals(glpAmount, swapToken.decimals, USDG_DECIMALS);
+  let mlpAmount = fromAmount.mul(swapToken.minPrice).div(mlpPrice);
+  mlpAmount = adjustForDecimals(mlpAmount, swapToken.decimals, USDG_DECIMALS);
 
   let usdgAmount = fromAmount.mul(swapToken.minPrice).div(PRECISION);
   usdgAmount = adjustForDecimals(usdgAmount, swapToken.decimals, USDG_DECIMALS);
@@ -699,14 +675,14 @@ export function getBuyGlpToAmount(fromAmount, swapTokenAddress, infoTokens, glpP
     totalTokenWeights
   );
 
-  glpAmount = glpAmount.mul(BASIS_POINTS_DIVISOR - feeBasisPoints).div(BASIS_POINTS_DIVISOR);
+  mlpAmount = mlpAmount.mul(BASIS_POINTS_DIVISOR - feeBasisPoints).div(BASIS_POINTS_DIVISOR);
 
-  return { amount: glpAmount, feeBasisPoints };
+  return { amount: mlpAmount, feeBasisPoints };
 }
 
-export function getSellGlpFromAmount(toAmount, swapTokenAddress, infoTokens, glpPrice, usdgSupply, totalTokenWeights) {
+export function getSellMlpFromAmount(toAmount, swapTokenAddress, infoTokens, mlpPrice, usdgSupply, totalTokenWeights) {
   const defaultValue = { amount: bigNumberify(0), feeBasisPoints: 0 };
-  if (!toAmount || !swapTokenAddress || !infoTokens || !glpPrice || !usdgSupply || !totalTokenWeights) {
+  if (!toAmount || !swapTokenAddress || !infoTokens || !mlpPrice || !usdgSupply || !totalTokenWeights) {
     return defaultValue;
   }
 
@@ -715,8 +691,8 @@ export function getSellGlpFromAmount(toAmount, swapTokenAddress, infoTokens, glp
     return defaultValue;
   }
 
-  let glpAmount = toAmount.mul(swapToken.maxPrice).div(glpPrice);
-  glpAmount = adjustForDecimals(glpAmount, swapToken.decimals, USDG_DECIMALS);
+  let mlpAmount = toAmount.mul(swapToken.maxPrice).div(mlpPrice);
+  mlpAmount = adjustForDecimals(mlpAmount, swapToken.decimals, USDG_DECIMALS);
 
   let usdgAmount = toAmount.mul(swapToken.maxPrice).div(PRECISION);
   usdgAmount = adjustForDecimals(usdgAmount, swapToken.decimals, USDG_DECIMALS);
@@ -730,14 +706,14 @@ export function getSellGlpFromAmount(toAmount, swapTokenAddress, infoTokens, glp
     totalTokenWeights
   );
 
-  glpAmount = glpAmount.mul(BASIS_POINTS_DIVISOR).div(BASIS_POINTS_DIVISOR - feeBasisPoints);
+  mlpAmount = mlpAmount.mul(BASIS_POINTS_DIVISOR).div(BASIS_POINTS_DIVISOR - feeBasisPoints);
 
-  return { amount: glpAmount, feeBasisPoints };
+  return { amount: mlpAmount, feeBasisPoints };
 }
 
-export function getBuyGlpFromAmount(toAmount, fromTokenAddress, infoTokens, glpPrice, usdgSupply, totalTokenWeights) {
+export function getBuyMlpFromAmount(toAmount, fromTokenAddress, infoTokens, mlpPrice, usdgSupply, totalTokenWeights) {
   const defaultValue = { amount: bigNumberify(0) };
-  if (!toAmount || !fromTokenAddress || !infoTokens || !glpPrice || !usdgSupply || !totalTokenWeights) {
+  if (!toAmount || !fromTokenAddress || !infoTokens || !mlpPrice || !usdgSupply || !totalTokenWeights) {
     return defaultValue;
   }
 
@@ -746,10 +722,10 @@ export function getBuyGlpFromAmount(toAmount, fromTokenAddress, infoTokens, glpP
     return defaultValue;
   }
 
-  let fromAmount = toAmount.mul(glpPrice).div(fromToken.minPrice);
-  fromAmount = adjustForDecimals(fromAmount, GLP_DECIMALS, fromToken.decimals);
+  let fromAmount = toAmount.mul(mlpPrice).div(fromToken.minPrice);
+  fromAmount = adjustForDecimals(fromAmount, MLP_DECIMALS, fromToken.decimals);
 
-  const usdgAmount = toAmount.mul(glpPrice).div(PRECISION);
+  const usdgAmount = toAmount.mul(mlpPrice).div(PRECISION);
   const feeBasisPoints = getFeeBasisPoints(
     fromToken,
     usdgAmount,
@@ -765,9 +741,9 @@ export function getBuyGlpFromAmount(toAmount, fromTokenAddress, infoTokens, glpP
   return { amount: fromAmount, feeBasisPoints };
 }
 
-export function getSellGlpToAmount(toAmount, fromTokenAddress, infoTokens, glpPrice, usdgSupply, totalTokenWeights) {
+export function getSellMlpToAmount(toAmount, fromTokenAddress, infoTokens, mlpPrice, usdgSupply, totalTokenWeights) {
   const defaultValue = { amount: bigNumberify(0) };
-  if (!toAmount || !fromTokenAddress || !infoTokens || !glpPrice || !usdgSupply || !totalTokenWeights) {
+  if (!toAmount || !fromTokenAddress || !infoTokens || !mlpPrice || !usdgSupply || !totalTokenWeights) {
     return defaultValue;
   }
 
@@ -776,10 +752,10 @@ export function getSellGlpToAmount(toAmount, fromTokenAddress, infoTokens, glpPr
     return defaultValue;
   }
 
-  let fromAmount = toAmount.mul(glpPrice).div(fromToken.maxPrice);
-  fromAmount = adjustForDecimals(fromAmount, GLP_DECIMALS, fromToken.decimals);
+  let fromAmount = toAmount.mul(mlpPrice).div(fromToken.maxPrice);
+  fromAmount = adjustForDecimals(fromAmount, MLP_DECIMALS, fromToken.decimals);
 
-  const usdgAmount = toAmount.mul(glpPrice).div(PRECISION);
+  const usdgAmount = toAmount.mul(mlpPrice).div(PRECISION);
   const feeBasisPoints = getFeeBasisPoints(
     fromToken,
     usdgAmount,
@@ -2074,7 +2050,7 @@ export function getExplorerUrl(chainId) {
   } else if (chainId === TESTNET) {
     return "https://testnet.bscscan.com/";
   } else if (chainId === ARBITRUM_TESTNET) {
-    return "https://rinkeby-explorer.arbitrum.io/";
+    return "https://testnet.arbiscan.io/";
   } else if (chainId === ARBITRUM) {
     return "https://arbiscan.io/";
   } else if (chainId === AVALANCHE) {
@@ -2269,7 +2245,7 @@ const NETWORK_METADATA = {
       decimals: 18,
     },
     rpcUrls: ARBITRUM_TESTNET_RPC_PROVIDERS,
-    blockExplorerUrls: ["https://rinkeby-explorer.arbitrum.io/"],
+    blockExplorerUrls: [getExplorerUrl(ARBITRUM_TESTNET)],
   },
   [ARBITRUM]: {
     chainId: "0x" + ARBITRUM.toString(16),
@@ -2531,7 +2507,7 @@ export function getBalanceAndSupplyData(balances) {
     return {};
   }
 
-  const keys = ["gmx", "esGmx", "glp", "stakedGmxTracker"];
+  const keys = ["myc", "esMyc", "mlp", "stakedMycTracker"];
   const balanceData = {};
   const supplyData = {};
   const propsLength = 2;
@@ -2551,12 +2527,12 @@ export function getDepositBalanceData(depositBalances) {
   }
 
   const keys = [
-    "gmxInStakedGmx",
-    "esGmxInStakedGmx",
-    "stakedGmxInBonusGmx",
-    "bonusGmxInFeeGmx",
-    "bnGmxInFeeGmx",
-    "glpInStakedGlp",
+    "mycInStakedMyc",
+    "esMycInStakedMyc",
+    "stakedMycInBonusMyc",
+    "bonusMycInFeeMyc",
+    "bnMycInFeeMyc",
+    "mlpInStakedMlp",
   ];
   const data = {};
 
@@ -2573,7 +2549,7 @@ export function getVestingData(vestingInfo) {
     return;
   }
 
-  const keys = ["gmxVester", "glpVester"];
+  const keys = ["mycVester", "mlpVester"];
   const data = {};
   const propsLength = 7;
 
@@ -2606,7 +2582,7 @@ export function getStakingData(stakingInfo) {
     return;
   }
 
-  const keys = ["stakedGmxTracker", "bonusGmxTracker", "feeGmxTracker", "stakedGlpTracker", "feeGlpTracker"];
+  const keys = ["stakedMycTracker", "bonusMycTracker", "feeMycTracker", "stakedMlpTracker", "feeMlpTracker"];
   const data = {};
   const propsLength = 5;
 
@@ -2632,9 +2608,9 @@ export function getProcessedData(
   vestingData,
   aum,
   nativeTokenPrice,
-  stakedGmxSupply,
-  gmxPrice,
-  gmxSupply
+  stakedMycSupply,
+  mycPrice,
+  mycSupply
 ) {
   if (
     !balanceData ||
@@ -2644,127 +2620,127 @@ export function getProcessedData(
     !vestingData ||
     !aum ||
     !nativeTokenPrice ||
-    !stakedGmxSupply ||
-    !gmxPrice ||
-    !gmxSupply
+    !stakedMycSupply ||
+    !mycPrice ||
+    !mycSupply
   ) {
     return {};
   }
 
   const data = {};
 
-  data.gmxBalance = balanceData.gmx;
-  data.gmxBalanceUsd = balanceData.gmx.mul(gmxPrice).div(expandDecimals(1, 18));
+  data.mycBalance = balanceData.myc;
+  data.mycBalanceUsd = balanceData.myc.mul(mycPrice).div(expandDecimals(1, 18));
 
-  data.gmxSupply = bigNumberify(gmxSupply);
+  data.mycSupply = bigNumberify(mycSupply);
 
-  data.gmxSupplyUsd = data.gmxSupply.mul(gmxPrice).div(expandDecimals(1, 18));
-  data.stakedGmxSupply = stakedGmxSupply;
-  data.stakedGmxSupplyUsd = stakedGmxSupply.mul(gmxPrice).div(expandDecimals(1, 18));
-  data.gmxInStakedGmx = depositBalanceData.gmxInStakedGmx;
-  data.gmxInStakedGmxUsd = depositBalanceData.gmxInStakedGmx.mul(gmxPrice).div(expandDecimals(1, 18));
+  data.mycSupplyUsd = data.mycSupply.mul(mycPrice).div(expandDecimals(1, 18));
+  data.stakedMycSupply = stakedMycSupply;
+  data.stakedMycSupplyUsd = stakedMycSupply.mul(mycPrice).div(expandDecimals(1, 18));
+  data.mycInStakedMyc = depositBalanceData.mycInStakedMyc;
+  data.mycInStakedMycUsd = depositBalanceData.mycInStakedMyc.mul(mycPrice).div(expandDecimals(1, 18));
 
-  data.esGmxBalance = balanceData.esGmx;
-  data.esGmxBalanceUsd = balanceData.esGmx.mul(gmxPrice).div(expandDecimals(1, 18));
+  data.esMycBalance = balanceData.esMyc;
+  data.esMycBalanceUsd = balanceData.esMyc.mul(mycPrice).div(expandDecimals(1, 18));
 
-  data.stakedGmxTrackerSupply = supplyData.stakedGmxTracker;
-  data.stakedGmxTrackerSupplyUsd = supplyData.stakedGmxTracker.mul(gmxPrice).div(expandDecimals(1, 18));
-  data.stakedEsGmxSupply = data.stakedGmxTrackerSupply.sub(data.stakedGmxSupply);
-  data.stakedEsGmxSupplyUsd = data.stakedEsGmxSupply.mul(gmxPrice).div(expandDecimals(1, 18));
+  data.stakedMycTrackerSupply = supplyData.stakedMycTracker;
+  data.stakedMycTrackerSupplyUsd = supplyData.stakedMycTracker.mul(mycPrice).div(expandDecimals(1, 18));
+  data.stakedEsMycSupply = data.stakedMycTrackerSupply.sub(data.stakedMycSupply);
+  data.stakedEsMycSupplyUsd = data.stakedEsMycSupply.mul(mycPrice).div(expandDecimals(1, 18));
 
-  data.esGmxInStakedGmx = depositBalanceData.esGmxInStakedGmx;
-  data.esGmxInStakedGmxUsd = depositBalanceData.esGmxInStakedGmx.mul(gmxPrice).div(expandDecimals(1, 18));
+  data.esMycInStakedMyc = depositBalanceData.esMycInStakedMyc;
+  data.esMycInStakedMycUsd = depositBalanceData.esMycInStakedMyc.mul(mycPrice).div(expandDecimals(1, 18));
 
-  data.bnGmxInFeeGmx = depositBalanceData.bnGmxInFeeGmx;
-  data.bonusGmxInFeeGmx = depositBalanceData.bonusGmxInFeeGmx;
-  data.feeGmxSupply = stakingData.feeGmxTracker.totalSupply;
-  data.feeGmxSupplyUsd = data.feeGmxSupply.mul(gmxPrice).div(expandDecimals(1, 18));
+  data.bnMycInFeeMyc = depositBalanceData.bnMycInFeeMyc;
+  data.bonusMycInFeeMyc = depositBalanceData.bonusMycInFeeMyc;
+  data.feeMycSupply = stakingData.feeMycTracker.totalSupply;
+  data.feeMycSupplyUsd = data.feeMycSupply.mul(mycPrice).div(expandDecimals(1, 18));
 
-  data.stakedGmxTrackerRewards = stakingData.stakedGmxTracker.claimable;
-  data.stakedGmxTrackerRewardsUsd = stakingData.stakedGmxTracker.claimable.mul(gmxPrice).div(expandDecimals(1, 18));
+  data.stakedMycTrackerRewards = stakingData.stakedMycTracker.claimable;
+  data.stakedMycTrackerRewardsUsd = stakingData.stakedMycTracker.claimable.mul(mycPrice).div(expandDecimals(1, 18));
 
-  data.bonusGmxTrackerRewards = stakingData.bonusGmxTracker.claimable;
+  data.bonusMycTrackerRewards = stakingData.bonusMycTracker.claimable;
 
-  data.feeGmxTrackerRewards = stakingData.feeGmxTracker.claimable;
-  data.feeGmxTrackerRewardsUsd = stakingData.feeGmxTracker.claimable.mul(nativeTokenPrice).div(expandDecimals(1, 18));
+  data.feeMycTrackerRewards = stakingData.feeMycTracker.claimable;
+  data.feeMycTrackerRewardsUsd = stakingData.feeMycTracker.claimable.mul(nativeTokenPrice).div(expandDecimals(1, 18));
 
   data.boostBasisPoints = bigNumberify(0);
-  if (data && data.bnGmxInFeeGmx && data.bonusGmxInFeeGmx && data.bonusGmxInFeeGmx.gt(0)) {
-    data.boostBasisPoints = data.bnGmxInFeeGmx.mul(BASIS_POINTS_DIVISOR).div(data.bonusGmxInFeeGmx);
+  if (data && data.bnMycInFeeMyc && data.bonusMycInFeeMyc && data.bonusMycInFeeMyc.gt(0)) {
+    data.boostBasisPoints = data.bnMycInFeeMyc.mul(BASIS_POINTS_DIVISOR).div(data.bonusMycInFeeMyc);
   }
 
-  data.stakedGmxTrackerAnnualRewardsUsd = stakingData.stakedGmxTracker.tokensPerInterval
+  data.stakedMycTrackerAnnualRewardsUsd = stakingData.stakedMycTracker.tokensPerInterval
     .mul(SECONDS_PER_YEAR)
-    .mul(gmxPrice)
+    .mul(mycPrice)
     .div(expandDecimals(1, 18));
-  data.gmxAprForEsGmx =
-    data.stakedGmxTrackerSupplyUsd && data.stakedGmxTrackerSupplyUsd.gt(0)
-      ? data.stakedGmxTrackerAnnualRewardsUsd.mul(BASIS_POINTS_DIVISOR).div(data.stakedGmxTrackerSupplyUsd)
+  data.mycAprForEsMyc =
+    data.stakedMycTrackerSupplyUsd && data.stakedMycTrackerSupplyUsd.gt(0)
+      ? data.stakedMycTrackerAnnualRewardsUsd.mul(BASIS_POINTS_DIVISOR).div(data.stakedMycTrackerSupplyUsd)
       : bigNumberify(0);
-  data.feeGmxTrackerAnnualRewardsUsd = stakingData.feeGmxTracker.tokensPerInterval
-    .mul(SECONDS_PER_YEAR)
-    .mul(nativeTokenPrice)
-    .div(expandDecimals(1, 18));
-  data.gmxAprForNativeToken =
-    data.feeGmxSupplyUsd && data.feeGmxSupplyUsd.gt(0)
-      ? data.feeGmxTrackerAnnualRewardsUsd.mul(BASIS_POINTS_DIVISOR).div(data.feeGmxSupplyUsd)
-      : bigNumberify(0);
-  data.gmxBoostAprForNativeToken = data.gmxAprForNativeToken.mul(data.boostBasisPoints).div(BASIS_POINTS_DIVISOR);
-  data.gmxAprTotal = data.gmxAprForNativeToken.add(data.gmxAprForEsGmx);
-  data.gmxAprTotalWithBoost = data.gmxAprForNativeToken.add(data.gmxBoostAprForNativeToken).add(data.gmxAprForEsGmx);
-  data.gmxAprForNativeTokenWithBoost = data.gmxAprForNativeToken.add(data.gmxBoostAprForNativeToken);
-
-  data.totalGmxRewardsUsd = data.stakedGmxTrackerRewardsUsd.add(data.feeGmxTrackerRewardsUsd);
-
-  data.glpSupply = supplyData.glp;
-  data.glpPrice =
-    data.glpSupply && data.glpSupply.gt(0)
-      ? aum.mul(expandDecimals(1, GLP_DECIMALS)).div(data.glpSupply)
-      : bigNumberify(0);
-
-  data.glpSupplyUsd = supplyData.glp.mul(data.glpPrice).div(expandDecimals(1, 18));
-
-  data.glpBalance = depositBalanceData.glpInStakedGlp;
-  data.glpBalanceUsd = depositBalanceData.glpInStakedGlp.mul(data.glpPrice).div(expandDecimals(1, GLP_DECIMALS));
-
-  data.stakedGlpTrackerRewards = stakingData.stakedGlpTracker.claimable;
-  data.stakedGlpTrackerRewardsUsd = stakingData.stakedGlpTracker.claimable.mul(gmxPrice).div(expandDecimals(1, 18));
-
-  data.feeGlpTrackerRewards = stakingData.feeGlpTracker.claimable;
-  data.feeGlpTrackerRewardsUsd = stakingData.feeGlpTracker.claimable.mul(nativeTokenPrice).div(expandDecimals(1, 18));
-
-  data.stakedGlpTrackerAnnualRewardsUsd = stakingData.stakedGlpTracker.tokensPerInterval
-    .mul(SECONDS_PER_YEAR)
-    .mul(gmxPrice)
-    .div(expandDecimals(1, 18));
-  data.glpAprForEsGmx =
-    data.glpSupplyUsd && data.glpSupplyUsd.gt(0)
-      ? data.stakedGlpTrackerAnnualRewardsUsd.mul(BASIS_POINTS_DIVISOR).div(data.glpSupplyUsd)
-      : bigNumberify(0);
-  data.feeGlpTrackerAnnualRewardsUsd = stakingData.feeGlpTracker.tokensPerInterval
+  data.feeMycTrackerAnnualRewardsUsd = stakingData.feeMycTracker.tokensPerInterval
     .mul(SECONDS_PER_YEAR)
     .mul(nativeTokenPrice)
     .div(expandDecimals(1, 18));
-  data.glpAprForNativeToken =
-    data.glpSupplyUsd && data.glpSupplyUsd.gt(0)
-      ? data.feeGlpTrackerAnnualRewardsUsd.mul(BASIS_POINTS_DIVISOR).div(data.glpSupplyUsd)
+  data.mycAprForNativeToken =
+    data.feeMycSupplyUsd && data.feeMycSupplyUsd.gt(0)
+      ? data.feeMycTrackerAnnualRewardsUsd.mul(BASIS_POINTS_DIVISOR).div(data.feeMycSupplyUsd)
       : bigNumberify(0);
-  data.glpAprTotal = data.glpAprForNativeToken.add(data.glpAprForEsGmx);
+  data.mycBoostAprForNativeToken = data.mycAprForNativeToken.mul(data.boostBasisPoints).div(BASIS_POINTS_DIVISOR);
+  data.mycAprTotal = data.mycAprForNativeToken.add(data.mycAprForEsMyc);
+  data.mycAprTotalWithBoost = data.mycAprForNativeToken.add(data.mycBoostAprForNativeToken).add(data.mycAprForEsMyc);
+  data.mycAprForNativeTokenWithBoost = data.mycAprForNativeToken.add(data.mycBoostAprForNativeToken);
 
-  data.totalGlpRewardsUsd = data.stakedGlpTrackerRewardsUsd.add(data.feeGlpTrackerRewardsUsd);
+  data.totalMycRewardsUsd = data.stakedMycTrackerRewardsUsd.add(data.feeMycTrackerRewardsUsd);
 
-  data.totalEsGmxRewards = data.stakedGmxTrackerRewards.add(data.stakedGlpTrackerRewards);
-  data.totalEsGmxRewardsUsd = data.stakedGmxTrackerRewardsUsd.add(data.stakedGlpTrackerRewardsUsd);
+  data.mlpSupply = supplyData.mlp;
+  data.mlpPrice =
+    data.mlpSupply && data.mlpSupply.gt(0)
+      ? aum.mul(expandDecimals(1, MLP_DECIMALS)).div(data.mlpSupply)
+      : bigNumberify(0);
 
-  data.gmxVesterRewards = vestingData.gmxVester.claimable;
-  data.glpVesterRewards = vestingData.glpVester.claimable;
-  data.totalVesterRewards = data.gmxVesterRewards.add(data.glpVesterRewards);
-  data.totalVesterRewardsUsd = data.totalVesterRewards.mul(gmxPrice).div(expandDecimals(1, 18));
+  data.mlpSupplyUsd = supplyData.mlp.mul(data.mlpPrice).div(expandDecimals(1, 18));
 
-  data.totalNativeTokenRewards = data.feeGmxTrackerRewards.add(data.feeGlpTrackerRewards);
-  data.totalNativeTokenRewardsUsd = data.feeGmxTrackerRewardsUsd.add(data.feeGlpTrackerRewardsUsd);
+  data.mlpBalance = depositBalanceData.mlpInStakedMlp;
+  data.mlpBalanceUsd = depositBalanceData.mlpInStakedMlp.mul(data.mlpPrice).div(expandDecimals(1, MLP_DECIMALS));
 
-  data.totalRewardsUsd = data.totalEsGmxRewardsUsd.add(data.totalNativeTokenRewardsUsd).add(data.totalVesterRewardsUsd);
+  data.stakedMlpTrackerRewards = stakingData.stakedMlpTracker.claimable;
+  data.stakedMlpTrackerRewardsUsd = stakingData.stakedMlpTracker.claimable.mul(mycPrice).div(expandDecimals(1, 18));
+
+  data.feeMlpTrackerRewards = stakingData.feeMlpTracker.claimable;
+  data.feeMlpTrackerRewardsUsd = stakingData.feeMlpTracker.claimable.mul(nativeTokenPrice).div(expandDecimals(1, 18));
+
+  data.stakedMlpTrackerAnnualRewardsUsd = stakingData.stakedMlpTracker.tokensPerInterval
+    .mul(SECONDS_PER_YEAR)
+    .mul(mycPrice)
+    .div(expandDecimals(1, 18));
+  data.mlpAprForEsMyc =
+    data.mlpSupplyUsd && data.mlpSupplyUsd.gt(0)
+      ? data.stakedMlpTrackerAnnualRewardsUsd.mul(BASIS_POINTS_DIVISOR).div(data.mlpSupplyUsd)
+      : bigNumberify(0);
+  data.feeMlpTrackerAnnualRewardsUsd = stakingData.feeMlpTracker.tokensPerInterval
+    .mul(SECONDS_PER_YEAR)
+    .mul(nativeTokenPrice)
+    .div(expandDecimals(1, 18));
+  data.mlpAprForNativeToken =
+    data.mlpSupplyUsd && data.mlpSupplyUsd.gt(0)
+      ? data.feeMlpTrackerAnnualRewardsUsd.mul(BASIS_POINTS_DIVISOR).div(data.mlpSupplyUsd)
+      : bigNumberify(0);
+  data.mlpAprTotal = data.mlpAprForNativeToken.add(data.mlpAprForEsMyc);
+
+  data.totalMlpRewardsUsd = data.stakedMlpTrackerRewardsUsd.add(data.feeMlpTrackerRewardsUsd);
+
+  data.totalEsMycRewards = data.stakedMycTrackerRewards.add(data.stakedMlpTrackerRewards);
+  data.totalEsMycRewardsUsd = data.stakedMycTrackerRewardsUsd.add(data.stakedMlpTrackerRewardsUsd);
+
+  data.mycVesterRewards = vestingData.mycVester.claimable;
+  data.mlpVesterRewards = vestingData.mlpVester.claimable;
+  data.totalVesterRewards = data.mycVesterRewards.add(data.mlpVesterRewards);
+  data.totalVesterRewardsUsd = data.totalVesterRewards.mul(mycPrice).div(expandDecimals(1, 18));
+
+  data.totalNativeTokenRewards = data.feeMycTrackerRewards.add(data.feeMlpTrackerRewards);
+  data.totalNativeTokenRewardsUsd = data.feeMycTrackerRewardsUsd.add(data.feeMlpTrackerRewardsUsd);
+
+  data.totalRewardsUsd = data.totalEsMycRewardsUsd.add(data.totalNativeTokenRewardsUsd).add(data.totalVesterRewardsUsd);
 
   return data;
 }
@@ -2797,7 +2773,7 @@ export function sleep(ms) {
 }
 
 export function getPageTitle(data) {
-  return `${data} | Tracer Perpetual Swaps`;
+  return `${data} | Mycelium Perpetual Swaps`;
 }
 
 export function isHashZero(value) {

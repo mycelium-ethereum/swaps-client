@@ -2,22 +2,25 @@ import React, { useEffect } from "react";
 import Footer from "../../Footer";
 import "./Buy.css";
 import TokenCard from "../../components/TokenCard/TokenCard";
-import buyGMXIcon from "../../img/buy_gmx.svg";
+import buyMYCIcon from "../../img/buy_gmx.svg";
 import SEO from "../../components/Common/SEO";
 import { getPageTitle } from "../../Helpers";
 
-export default function BuyGMXGLP(props) {
+export default function BuyMYCMLP(props) {
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
 
   return (
-    <SEO title={getPageTitle("Buy MLP")}>
-      <div className="BuyGMXGLP page-layout">
-        <div className="BuyGMXGLP-container default-container">
+    <SEO
+      title={getPageTitle("Buy")}
+      description="Buy MLP tokens to provide liquidity to Mycelium’s Perpetual Swaps. MLP tokens represent a share in a yield bearing diversified pool of blue-chip crypto assets."
+    >
+      <div className="BuyMYCMLP page-layout">
+        <div className="BuyMYCMLP-container default-container">
           <div className="section-title-block">
             <div className="section-title-icon">
-              <img src={buyGMXIcon} alt="buyGMXIcon" />
+              <img src={buyMYCIcon} alt="buyMYCIcon" />
             </div>
             <div className="section-title-content">
               <div className="Page-title">Buy MLP</div>
