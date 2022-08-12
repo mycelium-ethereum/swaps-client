@@ -15,7 +15,7 @@ import {
 } from "./Helpers";
 
 const writeKey = process.env.REACT_APP_SEGMENT_WRITE_KEY;
-const customTrackPages = ["/trade", "/buy_mlp", "/rewards"]; //These pages are tracked through trackPageWithTraits() separately
+const customTrackPages = ["/", "/buy_mlp", "/rewards"]; //These pages are tracked through trackPageWithTraits() separately
 
 const IGNORE_IP_CONTEXT = {
   context: {

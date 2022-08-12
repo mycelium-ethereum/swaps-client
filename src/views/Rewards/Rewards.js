@@ -2,7 +2,7 @@ import React, { useState, useMemo, useEffect } from "react";
 
 import useSWR from "swr";
 
-import { getTokenInfo, useChainId, useENS } from "../../Helpers";
+import { getPageTitle, getTokenInfo, useChainId, useENS } from "../../Helpers";
 import { useWeb3React } from "@web3-react/core";
 import { getTracerServerUrl } from "../../Api/rewards";
 import { useInfoTokens } from "../../Api";
@@ -12,6 +12,7 @@ import Leaderboard from "./Leaderboard";
 import * as Styles from "./Rewards.styles";
 import { LeaderboardSwitch } from "./ViewSwitch";
 import Footer from "../../Footer";
+import SEO from "../../components/Common/SEO";
 
 const PersonalHeader = () => (
   <div className="Page-title-section mt-0">
@@ -180,48 +181,53 @@ export default function Rewards(props) {
   }, [weeksRewardsData, pageTracked, trackPageWithTraits, analytics]);
 
   return (
-    <Styles.StyledRewardsPage className="default-container page-layout">
-      {
+    <SEO
+      title={getPageTitle("Rewards")}
+      description="Claim fees earned via being in the top 50% of traders on Mycelium Perpetual Swaps."
+    >
+      <Styles.StyledRewardsPage className="default-container page-layout">
         {
-          Personal: <PersonalHeader />,
-          Leaderboard: <LeaderboardHeader />,
-        }[currentView]
-      }
-      <LeaderboardSwitch
-        switchView={switchView}
-        currentView={currentView}
-        rewardsMessage={rewardsMessage}
-        weeksRewardsData={weeksRewardsData}
-        setSelectedWeek={setSelectedWeek}
-        trackAction={trackAction}
-      />
-      <TraderRewards
-        active={active}
-        account={account}
-        ensName={ensName}
-        userData={userData}
-        totalRewardAmountEth={totalRewardAmountEth}
-        unclaimedRewardsEth={unclaimedRewardsEth}
-        rewardsMessage={rewardsMessage}
-        weeksRewardsData={weeksRewardsData}
-        setSelectedWeek={setSelectedWeek}
-        connectWallet={connectWallet}
-        userWeekData={userWeekData}
-        rewardAmountEth={rewardAmountEth}
-        currentView={currentView}
-        trackAction={trackAction}
-      />
-      <Leaderboard
-        weekData={weekData}
-        userWeekData={userWeekData}
-        userAccount={account}
-        ensName={ensName}
-        currentView={currentView}
-        selectedWeek={selectedWeek}
-        connectWallet={connectWallet}
-        trackAction={trackAction}
-      />
-      <Footer />
-    </Styles.StyledRewardsPage>
+          {
+            Personal: <PersonalHeader />,
+            Leaderboard: <LeaderboardHeader />,
+          }[currentView]
+        }
+        <LeaderboardSwitch
+          switchView={switchView}
+          currentView={currentView}
+          rewardsMessage={rewardsMessage}
+          weeksRewardsData={weeksRewardsData}
+          setSelectedWeek={setSelectedWeek}
+          trackAction={trackAction}
+        />
+        <TraderRewards
+          active={active}
+          account={account}
+          ensName={ensName}
+          userData={userData}
+          totalRewardAmountEth={totalRewardAmountEth}
+          unclaimedRewardsEth={unclaimedRewardsEth}
+          rewardsMessage={rewardsMessage}
+          weeksRewardsData={weeksRewardsData}
+          setSelectedWeek={setSelectedWeek}
+          connectWallet={connectWallet}
+          userWeekData={userWeekData}
+          rewardAmountEth={rewardAmountEth}
+          currentView={currentView}
+          trackAction={trackAction}
+        />
+        <Leaderboard
+          weekData={weekData}
+          userWeekData={userWeekData}
+          userAccount={account}
+          ensName={ensName}
+          currentView={currentView}
+          selectedWeek={selectedWeek}
+          connectWallet={connectWallet}
+          trackAction={trackAction}
+        />
+        <Footer />
+      </Styles.StyledRewardsPage>
+    </SEO>
   );
 }
