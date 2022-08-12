@@ -71,8 +71,8 @@ function CompoundModal(props) {
     wrappedTokenSymbol,
   } = props;
   const [isCompounding, setIsCompounding] = useState(false);
-  const [shouldClaimMYC, setShouldClaimMYC] = useLocalStorageSerializeKey(
-    [chainId, "StakeV2-compound-should-claim-myc"],
+  const [shouldClaimEsMyc, setShouldClaimEsMYC] = useLocalStorageSerializeKey(
+    [chainId, "StakeV2-compound-should-claim-es-myc"],
     true
   );
   const [shouldClaimWeth, setShouldClaimWeth] = useLocalStorageSerializeKey(
@@ -139,9 +139,9 @@ function CompoundModal(props) {
       contract,
       "handleRewards",
       [
-        shouldClaimMYC,
+        false, // shouldClaimMyc
         false, // shouldStakeMYC,
-        false, // shouldClaimEsMyc
+        shouldClaimEsMyc,
         false, // shouldStakeEsMyc,
         false, // shouldStakeMultiplierPoints,
         shouldClaimWeth || shouldConvertWeth || shouldBuyMlpWithEth,
@@ -184,8 +184,8 @@ function CompoundModal(props) {
       <Modal isVisible={isVisible} setIsVisible={setIsVisible} label="Compound Rewards">
         <div className="CompoundModal-menu">
           <div>
-            <Checkbox isChecked={shouldClaimMYC} setIsChecked={setShouldClaimMYC}>
-              Claim MYC Rewards
+            <Checkbox isChecked={shouldClaimEsMYC} setIsChecked={setShouldClaimEsMYC}>
+              Claim esMYC Rewards
             </Checkbox>
           </div>
           <div>
@@ -230,8 +230,8 @@ function ClaimModal(props) {
     wrappedTokenSymbol,
   } = props;
   const [isClaiming, setIsClaiming] = useState(false);
-  const [shouldClaimMYC, setShouldClaimMYC] = useLocalStorageSerializeKey(
-    [chainId, "StakeV2-claim-should-claim-myc"],
+  const [shouldClaimEsMYC, setShouldClaimEsMYC] = useLocalStorageSerializeKey(
+    [chainId, "StakeV2-claim-should-claim-es-myc"],
     true
   );
   const [shouldClaimWeth, setShouldClaimWeth] = useLocalStorageSerializeKey(
@@ -263,9 +263,9 @@ function ClaimModal(props) {
       contract,
       "handleRewards",
       [
-        shouldClaimMYC,
+        false, // shouldClaimMYC
         false, // shouldStakeMYC
-        false, // shouldClaimEsMyc,
+        shouldClaimEsMyc,
         false, // shouldStakeEsMyc
         false, // shouldStakeMultiplierPoints
         shouldClaimWeth,
@@ -299,7 +299,7 @@ function ClaimModal(props) {
       <Modal isVisible={isVisible} setIsVisible={setIsVisible} label="Claim Rewards">
         <div className="CompoundModal-menu">
           <div>
-            <Checkbox isChecked={shouldClaimMYC} setIsChecked={setShouldClaimMYC}>
+            <Checkbox isChecked={shouldClaimEsMYC} setIsChecked={setShouldClaimEsMYC}>
               Claim MYC Rewards
             </Checkbox>
           </div>
