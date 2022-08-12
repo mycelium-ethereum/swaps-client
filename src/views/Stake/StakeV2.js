@@ -263,7 +263,7 @@ function ClaimModal(props) {
       contract,
       "handleRewards",
       [
-        false, // shouldClaimMYC
+        shouldClaimMYC,
         false, // shouldStakeMYC
         shouldClaimEsMyc,
         false, // shouldStakeEsMyc
@@ -300,7 +300,7 @@ function ClaimModal(props) {
         <div className="CompoundModal-menu">
           <div>
             <Checkbox isChecked={shouldClaimEsMyc} setIsChecked={setShouldClaimEsMYC}>
-              Claim MYC Rewards
+              Claim esMYC Rewards
             </Checkbox>
           </div>
           <div>
