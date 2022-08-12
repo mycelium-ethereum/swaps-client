@@ -294,7 +294,7 @@ export default function DashboardV2() {
               <br />
               <div>
                 <a
-                  href="https://tracer-1.gitbook.io/tracer-perpetual-swaps/6VOYVKGbCCw0I8cj7vdF/protocol-design/shared-liquidity-pool/mlp-token-pricing"
+                  href="https://swaps.docs.mycelium.xyz/protocol-design/mycelium-liquidity-pool-mlp/mlp-token#pricing"
                   target="_blank"
                   rel="noopener noreferrer"
                 >

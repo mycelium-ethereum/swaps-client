@@ -50,7 +50,7 @@ export default function TokenCard() {
               </Link>
             </div>
             <a
-              href="https://tracer-1.gitbook.io/tracer-perpetual-swaps/6VOYVKGbCCw0I8cj7vdF/perpetual-swaps/information-for-lps"
+              href="https://swaps.docs.mycelium.xyz/perpetual-swaps/information-for-lps"
               target="_blank"
               rel="noreferrer"
               className="default-btn read-more"
@@ -78,7 +78,7 @@ export default function TokenCard() {
               </Link>
             </div>
             <a
-              href="https://tracer-1.gitbook.io/tracer-perpetual-swaps/6VOYVKGbCCw0I8cj7vdF/protocol-design/shared-liquidity-pool/mlp-token-pricing"
+              href="https://swaps.docs.mycelium.xyz/protocol-design/mycelium-liquidity-pool-mlp/mlp-token#pricing"
               target="_blank"
               rel="noreferrer"
               className="default-btn read-more"
