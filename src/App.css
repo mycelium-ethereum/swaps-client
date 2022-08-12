@@ -63,15 +63,18 @@
 .App-header-drawer {
   background: #17182c88 0% 0% no-repeat padding-box;
   box-shadow: 8px 3px 6px #00000029;
+  background: url("./img/background_mesh_mobile.svg"), rgba(0, 49, 0, 0.95);
+  background-size: cover;
+  backdrop-filter: blur(5px);
   opacity: 1;
-  backdrop-filter: blur(27px);
   position: fixed;
   z-index: 801;
   left: 0;
   right: 0;
   top: 0;
   height: 100vh;
-  width: 304px;
+  width: 100%;
+  max-width: 375px;
   overflow-y: auto;
   -ms-overflow-style: none; /* Internet Explorer 10+ */
   scrollbar-width: none; /* Firefox */

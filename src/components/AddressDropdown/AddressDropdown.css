@@ -2,7 +2,7 @@
   border: 1px solid #262638;
 }
 .address-btn {
-  display: inline-flex;
+  display: inline-flex!important;
   align-items: center;
   justify-content: center;
   color: var(--text-navigation) !important;
@@ -11,7 +11,7 @@
 
 .user-address {
   margin-left: 10px;
-  margin-right: 10px;
+  margin-right: auto;
 }
 
 .App-header-user-address:hover {

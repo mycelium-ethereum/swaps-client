@@ -71,6 +71,7 @@ import Rewards from "./views/Rewards/Rewards";
 // import CompleteAccountTransfer from "./views/CompleteAccountTransfer/CompleteAccountTransfer";
 // import Debug from "./views/Debug/Debug";
 import ConsentModal from "./components/ConsentModal/ConsentModal";
+import MobileLinks from './components/Navigation/MobileNav';
 
 import cx from "classnames";
 import { cssTransition, ToastContainer } from "react-toastify";
@@ -93,7 +94,6 @@ import logoImg from "./img/logo_MYC.svg";
 import logoSmallImg from "./img/logo_MYC_small.svg";
 import connectWalletImg from "./img/ic_wallet_24.svg";
 
-// import logoImg from './img/mlp-logo-final-white-small.png'
 import metamaskImg from "./img/metamask.png";
 import coinbaseImg from "./img/coinbaseWallet.png";
 import walletConnectImg from "./img/walletconnect-circle-blue.svg";
@@ -824,11 +824,13 @@ function FullApp() {
                 variants={slideVariants}
                 transition={{ duration: 0.2 }}
               >
-                <AppHeaderLinks
-                  small
+                <MobileLinks
                   openSettings={openSettings}
                   clickCloseIcon={() => setIsDrawerVisible(false)}
                   trackAction={trackAction}
+                  setWalletModalVisible={setWalletModalVisible}
+                  showNetworkSelectorModal={showNetworkSelectorModal}
+                  disconnectAccountAndCloseSettings={disconnectAccountAndCloseSettings}
                 />
               </motion.div>
             )}

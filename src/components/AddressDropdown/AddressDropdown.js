@@ -17,7 +17,7 @@ function AddressDropdown({ account, accountUrl, disconnectAccountAndCloseSetting
 
   return (
     <Menu>
-      <Menu.Button as="div">
+      <Menu.Button as="div" className="address-btn-container">
         <button className="App-cta small transparent address-btn">
           <Davatar size={20} address={account} />
           <span className="user-address">{ensName || shortenAddress(account, breakpoint === "S" ? 9 : 13)}</span>
