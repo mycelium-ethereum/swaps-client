@@ -147,7 +147,7 @@ const TOKENS = {
       name: "Custom Test Token",
       symbol: "CTM",
       decimals: 18,
-      address: "0x06e7D03bc9CeFe0e61a6FCD13a3e786c4C8b8e8E",
+      address: "0x6467A2ad44C49dB9788d60e82B3adE35CcA5c5C4",
       isStable: false,
     },
     {
