@@ -1,68 +1,23 @@
-import React, { useCallback, useEffect } from "react";
+import React, { useEffect } from "react";
 import {
   AppHeaderLinkContainer,
-  PoolsSwitch,
-  MobileNetworkSelector,
-  MobileAddressDropdown,
-  AddressDropdownContainer
+  MyceliumCopy,
+  HeaderClose,
+  Header
 } from './MobileNav.styles';
 
-import mycSwapsLogo from "../../img/myc_swaps.svg";
-import mycPoolsLogo from "../../img/myc_pools.svg";
-import mycPoolsSwitch from "../../img/myc_pools_switch.svg";
-import AddressDropdown from "../AddressDropdown/AddressDropdown";
-
-
-import { Link, NavLink } from "react-router-dom";
-
-import { 
-  ARBITRUM,
-  ARBITRUM_TESTNET,
-  getAccountUrl,
-  getChainName,
-  switchNetwork,
-  useChainId,
-} from '../../Helpers';
-
-import { FiX } from "react-icons/fi";
-
-// import "./App.css";
-
-import logoImg from "../../img/logo_MYC.svg";
-import Button from "../Common/Button";
+import { NavLink } from "react-router-dom";
 import { useWeb3React } from "@web3-react/core";
+
+import navClose from "../../img/ic_nav_close.svg"
 
 export default function AppHeaderLinks({ 
   openSettings,
   clickCloseIcon,
-  trackAction,
   setWalletModalVisible,
-  disconnectAccountAndCloseSettings
 }) {
 
-  const { chainId } = useChainId();
-  const { active, account } = useWeb3React();
-  const showSelector = true;
-  const networkOptions = [
-    {
-      label: "Arbitrum",
-      value: ARBITRUM,
-      icon: "ic_arbitrum_24.svg",
-      color: "#264f79",
-    },
-    {
-      label: "Testnet",
-      value: ARBITRUM_TESTNET,
-      icon: "ic_arbitrum_24.svg",
-      color: "#264f79",
-    },
-    // {
-    // label: "Avalanche",
-    // value: AVALANCHE,
-    // icon: "ic_avalanche_24.svg",
-    // color: "#E841424D",
-    // },
-  ];
+  const { active } = useWeb3React();
 
   useEffect(() => {
     if (active) {
@@ -70,78 +25,17 @@ export default function AppHeaderLinks({
     }
   }, [active, setWalletModalVisible]);
 
-  const onNetworkSelect = useCallback(
-    (option) => {
-      if (option.value === chainId) {
-        return;
-      }
-      return switchNetwork(option.value, active);
-    },
-    [chainId, active]
-  );
-
-  const selectorLabel = getChainName(chainId);
-
-  const accountUrl = getAccountUrl(chainId, account);
-
   return (
     <div className="App-header-links">
-        <div className="App-header-links-header">
-          <div className="App-header-menu-icon-block" onClick={() => clickCloseIcon()}>
-            <FiX className="App-header-menu-icon" />
-          </div>
-          <Link
-            className="App-header-link-main"
-            to="/"
-            onClick={() =>
-              trackAction &&
-              trackAction("Button clicked", {
-                buttonName: "Tracer Nav Logo",
-              })
-            }
-          >
-            <img src={logoImg} alt="Tracer TRS Logo" />
-          </Link>
+      <Header>
+        <div>
+          Menu
         </div>
-      <PoolsSwitch>
-        <Button>
-          <span>
-            Switch to
-          </span>
-          <img src={mycPoolsSwitch} />
-        </Button>
-      </PoolsSwitch>
-      <MobileNetworkSelector
-        options={networkOptions}
-        label={selectorLabel}
-        onSelect={onNetworkSelect}
-        className="App-header-user-netowork"
-        showCaret={true}
-        modalLabel="Select Network"
-        small={false}
-        showModal={false}
-        trackAction={trackAction}
-      />
-      <AddressDropdownContainer>
-        <AddressDropdown
-            account={account}
-            small={false}
-            accountUrl={accountUrl}
-            disconnectAccountAndCloseSettings={disconnectAccountAndCloseSettings}
-            openSettings={openSettings}
-            trackAction={trackAction}
-        />
-      </AddressDropdownContainer>
-      <AppHeaderLinkContainer>
-        <NavLink activeClassName="active" to="/trade">
-          <img src={mycSwapsLogo} />
-        </NavLink>
-      </AppHeaderLinkContainer>
-      <AppHeaderLinkContainer>
-        <NavLink activeClassName="active" to="/trade">
-          <img src={mycSwapsLogo} />
-        </NavLink>
-      </AppHeaderLinkContainer>
+        <HeaderClose onClick={() => clickCloseIcon()}>
+          Close
+          <img src={navClose} className="close-icon" />
+        </HeaderClose>
+      </Header>
       <AppHeaderLinkContainer>
         <NavLink activeClassName="active" to="/dashboard">
           Dashboard
@@ -171,12 +65,15 @@ export default function AppHeaderLinks({
           Docs
         </a>
       </AppHeaderLinkContainer>
-      <div className="App-header-link-container">
+      <AppHeaderLinkContainer>
         {/* eslint-disable-next-line */}
         <a href="#" onClick={openSettings}>
           Settings
         </a>
-      </div>
+      </AppHeaderLinkContainer>
+      <MyceliumCopy>
+        © 2022 Mycelium
+      </MyceliumCopy>
     </div>
   );
 }

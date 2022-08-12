@@ -1,13 +1,39 @@
 import styled from 'styled-components';
 import NetworkSelector from '../NetworkSelector/NetworkSelector';
-import AddressDropdown from "../AddressDropdown/AddressDropdown";
+
+export const Header = styled.div`
+  padding: 1.5rem 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 20px;
+`
+
+export const HeaderClose = styled.div`
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 150%;
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 12px;
+  border-radius: 4px;
+  border: 1px solid var(--cell-highlight);
+  color: var(--cell-highlight);
+
+  .close-icon {
+    margin-left: 0.5rem;
+    font-size: 20px;
+  }
+`
 
 export const AppHeaderLinkContainer = styled.div`
-  border-top: 1px solid var(--cell-highlight);
+  &:first-child {
+    border-top: 1px solid var(--cell-highlight);
+  }
   border-bottom: 1px solid var(--cell-highlight);
 
   a {
-    font-size: 14px;
+    font-size: 20px;
     line-height: 18px;
     font-weight: normal;
     letter-spacing: 0.1px;
@@ -21,6 +47,13 @@ export const AppHeaderLinkContainer = styled.div`
     background: #303fd024;
     color: white;
   }
+`
+
+
+export const MyceliumCopy = styled.div`
+  color: var(--action-active);
+  font-size: 16px;
+  padding: 1.5rem 1rem;
 `
 
 const mobileButton = `
@@ -84,3 +117,4 @@ export const AddressDropdownContainer = styled.div`
     }
   }
 `
+
