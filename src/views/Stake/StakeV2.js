@@ -145,7 +145,7 @@ function CompoundModal(props) {
       [
         false, // shouldClaimMYC,
         false, // shouldStakeMYC,
-        shouldClaimEsMyc || shouldClaimEsMyc,
+        shouldClaimEsMyc || shouldStakeEsMyc,
         shouldStakeEsMyc,
         false, // shouldStakeMultiplierPoints,
         shouldClaimWeth || shouldConvertWeth || shouldBuyMlpWithEth,
