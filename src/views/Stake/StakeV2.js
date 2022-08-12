@@ -334,12 +334,8 @@ function VesterDepositModal(props) {
     setValue,
     balance,
     vestedAmount,
-    averageStakedAmount,
     maxVestableAmount,
     library,
-    stakeTokenLabel,
-    reserveAmount,
-    maxReserveAmount,
     vesterAddress,
     setPendingTxns,
   } = props;
@@ -347,19 +343,9 @@ function VesterDepositModal(props) {
 
   let amount = parseValue(value, 18);
 
-  let nextReserveAmount = reserveAmount;
-
   let nextDepositAmount = vestedAmount;
   if (amount) {
     nextDepositAmount = vestedAmount.add(amount);
-  }
-
-  let additionalReserveAmount = bigNumberify(0);
-  if (amount && averageStakedAmount && maxVestableAmount && maxVestableAmount.gt(0)) {
-    nextReserveAmount = nextDepositAmount.mul(averageStakedAmount).div(maxVestableAmount);
-    if (nextReserveAmount.gt(reserveAmount)) {
-      additionalReserveAmount = nextReserveAmount.sub(reserveAmount);
-    }
   }
 
   const getError = () => {
@@ -368,9 +354,6 @@ function VesterDepositModal(props) {
     }
     if (maxAmount && amount.gt(maxAmount)) {
       return "Max amount exceeded";
-    }
-    if (nextReserveAmount.gt(maxReserveAmount)) {
-      return "Insufficient staked tokens";
     }
   };
 
@@ -472,39 +455,6 @@ function VesterDepositModal(props) {
                         <br />
                         Max Capacity: {formatAmount(maxVestableAmount, 18, 2, true)} esMYC
                         <br />
-                      </>
-                    );
-                  }}
-                />
-              </div>
-            </div>
-            <div className="Exchange-info-row">
-              <div className="Exchange-info-label">Reserve Amount</div>
-              <div className="align-right">
-                <Tooltip
-                  handle={`${formatAmount(
-                    reserveAmount && reserveAmount.gte(additionalReserveAmount)
-                      ? reserveAmount
-                      : additionalReserveAmount,
-                    18,
-                    2,
-                    true
-                  )} / ${formatAmount(maxReserveAmount, 18, 2, true)}`}
-                  position="right-bottom"
-                  renderContent={() => {
-                    return (
-                      <>
-                        Current Reserved: {formatAmount(reserveAmount, 18, 2, true)}
-                        <br />
-                        Additional reserve required: {formatAmount(additionalReserveAmount, 18, 2, true)}
-                        <br />
-                        {amount && nextReserveAmount.gt(maxReserveAmount) && (
-                          <div>
-                            <br />
-                            You need a total of at least {formatAmount(nextReserveAmount, 18, 2, true)}{" "}
-                            {stakeTokenLabel} to vest {formatAmount(amount, 18, 2, true)} esMYC.
-                          </div>
-                        )}
                       </>
                     );
                   }}
@@ -785,10 +735,11 @@ export default function StakeV2({ setPendingTxns, connectWallet, trackAction }) 
       helperToast.error("Loading vesting data, please wait.");
       return;
     }
-    let remainingVestableAmount = vestingData.mlpVester.maxVestableAmount.sub(vestingData.mlpVester.vestedAmount);
-    if (processedData.esMycBalance.lt(remainingVestableAmount)) {
-      remainingVestableAmount = processedData.esMycBalance;
-    }
+    // let remainingVestableAmount = vestingData.mlpVester.maxVestableAmount.sub(vestingData.mlpVester.vestedAmount);
+    // if (processedData.esMycBalance.lt(remainingVestableAmount)) {
+    // }
+    let remainingVestableAmount = processedData.esMycBalance;
+    let maxVestableAmount = bigNumberify(remainingVestableAmount).add(vestingData.mlpVesterVestedAmount);
 
     setIsVesterDepositModalVisible(true);
     setVesterDepositTitle("MYC Vault");
@@ -797,7 +748,7 @@ export default function StakeV2({ setPendingTxns, connectWallet, trackAction }) 
     setVesterDepositBalance(processedData.esMycBalance);
     setVesterDepositEscrowedBalance(vestingData.mlpVester.escrowedBalance);
     setVesterDepositVestedAmount(vestingData.mlpVester.vestedAmount);
-    setVesterDepositMaxVestableAmount(vestingData.mlpVester.maxVestableAmount);
+    setVesterDepositMaxVestableAmount(maxVestableAmount);
     setVesterDepositAverageStakedAmount(vestingData.mlpVester.averageStakedAmount);
     setVesterDepositReserveAmount(vestingData.mlpVester.pairAmount);
     setVesterDepositMaxReserveAmount(totalRewardTokens);
