@@ -1,6 +1,7 @@
 import React from "react";
-import { useENS, truncateMiddleEthAddress, formatAmount, USD_DECIMALS } from "../../Helpers";
-import Davatar from "@davatar/react";
+import { truncateMiddleEthAddress, formatAmount, USD_DECIMALS, ETH_DECIMALS } from "../../Helpers";
+import Jazzicon, { jsNumberForAddress } from "react-jazzicon";
+import Davatar from '@davatar/react';
 import cx from "classnames";
 import {
   ConnectWalletText,
@@ -19,7 +20,6 @@ import {
   ScrollContainer,
   RankCell,
   UserCell,
-  EmptyAvatar,
   UserDetails,
   VolumeCell,
   RewardCell,
@@ -27,7 +27,7 @@ import {
   ClaimButton,
   WalletIcon,
 } from "./Rewards.styles";
-const DEFAULT_LISTINGS_COUNT = 50;
+
 const ARBISCAN_URL = "https://arbiscan.io/address/";
 const headings = ["Rank", "User", "Volume", "Reward", ""];
 
@@ -46,15 +46,14 @@ function RewardsTableWrapper({ children }) {
   );
 }
 
-function TableRow({ position, account, userAccount, volume, reward, trackAction }) {
-  const { ensName } = useENS(account);
+function TableRow({ position, account, userAccount, volume, ensName, reward, rewardAmountUsd, trackAction }) {
 
   return (
     <tr>
       <RankCell>{position}</RankCell>
       <UserCell>
         <div>
-          {account ? <Davatar size={32} address={account} /> : <EmptyAvatar />}
+          { ensName ? <Davatar size={40} address={account} /> : <Jazzicon diameter={40} seed={jsNumberForAddress(account)} />}
           <UserDetails>
             <a href={`${ARBISCAN_URL}${account}`} rel="noopener noreferrer" target="_blank">
               <span>{truncateMiddleEthAddress(account)}</span>
@@ -64,7 +63,7 @@ function TableRow({ position, account, userAccount, volume, reward, trackAction 
         </div>
       </UserCell>
       <VolumeCell>${formatAmount(volume, USD_DECIMALS, 2, true)}</VolumeCell>
-      <RewardCell>${formatAmount(reward, USD_DECIMALS, 2, true)}</RewardCell>
+      <RewardCell>{formatAmount(reward, ETH_DECIMALS, 4, true)} ETH {rewardAmountUsd && `($${formatAmount(rewardAmountUsd, ETH_DECIMALS + USD_DECIMALS, 2, true)})`}</RewardCell>
       <ClaimCell
         className={cx({
           "highlight-current": account === userAccount,
@@ -88,21 +87,23 @@ function TableRow({ position, account, userAccount, volume, reward, trackAction 
 }
 
 export default function Leaderboard(props) {
-  const { weekData, userweekData, userAccount, ensName, currentView, selectedWeek, connectWallet, trackAction } = props;
+  const { weekData, userWeekData, userAccount, ensName, currentView, selectedWeek, connectWallet, trackAction } = props;
+  console.log(userWeekData);
 
   return (
     <LeaderboardContainer hidden={currentView === "Personal"}>
       <Title>Your rewards</Title>
       <PersonalRewardsTableContainer>
         <RewardsTableBorder />
-        {userAccount && userweekData && userweekData.position ? (
+        {userAccount && userWeekData && userWeekData.position ? (
           <RewardsTableWrapper>
             <TableRow
-              position={userweekData.position}
+              position={userWeekData.position}
               account={userAccount}
               ensName={ensName}
-              volume={userweekData.volume}
-              reward={userweekData.reward}
+              volume={userWeekData.volume}
+              reward={userWeekData.reward}
+              rewardAmountUsd={userWeekData.rewardAmountUsd}
               trackAction={trackAction}
             />
           </RewardsTableWrapper>
@@ -148,13 +149,14 @@ export default function Leaderboard(props) {
         <ScrollContainer>
           {weekData?.traders?.length > 1 ? (
             <RewardsTableWrapper>
-              {weekData?.traders?.slice(0, DEFAULT_LISTINGS_COUNT).map(({ user_address, volume, reward }, index) => (
+              {weekData?.traders?.map(({ user_address, volume, reward, rewardAmountUsd }, index) => (
                 <TableRow
                   key={user_address}
                   position={index + 1}
                   account={user_address}
                   volume={volume}
                   reward={reward}
+                  rewardAmountUsd={rewardAmountUsd}
                   trackAction={trackAction}
                 />
               ))}

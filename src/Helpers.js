@@ -1395,6 +1395,23 @@ export function shortenAddress(address, length) {
   return address.substring(0, left) + "..." + address.substring(address.length - (length - (left + 3)), address.length);
 }
 
+export function formatTimeTill(time) {
+  const dateNow = new Date() / 1000;
+
+  if (time < dateNow) {
+    return '0d 0h 0s'
+  }
+
+  const secondsTill = Math.floor((time - dateNow));
+  let minutes = Math.floor(secondsTill/60);
+  let hours = Math.floor(minutes/60);
+  const days = Math.floor(hours/24);
+
+  hours = hours-(days*24);
+  minutes = minutes-(days*24*60)-(hours*60);
+  return `${days}d ${hours}h ${minutes}m`
+}
+
 export function formatDateTime(time) {
   return formatDateFn(time * 1000, "dd MMM yyyy, h:mm a");
 }
