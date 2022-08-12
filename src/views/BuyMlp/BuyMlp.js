@@ -22,8 +22,8 @@ export default function BuyMlp(props) {
   }, [history.location.hash]);
 
   return (
-    <SEO 
-      title={getPageTitle("Buy")} 
+    <SEO
+      title={getPageTitle("Buy")}
       description="Buy MLP tokens to provide liquidity to Mycelium’s Perpetual Swaps. MLP tokens represent a share in a yield bearing diversified pool of blue-chip crypto assets."
     >
       <div className="default-container buy-tlp-content page-layout">
@@ -38,7 +38,7 @@ export default function BuyMlp(props) {
             <div className="Page-description">
               Purchase{" "}
               <a
-                href="https://tracer-1.gitbook.io/tracer-perpetual-swaps/6VOYVKGbCCw0I8cj7vdF/protocol-design/shared-liquidity-pool/tlp-token-pricing"
+                href="https://swaps.docs.mycelium.xyz/protocol-design/mycelium-liquidity-pool-mlp/mlp-token"
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={() =>

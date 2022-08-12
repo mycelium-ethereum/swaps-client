@@ -881,7 +881,7 @@ export default function StakeV2({ setPendingTxns, connectWallet, trackAction }) 
               <div className="Page-description">
                 Stake{" "}
                 <a
-                  href="https://tracer-1.gitbook.io/tracer-perpetual-swaps/6VOYVKGbCCw0I8cj7vdF/protocol-design/shared-liquidity-pool/mlp-token-pricing"
+                  href="https://swaps.docs.mycelium.xyz/protocol-design/mycelium-liquidity-pool-mlp/mlp-token"
                   target="_blank"
                   rel="noopener noreferrer"
                 >
@@ -1018,7 +1018,7 @@ export default function StakeV2({ setPendingTxns, connectWallet, trackAction }) 
                 Convert esMYC tokens to MYC tokens.
                 <br />
                 Please read the{" "}
-                <a href="https://tracer-1.gitbook.io/mycelium-perpetual-swaps/6VOYVKGbCCw0I8cj7vdF/protocol-design/mycelium-liquidity-pool-mlp/mlp-rewards/esmyc-escrowed-myc" target="_blank" rel="noopener noreferrer">
+                <a href="https://swaps.docs.mycelium.xyz/protocol-design/mycelium-liquidity-pool-mlp/mlp-rewards/esmyc-escrowed-myc" target="_blank" rel="noopener noreferrer">
                   vesting details
                 </a>{" "}
                 before using the vaults.

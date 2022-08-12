@@ -1212,13 +1212,12 @@ export default function SwapBox(props) {
     Api.callContract(chainId, contract, "deposit", {
       value: fromAmount,
       sentMsg: "Swap submitted.",
-      successMsg: `Swapped ${formatAmount(fromAmount, fromToken.decimals, 4, true)} ${
-        fromToken.symbol
-      } for ${formatAmount(toAmount, toToken.decimals, 4, true)} ${toToken.symbol}!`,
+      successMsg: `Swapped ${formatAmount(fromAmount, fromToken.decimals, 4, true)} ${fromToken.symbol
+        } for ${formatAmount(toAmount, toToken.decimals, 4, true)} ${toToken.symbol}!`,
       failMsg: "Swap failed.",
       setPendingTxns,
     })
-      .then(async (res) => {})
+      .then(async (res) => { })
       .finally(() => {
         setIsSubmitting(false);
       });
@@ -1231,12 +1230,11 @@ export default function SwapBox(props) {
     Api.callContract(chainId, contract, "withdraw", [fromAmount], {
       sentMsg: "Swap submitted!",
       failMsg: "Swap failed.",
-      successMsg: `Swapped ${formatAmount(fromAmount, fromToken.decimals, 4, true)} ${
-        fromToken.symbol
-      } for ${formatAmount(toAmount, toToken.decimals, 4, true)} ${toToken.symbol}!`,
+      successMsg: `Swapped ${formatAmount(fromAmount, fromToken.decimals, 4, true)} ${fromToken.symbol
+        } for ${formatAmount(toAmount, toToken.decimals, 4, true)} ${toToken.symbol}!`,
       setPendingTxns,
     })
-      .then(async (res) => {})
+      .then(async (res) => { })
       .finally(() => {
         setIsSubmitting(false);
       });
@@ -1340,9 +1338,8 @@ export default function SwapBox(props) {
     Api.callContract(chainId, contract, method, params, {
       value,
       sentMsg: `Swap ${!isMarketOrder ? " order " : ""} submitted!`,
-      successMsg: `Swapped ${formatAmount(fromAmount, fromToken.decimals, 4, true)} ${
-        fromToken.symbol
-      } for ${formatAmount(toAmount, toToken.decimals, 4, true)} ${toToken.symbol}!`,
+      successMsg: `Swapped ${formatAmount(fromAmount, fromToken.decimals, 4, true)} ${fromToken.symbol
+        } for ${formatAmount(toAmount, toToken.decimals, 4, true)} ${toToken.symbol}!`,
       failMsg: "Swap failed.",
       setPendingTxns,
     })
@@ -2247,7 +2244,7 @@ export default function SwapBox(props) {
                             </div>
                           )}
                           <div>
-                            Position Fee (${MARGIN_FEE_BASIS_POINTS/100}% of position size): ${formatAmount(positionFee, USD_DECIMALS, 2, true)}
+                            Position Fee (${MARGIN_FEE_BASIS_POINTS / 100}% of position size): ${formatAmount(positionFee, USD_DECIMALS, 2, true)}
                           </div>
                         </>
                       );
@@ -2329,7 +2326,7 @@ export default function SwapBox(props) {
                       <br />
                       <br />
                       <a
-                        href="https://tracer-1.gitbook.io/tracer-perpetual-swaps/6VOYVKGbCCw0I8cj7vdF/protocol-design/trading/fees"
+                        href="https://swaps.docs.mycelium.xyz/quick-start-guide/2.-how-to-trade"
                         target="_blank"
                         rel="noopener noreferrer"
                       >
@@ -2358,7 +2355,7 @@ export default function SwapBox(props) {
                       <br />
                       <br />
                       <a
-                        href="https://tracer-1.gitbook.io/tracer-perpetual-swaps/6VOYVKGbCCw0I8cj7vdF/protocol-design/trading/fees"
+                        href="https://swaps.docs.mycelium.xyz/quick-start-guide/2.-how-to-trade"
                         target="_blank"
                         rel="noopener noreferrer"
                       >
@@ -2395,7 +2392,7 @@ export default function SwapBox(props) {
                       )}
                       <br />
                       <a
-                        href="https://tracer-1.gitbook.io/tracer-perpetual-swaps/6VOYVKGbCCw0I8cj7vdF/protocol-design/trading/fees"
+                        href="https://swaps.docs.mycelium.xyz/protocol-design/trading/fees#borrowing-fees"
                         target="_blank"
                         rel="noopener noreferrer"
                       >
@@ -2442,7 +2439,7 @@ export default function SwapBox(props) {
         <div className="Exchange-info-row">
           <div className="Exchange-info-label-button">
             <a
-              href="https://tracer-1.gitbook.io/tracer-perpetual-swaps/6VOYVKGbCCw0I8cj7vdF/quick-start-guide/3.-trading"
+              href="https://swaps.docs.mycelium.xyz/quick-start-guide/2.-how-to-trade"
               target="_blank"
               rel="noopener noreferrer"
             >
