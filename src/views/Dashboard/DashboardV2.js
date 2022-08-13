@@ -17,9 +17,7 @@ import {
   formatKeyAmount,
   expandDecimals,
   bigNumberify,
-  numberWithCommas,
   formatDate,
-  getServerUrl,
   getChainName,
   useChainId,
   USD_DECIMALS,
@@ -28,13 +26,12 @@ import {
   BASIS_POINTS_DIVISOR,
   ARBITRUM,
   AVALANCHE,
-  getTotalVolumeSum,
   MLP_POOL_COLORS,
   DEFAULT_MAX_USDG_AMOUNT,
   getPageTitle,
   ARBITRUM_TESTNET,
 } from "../../Helpers";
-import { useTotalTCRInLiquidity, useTCRPrice, useTotalTCRSupply, useInfoTokens } from "../../Api";
+import { useTotalTCRInLiquidity, useTCRPrice, useTotalTCRSupply, useInfoTokens, useFees } from "../../Api";
 
 import { getContract } from "../../Addresses";
 
@@ -54,37 +51,9 @@ import avalanche24Icon from "../../img/ic_avalanche_24.svg";
 
 import AssetDropdown from "./AssetDropdown";
 import SEO from "../../components/Common/SEO";
+import { getTracerServerUrl } from "../../Api/rewards";
 
 const { AddressZero } = ethers.constants;
-
-function getVolumeInfo(hourlyVolume) {
-  if (!hourlyVolume || hourlyVolume.length === 0) {
-    return {};
-  }
-
-  const secondsPerHour = 60 * 60;
-  const minTime = parseInt(Date.now() / 1000 / secondsPerHour) * secondsPerHour - 24 * secondsPerHour;
-
-  const info = {};
-  let totalVolume = bigNumberify(0);
-  for (let i = 0; i < hourlyVolume.length; i++) {
-    const item = hourlyVolume[i].data;
-    if (parseInt(item.timestamp) < minTime) {
-      break;
-    }
-
-    if (!info[item.token]) {
-      info[item.token] = bigNumberify(0);
-    }
-
-    info[item.token] = info[item.token].add(item.volume);
-    totalVolume = totalVolume.add(item.volume);
-  }
-
-  info.totalVolume = totalVolume;
-
-  return info;
-}
 
 function getCurrentFeesUsd(tokenAddresses, fees, infoTokens) {
   if (!fees || !infoTokens) {
@@ -112,18 +81,13 @@ export default function DashboardV2() {
 
   const chainName = getChainName(chainId);
 
-  const positionStatsUrl = getServerUrl(chainId, "/position_stats");
+  const positionStatsUrl = getTracerServerUrl(chainId, "/positionStats");
   const { data: positionStats } = useSWR([positionStatsUrl], {
     fetcher: (...args) => fetch(...args).then((res) => res.json()),
   });
 
-  const hourlyVolumeUrl = getServerUrl(chainId, "/hourly_volume");
-  const { data: hourlyVolume } = useSWR([hourlyVolumeUrl], {
-    fetcher: (...args) => fetch(...args).then((res) => res.json()),
-  });
-
-  const totalVolumeUrl = getServerUrl(chainId, "/total_volume");
-  const { data: totalVolume } = useSWR([totalVolumeUrl], {
+  const mycTotalVolumeUrl = getTracerServerUrl(chainId, "/volume");
+  const { data: mycTotalVolume } = useSWR([mycTotalVolumeUrl], {
     fetcher: (...args) => fetch(...args).then((res) => res.json()),
   });
 
@@ -135,10 +99,6 @@ export default function DashboardV2() {
     totalLongPositionSizes = bigNumberify(positionStats.totalLongPositionSizes);
     totalShortPositionSizes = bigNumberify(positionStats.totalShortPositionSizes);
   }
-
-  const volumeInfo = getVolumeInfo(hourlyVolume);
-
-  const totalVolumeSum = getTotalVolumeSum(totalVolume);
 
   const whitelistedTokens = getWhitelistedTokens(chainId);
   const whitelistedTokenAddresses = whitelistedTokens.map((token) => token.address);
@@ -180,13 +140,21 @@ export default function DashboardV2() {
 
   const currentFeesUsd = getCurrentFeesUsd(whitelistedTokenAddresses, fees, infoTokens);
 
+  let totalFeesDistributed;
+  const allFees = useFees(chainId);
+
   const feeHistory = getFeeHistory(chainId);
-  const shouldIncludeCurrrentFees = feeHistory.length && parseInt(Date.now() / 1000) - feeHistory[0].to > 60 * 60;
-  let totalFeesDistributed = shouldIncludeCurrrentFees
-    ? parseFloat(bigNumberify(formatAmount(currentFeesUsd, USD_DECIMALS - 2, 0, false)).toNumber()) / 100
-    : 0;
-  for (let i = 0; i < feeHistory.length; i++) {
-    totalFeesDistributed += parseFloat(feeHistory[i].feeUsd);
+  // this is a buffer for when the manually update fees, it gives them an hour window to update
+  // const shouldIncludeCurrrentFees = feeHistory.length && parseInt(Date.now() / 1000) - feeHistory[0].to > 60 * 60;
+  // let totalFeesDistributed = shouldIncludeCurrrentFees
+    // ? parseFloat(bigNumberify(formatAmount(currentFeesUsd, USD_DECIMALS - 2, 0, false)).toNumber()) / 100
+    // : 0;
+  // for (let i = 0; i < feeHistory.length; i++) {
+    // totalFeesDistributed += parseFloat(feeHistory[i].feeUsd);
+  // }
+
+  if (allFees) {
+    totalFeesDistributed = bigNumberify(allFees.mint).add(allFees.burn).add(allFees.marginAndLiquidation).add(allFees.swap);
   }
 
   const { tcrPrice, tcrPriceFromMainnet, tcrPriceFromArbitrum } = useTCRPrice(
@@ -467,7 +435,7 @@ export default function DashboardV2() {
                 </div>
                 <div className="App-card-row">
                   <div className="label">24h Volume</div>
-                  <div>${formatAmount(volumeInfo.totalVolume, USD_DECIMALS, 0, true)}</div>
+                  <div>${formatAmount(mycTotalVolume?.oneDayVolume, USD_DECIMALS, 0, true)}</div>
                 </div>
                 <div className="App-card-row">
                   <div className="label">Long Positions</div>
@@ -491,11 +459,11 @@ export default function DashboardV2() {
               <div className="App-card-content">
                 <div className="App-card-row">
                   <div className="label">Total Fees</div>
-                  <div>${numberWithCommas(totalFeesDistributed.toFixed(0))}</div>
+                  <div>${formatAmount(totalFeesDistributed, USD_DECIMALS, 0, true)}</div>
                 </div>
                 <div className="App-card-row">
                   <div className="label">Total Volume</div>
-                  <div>${formatAmount(totalVolumeSum, USD_DECIMALS, 0, true)}</div>
+                  <div>${formatAmount(mycTotalVolume?.totalVolume, USD_DECIMALS, 0, true)}</div>
                 </div>
               </div>
             </div>
