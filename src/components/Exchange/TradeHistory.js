@@ -429,7 +429,7 @@ export default function TradeHistory(props) {
       {tradesWithMessages.length > 0 &&
         tradesWithMessages.map((trade, index) => {
           const tradeData = trade.data;
-          const txUrl = getExplorerUrl(chainId) + "tx/" + tradeData.txhash;
+          const txUrl = getExplorerUrl(chainId) + "tx/" + tradeData.tx_hash;
 
           let msg = getMsg(trade);
 
