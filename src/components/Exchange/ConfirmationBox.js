@@ -18,6 +18,7 @@ import {
   SLIPPAGE_BPS_KEY,
   formatDateTime,
   calculatePositionDelta,
+  getSpread,
 } from "../../Helpers";
 import { getConstant } from "../../Constants";
 import { getContract } from "../../Addresses";
@@ -27,32 +28,8 @@ import Modal from "../Modal/Modal";
 import Tooltip from "../Tooltip/Tooltip";
 import Checkbox from "../Checkbox/Checkbox";
 import ExchangeInfoRow from "./ExchangeInfoRow";
+
 import { getNativeToken, getToken, getWrappedToken } from "../../data/Tokens";
-
-const HIGH_SPREAD_THRESHOLD = expandDecimals(1, USD_DECIMALS).div(100); // 1%;
-
-function getSpread(fromTokenInfo, toTokenInfo, isLong, nativeTokenAddress) {
-  if (fromTokenInfo && fromTokenInfo.maxPrice && toTokenInfo && toTokenInfo.minPrice) {
-    const fromDiff = fromTokenInfo.maxPrice.sub(fromTokenInfo.minPrice);
-    const fromSpread = fromDiff.mul(PRECISION).div(fromTokenInfo.maxPrice);
-    const toDiff = toTokenInfo.maxPrice.sub(toTokenInfo.minPrice);
-    const toSpread = toDiff.mul(PRECISION).div(toTokenInfo.maxPrice);
-
-    let value = fromSpread.add(toSpread);
-
-    const fromTokenAddress = fromTokenInfo.isNative ? nativeTokenAddress : fromTokenInfo.address;
-    const toTokenAddress = toTokenInfo.isNative ? nativeTokenAddress : toTokenInfo.address;
-
-    if (isLong && fromTokenAddress === toTokenAddress) {
-      value = fromSpread;
-    }
-
-    return {
-      value,
-      isHigh: value.gt(HIGH_SPREAD_THRESHOLD),
-    };
-  }
-}
 
 export default function ConfirmationBox(props) {
   const {
@@ -91,6 +68,8 @@ export default function ConfirmationBox(props) {
     feeBps,
     chainId,
     orders,
+    trackAction,
+    trackTrade,
   } = props;
 
   const [savedSlippageAmount] = useLocalStorageSerializeKey([chainId, SLIPPAGE_BPS_KEY], DEFAULT_SLIPPAGE_AMOUNT);
@@ -256,15 +235,8 @@ export default function ConfirmationBox(props) {
           const profitPrice = getProfitPrice(existingPosition.markPrice, existingPosition);
           return (
             <div className="Confirmation-box-warning">
-              Increasing this position at the current price will forfeit a&nbsp;
-              <a
-                href="https://gmxio.gitbook.io/gmx/trading#minimum-price-change"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                pending profit
-              </a>{" "}
-              of {existingPosition.deltaStr}.<br />
+              Increasing this position at the current price will forfeit a pending profit of {existingPosition.deltaStr}
+              .<br />
               <br />
               Profit price: {existingPosition.isLong ? ">" : "<"} ${formatAmount(profitPrice, USD_DECIMALS, 2, true)}.
               This rule only applies for the next {getTimeRemaining(minProfitExpiration)}, until{" "}
@@ -278,15 +250,7 @@ export default function ConfirmationBox(props) {
             const profitPrice = getProfitPrice(existingPosition.markPrice, existingPosition);
             return (
               <div className="Confirmation-box-warning">
-                This order will forfeit a&nbsp;
-                <a
-                  href="https://gmxio.gitbook.io/gmx/trading#minimum-price-change"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  profit
-                </a>{" "}
-                of {existingPosition.deltaStr}.<br />
+                This order will forfeit a profit of {existingPosition.deltaStr}.<br />
                 Profit price: {existingPosition.isLong ? ">" : "<"} ${formatAmount(profitPrice, USD_DECIMALS, 2, true)}.
                 This rule only applies for the next {getTimeRemaining(minProfitExpiration)}, until{" "}
                 {formatDateTime(minProfitExpiration)}.
@@ -298,12 +262,8 @@ export default function ConfirmationBox(props) {
 
       return (
         <div className="Confirmation-box-warning">
-          A minimum price change of&nbsp;
-          <a href="https://gmxio.gitbook.io/gmx/trading#minimum-price-change" target="_blank" rel="noopener noreferrer">
-            1.5%
-          </a>{" "}
-          is required for a position to be in profit. This only applies for the first {MIN_PROFIT_TIME / 60 / 60} hours
-          after increasing a position.
+          A minimum price change of 1.5% is required for a position to be in profit. This only applies for the first{" "}
+          {MIN_PROFIT_TIME / 60 / 60} hours after increasing a position.
         </div>
       );
     }
@@ -669,7 +629,14 @@ export default function ConfirmationBox(props) {
         {!isSwap && renderMarginSection()}
         <div className="Confirmation-box-row">
           <button
-            onClick={onConfirmationClick}
+            onClick={() => {
+              onConfirmationClick();
+              trackAction &&
+                trackAction("Button clicked", {
+                  buttonName: `Confirmation modal - ${getPrimaryText()} Trade`,
+                });
+              trackTrade(2, getPrimaryText());
+            }}
             className="App-cta Confirmation-box-button"
             disabled={!isPrimaryEnabled()}
           >

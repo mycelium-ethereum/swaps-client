@@ -18,13 +18,13 @@
 
 .Checkbox .Checkbox-icon {
   font-size: 0.8rem;
-  color: var(--tracer-blue);
+  color: var(--action-active);
   margin-right: 0.4rem;
   margin-bottom: 0;
 }
 
 .Checkbox.disabled .Checkbox-icon {
-  color: #47509e;
+  opacity: 0.5;
 }
 
 .Checkbox-icon.inactive {

@@ -3,6 +3,7 @@ import React, { useEffect, useState, useMemo, useCallback, forwardRef, useImpera
 import { useWeb3React } from "@web3-react/core";
 import useSWR from "swr";
 import { ethers } from "ethers";
+import { useLocalStorage } from "react-use";
 
 import {
   FUNDING_RATE_PRECISION,
@@ -21,7 +22,6 @@ import {
   getPositionKey,
   getPositionContractKey,
   getLeverage,
-  useLocalStorageSerializeKey,
   useLocalStorageByChainId,
   getDeltaStr,
   useChainId,
@@ -29,7 +29,7 @@ import {
   getPageTitle,
 } from "../../Helpers";
 import { getConstant } from "../../Constants";
-import { approvePlugin, useInfoTokens } from "../../Api";
+import { approvePlugin } from "../../Api";
 
 import { getContract } from "../../Addresses";
 import { getTokens, getToken, getWhitelistedTokens, getTokenBySymbol } from "../../data/Tokens";
@@ -46,11 +46,11 @@ import PositionsList from "../../components/Exchange/PositionsList";
 import OrdersList from "../../components/Exchange/OrdersList";
 import TradeHistory from "../../components/Exchange/TradeHistory";
 import ExchangeWalletTokens from "../../components/Exchange/ExchangeWalletTokens";
-import ExchangeBanner from "../../components/Exchange/ExchangeBanner";
 import Tab from "../../components/Tab/Tab";
 import Footer from "../../Footer";
 
 import "./Exchange.css";
+import SEO from "../../components/Common/SEO";
 const { AddressZero } = ethers.constants;
 
 const PENDING_POSITION_VALID_DURATION = 600 * 1000;
@@ -362,35 +362,18 @@ export const Exchange = forwardRef((props, ref) => {
     savedShouldShowPositionLines,
     setSavedShouldShowPositionLines,
     connectWallet,
+    infoTokens,
+    trackPageWithTraits,
+    trackAction,
+    analytics,
   } = props;
-  const [showBanner, setShowBanner] = useLocalStorageSerializeKey("showBanner", true);
-  const [bannerHidden, setBannerHidden] = useLocalStorageSerializeKey("bannerHidden", null);
 
   const [pendingPositions, setPendingPositions] = useState({});
   const [updatedPositions, setUpdatedPositions] = useState({});
 
-  const hideBanner = () => {
-    const hiddenLimit = new Date(new Date().getTime() + 2 * 24 * 60 * 60 * 1000);
-    setBannerHidden(hiddenLimit);
-    setShowBanner(false);
-  };
-
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
-
-  useEffect(() => {
-    if (new Date() > new Date("2021-11-30")) {
-      setShowBanner(false);
-    } else {
-      if (bannerHidden && new Date(bannerHidden) > new Date()) {
-        setShowBanner(false);
-      } else {
-        setBannerHidden(null);
-        setShowBanner(true);
-      }
-    }
-  }, [showBanner, bannerHidden, setBannerHidden, setShowBanner]);
 
   const { active, account, library } = useWeb3React();
   const { chainId } = useChainId();
@@ -404,7 +387,6 @@ export const Exchange = forwardRef((props, ref) => {
   const usdgAddress = getContract(chainId, "USDG");
 
   const whitelistedTokens = getWhitelistedTokens(chainId);
-  const whitelistedTokenAddresses = whitelistedTokens.map((token) => token.address);
 
   const positionQuery = getPositionQuery(whitelistedTokens, nativeTokenAddress);
 
@@ -475,11 +457,6 @@ export const Exchange = forwardRef((props, ref) => {
 
   const tokens = getTokens(chainId);
 
-  const tokenAddresses = tokens.map((token) => token.address);
-  const { data: tokenBalances } = useSWR(active && [active, chainId, readerAddress, "getTokenBalances", account], {
-    fetcher: fetcher(library, Reader, [tokenAddresses]),
-  });
-
   const { data: positionData, error: positionDataError } = useSWR(
     active && [active, chainId, readerAddress, "getPositions", vaultAddress, account],
     {
@@ -492,10 +469,6 @@ export const Exchange = forwardRef((props, ref) => {
   );
 
   const positionsDataIsLoading = active && !positionData && !positionDataError;
-
-  const { data: fundingRateInfo } = useSWR([active, chainId, readerAddress, "getFundingRates"], {
-    fetcher: fetcher(library, Reader, [vaultAddress, nativeTokenAddress, whitelistedTokenAddresses]),
-  });
 
   const { data: totalTokenWeights } = useSWR(
     [`Exchange:totalTokenWeights:${active}`, chainId, vaultAddress, "totalTokenWeights"],
@@ -523,8 +496,6 @@ export const Exchange = forwardRef((props, ref) => {
       fetcher: fetcher(library, Router),
     }
   );
-
-  const { infoTokens } = useInfoTokens(library, chainId, active, tokenBalances, fundingRateInfo);
 
   useEffect(() => {
     const fromToken = getTokenInfo(infoTokens, fromTokenAddress);
@@ -741,6 +712,73 @@ export const Exchange = forwardRef((props, ref) => {
       });
   };
 
+  const [pageTracked, setPageTracked] = useState(false);
+
+  const [chartPeriod] = useLocalStorage(JSON.stringify([chainId, "Chart-period"]));
+  const [tableViewSelection] = useLocalStorage("List-section-v2");
+  const [isLeverageSliderEnabled] = useLocalStorage(JSON.stringify([chainId, "Exchange-swap-leverage-slider-enabled"]));
+  const [leverageOption] = useLocalStorage(JSON.stringify([chainId, "Exchange-swap-leverage-option"]));
+  const tableView =
+    !!tableViewSelection && Object.keys(tableViewSelection).length > 0 ? tableViewSelection[chainId] : "Positions"; // localStorage item "List-section-v2" will return undefined if no selection has been made previously
+  const dataElements = [
+    chartPeriod,
+    tokenSelection,
+    pageTracked,
+    trackPageWithTraits,
+    chainId,
+    swapOption,
+    tableView,
+    isLeverageSliderEnabled,
+    leverageOption,
+  ];
+
+  const elementsLoaded = dataElements.every((element) => element !== undefined);
+
+  // Segment Analytics Page tracking
+  useEffect(() => {
+    if (elementsLoaded && analytics && !pageTracked) {
+      // Get Chart token selection
+      const chartToken = getChartToken(
+        swapOption,
+        tokenSelection[swapOption].from,
+        tokenSelection[swapOption].to,
+        chainId
+      );
+      const market = getToken(chainId, chartToken);
+      const marketFormatted = `${market.symbol}/USD`;
+      // Get token to pay
+      const tokenToPay = getToken(chainId, tokenSelection[swapOption].from).symbol;
+      const tokenToReceive = getToken(chainId, tokenSelection[swapOption].to).symbol;
+      // Get leverage option if leverage slider enabled
+      const leverage = isLeverageSliderEnabled ? { leverage: parseInt(leverageOption) } : null;
+
+      const traits = {
+        graphTime: chartPeriod,
+        tableView: tableView,
+        market: marketFormatted,
+        marketPosition: swapOption,
+        tokenToPay: tokenToPay,
+        tokenToReceive: tokenToReceive,
+        leverageSliderEnabled: isLeverageSliderEnabled,
+        ...leverage,
+      };
+      trackPageWithTraits(traits);
+      setPageTracked(true); // Prevent Page function being called twice
+    }
+  }, [
+    elementsLoaded,
+    chartPeriod,
+    tokenSelection,
+    pageTracked,
+    trackPageWithTraits,
+    chainId,
+    swapOption,
+    tableView,
+    isLeverageSliderEnabled,
+    leverageOption,
+    analytics,
+  ]);
+
   const LIST_SECTIONS = ["Positions", flagOrdersEnabled ? "Orders" : undefined, "Trades"].filter(Boolean);
   let [listSection, setListSection] = useLocalStorageByChainId(chainId, "List-section-v2", LIST_SECTIONS[0]);
   const LIST_SECTIONS_LABELS = {
@@ -762,7 +800,13 @@ export const Exchange = forwardRef((props, ref) => {
             options={LIST_SECTIONS}
             optionLabels={LIST_SECTIONS_LABELS}
             option={listSection}
-            onChange={(section) => setListSection(section)}
+            onChange={(section) => {
+              setListSection(section);
+              trackAction &&
+                trackAction("Button clicked", {
+                  buttonName: `Table view ${section}`,
+                });
+            }}
             type="inline"
             className="Exchange-list-tabs"
           />
@@ -849,71 +893,76 @@ export const Exchange = forwardRef((props, ref) => {
         savedShouldShowPositionLines={savedShouldShowPositionLines}
         orders={orders}
         setToTokenAddress={setToTokenAddress}
+        trackAction={trackAction}
       />
     );
   };
 
   return (
-    <div className="Exchange page-layout">
-      {showBanner && <ExchangeBanner hideBanner={hideBanner} />}
-      <div className="Exchange-content">
-        <div className="Exchange-left">
-          {renderChart()}
-          <div className="Exchange-lists large">{getListSection()}</div>
-        </div>
-        <div className="Exchange-right">
-          <SwapBox
-            pendingPositions={pendingPositions}
-            setPendingPositions={setPendingPositions}
-            setIsWaitingForPluginApproval={setIsWaitingForPluginApproval}
-            setIsWaitingForPositionRouterApproval={setIsWaitingForPositionRouterApproval}
-            approveOrderBook={approveOrderBook}
-            approvePositionRouter={approvePositionRouter}
-            isPluginApproving={isPluginApproving}
-            isPositionRouterApproving={isPositionRouterApproving}
-            isWaitingForPluginApproval={isWaitingForPluginApproval}
-            isWaitingForPositionRouterApproval={isWaitingForPositionRouterApproval}
-            orderBookApproved={orderBookApproved}
-            positionRouterApproved={positionRouterApproved}
-            orders={orders}
-            flagOrdersEnabled={flagOrdersEnabled}
-            chainId={chainId}
-            infoTokens={infoTokens}
-            active={active}
-            connectWallet={connectWallet}
-            library={library}
-            account={account}
-            positionsMap={positionsMap}
-            fromTokenAddress={fromTokenAddress}
-            setFromTokenAddress={setFromTokenAddress}
-            toTokenAddress={toTokenAddress}
-            setToTokenAddress={setToTokenAddress}
-            swapOption={swapOption}
-            setSwapOption={setSwapOption}
-            pendingTxns={pendingTxns}
-            setPendingTxns={setPendingTxns}
-            tokenSelection={tokenSelection}
-            setTokenSelection={setTokenSelection}
-            isConfirming={isConfirming}
-            setIsConfirming={setIsConfirming}
-            isPendingConfirmation={isPendingConfirmation}
-            setIsPendingConfirmation={setIsPendingConfirmation}
-            savedIsPnlInLeverage={savedIsPnlInLeverage}
-            setSavedIsPnlInLeverage={setSavedIsPnlInLeverage}
-            nativeTokenAddress={nativeTokenAddress}
-            savedSlippageAmount={savedSlippageAmount}
-            totalTokenWeights={totalTokenWeights}
-            usdgSupply={usdgSupply}
-          />
-          <div className="Exchange-wallet-tokens">
-            <div className="Exchange-wallet-tokens-content">
-              <ExchangeWalletTokens tokens={tokens} infoTokens={infoTokens} onSelectToken={onSelectWalletToken} />
+    <SEO
+      description="Trade Mycelium Perpetual Swaps to gain leveraged long or short exposure to crypto assets with low fees and zero price impact."
+    >
+      <div className="Exchange page-layout">
+        <div className="Exchange-content">
+          <div className="Exchange-left">
+            {renderChart()}
+            <div className="Exchange-lists large">{getListSection()}</div>
+          </div>
+          <div className="Exchange-right">
+            <SwapBox
+              pendingPositions={pendingPositions}
+              setPendingPositions={setPendingPositions}
+              setIsWaitingForPluginApproval={setIsWaitingForPluginApproval}
+              setIsWaitingForPositionRouterApproval={setIsWaitingForPositionRouterApproval}
+              approveOrderBook={approveOrderBook}
+              approvePositionRouter={approvePositionRouter}
+              isPluginApproving={isPluginApproving}
+              isPositionRouterApproving={isPositionRouterApproving}
+              isWaitingForPluginApproval={isWaitingForPluginApproval}
+              isWaitingForPositionRouterApproval={isWaitingForPositionRouterApproval}
+              orderBookApproved={orderBookApproved}
+              positionRouterApproved={positionRouterApproved}
+              orders={orders}
+              flagOrdersEnabled={flagOrdersEnabled}
+              chainId={chainId}
+              infoTokens={infoTokens}
+              active={active}
+              connectWallet={connectWallet}
+              library={library}
+              account={account}
+              positionsMap={positionsMap}
+              fromTokenAddress={fromTokenAddress}
+              setFromTokenAddress={setFromTokenAddress}
+              toTokenAddress={toTokenAddress}
+              setToTokenAddress={setToTokenAddress}
+              swapOption={swapOption}
+              setSwapOption={setSwapOption}
+              pendingTxns={pendingTxns}
+              setPendingTxns={setPendingTxns}
+              tokenSelection={tokenSelection}
+              setTokenSelection={setTokenSelection}
+              isConfirming={isConfirming}
+              setIsConfirming={setIsConfirming}
+              isPendingConfirmation={isPendingConfirmation}
+              setIsPendingConfirmation={setIsPendingConfirmation}
+              savedIsPnlInLeverage={savedIsPnlInLeverage}
+              setSavedIsPnlInLeverage={setSavedIsPnlInLeverage}
+              nativeTokenAddress={nativeTokenAddress}
+              savedSlippageAmount={savedSlippageAmount}
+              totalTokenWeights={totalTokenWeights}
+              usdgSupply={usdgSupply}
+              trackAction={trackAction}
+            />
+            <div className="Exchange-wallet-tokens">
+              <div className="Exchange-wallet-tokens-content">
+                <ExchangeWalletTokens tokens={tokens} infoTokens={infoTokens} onSelectToken={onSelectWalletToken} />
+              </div>
             </div>
           </div>
+          <div className="Exchange-lists small">{getListSection()}</div>
         </div>
-        <div className="Exchange-lists small">{getListSection()}</div>
+        <Footer />
       </div>
-      <Footer />
-    </div>
+    </SEO>
   );
 });

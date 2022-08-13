@@ -36,6 +36,7 @@ import {
   getProfitPrice,
   formatDateTime,
   getTimeRemaining,
+  LIMIT,
 } from "../../Helpers";
 import { getConstant } from "../../Constants";
 import { createDecreaseOrder, callContract, useHasOutdatedUi } from "../../Api";
@@ -46,6 +47,7 @@ import Tab from "../Tab/Tab";
 import Modal from "../Modal/Modal";
 import ExchangeInfoRow from "./ExchangeInfoRow";
 import Tooltip from "../Tooltip/Tooltip";
+import ComingSoonTooltip from "../Tooltip/ComingSoon";
 
 const { AddressZero } = ethers.constants;
 
@@ -123,7 +125,8 @@ export default function PositionSeller(props) {
     fetcher: fetcher(library, PositionRouter),
   });
 
-  const orderOptions = [MARKET, STOP];
+  const orderOptions = [MARKET, <ComingSoonTooltip position="right-bottom" handle={orderOptionLabels[STOP]} />];
+
   let [orderOption, setOrderOption] = useState(MARKET);
 
   if (!flagOrdersEnabled) {
@@ -133,7 +136,10 @@ export default function PositionSeller(props) {
   const needPositionRouterApproval = !positionRouterApproved && orderOption === MARKET;
 
   const onOrderOptionChange = (option) => {
-    setOrderOption(option);
+    // disabled limit close
+    if (typeof option === "string" && option !== LIMIT) {
+      setOrderOption(option);
+    }
   };
 
   const onTriggerPriceChange = (evt) => {
@@ -632,15 +638,7 @@ export default function PositionSeller(props) {
       if (orderOption === MARKET) {
         return (
           <div className="Confirmation-box-warning">
-            Reducing the position at the current price will forfeit a&nbsp;
-            <a
-              href="https://gmxio.gitbook.io/gmx/trading#minimum-price-change"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              pending profit
-            </a>{" "}
-            of {deltaStr}. <br />
+            Reducing the position at the current price will forfeit a pending profit of {deltaStr}. <br />
             <br />
             Profit price: {position.isLong ? ">" : "<"} ${formatAmount(profitPrice, USD_DECIMALS, 2, true)}. This rule
             applies for the next {getTimeRemaining(minProfitExpiration)}, until {formatDateTime(minProfitExpiration)}.
@@ -649,11 +647,7 @@ export default function PositionSeller(props) {
       }
       return (
         <div className="Confirmation-box-warning">
-          This order will forfeit a&nbsp;
-          <a href="https://gmxio.gitbook.io/gmx/trading#minimum-price-change" target="_blank" rel="noopener noreferrer">
-            profit
-          </a>{" "}
-          of {deltaStr}. <br />
+          This order will forfeit a profit of {deltaStr}. <br />
           Profit price: {position.isLong ? ">" : "<"} ${formatAmount(profitPrice, USD_DECIMALS, 2, true)}. This rule
           applies for the next {getTimeRemaining(minProfitExpiration)}, until {formatDateTime(minProfitExpiration)}.
         </div>

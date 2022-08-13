@@ -6,33 +6,31 @@ body,
   margin: 0;
   padding: 0;
   color: white;
-  font-family: "Relative";
+  font-family: "Inter";
   letter-spacing: 0.5px;
   font-size: 15.5px;
   background-color: var(--background-primary);
 }
 
-
-
 * {
   box-sizing: border-box;
-  font-family: "Relative";
+  font-family: "Inter";
 }
 
 ::-webkit-scrollbar {
-  /* width: 10px; */
+  width: 8px;
+  height: 8px;
 }
 
 /* Track */
 ::-webkit-scrollbar-track {
-  background: #1c1c1c;
+  background: transparent;
 }
 
 /* Handle */
 ::-webkit-scrollbar-thumb {
-  background: #383838;
-  border-radius: 1rem;
-  border: 1px solid #212121;
+  background-color: var(--cell-highlight);
+  border: 1px solid transparent;
 }
 
 /* Handle on hover */
@@ -51,12 +49,34 @@ body,
   --arbitrum-blue: #28a0f0;
   --border-radius-sm: 4px;
 
-  --background-primary: #18181B;
-  --background-secondary: rgba(243, 244, 246, 0.05);
-  --border-primary: #71717A;
+  --short-active: #dd463a;
+  --long-active: #3ee028;
 
-  --tracer-blue: #3535DC;
-  --tracer-blue-light: #1C64F2;
+  --background-primary: #000a00;
+  --background-secondary: rgba(0, 9, 0, 0.2);
+  --background-navigation: linear-gradient(83.12deg, rgba(9, 130, 0, 0.5) -208.54%, rgba(9, 130, 0, 0) 159.09%);
+
+  --border-navigation: #098200;
+
+  --action-active: #098200;
+  --action-inactive: #093806;
+  --action-hover: #003000;
+  --action-stroke: #003000;
+  --action-shadow: 0 0 4px 6px rgba(9, 130, 0, 0.1);
+
+  --cell-gradient: linear-gradient(180deg, rgba(5, 67, 1, 0.2) 0%, rgba(5, 67, 1, 0) 65.01%);
+  --cell-hover: #03100e;
+  --cell-stroke: #003000;
+  --cell-highlight: #098200;
+
+  --tooltip-fill: #03100e;
+  --tooltip-shadow: 0px 0px 7px rgba(39, 62, 89, 0.53);
+
+  --text-primary: #fff;
+  --text-secondary: #8b968c;
+  /* Same as secondary but unsure what it should be so keeping seperate */
+  --text-hover: #8b968c;
+  --text-navigation: #fff;
 }
 
 a {
@@ -85,7 +105,7 @@ input {
   background: none;
   border: none;
   padding: 0.8rem;
-  font-family: "Relative";
+  font-family: "Inter";
   text-overflow: ellipsis;
   white-space: nowrap;
   overflow: hidden;
@@ -94,7 +114,7 @@ input {
 button {
   outline: none;
   cursor: pointer;
-  font-family: "Relative";
+  font-family: "Inter";
 }
 
 button:disabled,
@@ -165,7 +185,7 @@ td {
 
 .label,
 .label a {
-  color: rgba(255, 255, 255, 0.7);
+  color: var(--text-secondary);
 }
 
 ul {
@@ -186,11 +206,11 @@ a.plain {
 }
 
 .default-btn {
-  background: var(--tracer-blue);
+  background: var(--action-active);
   border-radius: 4px;
   font-size: 14px;
   line-height: 20px;
-  font-family: Relative;
+  font-family: Inter;
   font-weight: normal;
   letter-spacing: 0px;
   color: #ffffff !important;
@@ -261,7 +281,7 @@ a.plain {
   border-radius: 4px;
   font-size: 14px;
   line-height: 20px;
-  font-family: Relative;
+  font-family: Inter;
   font-weight: normal;
   letter-spacing: 0px;
   color: black;
@@ -366,7 +386,11 @@ button.btn-link:hover .logout-icon {
   min-height: calc(100vh - 62px);
   display: flex;
   flex-direction: column;
-  padding-bottom: calc(3rem + 200px);
+}
+
+.page-layout .footer {
+  padding: 1rem 0;
+  margin-bottom: 0;
 }
 
 .d-flex {

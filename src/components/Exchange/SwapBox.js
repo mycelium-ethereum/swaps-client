@@ -61,6 +61,9 @@ import {
   adjustForDecimals,
   REFERRAL_CODE_KEY,
   isHashZero,
+  NETWORK_NAME,
+  getSpread,
+  getUserTokenBalances,
 } from "../../Helpers";
 import { getConstant } from "../../Constants";
 import * as Api from "../../Api";
@@ -164,6 +167,7 @@ export default function SwapBox(props) {
     setIsWaitingForPositionRouterApproval,
     isPluginApproving,
     isPositionRouterApproving,
+    trackAction,
   } = props;
 
   const [fromValue, setFromValue] = useState("");
@@ -234,7 +238,10 @@ export default function SwapBox(props) {
   }
 
   const onOrderOptionChange = (option) => {
-    setOrderOption(option);
+    // limits disabled
+    if (typeof option === "string" && option !== LIMIT) {
+      setOrderOption(option);
+    }
   };
 
   const [sellValue, setSellValue] = useState("");
@@ -1205,13 +1212,12 @@ export default function SwapBox(props) {
     Api.callContract(chainId, contract, "deposit", {
       value: fromAmount,
       sentMsg: "Swap submitted.",
-      successMsg: `Swapped ${formatAmount(fromAmount, fromToken.decimals, 4, true)} ${
-        fromToken.symbol
-      } for ${formatAmount(toAmount, toToken.decimals, 4, true)} ${toToken.symbol}!`,
+      successMsg: `Swapped ${formatAmount(fromAmount, fromToken.decimals, 4, true)} ${fromToken.symbol
+        } for ${formatAmount(toAmount, toToken.decimals, 4, true)} ${toToken.symbol}!`,
       failMsg: "Swap failed.",
       setPendingTxns,
     })
-      .then(async (res) => {})
+      .then(async (res) => { })
       .finally(() => {
         setIsSubmitting(false);
       });
@@ -1224,12 +1230,11 @@ export default function SwapBox(props) {
     Api.callContract(chainId, contract, "withdraw", [fromAmount], {
       sentMsg: "Swap submitted!",
       failMsg: "Swap failed.",
-      successMsg: `Swapped ${formatAmount(fromAmount, fromToken.decimals, 4, true)} ${
-        fromToken.symbol
-      } for ${formatAmount(toAmount, toToken.decimals, 4, true)} ${toToken.symbol}!`,
+      successMsg: `Swapped ${formatAmount(fromAmount, fromToken.decimals, 4, true)} ${fromToken.symbol
+        } for ${formatAmount(toAmount, toToken.decimals, 4, true)} ${toToken.symbol}!`,
       setPendingTxns,
     })
-      .then(async (res) => {})
+      .then(async (res) => { })
       .finally(() => {
         setIsSubmitting(false);
       });
@@ -1304,6 +1309,7 @@ export default function SwapBox(props) {
         setPendingTxns,
       })
         .then(() => {
+          trackTrade(3, "Swap");
           setIsConfirming(false);
         })
         .finally(() => {
@@ -1332,13 +1338,13 @@ export default function SwapBox(props) {
     Api.callContract(chainId, contract, method, params, {
       value,
       sentMsg: `Swap ${!isMarketOrder ? " order " : ""} submitted!`,
-      successMsg: `Swapped ${formatAmount(fromAmount, fromToken.decimals, 4, true)} ${
-        fromToken.symbol
-      } for ${formatAmount(toAmount, toToken.decimals, 4, true)} ${toToken.symbol}!`,
+      successMsg: `Swapped ${formatAmount(fromAmount, fromToken.decimals, 4, true)} ${fromToken.symbol
+        } for ${formatAmount(toAmount, toToken.decimals, 4, true)} ${toToken.symbol}!`,
       failMsg: "Swap failed.",
       setPendingTxns,
     })
       .then(async () => {
+        trackTrade(3, "Swap");
         setIsConfirming(false);
       })
       .finally(() => {
@@ -1389,6 +1395,7 @@ export default function SwapBox(props) {
       }
     )
       .then(() => {
+        trackTrade(3, "Limit");
         setIsConfirming(false);
       })
       .finally(() => {
@@ -1509,6 +1516,7 @@ export default function SwapBox(props) {
       successMsg,
     })
       .then(async () => {
+        trackTrade(3, `${isLong ? "Long" : "Short"}`);
         setIsConfirming(false);
 
         const key = getPositionKey(account, path[path.length - 1], indexTokenAddress, isLong);
@@ -1549,6 +1557,10 @@ export default function SwapBox(props) {
         setShortCollateralAddress(stableToken.address);
       }
     }
+
+    trackAction && trackAction("Swap option changed", {
+      option: opt,
+    });
   };
 
   const onConfirmationClick = () => {
@@ -1741,6 +1753,108 @@ export default function SwapBox(props) {
     return fromValue !== formatAmountFree(maxAvailableAmount, fromToken.decimals, fromToken.decimals);
   }
 
+  const determineLiquidationPrice = () => {
+    switch (true) {
+      case !!existingLiquidationPrice:
+        return formatAmount(existingLiquidationPrice, USD_DECIMALS, 2, false);
+      case !!displayLiquidationPrice:
+        return formatAmount(displayLiquidationPrice, USD_DECIMALS, 2, false);
+      default:
+        return 0;
+    }
+  };
+
+  const determineBorrowFee = () => {
+    let borrowFee = 0;
+    switch (true) {
+      case isLong && toTokenInfo:
+        borrowFee = parseFloat(formatAmount(toTokenInfo.fundingRate, 4, 4));
+        break;
+      case isShort && shortCollateralToken:
+        borrowFee = parseFloat(formatAmount(shortCollateralToken.fundingRate, 4, 4));
+        break;
+      default:
+        borrowFee = 0;
+        break;
+    }
+    if (
+      (isLong && toTokenInfo && toTokenInfo.fundingRate) ||
+      (isShort && shortCollateralToken && shortCollateralToken.fundingRate)
+    ) {
+      return `${borrowFee}% / 1h`;
+    } else {
+      return borrowFee;
+    }
+  };
+
+  const trackTrade = (stage, tradeType) => {
+    let stageName = "";
+    switch (stage) {
+      case 1:
+        stageName = "Approve";
+        break;
+      case 2:
+        stageName = "Pre-confirmation";
+        break;
+      case 3:
+        stageName = "Post-confirmation";
+        break;
+      default:
+        stageName = "Approve";
+        break;
+    }
+
+    const actionName = `${stageName}`;
+
+    try {
+      const fromToken = getToken(chainId, fromTokenAddress);
+      const toToken = getToken(chainId, toTokenAddress);
+      const leverage = (isLong || isShort) && hasLeverageOption && parseFloat(leverageOption).toFixed(2);
+      const market = swapOption !== "Swap" ? `${toToken.symbol}/USD` : "No market - swap"; //No market for Swap
+      const collateralAfterFees = feesUsd ? fromUsdMin.sub(feesUsd) : "No collateral - swap";
+      const spread = getSpread(fromTokenInfo, toTokenInfo, isLong, nativeTokenAddress);
+      const entryPrice =
+        isLong || isShort ? formatAmount(entryMarkPrice, USD_DECIMALS, 2, false) : "No entry price - swap";
+      let liqPrice = parseFloat(determineLiquidationPrice());
+      liqPrice = liqPrice < 0 ? 0 : liqPrice;
+
+      // Format user ERC20 token balances from BigNumber to float
+      const [userBalances, tokenPrices, poolBalances] = getUserTokenBalances(infoTokens);
+
+      const traits = {
+        tradeType: tradeType,
+        position: swapOption,
+        market: market,
+        tokenToPay: fromToken.symbol,
+        tokenToReceive: toToken.symbol,
+        amountToPay: parseFloat(fromValue),
+        amountToReceive: parseFloat(toValue),
+        fromCurrencyBalance: parseFloat(formatAmount(fromBalance, fromToken.decimals, 4, false)),
+        fromCurrencyToken: fromToken.symbol,
+        leverage: parseFloat(leverage),
+        feesUsd: parseFloat(formatAmount(feesUsd, 4, 4, false)),
+        [`fees${fromToken.symbol}`]: parseFloat(formatAmount(fees, fromToken.decimals, 4, false)),
+        walletAddress: account,
+        network: NETWORK_NAME[chainId],
+        profitsIn: toToken.symbol,
+        liqPrice: liqPrice,
+        collateral: `$${parseFloat(formatAmount(collateralAfterFees, USD_DECIMALS, 2, false))}`,
+        spreadIsHigh: spread.isHigh,
+        spreadValue: parseFloat(formatAmount(spread.value, 4, 4, true)),
+        entryPrice: parseFloat(entryPrice),
+        borrowFee: determineBorrowFee(),
+        allowedSlippage: parseFloat(formatAmount(allowedSlippage, 2, 2)),
+        upToOnePercentSlippageEnabled: isHigherSlippageAllowed,
+        ...userBalances,
+        ...tokenPrices,
+        ...poolBalances,
+      };
+      trackAction && trackAction(actionName, traits);
+    } catch (err) {
+      console.error(`Unable to track ${actionName} event`, err);
+    }
+  };
+
   return (
     <div className="Exchange-swap-box">
       {/* <div className="Exchange-swap-wallet-box App-box">
@@ -1793,7 +1907,15 @@ export default function SwapBox(props) {
                     onChange={onFromValueChange}
                   />
                   {shouldShowMaxButton() && (
-                    <div className="Exchange-swap-max" onClick={setFromValueToMaximumAvailable}>
+                    <div
+                      className="Exchange-swap-max"
+                      onClick={() => {
+                        setFromValueToMaximumAvailable();
+                        trackAction && trackAction("Button clicked", {
+                          buttonName: "Max amount",
+                        });
+                      }}
+                    >
                       MAX
                     </div>
                   )}
@@ -1808,6 +1930,7 @@ export default function SwapBox(props) {
                     infoTokens={infoTokens}
                     showMintingCap={false}
                     showTokenImgInDropdown={true}
+                    trackAction={trackAction}
                   />
                 </div>
               </div>
@@ -1854,6 +1977,7 @@ export default function SwapBox(props) {
                     tokens={toTokens}
                     infoTokens={infoTokens}
                     showTokenImgInDropdown={true}
+                    trackAction={trackAction}
                   />
                 </div>
               </div>
@@ -1904,6 +2028,7 @@ export default function SwapBox(props) {
                   onSelectToken={onSelectToToken}
                   tokens={toTokens}
                   infoTokens={infoTokens}
+                  trackAction={trackAction}
                 />
               </div>
             </div>
@@ -2002,8 +2127,16 @@ export default function SwapBox(props) {
         {(isLong || isShort) && (
           <div className="Exchange-leverage-box">
             <div className="Exchange-leverage-slider-settings">
-              <Checkbox isChecked={isLeverageSliderEnabled} setIsChecked={setIsLeverageSliderEnabled}>
-                <span className="muted">Leverage slider</span>
+              <Checkbox
+                isChecked={isLeverageSliderEnabled}
+                setIsChecked={setIsLeverageSliderEnabled}
+                onClick={() =>
+                  trackAction && trackAction("Button clicked", {
+                    buttonName: `Leverage slider toggled ${isLeverageSliderEnabled ? "on" : "off"}`,
+                  })
+                }
+              >
+                <span>Leverage slider</span>
               </Checkbox>
             </div>
             {isLeverageSliderEnabled && (
@@ -2036,6 +2169,7 @@ export default function SwapBox(props) {
                     onSelectToken={onSelectShortCollateralAddress}
                     tokens={stableTokens}
                     showTokenImgInDropdown={true}
+                    trackAction={trackAction}
                   />
                 </div>
               </div>
@@ -2110,7 +2244,7 @@ export default function SwapBox(props) {
                             </div>
                           )}
                           <div>
-                            Position Fee (0.1% of position size): ${formatAmount(positionFee, USD_DECIMALS, 2, true)}
+                            Position Fee ({MARGIN_FEE_BASIS_POINTS / 100}% of position size): ${formatAmount(positionFee, USD_DECIMALS, 2, true)}
                           </div>
                         </>
                       );
@@ -2122,7 +2256,25 @@ export default function SwapBox(props) {
           </div>
         )}
         <div className="Exchange-swap-button-container">
-          <button className="App-cta Exchange-swap-button" onClick={onClickPrimary} disabled={!isPrimaryEnabled()}>
+          <button
+            className="App-cta Exchange-swap-button"
+            onClick={() => {
+              const buttonText = getPrimaryText();
+              onClickPrimary();
+              if (buttonText.includes("Approve")) {
+                trackTrade(1, fromToken?.symbol);
+                trackAction && trackAction("Button clicked", {
+                  buttonName: "Approve",
+                  fromToken: fromToken?.symbol,
+                });
+              } else {
+                trackAction && trackAction("Button clicked", {
+                  buttonName: buttonText,
+                });
+              }
+            }}
+            disabled={!isPrimaryEnabled()}
+          >
             {getPrimaryText()}
           </button>
         </div>
@@ -2174,7 +2326,7 @@ export default function SwapBox(props) {
                       <br />
                       <br />
                       <a
-                        href="https://gmxio.gitbook.io/gmx/trading#opening-a-position"
+                        href="https://swaps.docs.mycelium.xyz/quick-start-guide/2.-how-to-trade"
                         target="_blank"
                         rel="noopener noreferrer"
                       >
@@ -2203,7 +2355,7 @@ export default function SwapBox(props) {
                       <br />
                       <br />
                       <a
-                        href="https://gmxio.gitbook.io/gmx/trading#opening-a-position"
+                        href="https://swaps.docs.mycelium.xyz/quick-start-guide/2.-how-to-trade"
                         target="_blank"
                         rel="noopener noreferrer"
                       >
@@ -2240,7 +2392,7 @@ export default function SwapBox(props) {
                       )}
                       <br />
                       <a
-                        href="https://gmxio.gitbook.io/gmx/trading#opening-a-position"
+                        href="https://swaps.docs.mycelium.xyz/protocol-design/trading/fees#borrowing-fees"
                         target="_blank"
                         rel="noopener noreferrer"
                       >
@@ -2286,22 +2438,12 @@ export default function SwapBox(props) {
         <div className="App-card-divider"></div>
         <div className="Exchange-info-row">
           <div className="Exchange-info-label-button">
-            <a href="https://gmxio.gitbook.io/gmx/trading" target="_blank" rel="noopener noreferrer">
+            <a
+              href="https://swaps.docs.mycelium.xyz/quick-start-guide/2.-how-to-trade"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
               Trading guide
-            </a>
-          </div>
-        </div>
-        <div className="Exchange-info-row">
-          <div className="Exchange-info-label-button">
-            <a href={getLeaderboardLink()} target="_blank" rel="noopener noreferrer">
-              Leaderboard
-            </a>
-          </div>
-        </div>
-        <div className="Exchange-info-row">
-          <div className="Exchange-info-label-button">
-            <a href="https://gmxio.gitbook.io/gmx/trading#backup-rpc-urls" target="_blank" rel="noopener noreferrer">
-              Speed up page loading
             </a>
           </div>
         </div>
@@ -2346,6 +2488,8 @@ export default function SwapBox(props) {
           collateralTokenAddress={collateralTokenAddress}
           infoTokens={infoTokens}
           chainId={chainId}
+          trackAction={trackAction}
+          trackTrade={trackTrade}
         />
       )}
     </div>

@@ -425,11 +425,11 @@ export default function TradeHistory(props) {
 
   return (
     <div className="TradeHistory">
-      {tradesWithMessages.length === 0 && <div className="TradeHistory-row App-box">No trades yet</div>}
+      {tradesWithMessages.length === 0 && <div className="Exchange-empty-positions-list-note App-card">No trades yet</div>}
       {tradesWithMessages.length > 0 &&
         tradesWithMessages.map((trade, index) => {
           const tradeData = trade.data;
-          const txUrl = getExplorerUrl(chainId) + "tx/" + tradeData.txhash;
+          const txUrl = getExplorerUrl(chainId) + "tx/" + tradeData.tx_hash;
 
           let msg = getMsg(trade);
 

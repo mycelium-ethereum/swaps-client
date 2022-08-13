@@ -74,7 +74,7 @@ a.btn {
 
 .btn-primary {
   background: transparent;
-  border: 1px solid var(--dark-blue-border);
+  border: 0.5px solid var(--action-stroke);
   border-radius: var(--border-radius-sm);
 }
 
@@ -83,6 +83,16 @@ a.btn {
 }
 .btn-primary:active {
   background: var(--dark-blue-active);
+}
+
+.connect-wallet {
+    color: var(--text-navigation);
+    border-color: var(--border-navigation);
+    background: var(--background-navigation)
+}
+
+.connect-wallet .btn-label {
+  color: inherit;
 }
 
 @media (max-width: 450px) {

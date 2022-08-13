@@ -9,6 +9,10 @@ import { Web3Provider } from "@ethersproject/providers";
 
 import { Switch, Route, NavLink } from "react-router-dom";
 
+import { ThemeProvider } from "@tracer-protocol/tracer-ui";
+import { useAnalytics } from "./segmentAnalytics";
+import { getTokens, getWhitelistedTokens } from "./data/Tokens";
+
 import {
   ARBITRUM,
   AVALANCHE,
@@ -18,6 +22,7 @@ import {
   SHOW_PNL_AFTER_FEES_KEY,
   BASIS_POINTS_DIVISOR,
   SHOULD_SHOW_POSITION_LINES_KEY,
+  fetcher,
   clearWalletConnectData,
   switchNetwork,
   helperToast,
@@ -35,30 +40,38 @@ import {
   hasCoinBaseWalletExtension,
   isMobileDevice,
   clearWalletLinkData,
+  getBalanceAndSupplyData,
+  formatAmount,
+  formatTitleCase,
+  getUserTokenBalances,
+  hasChangedAccount,
+  setCurrentAccount,
   SHOULD_EAGER_CONNECT_LOCALSTORAGE_KEY,
   CURRENT_PROVIDER_LOCALSTORAGE_KEY,
   REFERRAL_CODE_KEY,
   REFERRAL_CODE_QUERY_PARAMS,
   ARBITRUM_TESTNET,
+  PLACEHOLDER_ACCOUNT,
 } from "./Helpers";
+import ReaderV2 from "./abis/ReaderV2.json";
 
-import Home from "./views/Home/Home";
-import Presale from "./views/Presale/Presale";
 import Dashboard from "./views/Dashboard/Dashboard";
 import Stake from "./views/Stake/Stake";
 import { Exchange } from "./views/Exchange/Exchange";
 import Actions from "./views/Actions/Actions";
 import OrdersOverview from "./views/OrdersOverview/OrdersOverview";
 import PositionsOverview from "./views/PositionsOverview/PositionsOverview";
-import BuyGlp from "./views/BuyGlp/BuyGlp";
-import BuyGMX from "./views/BuyGMX/BuyGMX";
-import SellGlp from "./views/SellGlp/SellGlp";
+import BuyMYC from "./views/BuyMYC/BuyMYC";
+import BuyMlp from "./views/BuyMlp/BuyMlp";
+import SellMlp from "./views/SellMlp/SellMlp";
 import Buy from "./views/Buy/Buy";
-import NftWallet from "./views/NftWallet/NftWallet";
-import ClaimEsGmx from "./views/ClaimEsGmx/ClaimEsGmx";
-import BeginAccountTransfer from "./views/BeginAccountTransfer/BeginAccountTransfer";
-import CompleteAccountTransfer from "./views/CompleteAccountTransfer/CompleteAccountTransfer";
-import Debug from "./views/Debug/Debug";
+import Rewards from "./views/Rewards/Rewards";
+// import NftWallet from "./views/NftWallet/NftWallet";
+// import BeginAccountTransfer from "./views/BeginAccountTransfer/BeginAccountTransfer";
+// import CompleteAccountTransfer from "./views/CompleteAccountTransfer/CompleteAccountTransfer";
+// import Debug from "./views/Debug/Debug";
+import ConsentModal from "./components/ConsentModal/ConsentModal";
+import MobileLinks from './components/Navigation/MobileNav';
 
 import cx from "classnames";
 import { cssTransition, ToastContainer } from "react-toastify";
@@ -77,11 +90,10 @@ import "./App.css";
 import "./Input.css";
 import "./AppOrder.css";
 
-import logoImg from "./img/logo_GMX.svg";
-import logoSmallImg from "./img/logo_GMX_small.svg";
+import logoImg from "./img/logo_MYC.svg";
+import logoSmallImg from "./img/logo_MYC_small.svg";
 import connectWalletImg from "./img/ic_wallet_24.svg";
 
-// import logoImg from './img/gmx-logo-final-white-small.png'
 import metamaskImg from "./img/metamask.png";
 import coinbaseImg from "./img/coinbaseWallet.png";
 import walletConnectImg from "./img/walletconnect-circle-blue.svg";
@@ -92,6 +104,7 @@ import { Link } from "react-router-dom";
 import EventToastContainer from "./components/EventToast/EventToastContainer";
 import SEO from "./components/Common/SEO";
 import useRouteQuery from "./hooks/useRouteQuery";
+import { useInfoTokens } from "./Api";
 import { encodeReferralCode } from "./Api/referrals";
 
 import { getContract } from "./Addresses";
@@ -99,7 +112,7 @@ import VaultV2 from "./abis/VaultV2.json";
 import VaultV2b from "./abis/VaultV2b.json";
 import PositionRouter from "./abis/PositionRouter.json";
 import PageNotFound from "./views/PageNotFound/PageNotFound";
-import ReferralTerms from "./views/ReferralTerms/ReferralTerms";
+import useSWR from "swr";
 
 if ("ethereum" in window) {
   window.ethereum.autoRefreshOnNetworkChange = false;
@@ -123,7 +136,9 @@ function inPreviewMode() {
   return false;
 }
 
-const arbWsProvider = new ethers.providers.WebSocketProvider("wss://arb1.arbitrum.io/ws");
+// const arbWsProvider = new ethers.providers.WebSocketProvider("wss://arb1.arbitrum.io/ws");
+const arbWsProvider = new ethers.providers.JsonRpcProvider("https://arb1.arbitrum.io/rpc");
+// const arbTestnetWsProvider = new ethers.providers.WebSocketProvider("wss://rinkeby.arbitrum.io/ws");
 const arbTestnetWsProvider = new ethers.providers.JsonRpcProvider("https://rinkeby.arbitrum.io/rpc");
 const avaxWsProvider = new ethers.providers.JsonRpcProvider("https://api.avax.network/ext/bc/C/rpc");
 
@@ -144,7 +159,7 @@ function getWsProvider(active, chainId) {
   }
 }
 
-function AppHeaderLinks({ small, openSettings, clickCloseIcon }) {
+function AppHeaderLinks({ small, openSettings, clickCloseIcon, trackAction }) {
   if (inPreviewMode()) {
     return (
       <div className="App-header-links preview">
@@ -159,7 +174,11 @@ function AppHeaderLinks({ small, openSettings, clickCloseIcon }) {
           </NavLink>
         </div>
         <div className="App-header-link-container">
-          <a href="https://gmxio.gitbook.io/gmx/" target="_blank" rel="noopener noreferrer">
+          <a
+            href="https://swaps.docs.mycelium.xyz/perpetual-swaps/mycelium-perpetual-swaps"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
             ABOUT
           </a>
         </div>
@@ -173,8 +192,17 @@ function AppHeaderLinks({ small, openSettings, clickCloseIcon }) {
           <div className="App-header-menu-icon-block" onClick={() => clickCloseIcon()}>
             <FiX className="App-header-menu-icon" />
           </div>
-          <Link className="App-header-link-main" to="/">
-            <img src={logoImg} alt="GMX Logo" />
+          <Link
+            className="App-header-link-main"
+            to="/"
+            onClick={() =>
+              trackAction &&
+              trackAction("Button clicked", {
+                buttonName: "Tracer Nav Logo",
+              })
+            }
+          >
+            <img src={logoImg} alt="Tracer TRS Logo" />
           </Link>
         </div>
       )}
@@ -183,13 +211,6 @@ function AppHeaderLinks({ small, openSettings, clickCloseIcon }) {
           Home
         </NavLink>
       </div>
-      {small && (
-        <div className="App-header-link-container">
-          <NavLink activeClassName="active" to="/trade">
-            Trade
-          </NavLink>
-        </div>
-      )}
       <div className="App-header-link-container">
         <NavLink activeClassName="active" to="/dashboard">
           Dashboard
@@ -201,13 +222,22 @@ function AppHeaderLinks({ small, openSettings, clickCloseIcon }) {
         </NavLink>
       </div>
       <div className="App-header-link-container">
-        <NavLink activeClassName="active" to="/buy">
+        <NavLink activeClassName="active" to="/buy_mlp">
           Buy
         </NavLink>
       </div>
       <div className="App-header-link-container">
-        <a href="https://gmxio.gitbook.io/gmx/" target="_blank" rel="noopener noreferrer">
-          About
+        <NavLink activeClassName="active" to="/rewards">
+          Rewards
+        </NavLink>
+      </div>
+      <div className="App-header-link-container">
+        <a
+          href="https://swaps.docs.mycelium.xyz/perpetual-swaps/mycelium-perpetual-swaps"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Docs
         </a>
       </div>
       {small && (
@@ -228,6 +258,7 @@ function AppHeaderUser({
   setWalletModalVisible,
   showNetworkSelectorModal,
   disconnectAccountAndCloseSettings,
+  trackAction,
 }) {
   const { chainId } = useChainId();
   const { active, account } = useWeb3React();
@@ -247,12 +278,12 @@ function AppHeaderUser({
       icon: "ic_arbitrum_24.svg",
       color: "#264f79",
     },
-    {
-      label: "Avalanche",
-      value: AVALANCHE,
-      icon: "ic_avalanche_24.svg",
-      color: "#E841424D",
-    },
+    // {
+    // label: "Avalanche",
+    // value: AVALANCHE,
+    // icon: "ic_avalanche_24.svg",
+    // color: "#E841424D",
+    // },
   ];
 
   useEffect(() => {
@@ -273,13 +304,11 @@ function AppHeaderUser({
 
   const selectorLabel = getChainName(chainId);
 
-  console.log("sel", selectorLabel);
-
   if (!active) {
     return (
       <div className="App-header-user">
         <div className="App-header-user-link">
-          <NavLink activeClassName="active" className="default-btn" to="/trade">
+          <NavLink exact activeClassName="active" className="default-btn trade-link" to="/">
             Trade
           </NavLink>
         </div>
@@ -293,9 +322,16 @@ function AppHeaderUser({
             modalLabel="Select Network"
             small={small}
             showModal={showNetworkSelectorModal}
+            trackAction={trackAction}
           />
         )}
-        <ConnectWalletButton onClick={() => setWalletModalVisible(true)} imgSrc={connectWalletImg}>
+        <ConnectWalletButton
+          onClick={() => {
+            trackAction && trackAction("Button clicked", { buttonName: "Connect Wallet" });
+            setWalletModalVisible(true);
+          }}
+          imgSrc={connectWalletImg}
+        >
           {small ? "Connect" : "Connect Wallet"}
         </ConnectWalletButton>
       </div>
@@ -307,7 +343,7 @@ function AppHeaderUser({
   return (
     <div className="App-header-user">
       <div className="App-header-user-link">
-        <NavLink activeClassName="active" className="default-btn" to="/trade">
+        <NavLink exact activeClassName="active" className="default-btn trade-link" to="/">
           Trade
         </NavLink>
       </div>
@@ -321,6 +357,7 @@ function AppHeaderUser({
           modalLabel="Select Network"
           small={small}
           showModal={showNetworkSelectorModal}
+          trackAction={trackAction}
         />
       )}
       <div className="App-header-user-address">
@@ -330,6 +367,7 @@ function AppHeaderUser({
           accountUrl={accountUrl}
           disconnectAccountAndCloseSettings={disconnectAccountAndCloseSettings}
           openSettings={openSettings}
+          trackAction={trackAction}
         />
       </div>
     </div>
@@ -337,9 +375,19 @@ function AppHeaderUser({
 }
 
 function FullApp() {
+  const [loggedInTracked, setLoggedInTracked] = useState(false);
+  const { trackLogin, trackPageWithTraits, trackAction, analytics } = useAnalytics();
+
   const exchangeRef = useRef();
-  const { connector, library, deactivate, activate, active } = useWeb3React();
+  const { connector, library, deactivate, activate, active, account } = useWeb3React();
   const { chainId } = useChainId();
+  const readerAddress = getContract(chainId, "Reader");
+  const tokens = getTokens(chainId);
+  const tokenAddresses = tokens.map((token) => token.address);
+  const whitelistedTokens = getWhitelistedTokens(chainId);
+  const whitelistedTokenAddresses = whitelistedTokens.map((token) => token.address);
+  const nativeTokenAddress = getContract(chainId, "NATIVE_TOKEN");
+
   useEventToast();
   const [activatingConnector, setActivatingConnector] = useState();
   useEffect(() => {
@@ -406,7 +454,7 @@ function FullApp() {
           <a href="https://metamask.io" target="_blank" rel="noopener noreferrer">
             Install MetaMask
           </a>
-          {userOnMobileDevice ? ", and use GMX with its built-in browser" : " to start using GMX"}.
+          {userOnMobileDevice ? ", and use MYC with its built-in browser" : " to start using MYC"}.
         </div>
       );
       return false;
@@ -423,7 +471,7 @@ function FullApp() {
           <a href="https://www.coinbase.com/wallet" target="_blank" rel="noopener noreferrer">
             Install Coinbase Wallet
           </a>
-          {userOnMobileDevice ? ", and use GMX with its built-in browser" : " to start using GMX"}.
+          {userOnMobileDevice ? ", and use MYC with its built-in browser" : " to start using MYC"}.
         </div>
       );
       return false;
@@ -615,6 +663,48 @@ function FullApp() {
     };
   }, [active, chainId, vaultAddress, positionRouterAddress]);
 
+  const { data: tokenBalances } = useSWR(
+    [`FullApp:getTokenBalances:${active}`, chainId, readerAddress, "getTokenBalances", account || PLACEHOLDER_ACCOUNT],
+    {
+      fetcher: fetcher(library, ReaderV2, [tokenAddresses]),
+    }
+  );
+  const { data: fundingRateInfo } = useSWR([active, chainId, readerAddress, "getFundingRates"], {
+    fetcher: fetcher(library, ReaderV2, [vaultAddress, nativeTokenAddress, whitelistedTokenAddresses]),
+  });
+
+  const { infoTokens } = useInfoTokens(library, chainId, active, tokenBalances, fundingRateInfo);
+
+  // Track user wallet connect
+  useEffect(() => {
+    const accountChanged = hasChangedAccount(account);
+    if ((!loggedInTracked || accountChanged) && infoTokens) {
+      const sendTrackLoginData = async () => {
+        if (account && tokenBalances) {
+          const { balanceData } = getBalanceAndSupplyData(tokenBalances);
+
+          // Format MYC token balances from BigNumber to float
+          const tokenDecimals = tokens.map((token) => token.decimals);
+          let mlpBalances = {};
+          Object.keys(balanceData).forEach((token, i) => {
+            if (balanceData[token]) {
+              const fieldName = `balance${formatTitleCase(token)}`;
+              mlpBalances[fieldName] = parseFloat(formatAmount(balanceData[token], tokenDecimals[i], 4, true));
+            }
+          });
+
+          // Format user ERC20 token balances from BigNumber to float
+          const [userBalances] = getUserTokenBalances(infoTokens);
+
+          trackLogin(chainId, mlpBalances, userBalances);
+          setCurrentAccount(account);
+          setLoggedInTracked(true); // Only track once
+        }
+      };
+      sendTrackLoginData();
+    }
+  }, [account, chainId, tokenBalances, trackLogin, loggedInTracked, library, infoTokens, tokens]);
+
   return (
     <>
       <div className="App">
@@ -658,13 +748,22 @@ function FullApp() {
           <header>
             <div className="App-header large">
               <div className="App-header-container-left">
-                <Link className="App-header-link-main" to="/">
-                  <img src={logoImg} className="big" alt="GMX Logo" />
-                  <img src={logoSmallImg} className="small" alt="GMX Logo" />
+                <Link
+                  className="App-header-link-main"
+                  to="/"
+                  onClick={() =>
+                    trackAction &&
+                    trackAction("Button clicked", {
+                      buttonName: "Tracer Nav Logo",
+                    })
+                  }
+                >
+                  <img src={logoImg} className="big" alt="Tracer TRS Logo" />
+                  <img src={logoSmallImg} className="small" alt="Tracer TRS Logo" />
                 </Link>
-                <AppHeaderLinks />
               </div>
               <div className="App-header-container-right">
+                <AppHeaderLinks trackAction={trackAction} />
                 <AppHeaderUser
                   disconnectAccountAndCloseSettings={disconnectAccountAndCloseSettings}
                   openSettings={openSettings}
@@ -672,6 +771,7 @@ function FullApp() {
                   walletModalVisible={walletModalVisible}
                   setWalletModalVisible={setWalletModalVisible}
                   showNetworkSelectorModal={showNetworkSelectorModal}
+                  trackAction={trackAction}
                 />
               </div>
             </div>
@@ -686,9 +786,18 @@ function FullApp() {
                     {!isDrawerVisible && <RiMenuLine className="App-header-menu-icon" />}
                     {isDrawerVisible && <FaTimes className="App-header-menu-icon" />}
                   </div>
-                  <div className="App-header-link-main clickable" onClick={() => setIsDrawerVisible(!isDrawerVisible)}>
-                    <img src={logoImg} className="big" alt="GMX Logo" />
-                    <img src={logoSmallImg} className="small" alt="GMX Logo" />
+                  <div
+                    className="App-header-link-main clickable"
+                    onClick={() => {
+                      setIsDrawerVisible(!isDrawerVisible);
+                      trackAction &&
+                        trackAction("Button clicked", {
+                          buttonName: "Tracer Nav Logo",
+                        });
+                    }}
+                  >
+                    <img src={logoImg} className="big" alt="Tracer TRS Logo" />
+                    <img src={logoSmallImg} className="small" alt="Tracer TRS Logo" />
                   </div>
                 </div>
                 <div className="App-header-container-right">
@@ -700,6 +809,7 @@ function FullApp() {
                     walletModalVisible={walletModalVisible}
                     setWalletModalVisible={setWalletModalVisible}
                     showNetworkSelectorModal={showNetworkSelectorModal}
+                    trackAction={trackAction}
                   />
                 </div>
               </div>
@@ -716,15 +826,19 @@ function FullApp() {
                 variants={slideVariants}
                 transition={{ duration: 0.2 }}
               >
-                <AppHeaderLinks small openSettings={openSettings} clickCloseIcon={() => setIsDrawerVisible(false)} />
+                <MobileLinks
+                  openSettings={openSettings}
+                  clickCloseIcon={() => setIsDrawerVisible(false)}
+                  trackAction={trackAction}
+                  setWalletModalVisible={setWalletModalVisible}
+                  showNetworkSelectorModal={showNetworkSelectorModal}
+                  disconnectAccountAndCloseSettings={disconnectAccountAndCloseSettings}
+                />
               </motion.div>
             )}
           </AnimatePresence>
           <Switch>
             <Route exact path="/">
-              <Home />
-            </Route>
-            <Route exact path="/trade">
               <Exchange
                 ref={exchangeRef}
                 savedShowPnlAfterFees={savedShowPnlAfterFees}
@@ -736,16 +850,17 @@ function FullApp() {
                 savedShouldShowPositionLines={savedShouldShowPositionLines}
                 setSavedShouldShowPositionLines={setSavedShouldShowPositionLines}
                 connectWallet={connectWallet}
+                infoTokens={infoTokens}
+                trackPageWithTraits={trackPageWithTraits}
+                trackAction={trackAction}
+                analytics={analytics}
               />
-            </Route>
-            <Route exact path="/presale">
-              <Presale />
             </Route>
             <Route exact path="/dashboard">
               <Dashboard />
             </Route>
             <Route exact path="/earn">
-              <Stake setPendingTxns={setPendingTxns} connectWallet={connectWallet} />
+              <Stake setPendingTxns={setPendingTxns} connectWallet={connectWallet} trackAction={trackAction} />
             </Route>
             <Route exact path="/buy">
               <Buy
@@ -754,32 +869,39 @@ function FullApp() {
                 connectWallet={connectWallet}
               />
             </Route>
-            <Route exact path="/buy_glp">
-              <BuyGlp
+            <Route exact path="/buy_mlp">
+              <BuyMlp
+                savedSlippageAmount={savedSlippageAmount}
+                setPendingTxns={setPendingTxns}
+                connectWallet={connectWallet}
+                trackPageWithTraits={trackPageWithTraits}
+                trackAction={trackAction}
+                analytics={analytics}
+              />
+            </Route>
+            <Route exact path="/sell_mlp">
+              <SellMlp
                 savedSlippageAmount={savedSlippageAmount}
                 setPendingTxns={setPendingTxns}
                 connectWallet={connectWallet}
               />
             </Route>
-            <Route exact path="/sell_glp">
-              <SellGlp
-                savedSlippageAmount={savedSlippageAmount}
-                setPendingTxns={setPendingTxns}
+            <Route exact path="/buy_myc">
+              <BuyMYC />
+            </Route>
+            <Route exact path="/rewards">
+              <Rewards
                 connectWallet={connectWallet}
+                trackPageWithTraits={trackPageWithTraits}
+                trackAction={trackAction}
+                analytics={analytics}
               />
             </Route>
-            <Route exact path="/buy_gmx">
-              <BuyGMX />
-            </Route>
-            <Route exact path="/about">
-              <Home />
-            </Route>
+            {/*
             <Route exact path="/nft_wallet">
               <NftWallet />
             </Route>
-            <Route exact path="/claim_es_gmx">
-              <ClaimEsGmx setPendingTxns={setPendingTxns} />
-            </Route>
+            */}
             <Route exact path="/actions/:account">
               <Actions />
             </Route>
@@ -792,6 +914,7 @@ function FullApp() {
             <Route exact path="/actions">
               <Actions />
             </Route>
+            {/*
             <Route exact path="/begin_account_transfer">
               <BeginAccountTransfer setPendingTxns={setPendingTxns} />
             </Route>
@@ -803,7 +926,7 @@ function FullApp() {
             </Route>
             <Route exact path="/referral-terms">
               <ReferralTerms />
-            </Route>
+            </Route> */}
             <Route path="*">
               <PageNotFound />
             </Route>
@@ -811,7 +934,6 @@ function FullApp() {
         </div>
       </div>
       <ToastContainer
-        limit={1}
         transition={Zoom}
         position="bottom-right"
         autoClose={7000}
@@ -828,15 +950,33 @@ function FullApp() {
         setIsVisible={setWalletModalVisible}
         label="Connect Wallet"
       >
-        <button className="Wallet-btn MetaMask-btn" onClick={activateMetaMask}>
+        <button
+          className="Wallet-btn MetaMask-btn"
+          onClick={() => {
+            activateMetaMask();
+            trackAction && trackAction("Button clicked", { buttonName: "Connect with MetaMask" });
+          }}
+        >
           <img src={metamaskImg} alt="MetaMask" />
           <div>MetaMask</div>
         </button>
-        <button className="Wallet-btn CoinbaseWallet-btn" onClick={activateCoinBase}>
+        <button
+          className="Wallet-btn CoinbaseWallet-btn"
+          onClick={() => {
+            activateCoinBase();
+            trackAction && trackAction("Button clicked", { buttonName: "Connect with Coinbase Wallet" });
+          }}
+        >
           <img src={coinbaseImg} alt="Coinbase Wallet" />
           <div>Coinbase Wallet</div>
         </button>
-        <button className="Wallet-btn WalletConnect-btn" onClick={activateWalletConnect}>
+        <button
+          className="Wallet-btn WalletConnect-btn"
+          onClick={() => {
+            activateWalletConnect();
+            trackAction && trackAction("Button clicked", { buttonName: "Connect with WalletConnect" });
+          }}
+        >
           <img src={walletConnectImg} alt="WalletConnect" />
           <div>WalletConnect</div>
         </button>
@@ -870,7 +1010,16 @@ function FullApp() {
             Include PnL in leverage display
           </Checkbox>
         </div>
-        <button className="App-cta Exchange-swap-button" onClick={saveAndCloseSettings}>
+        <button
+          className="App-cta Exchange-swap-button"
+          onClick={() => {
+            saveAndCloseSettings();
+            trackAction &&
+              trackAction("Button clicked", {
+                buttonName: "Save wallet settings",
+              });
+          }}
+        >
           Save
         </button>
       </Modal>
@@ -918,8 +1067,8 @@ function PreviewApp() {
             <div className="App-header large preview">
               <div className="App-header-container-left">
                 <NavLink exact activeClassName="active" className="App-header-link-main" to="/">
-                  <img src={logoImg} alt="GMX Logo" />
-                  GMX
+                  <img src={logoImg} alt="Tracer TRS Logo" />
+                  MYC
                 </NavLink>
               </div>
               <div className="App-header-container-right">
@@ -934,7 +1083,7 @@ function PreviewApp() {
               >
                 <div className="App-header-container-left">
                   <div className="App-header-link-main">
-                    <img src={logoImg} alt="GMX Logo" />
+                    <img src={logoImg} alt="Tracer TRS Logo" />
                   </div>
                 </div>
                 <div className="App-header-container-right">
@@ -962,9 +1111,6 @@ function PreviewApp() {
             </div>
           </header>
           <Switch>
-            <Route exact path="/">
-              <Home />
-            </Route>
             <Route exact path="/earn">
               <Stake />
             </Route>
@@ -976,10 +1122,19 @@ function PreviewApp() {
 }
 
 function App() {
+  const [hasConsented, setConsented] = useState(false);
+
+  useEffect(() => {
+    const consentAcknowledged = localStorage.getItem("consentAcknowledged") === "true";
+    setConsented(consentAcknowledged);
+  }, []);
+
   if (inPreviewMode()) {
     return (
       <Web3ReactProvider getLibrary={getLibrary}>
-        <PreviewApp />
+        <ThemeProvider>
+          <PreviewApp />
+        </ThemeProvider>
       </Web3ReactProvider>
     );
   }
@@ -988,8 +1143,11 @@ function App() {
     <SWRConfig value={{ refreshInterval: 5000 }}>
       <Web3ReactProvider getLibrary={getLibrary}>
         <SEO>
-          <FullApp />
+          <ThemeProvider>
+            <FullApp />
+          </ThemeProvider>
         </SEO>
+        <ConsentModal hasConsented={hasConsented} setConsented={setConsented} />
       </Web3ReactProvider>
     </SWRConfig>
   );

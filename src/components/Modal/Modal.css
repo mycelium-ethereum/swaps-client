@@ -32,7 +32,7 @@
 }
 
 .divider {
-  border-bottom: 1px solid #ffffff29;
+  border-bottom: 1px solid var(--cell-stroke);
   margin-bottom: 1rem;
 }
 

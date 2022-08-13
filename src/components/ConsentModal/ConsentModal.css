@@ -1,0 +1,57 @@
+.ConsentModal {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  backdrop-filter: blur(4px);
+  box-shadow: rgb(0 0 0 / 20%) 0px 7px 8px;
+  border-color: rgba(48, 52, 54, 0.08);
+  background-color: rgba(13, 14, 29, 0.4);
+  border: 1px solid #ffffff14;
+  border-radius: 4px;
+  padding: 20px 40px 20px 20px;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  font-size: 14px;
+  line-height: 1.484rem;
+}
+.ConsentModal.visible {
+  pointer-events: auto;
+  opacity: 1;
+}
+.ConsentModal-text {
+  max-width: 640px;
+  margin: 0 auto;
+}
+.ConsentModal p:first-of-type {
+  margin-top: 0;
+}
+.ConsentModal-close-btn {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background: transparent;
+  border: 0;
+}
+.ConsentModal-close-btn-icon {
+  width: 15px;
+  height: 15px;
+  pointer-events: none;
+}
+.ConsentModal-buttons {
+  display: flex;
+  justify-content: center;
+}
+.ConsentModal-buttons > .read-more:first-of-type {
+  margin-right: 10px;
+}
+
+@media screen and (max-width: 670px) {
+  .ConsentModal {
+    max-width: calc(100vw - 64px);
+  }
+}
+
+@media screen and (max-width: 370px) {
+}
