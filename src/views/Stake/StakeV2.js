@@ -704,30 +704,11 @@ export default function StakeV2({ setPendingTxns, connectWallet, trackAction }) 
 
   let earnMsg;
   if (totalRewardTokensAndMlp && totalRewardTokensAndMlp.gt(0)) {
-    let mycAmountStr;
-    if (processedData.mycInStakedMyc && processedData.mycInStakedMyc.gt(0)) {
-      mycAmountStr = formatAmount(processedData.mycInStakedMyc, 18, 2, true) + " MYC";
-    }
-    let esMycAmountStr;
-    if (processedData.esMycInStakedMyc && processedData.esMycInStakedMyc.gt(0)) {
-      esMycAmountStr = formatAmount(processedData.esMycInStakedMyc, 18, 2, true) + " esMYC";
-    }
-    let mpAmountStr;
-    if (processedData.bonusMycInFeeMyc && processedData.bnMycInFeeMyc.gt(0)) {
-      mpAmountStr = formatAmount(processedData.bnMycInFeeMyc, 18, 2, true) + " MP";
-    }
-    let mlpStr;
-    if (processedData.mlpBalance && processedData.mlpBalance.gt(0)) {
-      mlpStr = formatAmount(processedData.mlpBalance, 18, 2, true) + " MLP";
-    }
-    const amountStr = [mycAmountStr, esMycAmountStr, mpAmountStr, mlpStr].filter((s) => s).join(", ");
     earnMsg = (
       <div>
-        You are earning {nativeTokenSymbol} rewards with {formatAmount(totalRewardTokensAndMlp, 18, 2, true)} tokens.
-        <br />
-        Tokens: {amountStr}.
+        You are earning {nativeTokenSymbol} rewards with {formatAmount(totalRewardTokensAndMlp, 18, 2, true)} MLP tokens.
       </div>
-    );
+    )
   }
 
   const showMycVesterDepositModal = () => {
@@ -742,7 +723,7 @@ export default function StakeV2({ setPendingTxns, connectWallet, trackAction }) 
     let maxVestableAmount = bigNumberify(remainingVestableAmount).add(vestingData.mlpVesterVestedAmount);
 
     setIsVesterDepositModalVisible(true);
-    setVesterDepositTitle("MYC Vault");
+    setVesterDepositTitle("esMYC Vault");
     setVesterDepositStakeTokenLabel("staked MYC + esMYC + Multiplier Points");
     setVesterDepositMaxAmount(remainingVestableAmount);
     setVesterDepositBalance(processedData.esMycBalance);
@@ -763,7 +744,7 @@ export default function StakeV2({ setPendingTxns, connectWallet, trackAction }) 
     }
 
     setIsVesterWithdrawModalVisible(true);
-    setVesterWithdrawTitle("Withdraw from MYC Vault");
+    setVesterWithdrawTitle("Withdraw from esMYC Vault");
     setVesterWithdrawAddress(mlpVesterAddress);
   };
 
