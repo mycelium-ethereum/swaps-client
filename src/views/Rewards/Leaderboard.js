@@ -1,7 +1,7 @@
 import React from "react";
 import { truncateMiddleEthAddress, formatAmount, USD_DECIMALS, ETH_DECIMALS } from "../../Helpers";
 import Jazzicon, { jsNumberForAddress } from "react-jazzicon";
-import Davatar from '@davatar/react';
+import Davatar from "@davatar/react";
 import cx from "classnames";
 import {
   ConnectWalletText,
@@ -26,6 +26,8 @@ import {
   ClaimCell,
   ClaimButton,
   WalletIcon,
+  TopFiftyRow,
+  TopFiftyRowCell,
 } from "./Rewards.styles";
 
 const ARBISCAN_URL = "https://arbiscan.io/address/";
@@ -46,43 +48,72 @@ function RewardsTableWrapper({ children }) {
   );
 }
 
-function TableRow({ position, account, userAccount, volume, ensName, reward, rewardAmountUsd, trackAction }) {
-
+function TopFiftyIndicatorRow() {
   return (
-    <tr>
-      <RankCell>{position}</RankCell>
-      <UserCell>
-        <div>
-          { ensName ? <Davatar size={40} address={account} /> : <Jazzicon diameter={40} seed={jsNumberForAddress(account)} />}
-          <UserDetails>
-            <a href={`${ARBISCAN_URL}${account}`} rel="noopener noreferrer" target="_blank">
-              <span>{truncateMiddleEthAddress(account)}</span>
-            </a>
-            <span>{ensName}</span>
-          </UserDetails>
-        </div>
-      </UserCell>
-      <VolumeCell>${formatAmount(volume, USD_DECIMALS, 2, true)}</VolumeCell>
-      <RewardCell>{formatAmount(reward, ETH_DECIMALS, 4, true)} ETH {rewardAmountUsd && `($${formatAmount(rewardAmountUsd, ETH_DECIMALS + USD_DECIMALS, 2, true)})`}</RewardCell>
-      <ClaimCell
+    <TopFiftyRow>
+      <TopFiftyRowCell colSpan={5} className="">
+        <span>Top 50% of traders</span>
+      </TopFiftyRowCell>
+    </TopFiftyRow>
+  );
+}
+
+function TableRow({
+  position,
+  account,
+  userAccount,
+  volume,
+  ensName,
+  reward,
+  rewardAmountUsd,
+  trackAction,
+  totalTraders,
+}) {
+  return (
+    <>
+      {position === Math.ceil(totalTraders / 2) + 1 ? <TopFiftyIndicatorRow /> : null}
+      <tr
         className={cx({
           "highlight-current": account === userAccount,
         })}
       >
-        {account === userAccount ? (
-          <ClaimButton
-            onClick={() => {
-              // TODO: Add claim reward function
-              trackAction("Button clicked", {
-                buttonName: "Claim rewards",
-              });
-            }}
-          >
-            Claim ETH
-          </ClaimButton>
-        ) : null}
-      </ClaimCell>
-    </tr>
+        <RankCell>{position}</RankCell>
+        <UserCell>
+          <div>
+            {ensName ? (
+              <Davatar size={40} address={account} />
+            ) : (
+              <Jazzicon diameter={40} seed={jsNumberForAddress(account)} />
+            )}
+            <UserDetails>
+              <a href={`${ARBISCAN_URL}${account}`} rel="noopener noreferrer" target="_blank">
+                <span>{truncateMiddleEthAddress(account)}</span>
+              </a>
+              <span>{ensName}</span>
+            </UserDetails>
+          </div>
+        </UserCell>
+        <VolumeCell>${formatAmount(volume, USD_DECIMALS, 2, true)}</VolumeCell>
+        <RewardCell>
+          {formatAmount(reward, ETH_DECIMALS, 4, true)} ETH{" "}
+          {rewardAmountUsd && `($${formatAmount(rewardAmountUsd, ETH_DECIMALS + USD_DECIMALS, 2, true)})`}
+        </RewardCell>
+        <ClaimCell>
+          {account === userAccount ? (
+            <ClaimButton
+              onClick={() => {
+                // TODO: Add claim reward function
+                trackAction("Button clicked", {
+                  buttonName: "Claim rewards",
+                });
+              }}
+            >
+              Claim ETH
+            </ClaimButton>
+          ) : null}
+        </ClaimCell>
+      </tr>
+    </>
   );
 }
 
@@ -152,6 +183,7 @@ export default function Leaderboard(props) {
               {weekData?.traders?.map(({ user_address, volume, reward, rewardAmountUsd }, index) => (
                 <TableRow
                   key={user_address}
+                  totalTraders={weekData.traders.length}
                   position={index + 1}
                   account={user_address}
                   volume={volume}
