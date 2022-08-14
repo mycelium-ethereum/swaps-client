@@ -57,18 +57,7 @@ function TopFiftyIndicatorRow() {
     </TopFiftyRow>
   );
 }
-
-function TableRow({
-  position,
-  account,
-  userAccount,
-  volume,
-  ensName,
-  reward,
-  rewardAmountUsd,
-  trackAction,
-  totalTraders,
-}) {
+function TableRow({ ensName, totalTraders, position, account, userAccount, volume, reward, trackAction, rewardAmountUsd }) {
   return (
     <>
       {position === Math.ceil(totalTraders / 2) + 1 ? <TopFiftyIndicatorRow /> : null}
@@ -98,7 +87,11 @@ function TableRow({
           {formatAmount(reward, ETH_DECIMALS, 4, true)} ETH{" "}
           {rewardAmountUsd && `($${formatAmount(rewardAmountUsd, ETH_DECIMALS + USD_DECIMALS, 2, true)})`}
         </RewardCell>
-        <ClaimCell>
+        <ClaimCell
+          className={cx({
+            "highlight-current": account === userAccount,
+          })}
+        >
           {account === userAccount ? (
             <ClaimButton
               onClick={() => {
@@ -119,7 +112,6 @@ function TableRow({
 
 export default function Leaderboard(props) {
   const { weekData, userWeekData, userAccount, ensName, currentView, selectedWeek, connectWallet, trackAction } = props;
-  console.log(userWeekData);
 
   return (
     <LeaderboardContainer hidden={currentView === "Personal"}>
