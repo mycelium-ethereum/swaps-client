@@ -3,7 +3,7 @@ import { Helmet } from "react-helmet";
 function SEO(props) {
   const { children, ...customMeta } = props;
   const meta = {
-    title: "Mycelium Perpetual Swaps",
+    title: "Perpetual Swaps",
     description: `Trade spot or perpetual BTC, ETH and other top cryptocurrencies with up to 30x leverage directly from your wallet on Arbitrum.`,
     type: "exchange",
     ...customMeta,
