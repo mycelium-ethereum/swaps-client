@@ -197,11 +197,6 @@ function CompoundModal(props) {
             </Checkbox>
           </div>
           <div>
-            <Checkbox isChecked={shouldConvertWeth} setIsChecked={toggleConvertWeth}>
-              Convert {wrappedTokenSymbol} to {nativeTokenSymbol}
-            </Checkbox>
-          </div>
-          <div>
             <Checkbox isChecked={shouldBuyMlpWithEth} setIsChecked={toggleBuyTlp}>
               Buy MLP with {wrappedTokenSymbol}
             </Checkbox>
