@@ -383,16 +383,17 @@ function AppHeaderUser({
           trackAction={trackAction}
         />
       </div>
-      <a
-        href="https://pools.tracer.finance"
-        rel="noopener noreferrer"
-        target="_blank"
-        onClick={() => trackAction && trackAction("Button clicked", { buttonName: "Switch to Perpetual Pools" })}
-      >
-        <button exact activeClassName="active" className="default-btn switch-btn" to="/">
-          Switch to <img src={poolsSmallImg} alt="Perpetual Pools" />
-        </button>
-      </a>
+      <div className="App-header-user-link Switch-app-btn">
+        <a
+          href="https://pools.tracer.finance"
+          rel="noopener noreferrer"
+          onClick={() => trackAction && trackAction("Button clicked", { buttonName: "Switch to Perpetual Pools" })}
+        >
+          <button exact activeClassName="active" className="default-btn switch-link" to="/">
+            Switch to <img src={poolsSmallImg} alt="Perpetual Pools" />
+          </button>
+        </a>
+      </div>
     </div>
   );
 }
