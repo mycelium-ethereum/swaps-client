@@ -88,7 +88,6 @@ function TableRow({ position, account, userAccount, volume, ensName, reward, rew
 
 export default function Leaderboard(props) {
   const { weekData, userWeekData, userAccount, ensName, currentView, selectedWeek, connectWallet, trackAction } = props;
-  console.log(userWeekData);
 
   return (
     <LeaderboardContainer hidden={currentView === "Personal"}>
