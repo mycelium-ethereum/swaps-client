@@ -1211,6 +1211,10 @@ button.App-button {
     margin-right: 16px;
   }
 
+  .App-header-user-link .switch-link {
+    margin-left: 16px;
+  }
+
   .App-header-user-netowork {
     margin-right: 16px;
   }
@@ -1304,6 +1308,9 @@ button.App-button {
   }
   .Switch-app-btn {
     display: none;
+  }
+  .App-header-user-link .switch-link {
+    display: none !important;
   }
 }
 
