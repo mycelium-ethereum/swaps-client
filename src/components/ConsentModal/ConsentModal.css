@@ -46,12 +46,3 @@
 .ConsentModal-buttons > .read-more:first-of-type {
   margin-right: 10px;
 }
-
-@media screen and (max-width: 670px) {
-  .ConsentModal {
-    max-width: calc(100vw - 64px);
-  }
-}
-
-@media screen and (max-width: 370px) {
-}
