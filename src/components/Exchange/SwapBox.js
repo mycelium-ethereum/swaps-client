@@ -2348,7 +2348,7 @@ export default function SwapBox(props) {
                   return (
                     <>
                       If you have an existing position, the position will be closed at{" "}
-                      {formatAmount(entryMarkPrice, USD_DECIMALS, 2, true)} USD.
+                      {formatAmount(exitMarkPrice, USD_DECIMALS, 2, true)} USD.
                       <br />
                       <br />
                       This exit price will change with the price of the asset.
