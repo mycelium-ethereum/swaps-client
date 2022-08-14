@@ -90,9 +90,9 @@ export const MLP_DECIMALS = 18;
 export const MYC_DECIMALS = 18;
 export const DEFAULT_MAX_USDG_AMOUNT = expandDecimals(200 * 1000 * 1000, 18);
 
-export const TAX_BASIS_POINTS = 50;
-export const STABLE_TAX_BASIS_POINTS = 5;
-export const MINT_BURN_FEE_BASIS_POINTS = 25;
+export const TAX_BASIS_POINTS = 0;
+export const STABLE_TAX_BASIS_POINTS = 0;
+export const MINT_BURN_FEE_BASIS_POINTS = 0;
 export const SWAP_FEE_BASIS_POINTS = 25;
 export const STABLE_SWAP_FEE_BASIS_POINTS = 1;
 export const MARGIN_FEE_BASIS_POINTS = 3;
@@ -1403,12 +1403,12 @@ export function formatTimeTill(time) {
   }
 
   const secondsTill = Math.floor((time - dateNow));
-  let minutes = Math.floor(secondsTill/60);
-  let hours = Math.floor(minutes/60);
-  const days = Math.floor(hours/24);
+  let minutes = Math.floor(secondsTill / 60);
+  let hours = Math.floor(minutes / 60);
+  const days = Math.floor(hours / 24);
 
-  hours = hours-(days*24);
-  minutes = minutes-(days*24*60)-(hours*60);
+  hours = hours - (days * 24);
+  minutes = minutes - (days * 24 * 60) - (hours * 60);
   return `${days}d ${hours}h ${minutes}m`
 }
 
@@ -1576,7 +1576,7 @@ export function useEagerConnect(setActivatingConnector) {
           setActivatingConnector(connector);
           await activate(connector, undefined, true);
         }
-      } catch (ex) {}
+      } catch (ex) { }
 
       setTried(true);
     })();
