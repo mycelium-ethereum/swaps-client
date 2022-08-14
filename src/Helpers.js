@@ -324,14 +324,14 @@ export const platformTokens = {
       decimals: 18,
       address: getContract(ARBITRUM, "StakedMlpTracker"), // address of fsMLP token because user only holds fsMLP
       imageUrl:
-        "https://raw.githubusercontent.com/mycelium-ethereum/myc-assets/master/assets/tokens/MLP.png?token=GHSAT0AAAAAABRXE63EVTN6JZDCPGAATEOOYXTHT4Q",
+        "https://raw.githubusercontent.com/mycelium-ethereum/gmx-interface/trs/src/img/ic_mlp_custom.svg",
     },
     MYC: {
       name: "MYC",
       symbol: "MYC",
       decimals: 18,
       address: getContract(ARBITRUM, "MYC"),
-      imageUrl: "https://raw.githubusercontent.com/mycelium-ethereum/myc-assets/master/assets/tokens/MYC.png?token=GHSAT0AAAAAABRXE63FIEAXHG7FTKRWOL3UYXTH2IA",
+      imageUrl: "https://raw.githubusercontent.com/mycelium-ethereum/gmx-interface/trs/src/img/ic_myc.svg",
     },
   },
   43114: {
@@ -348,14 +348,14 @@ export const platformTokens = {
       symbol: "MLP",
       decimals: 18,
       address: getContract(ARBITRUM, "StakedMlpTracker"), // address of fsMLP token because user only holds fsMLP
-      imageUrl: "https://raw.githubusercontent.com/mycelium-ethereum/myc-assets/master/assets/tokens/MLP.png?token=GHSAT0AAAAAABRXE63EVTN6JZDCPGAATEOOYXTHT4Q"
+      imageUrl: "https://raw.githubusercontent.com/mycelium-ethereum/gmx-interface/trs/src/img/ic_mlp_custom.svg"
     },
     MYC: {
       name: "MYC",
       symbol: "MYC",
       decimals: 18,
       address: getContract(AVALANCHE, "MYC"),
-      imageUrl: "https://assets.coingecko.com/coins/images/18323/small/arbit.png?1631532468",
+      imageUrl: "https://raw.githubusercontent.com/mycelium-ethereum/gmx-interface/trs/src/img/ic_myc.svg",
     },
   },
 };

@@ -406,7 +406,7 @@ button.App-connect-wallet:hover {
 .App-header-user-link .switch-link {
   background: var(--background-navigation);
   border: 0.5px solid var(--border-navigation);
-  margin-left: 16px;
+  margin-left: 24px;
 }
 
 .App-header-user-link .switch-link img {
