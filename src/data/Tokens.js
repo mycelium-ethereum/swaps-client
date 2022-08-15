@@ -257,6 +257,30 @@ const TOKENS = {
       isStable: true,
       imageUrl: "https://assets.coingecko.com/coins/images/16786/small/mimlogopng.png",
     },
+    {
+      name: "Frax Shares",
+      symbol: "FXS",
+      decimals: 18,
+      isShortable: true,
+      address: "0x9d2F299715D94d8A7E6F5eaa8E654E8c74a988A7",
+      imageUrl: "https://assets.coingecko.com/coins/images/13423/small/frax_share.png?1608478989",
+    },
+    {
+      name: "Balancer",
+      symbol: "BAL",
+      decimals: 18,
+      isShortable: true,
+      address: "0x040d1EdC9569d4Bab2D15287Dc5A4F10F56a56B8",
+      imageUrl: "https://assets.coingecko.com/coins/images/11683/small/Balancer.png?1592792958",
+    },
+    {
+      name: "Curve DAO",
+      symbol: "CRV",
+      decimals: 18,
+      isShortable: true,
+      address: "0x11cDb42B0EB46D95f990BeDD4695A6e3fA034978",
+      imageUrl: "https://assets.coingecko.com/coins/images/12124/small/Curve.png?1597369484",
+    },
   ],
   43114: [
     {

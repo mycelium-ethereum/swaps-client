@@ -252,6 +252,18 @@ export const ICONLINKS = {
       coingecko: "https://www.coingecko.com/en/coins/frax",
       arbitrum: "https://arbiscan.io/address/0x17fc002b466eec40dae837fc4be5c67993ddbd6f",
     },
+    FXS: {
+      coingecko: "https://www.coingecko.com/en/coins/frax-share",
+      arbitrum: "https://arbiscan.io/address/0x9d2F299715D94d8A7E6F5eaa8E654E8c74a988A7",
+    },
+    BAL: {
+      coingecko: "https://www.coingecko.com/en/coins/balancer",
+      arbitrum: "https://arbiscan.io/address/0x040d1EdC9569d4Bab2D15287Dc5A4F10F56a56B8",
+    },
+    CRV: {
+      coingecko: "https://www.coingecko.com/en/coins/crv-dao-token",
+      arbitrum: "https://arbiscan.io/address/0x11cDb42B0EB46D95f990BeDD4695A6e3fA034978",
+    },
   },
   43114: {
     TCR: {
