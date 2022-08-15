@@ -4,7 +4,7 @@ import useSWR from "swr";
 
 import {
   PLACEHOLDER_ACCOUNT,
-  getServerUrl,
+  getSupplyUrl,
   fetcher,
   formatKeyAmount,
   getBalanceAndSupplyData,
@@ -126,9 +126,9 @@ export default function APRLabel({ chainId, label }) {
 
   const { tcrPrice } = useTCRPrice(chainId, {}, active);
 
-  const mycSupplyUrl = getServerUrl(chainId, "/gmx_supply");
+  const mycSupplyUrl = getSupplyUrl();
   const { data: mycSupply } = useSWR([mycSupplyUrl], {
-    fetcher: (...args) => fetch(...args).then((res) => res.text()),
+    fetcher: (...args) => fetch(...args).then((res) => res.json()).then((res) => res?.totalSupply),
   });
 
   let aum;

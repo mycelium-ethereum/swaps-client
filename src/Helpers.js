@@ -519,6 +519,10 @@ export function getMarginFee(sizeDelta) {
   return sizeDelta.sub(afterFeeUsd);
 }
 
+export function getSupplyUrl(_chainId) {
+  // same supply across networks
+  return "https://stats.tracer.finance/supply";
+}
 export function getServerBaseUrl(chainId) {
   if (!chainId) {
     throw new Error("chainId is not provided");
