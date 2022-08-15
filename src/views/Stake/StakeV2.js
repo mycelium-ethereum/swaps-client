@@ -197,6 +197,11 @@ function CompoundModal(props) {
             </Checkbox>
           </div>
           <div>
+            <Checkbox isChecked={shouldConvertWeth} setIsChecked={toggleConvertWeth}>
+              Convert {wrappedTokenSymbol} to {nativeTokenSymbol}
+            </Checkbox>
+          </div>
+          <div>
             <Checkbox isChecked={shouldBuyMlpWithEth} setIsChecked={toggleBuyTlp}>
               Buy MLP with {wrappedTokenSymbol}
             </Checkbox>
@@ -701,9 +706,10 @@ export default function StakeV2({ setPendingTxns, connectWallet, trackAction }) 
   if (totalRewardTokensAndMlp && totalRewardTokensAndMlp.gt(0)) {
     earnMsg = (
       <div>
-        You are earning {nativeTokenSymbol} rewards with {formatAmount(totalRewardTokensAndMlp, 18, 2, true)} MLP tokens.
+        You are earning {nativeTokenSymbol} rewards with {formatAmount(totalRewardTokensAndMlp, 18, 2, true)} MLP
+        tokens.
       </div>
-    )
+    );
   }
 
   const showMycVesterDepositModal = () => {
@@ -945,7 +951,11 @@ export default function StakeV2({ setPendingTxns, connectWallet, trackAction }) 
                 Convert esMYC tokens to MYC tokens.
                 <br />
                 Please read the{" "}
-                <a href="https://swaps.docs.mycelium.xyz/protocol-design/mycelium-liquidity-pool-mlp/mlp-rewards/esmyc-escrowed-myc" target="_blank" rel="noopener noreferrer">
+                <a
+                  href="https://swaps.docs.mycelium.xyz/protocol-design/mycelium-liquidity-pool-mlp/mlp-rewards/esmyc-escrowed-myc"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
                   vesting details
                 </a>{" "}
                 before using the vaults.
@@ -966,8 +976,7 @@ export default function StakeV2({ setPendingTxns, connectWallet, trackAction }) 
                       </StakeV2Styled.RewardsBannerText>{" "}
                       <StakeV2Styled.RewardsBannerText inline>
                         ($
-                        {formatKeyAmount(processedData, "mlpVesterVestedAmountUsd", USD_DECIMALS, 2, true)}
-                        )
+                        {formatKeyAmount(processedData, "mlpVesterVestedAmountUsd", USD_DECIMALS, 2, true)})
                       </StakeV2Styled.RewardsBannerText>
                     </StakeV2Styled.RewardsBannerTextWrap>
                   </div>
