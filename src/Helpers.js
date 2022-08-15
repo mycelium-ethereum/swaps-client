@@ -227,7 +227,7 @@ export const ICONLINKS = {
     },
     MYC: {
       coingecko: "https://www.coingecko.com/en/coins/mycelium",
-      arbitrum: "https://etherscan.io/token/0x4b13006980acb09645131b91d259eaa111eaf5ba",
+      arbitrum: "https://arbiscan.io/token/0xc74fe4c715510ec2f8c61d70d397b32043f55abe",
     },
     ETH: {
       coingecko: "https://www.coingecko.com/en/coins/ethereum",
