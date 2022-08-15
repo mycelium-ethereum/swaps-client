@@ -15,6 +15,7 @@
   transition: opacity 0.3s ease;
   font-size: 14px;
   line-height: 1.484rem;
+  z-index: 999;
 }
 .ConsentModal.visible {
   pointer-events: auto;
