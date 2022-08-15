@@ -102,7 +102,6 @@ import { ConnectWalletButton } from "./components/Common/Button";
 import useEventToast from "./components/EventToast/useEventToast";
 import { Link } from "react-router-dom";
 import EventToastContainer from "./components/EventToast/EventToastContainer";
-import SEO from "./components/Common/SEO";
 import useRouteQuery from "./hooks/useRouteQuery";
 import { useInfoTokens } from "./Api";
 import { encodeReferralCode } from "./Api/referrals";
