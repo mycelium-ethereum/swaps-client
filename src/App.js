@@ -1153,11 +1153,9 @@ function App() {
   return (
     <SWRConfig value={{ refreshInterval: 5000 }}>
       <Web3ReactProvider getLibrary={getLibrary}>
-        <SEO>
-          <ThemeProvider>
-            <FullApp />
-          </ThemeProvider>
-        </SEO>
+        <ThemeProvider>
+          <FullApp />
+        </ThemeProvider>
         <ConsentModal hasConsented={hasConsented} setConsented={setConsented} />
       </Web3ReactProvider>
     </SWRConfig>

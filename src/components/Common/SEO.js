@@ -8,6 +8,8 @@ function SEO(props) {
     type: "exchange",
     ...customMeta,
   };
+  const defaultImage = "/preview.png";
+  const image = meta.image || defaultImage;
   return (
     <>
       <Helmet>
@@ -23,7 +25,7 @@ function SEO(props) {
         <meta name="twitter:site" content="@mycelium_eth" />
         <meta name="twitter:title" content={meta.title} />
         <meta name="twitter:description" content={meta.description} />
-        <meta name="twitter:image" content={meta.image} />
+        <meta name="twitter:image" content={image} />
       </Helmet>
       {children}
     </>
