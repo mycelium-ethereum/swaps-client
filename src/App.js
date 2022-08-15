@@ -335,7 +335,7 @@ function AppHeaderUser({
         </ConnectWalletButton>
         <div className="App-header-user-link">
           <a
-            href="https://pools.tracer.finance"
+            href="https://pools.mycelium.xyz"
             rel="noopener noreferrer"
             target="_blank"
             onClick={() => trackAction && trackAction("Button clicked", { buttonName: "Switch to Perpetual Pools" })}
@@ -383,7 +383,7 @@ function AppHeaderUser({
       </div>
       <div className="App-header-user-link Switch-app-btn">
         <a
-          href="https://pools.tracer.finance"
+          href="https://pools.mycelium.xyz"
           rel="noopener noreferrer"
           onClick={() => trackAction && trackAction("Button clicked", { buttonName: "Switch to Perpetual Pools" })}
         >
