@@ -299,14 +299,14 @@ export const platformTokens = {
       symbol: "TCR",
       decimals: 18,
       address: getContract(ARBITRUM_TESTNET, "TCR"),
-      imageUrl: "https://assets.coingecko.com/coins/images/18271/small/tracer_logo.png?1631176676",
+      imageUrl: "/icons/ic_tcr_40.svg",
     },
     MLP: {
       name: "TCR LP",
       symbol: "MLP",
       decimals: 18,
       address: getContract(ARBITRUM_TESTNET, "StakedMlpTracker"), // address of fsMLP token because user only holds fsMLP
-      imageUrl: "https://i.imgur.com/1xbBwPe.png",
+      imageUrl: "/icons/ic_mlp_custom.svg",
     },
   },
   42161: {
@@ -316,22 +316,21 @@ export const platformTokens = {
       symbol: "TCR",
       decimals: 18,
       address: getContract(ARBITRUM, "TCR"),
-      imageUrl: "https://assets.coingecko.com/coins/images/18271/small/tracer_logo.png?1631176676",
-    },
-    MLP: {
-      name: "MYC LP",
-      symbol: "MLP",
-      decimals: 18,
-      address: getContract(ARBITRUM, "StakedMlpTracker"), // address of fsMLP token because user only holds fsMLP
-      imageUrl:
-        "https://raw.githubusercontent.com/mycelium-ethereum/gmx-interface/trs/src/img/ic_mlp_custom.svg",
+      imageUrl: "/icons/ic_tcr_40.svg",
     },
     MYC: {
       name: "MYC",
       symbol: "MYC",
       decimals: 18,
       address: getContract(ARBITRUM, "MYC"),
-      imageUrl: "https://raw.githubusercontent.com/mycelium-ethereum/gmx-interface/trs/src/img/ic_myc.svg",
+      imageUrl: "/icons/ic_myc_custom.svg",
+    },
+    MLP: {
+      name: "MYC LP",
+      symbol: "MLP",
+      decimals: 18,
+      address: getContract(ARBITRUM, "StakedMlpTracker"), // address of fsMLP token because user only holds fsMLP
+      imageUrl: "/icons/ic_mlp_custom.svg",
     },
   },
   43114: {
@@ -341,21 +340,21 @@ export const platformTokens = {
       symbol: "TCR",
       decimals: 18,
       address: getContract(ARBITRUM, "TCR"),
-      imageUrl: "https://assets.coingecko.com/coins/images/18271/small/tracer_logo.png?1631176676",
+      imageUrl: "/icons/ic_tcr_40.svg",
     },
     MLP: {
       name: "MYC LP",
       symbol: "MLP",
       decimals: 18,
       address: getContract(ARBITRUM, "StakedMlpTracker"), // address of fsMLP token because user only holds fsMLP
-      imageUrl: "https://raw.githubusercontent.com/mycelium-ethereum/gmx-interface/trs/src/img/ic_mlp_custom.svg"
+      imageUrl: "/icons/ic_mlp_custom.svg",
     },
     MYC: {
       name: "MYC",
       symbol: "MYC",
       decimals: 18,
       address: getContract(AVALANCHE, "MYC"),
-      imageUrl: "https://raw.githubusercontent.com/mycelium-ethereum/gmx-interface/trs/src/img/ic_myc.svg",
+      imageUrl: "/icons/ic_myc_custom.svg",
     },
   },
 };
@@ -1399,17 +1398,17 @@ export function formatTimeTill(time) {
   const dateNow = new Date() / 1000;
 
   if (time < dateNow) {
-    return '0d 0h 0s'
+    return "0d 0h 0s";
   }
 
-  const secondsTill = Math.floor((time - dateNow));
-  let minutes = Math.floor(secondsTill/60);
-  let hours = Math.floor(minutes/60);
-  const days = Math.floor(hours/24);
+  const secondsTill = Math.floor(time - dateNow);
+  let minutes = Math.floor(secondsTill / 60);
+  let hours = Math.floor(minutes / 60);
+  const days = Math.floor(hours / 24);
 
-  hours = hours-(days*24);
-  minutes = minutes-(days*24*60)-(hours*60);
-  return `${days}d ${hours}h ${minutes}m`
+  hours = hours - days * 24;
+  minutes = minutes - days * 24 * 60 - hours * 60;
+  return `${days}d ${hours}h ${minutes}m`;
 }
 
 export function formatDateTime(time) {
