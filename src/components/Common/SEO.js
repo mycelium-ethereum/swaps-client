@@ -9,7 +9,7 @@ function SEO(props) {
     ...customMeta,
   };
   const defaultImage = "https://swaps.mycelium.xyz/preview.png";
-  const image = meta.image || defaultImage;
+  const image = !!meta.image ? meta.image : defaultImage;
   return (
     <>
       <Helmet>
