@@ -1156,10 +1156,7 @@ export default function MlpSwap(props) {
                 );
               }
               function renderFees() {
-                const swapUrl =
-                  chainId === ARBITRUM
-                    ? `https://app.uniswap.org/#/swap?inputCurrency=${token.address}`
-                    : `https://traderjoexyz.com/trade?inputCurrency=${token.address}`;
+                const swapUrl = `https://app.uniswap.org/#/swap?inputCurrency=${token.address}&chain=arbitrum`
                 switch (true) {
                   case (isBuying && isCapReached) || (!isBuying && managedUsd?.lt(1)):
                     return (
