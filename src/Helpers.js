@@ -157,7 +157,7 @@ export const MLP_POOL_COLORS = {
   CTM: "#F8B500",
   FXS: "#3B3B3B",
   BAL: "#1B1B1B",
-  CRV: "#CF0301"
+  CRV: "#CF0301",
 };
 
 export const HIGH_SPREAD_THRESHOLD = expandDecimals(1, USD_DECIMALS).div(100); // 1%;
@@ -173,7 +173,8 @@ export const ICONLINKS = {
     },
     MYC: {
       coingecko: "https://www.coingecko.com/en/coins/mycelium",
-      arbitrum: "https://arbiscan.io/address/0xfc5a1a6eb076a2c7ad06ed22c90d7e710e35ad0a",
+      arbitrum:
+        "https://etherscan.io/token/0x4b13006980aCB09645131b91D259eaA111eaF5Ba?a=0x66dd48889df1fc32cba3abfa2c453906d527eb2e",
     },
     ETH: {
       coingecko: "https://www.coingecko.com/en/coins/ethereum",
@@ -227,7 +228,8 @@ export const ICONLINKS = {
     },
     MYC: {
       coingecko: "https://www.coingecko.com/en/coins/mycelium",
-      arbitrum: "https://arbiscan.io/address/0xfc5a1a6eb076a2c7ad06ed22c90d7e710e35ad0a",
+      arbitrum:
+        "https://etherscan.io/token/0x4b13006980aCB09645131b91D259eaA111eaF5Ba?a=0x66dd48889df1fc32cba3abfa2c453906d527eb2e",
     },
     ETH: {
       coingecko: "https://www.coingecko.com/en/coins/ethereum",
@@ -1425,17 +1427,15 @@ export function formatTimeTill(time) {
     return "0d 0h 0s";
   }
 
-
-  const secondsTill = Math.floor((time - dateNow));
+  const secondsTill = Math.floor(time - dateNow);
 
   let minutes = Math.floor(secondsTill / 60);
   let hours = Math.floor(minutes / 60);
   const days = Math.floor(hours / 24);
 
-  hours = hours - (days * 24);
-  minutes = minutes - (days * 24 * 60) - (hours * 60);
-  return `${days}d ${hours}h ${minutes}m`
-
+  hours = hours - days * 24;
+  minutes = minutes - days * 24 * 60 - hours * 60;
+  return `${days}d ${hours}h ${minutes}m`;
 }
 
 export function formatDateTime(time) {
@@ -1602,7 +1602,7 @@ export function useEagerConnect(setActivatingConnector) {
           setActivatingConnector(connector);
           await activate(connector, undefined, true);
         }
-      } catch (ex) { }
+      } catch (ex) {}
 
       setTried(true);
     })();
