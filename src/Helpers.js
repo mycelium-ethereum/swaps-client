@@ -59,8 +59,17 @@ const MAX_GAS_PRICE_MAP = {
   [AVALANCHE]: "200000000000", // 200 gwei
 };
 
+const alchemyWhitelistedDomains = ["swaps.mycelium.xyz", "perpetual-swaps-git-add-mainnet-mycelium.vercel.app"];
+
+export function getDefaultArbitrumRpcUrl() {
+  if (alchemyWhitelistedDomains.includes(window.location.host)) {
+    return "https://arb-mainnet.g.alchemy.com/v2/SKz5SvTuqIVjE38XsFsy0McZbgfFPOng";
+  }
+  return "https://arb1.arbitrum.io/rpc";
+}
+
 const ETHEREUM_RPC_PROVIDERS = ["https://cloudflare-eth.com"];
-const ARBITRUM_RPC_PROVIDERS = ["https://arb1.arbitrum.io/rpc"];
+const ARBITRUM_RPC_PROVIDERS = [getDefaultArbitrumRpcUrl()];
 const ARBITRUM_TESTNET_RPC_PROVIDERS = ["https://rinkeby.arbitrum.io/rpc"];
 const AVALANCHE_RPC_PROVIDERS = ["https://avax-mainnet.gateway.pokt.network/v1/lb/626f37766c499d003aada23b"];
 export const WALLET_CONNECT_LOCALSTORAGE_KEY = "walletconnect";
@@ -146,6 +155,9 @@ export const MLP_POOL_COLORS = {
   AVAX: "#E84142",
   LINK: "#3256D6",
   CTM: "#F8B500",
+  FXS: "#3B3B3B",
+  BAL: "#1B1B1B",
+  CRV: "#CF0301"
 };
 
 export const HIGH_SPREAD_THRESHOLD = expandDecimals(1, USD_DECIMALS).div(100); // 1%;
@@ -251,6 +263,18 @@ export const ICONLINKS = {
     FRAX: {
       coingecko: "https://www.coingecko.com/en/coins/frax",
       arbitrum: "https://arbiscan.io/address/0x17fc002b466eec40dae837fc4be5c67993ddbd6f",
+    },
+    FXS: {
+      coingecko: "https://www.coingecko.com/en/coins/frax-share",
+      arbitrum: "https://arbiscan.io/address/0x9d2F299715D94d8A7E6F5eaa8E654E8c74a988A7",
+    },
+    BAL: {
+      coingecko: "https://www.coingecko.com/en/coins/balancer",
+      arbitrum: "https://arbiscan.io/address/0x040d1EdC9569d4Bab2D15287Dc5A4F10F56a56B8",
+    },
+    CRV: {
+      coingecko: "https://www.coingecko.com/en/coins/crv-dao-token",
+      arbitrum: "https://arbiscan.io/address/0x11cDb42B0EB46D95f990BeDD4695A6e3fA034978",
     },
   },
   43114: {
