@@ -1861,7 +1861,10 @@ export default function SwapBox(props) {
         {active && <div className="Exchange-swap-account" >
         </div>}
       </div> */}
-      <div className="Exchange-swap-box-inner App-box-highlight">
+      <div className={`Exchange-swap-box-inner App-box-highlight ${chainId === ARBITRUM ? "disabled" : ""}`}>
+        <div className="coming-soon-tooltip">
+          Trading coming soon
+        </div>
         <div>
           <Tab
             icons={SWAP_ICONS}
