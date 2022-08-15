@@ -527,8 +527,26 @@ function FullApp() {
     DEFAULT_SLIPPAGE_AMOUNT
   );
   const [slippageAmount, setSlippageAmount] = useState(0);
+  const [slippageError, setSlippageError] = useState(false);
   const [isPnlInLeverage, setIsPnlInLeverage] = useState(false);
   const [showPnlAfterFees, setShowPnlAfterFees] = useState(false);
+
+  const MAX_DECIMALS = 2;
+
+  const parseSlippageAmount = (amount) => {
+    const strWithoutLeadingsZeroes = amount.replace(/^[0]+/g, "0");
+    setSlippageAmount(strWithoutLeadingsZeroes);
+    const decimals = strWithoutLeadingsZeroes.toString().split(".")[1];
+    // limit the amount of decimals
+    if (!decimals || decimals?.length <= MAX_DECIMALS) {
+      // replace commas with periods
+      setSlippageAmount(strWithoutLeadingsZeroes.replace(/,/g, "."));
+      setSlippageError(false);
+    } else {
+      setSlippageError(true);
+    }
+    setSlippageAmount(amount);
+  };
 
   const [savedIsPnlInLeverage, setSavedIsPnlInLeverage] = useLocalStorageSerializeKey(
     [chainId, IS_PNL_IN_LEVERAGE_KEY],
@@ -1004,12 +1022,14 @@ function FullApp() {
             <input
               type="number"
               className="App-slippage-tolerance-input"
+              step="0.01"
               min="0"
               value={slippageAmount}
-              onChange={(e) => setSlippageAmount(e.target.value)}
+              onChange={(e) => parseSlippageAmount(e.target.value)}
             />
             <div className="App-slippage-tolerance-input-percent">%</div>
           </div>
+          {slippageError && <div className="App-slippage-tolerance-error">Max slippage precision is 0.01%</div>}
         </div>
         <div className="Exchange-settings-row">
           <Checkbox isChecked={showPnlAfterFees} setIsChecked={setShowPnlAfterFees}>
