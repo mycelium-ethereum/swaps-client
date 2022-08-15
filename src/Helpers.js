@@ -172,7 +172,7 @@ export const ICONLINKS = {
       arbitrum: `https://arbiscan.io/address/${getContract(ARBITRUM_TESTNET, "StakedMlpTracker")}`,
     },
     MYC: {
-      coingecko: "https://www.coingecko.com/en/coins/myc",
+      coingecko: "https://www.coingecko.com/en/coins/mycelium",
       arbitrum: "https://arbiscan.io/address/0xfc5a1a6eb076a2c7ad06ed22c90d7e710e35ad0a",
     },
     ETH: {
@@ -226,7 +226,7 @@ export const ICONLINKS = {
       arbitrum: `https://arbiscan.io/address/${getContract(ARBITRUM, "StakedMlpTracker")}`,
     },
     MYC: {
-      coingecko: "https://www.coingecko.com/en/coins/myc",
+      coingecko: "https://www.coingecko.com/en/coins/mycelium",
       arbitrum: "https://arbiscan.io/address/0xfc5a1a6eb076a2c7ad06ed22c90d7e710e35ad0a",
     },
     ETH: {
@@ -286,7 +286,7 @@ export const ICONLINKS = {
       arbitrum: `https://arbiscan.io/address/${getContract(ARBITRUM_TESTNET, "StakedMlpTracker")}`,
     },
     MYC: {
-      coingecko: "https://www.coingecko.com/en/coins/myc",
+      coingecko: "https://www.coingecko.com/en/coins/mycelium",
       avalanche: "https://snowtrace.io/address/0x62edc0692bd897d2295872a9ffcac5425011c661",
     },
     AVAX: {
