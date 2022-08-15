@@ -576,26 +576,28 @@ function FullApp() {
   };
 
   const saveAndCloseSettings = () => {
-    const slippage = parseFloat(slippageAmount);
-    if (isNaN(slippage)) {
-      helperToast.error("Invalid slippage value");
-      return;
-    }
-    if (slippage > 5) {
-      helperToast.error("Slippage should be less than 5%");
-      return;
-    }
+    if (!slippageError) {
+      const slippage = parseFloat(slippageAmount);
+      if (isNaN(slippage)) {
+        helperToast.error("Invalid slippage value");
+        return;
+      }
+      if (slippage > 5) {
+        helperToast.error("Slippage should be less than 5%");
+        return;
+      }
 
-    const basisPoints = (slippage * BASIS_POINTS_DIVISOR) / 100;
-    if (parseInt(basisPoints) !== parseFloat(basisPoints)) {
-      helperToast.error("Max slippage precision is 0.01%");
-      return;
-    }
+      const basisPoints = (slippage * BASIS_POINTS_DIVISOR) / 100;
+      if (parseInt(basisPoints) !== parseFloat(basisPoints)) {
+        helperToast.error("Max slippage precision is 0.01%");
+        return;
+      }
 
-    setSavedIsPnlInLeverage(isPnlInLeverage);
-    setSavedShowPnlAfterFees(showPnlAfterFees);
-    setSavedSlippageAmount(basisPoints);
-    setIsSettingsVisible(false);
+      setSavedIsPnlInLeverage(isPnlInLeverage);
+      setSavedShowPnlAfterFees(showPnlAfterFees);
+      setSavedSlippageAmount(basisPoints);
+      setIsSettingsVisible(false);
+    }
   };
   useEffect(() => {
     if (isDrawerVisible) {
