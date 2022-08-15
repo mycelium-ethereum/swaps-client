@@ -299,14 +299,14 @@ export const platformTokens = {
       symbol: "TCR",
       decimals: 18,
       address: getContract(ARBITRUM_TESTNET, "TCR"),
-      imageUrl: "/icons/ic_tcr_40.svg",
+      imageUrl: `${window?.location?.origin}/icons/ic_tcr_40.svg`,
     },
     MLP: {
       name: "TCR LP",
       symbol: "MLP",
       decimals: 18,
       address: getContract(ARBITRUM_TESTNET, "StakedMlpTracker"), // address of fsMLP token because user only holds fsMLP
-      imageUrl: "/icons/ic_mlp_custom.svg",
+      imageUrl: `${window?.location?.origin}/icons/ic_mlp_custom.svg`,
     },
   },
   42161: {
@@ -316,21 +316,21 @@ export const platformTokens = {
       symbol: "TCR",
       decimals: 18,
       address: getContract(ARBITRUM, "TCR"),
-      imageUrl: "/icons/ic_tcr_40.svg",
+      imageUrl: `${window?.location?.origin}/icons/ic_tcr_40.svg`,
     },
     MYC: {
       name: "MYC",
       symbol: "MYC",
       decimals: 18,
       address: getContract(ARBITRUM, "MYC"),
-      imageUrl: "/icons/ic_myc_custom.svg",
+      imageUrl: `${window?.location?.origin}/icons/ic_myc_custom.svg`,
     },
     MLP: {
       name: "MYC LP",
       symbol: "MLP",
       decimals: 18,
       address: getContract(ARBITRUM, "StakedMlpTracker"), // address of fsMLP token because user only holds fsMLP
-      imageUrl: "/icons/ic_mlp_custom.svg",
+      imageUrl: `${window?.location?.origin}/icons/ic_mlp_custom.svg`,
     },
   },
   43114: {
@@ -340,21 +340,21 @@ export const platformTokens = {
       symbol: "TCR",
       decimals: 18,
       address: getContract(ARBITRUM, "TCR"),
-      imageUrl: "/icons/ic_tcr_40.svg",
+      imageUrl: `${window?.location?.origin}/icons/ic_tcr_40.svg`,
     },
     MLP: {
       name: "MYC LP",
       symbol: "MLP",
       decimals: 18,
       address: getContract(ARBITRUM, "StakedMlpTracker"), // address of fsMLP token because user only holds fsMLP
-      imageUrl: "/icons/ic_mlp_custom.svg",
+      imageUrl: `${window?.location?.origin}/icons/ic_mlp_custom.svg`,
     },
     MYC: {
       name: "MYC",
       symbol: "MYC",
       decimals: 18,
       address: getContract(AVALANCHE, "MYC"),
-      imageUrl: "/icons/ic_myc_custom.svg",
+      imageUrl: `${window?.location?.origin}/icons/ic_myc_custom.svg`,
     },
   },
 };
