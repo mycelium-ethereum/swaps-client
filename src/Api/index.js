@@ -22,7 +22,6 @@ import {
   AVALANCHE,
   ARBITRUM_TESTNET,
   ETHEREUM,
-  // DEFAULT_GAS_LIMIT,
   bigNumberify,
   getExplorerUrl,
   getServerUrl,
@@ -37,6 +36,7 @@ import {
   getInfoTokens,
   isAddressZero,
   helperToast,
+  getSupplyUrl
 } from "../Helpers";
 import { getTokens, getTokenBySymbol, getWhitelistedTokens } from "../data/Tokens";
 
@@ -498,7 +498,7 @@ export function useTCRPrice(chainId, libraries, active) {
 }
 
 export function useTotalTCRSupply() {
-  const tcrSupplyUrl = "https://stats.tracer.finance/supply";
+  const tcrSupplyUrl = getSupplyUrl()
 
   const { data: tcrSupply, mutate: updateTCRSupply } = useSWR([tcrSupplyUrl], {
     fetcher: (...args) => fetch(...args, { headers: { "Content-Type": "application/json" } }).then((res) => res.json()),
