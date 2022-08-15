@@ -8,7 +8,7 @@ function SEO(props) {
     type: "exchange",
     ...customMeta,
   };
-  const defaultImage = "/preview.png";
+  const defaultImage = "https://swaps.mycelium.xyz/preview.png";
   const image = meta.image || defaultImage;
   return (
     <>
