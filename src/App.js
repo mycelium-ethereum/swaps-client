@@ -527,7 +527,7 @@ function FullApp() {
     DEFAULT_SLIPPAGE_AMOUNT
   );
   const [slippageAmount, setSlippageAmount] = useState(0);
-  const [slippageError, setSlippageError] = useState(false);
+  const [slippageError, setSlippageError] = useState("");
   const [isPnlInLeverage, setIsPnlInLeverage] = useState(false);
   const [showPnlAfterFees, setShowPnlAfterFees] = useState(false);
 
@@ -535,15 +535,17 @@ function FullApp() {
 
   const parseSlippageAmount = (amount) => {
     const strWithoutLeadingsZeroes = amount.replace(/^[0]+/g, "0");
-    setSlippageAmount(strWithoutLeadingsZeroes);
     const decimals = strWithoutLeadingsZeroes.toString().split(".")[1];
+    if (parseFloat(amount) > 5.0) {
+      setSlippageError("Slippage should be less than 5%");
+    } else if (decimals?.length > MAX_DECIMALS) {
+      setSlippageError("Max slippage precision is 0.01%");
+    }
     // limit the amount of decimals
-    if (!decimals || decimals?.length <= MAX_DECIMALS) {
-      // replace commas with periods
+    else if (!decimals || decimals?.length <= MAX_DECIMALS) {
+      // replace commas with periods for other locales
       setSlippageAmount(strWithoutLeadingsZeroes.replace(/,/g, "."));
-      setSlippageError(false);
-    } else {
-      setSlippageError(true);
+      setSlippageError("");
     }
     setSlippageAmount(amount);
   };
@@ -576,7 +578,7 @@ function FullApp() {
   };
 
   const saveAndCloseSettings = () => {
-    if (!slippageError) {
+    if (slippageError === "") {
       const slippage = parseFloat(slippageAmount);
       if (isNaN(slippage)) {
         helperToast.error("Invalid slippage value");
@@ -1031,7 +1033,7 @@ function FullApp() {
             />
             <div className="App-slippage-tolerance-input-percent">%</div>
           </div>
-          {slippageError && <div className="App-slippage-tolerance-error">Max slippage precision is 0.01%</div>}
+          {slippageError !== "" && <div className="App-slippage-tolerance-error">{slippageError}</div>}
         </div>
         <div className="Exchange-settings-row">
           <Checkbox isChecked={showPnlAfterFees} setIsChecked={setShowPnlAfterFees}>
