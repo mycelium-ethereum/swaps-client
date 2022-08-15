@@ -61,7 +61,7 @@ import { Exchange } from "./views/Exchange/Exchange";
 import Actions from "./views/Actions/Actions";
 import OrdersOverview from "./views/OrdersOverview/OrdersOverview";
 import PositionsOverview from "./views/PositionsOverview/PositionsOverview";
-import BuyMYC from "./views/BuyMYC/BuyMYC";
+// import BuyMYC from "./views/BuyMYC/BuyMYC";
 import BuyMlp from "./views/BuyMlp/BuyMlp";
 import SellMlp from "./views/SellMlp/SellMlp";
 import Rewards from "./views/Rewards/Rewards";
@@ -899,9 +899,6 @@ function FullApp() {
                 setPendingTxns={setPendingTxns}
                 connectWallet={connectWallet}
               />
-            </Route>
-            <Route exact path="/buy_myc">
-              <BuyMYC />
             </Route>
             <Route exact path="/rewards">
               <Rewards
