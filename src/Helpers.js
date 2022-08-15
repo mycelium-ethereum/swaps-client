@@ -155,6 +155,9 @@ export const MLP_POOL_COLORS = {
   AVAX: "#E84142",
   LINK: "#3256D6",
   CTM: "#F8B500",
+  FXS: "#3B3B3B",
+  BAL: "#1B1B1B",
+  CRV: "#CF0301"
 };
 
 export const HIGH_SPREAD_THRESHOLD = expandDecimals(1, USD_DECIMALS).div(100); // 1%;
