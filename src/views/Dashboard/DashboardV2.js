@@ -316,7 +316,7 @@ export default function DashboardV2() {
     },
   ];
 
-  const totalStatsStartDate = chainId === AVALANCHE ? "14 Sep 2022" : "14 Sep 2022";
+  const totalStatsStartDate = "14 Sep 2022";
 
   let stableMlp = 0;
   let totalMlp = 0;
