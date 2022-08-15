@@ -61,10 +61,9 @@ import { Exchange } from "./views/Exchange/Exchange";
 import Actions from "./views/Actions/Actions";
 import OrdersOverview from "./views/OrdersOverview/OrdersOverview";
 import PositionsOverview from "./views/PositionsOverview/PositionsOverview";
-import BuyMYC from "./views/BuyMYC/BuyMYC";
+// import BuyMYC from "./views/BuyMYC/BuyMYC";
 import BuyMlp from "./views/BuyMlp/BuyMlp";
 import SellMlp from "./views/SellMlp/SellMlp";
-import Buy from "./views/Buy/Buy";
 import Rewards from "./views/Rewards/Rewards";
 // import NftWallet from "./views/NftWallet/NftWallet";
 // import BeginAccountTransfer from "./views/BeginAccountTransfer/BeginAccountTransfer";
@@ -884,13 +883,6 @@ function FullApp() {
             <Route exact path="/earn">
               <Stake setPendingTxns={setPendingTxns} connectWallet={connectWallet} trackAction={trackAction} />
             </Route>
-            <Route exact path="/buy">
-              <Buy
-                savedSlippageAmount={savedSlippageAmount}
-                setPendingTxns={setPendingTxns}
-                connectWallet={connectWallet}
-              />
-            </Route>
             <Route exact path="/buy_mlp">
               <BuyMlp
                 savedSlippageAmount={savedSlippageAmount}
@@ -907,9 +899,6 @@ function FullApp() {
                 setPendingTxns={setPendingTxns}
                 connectWallet={connectWallet}
               />
-            </Route>
-            <Route exact path="/buy_myc">
-              <BuyMYC />
             </Route>
             <Route exact path="/rewards">
               <Rewards
