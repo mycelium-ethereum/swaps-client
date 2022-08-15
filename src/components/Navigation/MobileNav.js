@@ -1,22 +1,12 @@
 import React, { useEffect } from "react";
-import {
-  AppHeaderLinkContainer,
-  MyceliumCopy,
-  HeaderClose,
-  Header
-} from './MobileNav.styles';
+import { AppHeaderLinkContainer, MyceliumCopy, HeaderClose, Header } from "./MobileNav.styles";
 
 import { NavLink } from "react-router-dom";
 import { useWeb3React } from "@web3-react/core";
 
-import navClose from "../../img/ic_nav_close.svg"
+import navClose from "../../img/ic_nav_close.svg";
 
-export default function AppHeaderLinks({ 
-  openSettings,
-  clickCloseIcon,
-  setWalletModalVisible,
-}) {
-
+export default function AppHeaderLinks({ openSettings, clickCloseIcon, setWalletModalVisible }) {
   const { active } = useWeb3React();
 
   useEffect(() => {
@@ -28,12 +18,10 @@ export default function AppHeaderLinks({
   return (
     <div className="App-header-links">
       <Header>
-        <div>
-          Menu
-        </div>
+        <div>Menu</div>
         <HeaderClose onClick={() => clickCloseIcon()}>
           Close
-          <img src={navClose} className="close-icon" />
+          <img src={navClose} className="close-icon" alt="Close icon" />
         </HeaderClose>
       </Header>
       <AppHeaderLinkContainer>
@@ -43,17 +31,17 @@ export default function AppHeaderLinks({
       </AppHeaderLinkContainer>
       <AppHeaderLinkContainer>
         <NavLink activeClassName="active" to="/earn">
-          Earn 
+          Earn
         </NavLink>
       </AppHeaderLinkContainer>
       <AppHeaderLinkContainer>
-        <NavLink activeClassName="active" to="/Buy">
+        <NavLink activeClassName="active" to="/buy_mlp">
           Buy
         </NavLink>
       </AppHeaderLinkContainer>
       <AppHeaderLinkContainer>
-        <NavLink activeClassName="active" to="/Rewards">
-          Rewards 
+        <NavLink activeClassName="active" to="/rewards">
+          Rewards
         </NavLink>
       </AppHeaderLinkContainer>
       <AppHeaderLinkContainer>
@@ -71,9 +59,7 @@ export default function AppHeaderLinks({
           Settings
         </a>
       </AppHeaderLinkContainer>
-      <MyceliumCopy>
-        © 2022 Mycelium
-      </MyceliumCopy>
+      <MyceliumCopy>© 2022 Mycelium</MyceliumCopy>
     </div>
   );
 }
