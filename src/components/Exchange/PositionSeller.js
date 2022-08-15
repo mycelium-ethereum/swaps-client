@@ -221,6 +221,7 @@ export default function PositionSeller(props) {
   let fundingFee;
   let positionFee;
   let totalFees;
+
   if (position) {
     fundingFee = position.fundingFee;
     fromAmount = parseValue(fromValue, USD_DECIMALS);
@@ -808,14 +809,15 @@ export default function PositionSeller(props) {
                 </div>
               </div>
             )}
-            <div className="Exchange-info-row top-line">
-              <div className="Exchange-info-label">Mark Price</div>
-              <div className="align-right">${formatAmount(position.markPrice, USD_DECIMALS, 2, true)}</div>
-            </div>
             <div className="Exchange-info-row">
               <div className="Exchange-info-label">Entry Price</div>
               <div className="align-right">${formatAmount(position.averagePrice, USD_DECIMALS, 2, true)}</div>
             </div>
+            <div className="Exchange-info-row">
+              <div className="Exchange-info-label">Exit Price</div>
+              <div className="align-right">${formatAmount(position.markPrice, USD_DECIMALS, 2, true)}</div>
+            </div>
+            {/* {console.log(position)} */}
             <div className="Exchange-info-row">
               <div className="Exchange-info-label">Liq. Price</div>
               <div className="align-right">
