@@ -316,7 +316,7 @@ export default function DashboardV2() {
     },
   ];
 
-  const totalStatsStartDate = chainId === AVALANCHE ? "06 Jan 2022" : "01 Sep 2021";
+  const totalStatsStartDate = "14 Sep 2022";
 
   let stableMlp = 0;
   let totalMlp = 0;
@@ -489,7 +489,7 @@ export default function DashboardV2() {
                         <div className="App-card-title-mark-subtitle">MYC</div>
                       </div>
                       <div>
-                        <AssetDropdown assetSymbol="TCR" />
+                        <AssetDropdown assetSymbol="MYC" />
                       </div>
                     </div>
                   </div>

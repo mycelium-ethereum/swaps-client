@@ -1,5 +1,5 @@
 {
-  "name": "gambit-interface",
+  "name": "mycelium-swaps-interface",
   "version": "0.1.0",
   "private": true,
   "dependencies": {

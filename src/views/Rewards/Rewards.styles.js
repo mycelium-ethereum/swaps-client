@@ -356,6 +356,24 @@ const TableCell = styled.td`
   padding: 16px;
 `;
 
+export const TopFiftyRow = styled.tr`
+  &:after {
+    display: none;
+  }
+  & + tr {
+    &:after {
+      display: none;
+    }
+  }
+`;
+
+export const TopFiftyRowCell = styled(TableCell)`
+  font-weight: bold;
+  text-align: center;
+  height: 40px;
+  background: linear-gradient(180deg, #098200 0%, rgba(9, 130, 0, 0) 100%);
+`;
+
 export const RankCell = styled(TableCell)`
   text-align: center;
   font-weight: 700;

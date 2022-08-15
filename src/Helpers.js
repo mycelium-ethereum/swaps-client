@@ -35,7 +35,7 @@ export const ETHEREUM = 1;
 export const ARBITRUM_TESTNET = 421611;
 export const ARBITRUM = 42161;
 // TODO take it from web3
-export const DEFAULT_CHAIN_ID = ARBITRUM_TESTNET;
+export const DEFAULT_CHAIN_ID = ARBITRUM;
 export const CHAIN_ID = DEFAULT_CHAIN_ID;
 
 export const MIN_PROFIT_TIME = 0;
@@ -59,8 +59,17 @@ const MAX_GAS_PRICE_MAP = {
   [AVALANCHE]: "200000000000", // 200 gwei
 };
 
+const alchemyWhitelistedDomains = ["swaps.mycelium.xyz", "perpetual-swaps-git-add-mainnet-mycelium.vercel.app"];
+
+export function getDefaultArbitrumRpcUrl() {
+  if (alchemyWhitelistedDomains.includes(window.location.host)) {
+    return "https://arb-mainnet.g.alchemy.com/v2/SKz5SvTuqIVjE38XsFsy0McZbgfFPOng";
+  }
+  return "https://arb1.arbitrum.io/rpc";
+}
+
 const ETHEREUM_RPC_PROVIDERS = ["https://cloudflare-eth.com"];
-const ARBITRUM_RPC_PROVIDERS = ["https://arb1.arbitrum.io/rpc"];
+const ARBITRUM_RPC_PROVIDERS = [getDefaultArbitrumRpcUrl()];
 const ARBITRUM_TESTNET_RPC_PROVIDERS = ["https://rinkeby.arbitrum.io/rpc"];
 const AVALANCHE_RPC_PROVIDERS = ["https://avax-mainnet.gateway.pokt.network/v1/lb/626f37766c499d003aada23b"];
 export const WALLET_CONNECT_LOCALSTORAGE_KEY = "walletconnect";
@@ -90,11 +99,11 @@ export const MLP_DECIMALS = 18;
 export const MYC_DECIMALS = 18;
 export const DEFAULT_MAX_USDG_AMOUNT = expandDecimals(200 * 1000 * 1000, 18);
 
-export const TAX_BASIS_POINTS = 50;
-export const STABLE_TAX_BASIS_POINTS = 5;
-export const MINT_BURN_FEE_BASIS_POINTS = 25;
-export const SWAP_FEE_BASIS_POINTS = 25;
-export const STABLE_SWAP_FEE_BASIS_POINTS = 1;
+export const TAX_BASIS_POINTS = 0;
+export const STABLE_TAX_BASIS_POINTS = 2;
+export const MINT_BURN_FEE_BASIS_POINTS = 0;
+export const SWAP_FEE_BASIS_POINTS = 15;
+export const STABLE_SWAP_FEE_BASIS_POINTS = 3;
 export const MARGIN_FEE_BASIS_POINTS = 3;
 
 export const LIQUIDATION_FEE = expandDecimals(5, USD_DECIMALS);
@@ -146,6 +155,9 @@ export const MLP_POOL_COLORS = {
   AVAX: "#E84142",
   LINK: "#3256D6",
   CTM: "#F8B500",
+  FXS: "#3B3B3B",
+  BAL: "#1B1B1B",
+  CRV: "#CF0301"
 };
 
 export const HIGH_SPREAD_THRESHOLD = expandDecimals(1, USD_DECIMALS).div(100); // 1%;
@@ -252,6 +264,18 @@ export const ICONLINKS = {
       coingecko: "https://www.coingecko.com/en/coins/frax",
       arbitrum: "https://arbiscan.io/address/0x17fc002b466eec40dae837fc4be5c67993ddbd6f",
     },
+    FXS: {
+      coingecko: "https://www.coingecko.com/en/coins/frax-share",
+      arbitrum: "https://arbiscan.io/address/0x9d2F299715D94d8A7E6F5eaa8E654E8c74a988A7",
+    },
+    BAL: {
+      coingecko: "https://www.coingecko.com/en/coins/balancer",
+      arbitrum: "https://arbiscan.io/address/0x040d1EdC9569d4Bab2D15287Dc5A4F10F56a56B8",
+    },
+    CRV: {
+      coingecko: "https://www.coingecko.com/en/coins/crv-dao-token",
+      arbitrum: "https://arbiscan.io/address/0x11cDb42B0EB46D95f990BeDD4695A6e3fA034978",
+    },
   },
   43114: {
     TCR: {
@@ -299,14 +323,14 @@ export const platformTokens = {
       symbol: "TCR",
       decimals: 18,
       address: getContract(ARBITRUM_TESTNET, "TCR"),
-      imageUrl: "https://assets.coingecko.com/coins/images/18271/small/tracer_logo.png?1631176676",
+      imageUrl: `${window?.location?.origin}/icons/ic_tcr_40.svg`,
     },
     MLP: {
       name: "TCR LP",
       symbol: "MLP",
       decimals: 18,
       address: getContract(ARBITRUM_TESTNET, "StakedMlpTracker"), // address of fsMLP token because user only holds fsMLP
-      imageUrl: "https://i.imgur.com/1xbBwPe.png",
+      imageUrl: `${window?.location?.origin}/icons/ic_mlp_custom.svg`,
     },
   },
   42161: {
@@ -316,22 +340,21 @@ export const platformTokens = {
       symbol: "TCR",
       decimals: 18,
       address: getContract(ARBITRUM, "TCR"),
-      imageUrl: "https://assets.coingecko.com/coins/images/18271/small/tracer_logo.png?1631176676",
-    },
-    MLP: {
-      name: "MYC LP",
-      symbol: "MLP",
-      decimals: 18,
-      address: getContract(ARBITRUM, "StakedMlpTracker"), // address of fsMLP token because user only holds fsMLP
-      imageUrl:
-        "https://raw.githubusercontent.com/mycelium-ethereum/myc-assets/master/assets/tokens/MLP.png?token=GHSAT0AAAAAABRXE63EVTN6JZDCPGAATEOOYXTHT4Q",
+      imageUrl: `${window?.location?.origin}/icons/ic_tcr_40.svg`,
     },
     MYC: {
       name: "MYC",
       symbol: "MYC",
       decimals: 18,
       address: getContract(ARBITRUM, "MYC"),
-      imageUrl: "https://raw.githubusercontent.com/mycelium-ethereum/myc-assets/master/assets/tokens/MYC.png?token=GHSAT0AAAAAABRXE63FIEAXHG7FTKRWOL3UYXTH2IA",
+      imageUrl: `${window?.location?.origin}/icons/ic_myc_custom.svg`,
+    },
+    MLP: {
+      name: "MYC LP",
+      symbol: "MLP",
+      decimals: 18,
+      address: getContract(ARBITRUM, "StakedMlpTracker"), // address of fsMLP token because user only holds fsMLP
+      imageUrl: `${window?.location?.origin}/icons/ic_mlp_custom.svg`,
     },
   },
   43114: {
@@ -341,26 +364,26 @@ export const platformTokens = {
       symbol: "TCR",
       decimals: 18,
       address: getContract(ARBITRUM, "TCR"),
-      imageUrl: "https://assets.coingecko.com/coins/images/18271/small/tracer_logo.png?1631176676",
+      imageUrl: `${window?.location?.origin}/icons/ic_tcr_40.svg`,
     },
     MLP: {
       name: "MYC LP",
       symbol: "MLP",
       decimals: 18,
       address: getContract(ARBITRUM, "StakedMlpTracker"), // address of fsMLP token because user only holds fsMLP
-      imageUrl: "https://raw.githubusercontent.com/mycelium-ethereum/myc-assets/master/assets/tokens/MLP.png?token=GHSAT0AAAAAABRXE63EVTN6JZDCPGAATEOOYXTHT4Q"
+      imageUrl: `${window?.location?.origin}/icons/ic_mlp_custom.svg`,
     },
     MYC: {
       name: "MYC",
       symbol: "MYC",
       decimals: 18,
       address: getContract(AVALANCHE, "MYC"),
-      imageUrl: "https://assets.coingecko.com/coins/images/18323/small/arbit.png?1631532468",
+      imageUrl: `${window?.location?.origin}/icons/ic_myc_custom.svg`,
     },
   },
 };
 
-const supportedChainIds = [/*ARBITRUM, */ARBITRUM_TESTNET];
+const supportedChainIds = [ARBITRUM, AVALANCHE, ARBITRUM_TESTNET];
 const injectedConnector = new InjectedConnector({
   supportedChainIds,
 });
@@ -1399,17 +1422,20 @@ export function formatTimeTill(time) {
   const dateNow = new Date() / 1000;
 
   if (time < dateNow) {
-    return '0d 0h 0s'
+    return "0d 0h 0s";
   }
 
-  const secondsTill = Math.floor((time - dateNow));
-  let minutes = Math.floor(secondsTill/60);
-  let hours = Math.floor(minutes/60);
-  const days = Math.floor(hours/24);
 
-  hours = hours-(days*24);
-  minutes = minutes-(days*24*60)-(hours*60);
+  const secondsTill = Math.floor((time - dateNow));
+
+  let minutes = Math.floor(secondsTill / 60);
+  let hours = Math.floor(minutes / 60);
+  const days = Math.floor(hours / 24);
+
+  hours = hours - (days * 24);
+  minutes = minutes - (days * 24 * 60) - (hours * 60);
   return `${days}d ${hours}h ${minutes}m`
+
 }
 
 export function formatDateTime(time) {
@@ -1576,7 +1602,7 @@ export function useEagerConnect(setActivatingConnector) {
           setActivatingConnector(connector);
           await activate(connector, undefined, true);
         }
-      } catch (ex) {}
+      } catch (ex) { }
 
       setTried(true);
     })();

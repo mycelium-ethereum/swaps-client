@@ -15,6 +15,7 @@
   transition: opacity 0.3s ease;
   font-size: 14px;
   line-height: 1.484rem;
+  z-index: 999;
 }
 .ConsentModal.visible {
   pointer-events: auto;
@@ -45,13 +46,4 @@
 }
 .ConsentModal-buttons > .read-more:first-of-type {
   margin-right: 10px;
-}
-
-@media screen and (max-width: 670px) {
-  .ConsentModal {
-    max-width: calc(100vw - 64px);
-  }
-}
-
-@media screen and (max-width: 370px) {
 }
