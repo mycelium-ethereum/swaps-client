@@ -661,9 +661,10 @@ export default function StakeV2({ setPendingTxns, connectWallet, trackAction }) 
   const { tcrPrice } = useTCRPrice(chainId, { arbitrum: chainId === ARBITRUM ? library : undefined }, active);
 
   const supplyUrl = getSupplyUrl()
-  const { data: mycSupply } = useSWR([supplyUrl], {
-    fetcher: (...args) => fetch(...args).then((res) => res.json()).then((res) => res?.totalSupply),
+  const { data: mycSupply_ } = useSWR([supplyUrl], {
+    fetcher: (...args) => fetch(...args).then((res) => res.json()),
   });
+  const mycSupply = mycSupply_?.totalSupply;
 
   let aum;
   if (aums && aums.length > 0) {

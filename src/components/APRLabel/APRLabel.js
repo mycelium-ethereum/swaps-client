@@ -127,9 +127,11 @@ export default function APRLabel({ chainId, label }) {
   const { tcrPrice } = useTCRPrice(chainId, {}, active);
 
   const mycSupplyUrl = getSupplyUrl();
-  const { data: mycSupply } = useSWR([mycSupplyUrl], {
-    fetcher: (...args) => fetch(...args).then((res) => res.json()).then((res) => res?.totalSupply),
+  const { data: mycSupply_ } = useSWR([mycSupplyUrl], {
+    fetcher: (...args) => fetch(...args).then((res) => res.json())
   });
+  const mycSupply = mycSupply_?.totalSupply;
+
 
   let aum;
   if (aums && aums.length > 0) {
