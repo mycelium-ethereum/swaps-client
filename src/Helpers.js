@@ -59,8 +59,17 @@ const MAX_GAS_PRICE_MAP = {
   [AVALANCHE]: "200000000000", // 200 gwei
 };
 
+const alchemyWhitelistedDomains = ["swaps.mycelium.xyz"];
+
+export function getDefaultArbitrumRpcUrl() {
+  if (alchemyWhitelistedDomains.includes(window.location.host)) {
+    return "https://arb-mainnet.g.alchemy.com/v2/SKz5SvTuqIVjE38XsFsy0McZbgfFPOng";
+  }
+  return "https://arb1.arbitrum.io/rpc";
+}
+
 const ETHEREUM_RPC_PROVIDERS = ["https://cloudflare-eth.com"];
-const ARBITRUM_RPC_PROVIDERS = ["https://arb-mainnet.g.alchemy.com/v2/SKz5SvTuqIVjE38XsFsy0McZbgfFPOng"];
+const ARBITRUM_RPC_PROVIDERS = [getDefaultArbitrumRpcUrl()];
 const ARBITRUM_TESTNET_RPC_PROVIDERS = ["https://rinkeby.arbitrum.io/rpc"];
 const AVALANCHE_RPC_PROVIDERS = ["https://avax-mainnet.gateway.pokt.network/v1/lb/626f37766c499d003aada23b"];
 export const WALLET_CONNECT_LOCALSTORAGE_KEY = "walletconnect";
