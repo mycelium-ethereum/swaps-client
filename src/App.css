@@ -403,6 +403,16 @@ button.App-connect-wallet:hover {
   border: 0.5px solid var(--border-navigation);
 }
 
+.App-header-user-link .switch-link {
+  background: var(--background-navigation);
+  border: 0.5px solid var(--border-navigation);
+  margin-left: 24px;
+}
+
+.App-header-user-link .switch-link img {
+  margin-left: 8px;
+}
+
 .App-header-user-address {
   border: 0.5px solid var(--border-navigation);
   color: var(--text-navigation);
@@ -1185,7 +1195,7 @@ button.App-button {
   width: 100%;
 }
 
-@media (max-width: 1112px) {
+@media (max-width: 1380px) {
   .long-connect-btn {
     display: none !important;
   }
@@ -1199,6 +1209,10 @@ button.App-button {
 
   .App-header-user-link {
     margin-right: 16px;
+  }
+
+  .App-header-user-link .switch-link {
+    margin-left: 16px;
   }
 
   .App-header-user-netowork {
@@ -1291,6 +1305,12 @@ button.App-button {
 
   .App-card-long_sub {
     width: 100%;
+  }
+  .Switch-app-btn {
+    display: none;
+  }
+  .App-header-user-link .switch-link {
+    display: none !important;
   }
 }
 

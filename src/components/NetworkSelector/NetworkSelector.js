@@ -54,10 +54,11 @@ export default function NetworkSelector(props) {
     try {
       network = await props.onSelect(token);
       setSelectedLabel(network);
-      trackAction && trackAction("Network changed", {
-        previousNetwork: prevLabel,
-        currentNetwork: network,
-      });
+      trackAction &&
+        trackAction("Network changed", {
+          previousNetwork: prevLabel,
+          currentNetwork: network,
+        });
     } catch (error) {
       console.error(error);
     }
@@ -186,9 +187,10 @@ export default function NetworkSelector(props) {
           className={cx("Selector-box", value.label)}
           onClick={() => {
             toggleModal(true);
-            trackAction && trackAction("Button clicked", {
-              buttonName: "Network selector",
-            });
+            trackAction &&
+              trackAction("Button clicked", {
+                buttonName: "Network selector",
+              });
           }}
         >
           <img src={valueIcon.default} alt="valueIcon" />

@@ -71,7 +71,7 @@ import Rewards from "./views/Rewards/Rewards";
 // import CompleteAccountTransfer from "./views/CompleteAccountTransfer/CompleteAccountTransfer";
 // import Debug from "./views/Debug/Debug";
 import ConsentModal from "./components/ConsentModal/ConsentModal";
-import MobileLinks from './components/Navigation/MobileNav';
+import MobileLinks from "./components/Navigation/MobileNav";
 
 import cx from "classnames";
 import { cssTransition, ToastContainer } from "react-toastify";
@@ -92,6 +92,7 @@ import "./AppOrder.css";
 
 import logoImg from "./img/logo_MYC.svg";
 import logoSmallImg from "./img/logo_MYC_small.svg";
+import poolsSmallImg from "./img/myc_pools_short.svg";
 import connectWalletImg from "./img/ic_wallet_24.svg";
 
 import metamaskImg from "./img/metamask.png";
@@ -332,6 +333,18 @@ function AppHeaderUser({
         >
           {small ? "Connect" : "Connect Wallet"}
         </ConnectWalletButton>
+        <div className="App-header-user-link">
+          <a
+            href="https://pools.tracer.finance"
+            rel="noopener noreferrer"
+            target="_blank"
+            onClick={() => trackAction && trackAction("Button clicked", { buttonName: "Switch to Perpetual Pools" })}
+          >
+            <button className="default-btn switch-link">
+              Switch to <img src={poolsSmallImg} alt="Perpetual Pools" />
+            </button>
+          </a>
+        </div>
       </div>
     );
   }
@@ -367,6 +380,17 @@ function AppHeaderUser({
           openSettings={openSettings}
           trackAction={trackAction}
         />
+      </div>
+      <div className="App-header-user-link Switch-app-btn">
+        <a
+          href="https://pools.tracer.finance"
+          rel="noopener noreferrer"
+          onClick={() => trackAction && trackAction("Button clicked", { buttonName: "Switch to Perpetual Pools" })}
+        >
+          <button exact activeClassName="active" className="default-btn switch-link" to="/">
+            Switch to <img src={poolsSmallImg} alt="Perpetual Pools" />
+          </button>
+        </a>
       </div>
     </div>
   );
