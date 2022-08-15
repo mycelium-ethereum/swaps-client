@@ -59,7 +59,7 @@ const MAX_GAS_PRICE_MAP = {
   [AVALANCHE]: "200000000000", // 200 gwei
 };
 
-const alchemyWhitelistedDomains = ["swaps.mycelium.xyz"];
+const alchemyWhitelistedDomains = ["swaps.mycelium.xyz", "perpetual-swaps-git-add-mainnet-mycelium.vercel.app"];
 
 export function getDefaultArbitrumRpcUrl() {
   if (alchemyWhitelistedDomains.includes(window.location.host)) {
