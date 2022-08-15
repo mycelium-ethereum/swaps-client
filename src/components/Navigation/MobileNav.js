@@ -46,7 +46,7 @@ export default function AppHeaderLinks({ openSettings, clickCloseIcon, setWallet
       </AppHeaderLinkContainer>
       <AppHeaderLinkContainer>
         <a
-          href="https://tracer-1.gitbook.io/tracer-perpetual-swaps/6VOYVKGbCCw0I8cj7vdF/perpetual-swaps/tracers-perpetual-swaps"
+          href="https://swaps.docs.mycelium.xyz/perpetual-swaps/mycelium-perpetual-swaps"
           target="_blank"
           rel="noopener noreferrer"
         >
