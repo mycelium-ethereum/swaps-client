@@ -817,7 +817,6 @@ export default function PositionSeller(props) {
               <div className="Exchange-info-label">Exit Price</div>
               <div className="align-right">${formatAmount(position.markPrice, USD_DECIMALS, 2, true)}</div>
             </div>
-            {/* {console.log(position)} */}
             <div className="Exchange-info-row">
               <div className="Exchange-info-label">Liq. Price</div>
               <div className="align-right">
