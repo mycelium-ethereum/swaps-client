@@ -287,7 +287,7 @@ export const ICONLINKS = {
     },
     MYC: {
       coingecko: "https://www.coingecko.com/en/coins/mycelium",
-      arbitrum: "https://arbiscan.io/address/0x4b13006980aCB09645131b91D259eaA111eaF5Ba",
+      avalanche: "https://snowtrace.io/address/0x62edc0692bd897d2295872a9ffcac5425011c661",
     },
     AVAX: {
       coingecko: "https://www.coingecko.com/en/coins/avalanche",
