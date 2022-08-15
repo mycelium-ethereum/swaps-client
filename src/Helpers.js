@@ -173,7 +173,8 @@ export const ICONLINKS = {
     },
     MYC: {
       coingecko: "https://www.coingecko.com/en/coins/mycelium",
-      arbitrum: "https://arbiscan.io/address/0x4b13006980aCB09645131b91D259eaA111eaF5Ba",
+      arbitrum:
+        "https://etherscan.io/token/0x4b13006980aCB09645131b91D259eaA111eaF5Ba?a=0x66dd48889df1fc32cba3abfa2c453906d527eb2e",
     },
     ETH: {
       coingecko: "https://www.coingecko.com/en/coins/ethereum",
@@ -227,7 +228,8 @@ export const ICONLINKS = {
     },
     MYC: {
       coingecko: "https://www.coingecko.com/en/coins/mycelium",
-      arbitrum: "https://arbiscan.io/address/0x4b13006980aCB09645131b91D259eaA111eaF5Ba",
+      arbitrum:
+        "https://etherscan.io/token/0x4b13006980aCB09645131b91D259eaA111eaF5Ba?a=0x66dd48889df1fc32cba3abfa2c453906d527eb2e",
     },
     ETH: {
       coingecko: "https://www.coingecko.com/en/coins/ethereum",
