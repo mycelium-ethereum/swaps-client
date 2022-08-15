@@ -26,7 +26,6 @@ import {
   getChainName,
   parseValue,
   approveTokens,
-  getServerUrl,
   useLocalStorageSerializeKey,
   useChainId,
   MLP_DECIMALS,
@@ -39,6 +38,7 @@ import {
   getStakingData,
   getProcessedData,
   getPageTitle,
+  getSupplyUrl,
 } from "../../Helpers";
 import { callContract, useTCRPrice } from "../../Api";
 import { getConstant } from "../../Constants";
@@ -660,9 +660,9 @@ export default function StakeV2({ setPendingTxns, connectWallet, trackAction }) 
 
   const { tcrPrice } = useTCRPrice(chainId, { arbitrum: chainId === ARBITRUM ? library : undefined }, active);
 
-  const mycSupplyUrl = getServerUrl(chainId, "/gmx_supply");
-  const { data: mycSupply } = useSWR([mycSupplyUrl], {
-    fetcher: (...args) => fetch(...args).then((res) => res.text()),
+  const supplyUrl = getSupplyUrl()
+  const { data: mycSupply } = useSWR([supplyUrl], {
+    fetcher: (...args) => fetch(...args).then((res) => res.json()).then((res) => res?.totalSupply),
   });
 
   let aum;
