@@ -96,7 +96,7 @@ export const PullTab = styled.button(
   > img {
     width: 10px;
     transition: transform 0.5s ease;
-    transform: ${props.visible ? "rotate(180deg) translateX(-3px)" : "rotate(0deg) translateX(3px)"};
+    transform: ${props.visible ? "rotate(180deg) translateX(-5px)" : "rotate(0deg) translateX(3px)"};
   }
 `
 );
