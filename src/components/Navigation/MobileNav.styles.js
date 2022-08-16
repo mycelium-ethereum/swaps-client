@@ -158,8 +158,7 @@ export const AccountDropdownContainer = styled(ButtonContainer)`
     margin-left: 8px;
   }
   .menu-items {
-    background: linear-gradient(83.12deg, rgba(9, 130, 0, 0.6) -208.54%, rgba(9, 130, 0, 0) 159.09%),
-      rgba(0, 10, 0, 0.9);
+    background: var(--background-gradient);
   }
   .menu-item {
     display: flex;
@@ -176,7 +175,7 @@ export const AccountDropdownContainer = styled(ButtonContainer)`
       font-size: 14px;
     }
     &:hover {
-      background-color: #003000 !important;
+      background-color: var(--action-stroke) !important;
     }
   }
 

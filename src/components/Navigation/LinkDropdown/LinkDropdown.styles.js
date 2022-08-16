@@ -41,7 +41,7 @@ export const LinkMenu = styled.ul(
   width: 180px;
   height: 200px;
   border: 1px solid var(--action-active);
-  background: linear-gradient(83.12deg, rgba(9, 130, 0, 0.6) -208.54%, rgba(9, 130, 0, 0) 159.09%), rgba(0, 10, 0, 0.9);
+  background: var(--background-gradient);
   overflow: hidden;
   transition: opacity 0.3s ease;
   opacity: ${props.open ? 1 : 0};
@@ -68,7 +68,7 @@ export const LinkItem = styled.li`
   background-color: transparent;
 
   &:hover {
-    background-color: #003000;
+    background-color: var(--action-stroke);
   }
 
   a {
@@ -79,7 +79,7 @@ export const LinkItem = styled.li`
     justify-content: center;
     font-size: 14px;
     &.active {
-      background-color: #003000;
+      background-color: var(--action-stroke);
     }
   }
 
