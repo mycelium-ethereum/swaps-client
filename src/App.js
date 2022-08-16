@@ -322,7 +322,7 @@ function AppHeaderUser({
             onClick={() => trackAction && trackAction("Button clicked", { buttonName: "Switch to Perpetual Pools" })}
           >
             <button className="default-btn switch-link">
-              Switch to <img src={poolsSmallImg} alt="Perpetual Pools" />
+              <span>Switch to</span> <img src={poolsSmallImg} alt="Perpetual Pools" />
             </button>
           </a>
         </div>
@@ -369,7 +369,7 @@ function AppHeaderUser({
           onClick={() => trackAction && trackAction("Button clicked", { buttonName: "Switch to Perpetual Pools" })}
         >
           <button exact activeClassName="active" className="default-btn switch-link" to="/">
-            Switch to <img src={poolsSmallImg} alt="Perpetual Pools" />
+            <span>Switch to</span> <img src={poolsSmallImg} alt="Perpetual Pools" />
           </button>
         </a>
       </div>
@@ -835,6 +835,7 @@ function FullApp() {
                 </div>
                 <div>
                   <div className="App-header-container-right">
+                    <AppHeaderLinks trackAction={trackAction} />
                     <AppHeaderUser
                       disconnectAccountAndCloseSettings={disconnectAccountAndCloseSettings}
                       openSettings={openSettings}

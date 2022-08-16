@@ -78,6 +78,15 @@
   display: inline-flex;
 }
 
+@media screen and (max-width: 1380px) {
+  .user-address {
+    display: none;
+  }
+  .user-address + svg {
+    margin-left: 8px;
+  }
+}
+
 @media screen and (max-width: 370px) {
   .user-address {
     display: none;

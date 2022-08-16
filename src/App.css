@@ -64,11 +64,7 @@
 }
 
 .App-header.small .App-header-links {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
+  display: flex;
 }
 
 .App-header.small .App-header-container-left + div {
@@ -144,7 +140,7 @@
 }
 
 .App-header-menu-icon-block {
-  display: flex;
+  display: none;
   flex-direction: column;
   justify-content: center;
   align-items: center;
@@ -1274,6 +1270,12 @@ button.App-button {
 }
 
 @media (max-width: 1380px) {
+  .App-header-user-link .switch-link span {
+    display: none;
+  }
+  .App-header-user-link .switch-link img {
+    margin: 0;
+  }
   .long-connect-btn {
     display: none !important;
   }
@@ -1370,8 +1372,17 @@ button.App-button {
     grid-template-columns: 1fr 1fr;
   }
 }
+@media (max-width: 1280px) {
+  .App-header.small .App-header-links {
+    display: none;
+  }
+  /* Display link dropdown here */
+}
 
 @media (max-width: 1000px) {
+  .App-header-menu-icon-block {
+    display: flex;
+  }
   .App-card-long-content {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
