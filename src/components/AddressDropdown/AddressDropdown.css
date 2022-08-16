@@ -29,7 +29,7 @@
   position: absolute;
   right: 0;
   top: calc(100% + 0.5rem);
-  min-width: 12rem;
+  min-width: 10rem;
   width: 100%;
   transform-origin: top right;
   border-radius: 4px;
@@ -95,6 +95,9 @@
   }
   .user-address + svg {
     margin-left: 8px;
+  }
+  .menu-items {
+    min-width: 12rem;
   }
 }
 
