@@ -95,7 +95,6 @@ async function getChartPricesFromStats(chainId, symbol, period) {
 
   let json = (await res.json());
   let prices = json?.prices;
-  console.log("wala", prices)
   if (!prices || prices?.length < 10) {
     throw new Error(`not enough prices data: ${prices?.length}`);
   }
