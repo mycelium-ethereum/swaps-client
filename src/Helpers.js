@@ -2003,7 +2003,9 @@ export function useAccountOrders(flagOrdersEnabled, overrideAccount) {
       };
 
       try {
-        const [serverIndexes, lastIndexes] = await Promise.all([fetchIndexesFromServer(), fetchLastIndexes()]);
+        const lastIndexes = await fetchLastIndexes();
+        const serverIndexes = { swap: [], increase: [], decrease: [] };
+
         const [swapOrders = [], increaseOrders = [], decreaseOrders = []] = await Promise.all([
           getOrders("getSwapOrders", serverIndexes.swap, lastIndexes.swap, parseSwapOrdersData),
           getOrders("getIncreaseOrders", serverIndexes.increase, lastIndexes.increase, parseIncreaseOrdersData),
