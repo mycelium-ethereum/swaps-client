@@ -71,6 +71,11 @@
   height: 100%;
 }
 
+.App-header.small .App-header-container-left + div {
+  display: flex;
+  align-items: center;
+}
+
 .App-header-link-home {
   display: none;
 }
@@ -1445,8 +1450,8 @@ button.App-button {
   }
 
   .App-header.small {
-    padding-left: 6px;
-    padding-right: 6px;
+    padding-left: 24px;
+    padding-right: 24px;
   }
 
   .Home-faqs-content {
@@ -1470,6 +1475,9 @@ button.App-button {
   }
   .App-header-menu-icon-block {
     margin-left: 6px;
+  }
+  .App-header-container-right {
+    display: none;
   }
 }
 

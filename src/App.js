@@ -833,27 +833,29 @@ function FullApp() {
                     <img src={logoSmallImg} className="small" alt="Tracer TRS Logo" />
                   </div>
                 </div>
-                <div className="App-header-container-right">
-                  <AppHeaderUser
-                    disconnectAccountAndCloseSettings={disconnectAccountAndCloseSettings}
-                    openSettings={openSettings}
-                    small
-                    setActivatingConnector={setActivatingConnector}
-                    walletModalVisible={walletModalVisible}
-                    setWalletModalVisible={setWalletModalVisible}
-                    showNetworkSelectorModal={showNetworkSelectorModal}
-                    trackAction={trackAction}
-                  />
+                <div>
+                  <div className="App-header-container-right">
+                    <AppHeaderUser
+                      disconnectAccountAndCloseSettings={disconnectAccountAndCloseSettings}
+                      openSettings={openSettings}
+                      small
+                      setActivatingConnector={setActivatingConnector}
+                      walletModalVisible={walletModalVisible}
+                      setWalletModalVisible={setWalletModalVisible}
+                      showNetworkSelectorModal={showNetworkSelectorModal}
+                      trackAction={trackAction}
+                    />
+                  </div>
+                  {/* Hamburger menu */}
+                  <button className="App-header-menu-icon-block" onClick={() => setIsDrawerVisible(!isDrawerVisible)}>
+                    {/* {!isDrawerVisible && <RiMenuLine className="App-header-menu-icon" />}
+                    {isDrawerVisible && <FaTimes className="App-header-menu-icon" />} */}
+                    <span />
+                    <span />
+                    <span />
+                  </button>
                 </div>
               </div>
-              {/* Hamburger menu */}
-              <button className="App-header-menu-icon-block" onClick={() => setIsDrawerVisible(!isDrawerVisible)}>
-                {/* {!isDrawerVisible && <RiMenuLine className="App-header-menu-icon" />}
-                    {isDrawerVisible && <FaTimes className="App-header-menu-icon" />} */}
-                <span />
-                <span />
-                <span />
-              </button>
             </div>
           </nav>
           <div

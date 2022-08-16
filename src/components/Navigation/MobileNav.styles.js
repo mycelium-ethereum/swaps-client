@@ -1,13 +1,10 @@
 import styled from "styled-components";
-import NetworkSelector from "../NetworkSelector/NetworkSelector";
 
 export const MobileNavMenu = styled.menu`
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
   padding: 0;
   margin: 0;
   height: 100vh;
+  overflow: hidden;
 
   .pools-link {
     display: block;
@@ -15,6 +12,19 @@ export const MobileNavMenu = styled.menu`
     padding: 0;
     width: calc(100% - 48px);
     margin: 30px auto 48px;
+  }
+`;
+
+export const ScrollContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  overflow: hidden;
+  height: 100vh;
+  @media (max-height: 750px) {
+    height: 750px;
+    overflow-y: auto;
+    overflow-x: hidden;
   }
 `;
 export const Header = styled.div`
@@ -90,7 +100,7 @@ export const ButtonContainer = styled.div`
   }
 `;
 
-export const SwitchButtonContainer = styled.button`
+export const SwitchButton = styled.button`
   display: flex;
   justify-content: center;
   margin: 0 !important;
@@ -102,6 +112,14 @@ export const SwitchButtonContainer = styled.button`
   border: 0.5px solid var(--border-navigation);
   margin-left: 24px;
   transition: background 0.3s ease;
+
+  @media (max-width: 350px) {
+    font-size: 14px;
+    line-height: 24px;
+    > img {
+      width: 120px;
+    }
+  }
 
   &:hover {
     background: var(--action-active);
@@ -119,8 +137,11 @@ export const AccountDropdownContainer = styled(ButtonContainer)`
   button.App-cta.transparent {
     background: unset !important;
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
+  }
+  .address-btn-container {
+    width: 100%;
   }
   .address-btn {
     width: 100%;
@@ -129,6 +150,7 @@ export const AccountDropdownContainer = styled(ButtonContainer)`
     display: block;
     font-size: 20px;
     line-height: 30px;
+    margin-right: unset;
   }
   button svg {
     display: block;
@@ -148,6 +170,9 @@ export const NetworkDropdownContainer = styled(ButtonContainer)`
     display: flex;
     justify-content: center;
     background: unset;
+    width: 100%;
+  }
+  .Selector {
     width: 100%;
   }
   .Selector-box {
