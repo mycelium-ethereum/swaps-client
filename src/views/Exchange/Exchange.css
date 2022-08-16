@@ -587,36 +587,6 @@ table.Exchange-list th {
   padding: 1rem;
 }
 
-/* Disabled Trading styles when on mainnet */
-
-.Exchange-swap-box-inner.disabled {
-  cursor: not-allowed;
-}
-
-.Exchange-swap-box-inner.disabled * {
-  pointer-events: none;
-  opacity: 0.5;
-}
-
-.Exchange-swap-box-inner .coming-soon-tooltip {
-  display: none;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  font-size: 0.9rem;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.3s ease;
-}
-
-.Exchange-swap-box-inner.disabled .coming-soon-tooltip {
-  display: block;
-}
-
-.Exchange-swap-box-inner.disabled:hover .coming-soon-tooltip {
-  opacity: 1;
-}
 .Exchange-swap-market-box {
   padding: 1rem;
   margin-top: 0.8rem;
