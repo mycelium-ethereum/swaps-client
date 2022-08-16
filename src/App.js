@@ -749,6 +749,8 @@ function FullApp() {
     }
   }, [account, chainId, tokenBalances, trackLogin, loggedInTracked, library, infoTokens, tokens]);
 
+  const accountUrl = getAccountUrl(chainId, account);
+
   return (
     <>
       <div className="App">
@@ -826,10 +828,6 @@ function FullApp() {
                 })}
               >
                 <div className="App-header-container-left">
-                  <div className="App-header-menu-icon-block" onClick={() => setIsDrawerVisible(!isDrawerVisible)}>
-                    {!isDrawerVisible && <RiMenuLine className="App-header-menu-icon" />}
-                    {isDrawerVisible && <FaTimes className="App-header-menu-icon" />}
-                  </div>
                   <div
                     className="App-header-link-main clickable"
                     onClick={() => {
@@ -857,30 +855,32 @@ function FullApp() {
                   />
                 </div>
               </div>
+              {/* Hamburger menu */}
+              <button className="App-header-menu-icon-block" onClick={() => setIsDrawerVisible(!isDrawerVisible)}>
+                {/* {!isDrawerVisible && <RiMenuLine className="App-header-menu-icon" />}
+                    {isDrawerVisible && <FaTimes className="App-header-menu-icon" />} */}
+                <span />
+                <span />
+                <span />
+              </button>
             </div>
           </nav>
-          <AnimatePresence>
-            {isDrawerVisible && (
-              <motion.div
-                onClick={() => setIsDrawerVisible(false)}
-                className="App-header-links-container App-header-drawer"
-                initial="hidden"
-                animate="visible"
-                exit="hidden"
-                variants={slideVariants}
-                transition={{ duration: 0.2 }}
-              >
-                <MobileLinks
-                  openSettings={openSettings}
-                  clickCloseIcon={() => setIsDrawerVisible(false)}
-                  trackAction={trackAction}
-                  setWalletModalVisible={setWalletModalVisible}
-                  showNetworkSelectorModal={showNetworkSelectorModal}
-                  disconnectAccountAndCloseSettings={disconnectAccountAndCloseSettings}
-                />
-              </motion.div>
-            )}
-          </AnimatePresence>
+          <div
+            className={cx("App-header-links-container App-header-drawer", {
+              closed: !isDrawerVisible,
+            })}
+          >
+            <MobileLinks
+              account={account}
+              accountUrl={accountUrl}
+              openSettings={openSettings}
+              clickCloseIcon={() => setIsDrawerVisible(false)}
+              trackAction={trackAction}
+              setWalletModalVisible={setWalletModalVisible}
+              showNetworkSelectorModal={showNetworkSelectorModal}
+              disconnectAccountAndCloseSettings={disconnectAccountAndCloseSettings}
+            />
+          </div>
           <Switch>
             <Route exact path="/">
               <Exchange

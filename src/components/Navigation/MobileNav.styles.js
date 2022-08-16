@@ -1,5 +1,5 @@
-import styled from 'styled-components';
-import NetworkSelector from '../NetworkSelector/NetworkSelector';
+import styled from "styled-components";
+import NetworkSelector from "../NetworkSelector/NetworkSelector";
 
 export const Header = styled.div`
   padding: 1.5rem 1rem;
@@ -7,7 +7,19 @@ export const Header = styled.div`
   justify-content: space-between;
   align-items: center;
   font-size: 20px;
-`
+`;
+
+export const NavBackground = styled.img`
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  z-index: -1;
+  pointer-events: none;
+  object-fit: cover;
+  object-position: left;
+`;
 
 export const HeaderClose = styled.div`
   font-weight: 400;
@@ -19,12 +31,36 @@ export const HeaderClose = styled.div`
   border-radius: 4px;
   border: 1px solid var(--cell-highlight);
   color: var(--cell-highlight);
+  transition: all 0.3s ease;
 
   .close-icon {
     margin-left: 0.5rem;
     font-size: 20px;
   }
-`
+
+  &:hover {
+    background-color: var(--cell-highlight);
+    color: white;
+    > img {
+      filter: invert(1) brightness(100);
+    }
+  }
+`;
+
+export const SwitchButton = styled.button`
+  width: 100%;
+  margin: 0 !important;
+  display: flex;
+  justify-content: center;
+  height: 48px;
+  font-size: 20px;
+  line-height: 30px;
+  margin-bottom: 48px;
+  > img {
+    height: 24px;
+    width: 168px;
+  }
+`;
 
 export const AppHeaderLinkContainer = styled.div`
   &:first-child {
@@ -43,18 +79,19 @@ export const AppHeaderLinkContainer = styled.div`
     display: block;
   }
 
-  a:hover,  a:focus, a:active {
+  a:hover,
+  a:focus,
+  a:active {
     background: #303fd024;
     color: white;
   }
-`
-
+`;
 
 export const MyceliumCopy = styled.div`
   color: var(--action-active);
   font-size: 16px;
   padding: 1.5rem 1rem;
-`
+`;
 
 const mobileButton = `
   text-align: center;
@@ -62,7 +99,7 @@ const mobileButton = `
   font-size: 20px;
   background: var(--background-navigation)!important;
   border: 0.5px solid var(--border-navigation);
-`
+`;
 
 export const PoolsSwitch = styled.div`
   font-size: 20px;
@@ -76,7 +113,7 @@ export const PoolsSwitch = styled.div`
       margin-right: 0.5rem;
     }
   }
-`
+`;
 
 export const MobileNetworkSelector = styled(NetworkSelector)`
   width: 100%;
@@ -85,7 +122,6 @@ export const MobileNetworkSelector = styled(NetworkSelector)`
 
   .network-select {
     background: transparent;
-
   }
 
   .react-select__control {
@@ -100,11 +136,11 @@ export const MobileNetworkSelector = styled(NetworkSelector)`
     padding-left: 0;
   }
 
-   .network-label {
-    display: block!important;
+  .network-label {
+    display: block !important;
     font-size: 20px;
   }
-`
+`;
 
 export const AddressDropdownContainer = styled.div`
   .address-btn-container {
@@ -116,5 +152,4 @@ export const AddressDropdownContainer = styled.div`
       border-radius: 4px;
     }
   }
-`
-
+`;
