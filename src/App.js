@@ -46,6 +46,7 @@ import {
   getUserTokenBalances,
   hasChangedAccount,
   setCurrentAccount,
+  networkOptions,
   SHOULD_EAGER_CONNECT_LOCALSTORAGE_KEY,
   CURRENT_PROVIDER_LOCALSTORAGE_KEY,
   REFERRAL_CODE_KEY,
@@ -264,26 +265,6 @@ function AppHeaderUser({
   const { chainId } = useChainId();
   const { active, account } = useWeb3React();
   const showSelector = true;
-  const networkOptions = [
-    {
-      label: "Arbitrum",
-      value: ARBITRUM,
-      icon: "ic_arbitrum_24.svg",
-      color: "#264f79",
-    },
-    {
-      label: "Testnet",
-      value: ARBITRUM_TESTNET,
-      icon: "ic_arbitrum_24.svg",
-      color: "#264f79",
-    },
-    // {
-    // label: "Avalanche",
-    // value: AVALANCHE,
-    // icon: "ic_avalanche_24.svg",
-    // color: "#E841424D",
-    // },
-  ];
 
   useEffect(() => {
     if (active) {
@@ -749,7 +730,17 @@ function FullApp() {
     }
   }, [account, chainId, tokenBalances, trackLogin, loggedInTracked, library, infoTokens, tokens]);
 
-  const accountUrl = getAccountUrl(chainId, account);
+  const selectorLabel = getChainName(chainId);
+
+  const onNetworkSelect = useCallback(
+    (option) => {
+      if (option.value === chainId) {
+        return;
+      }
+      return switchNetwork(option.value, active);
+    },
+    [chainId, active]
+  );
 
   return (
     <>
@@ -871,11 +862,12 @@ function FullApp() {
             })}
           >
             <MobileLinks
-              account={account}
-              accountUrl={accountUrl}
               openSettings={openSettings}
               clickCloseIcon={() => setIsDrawerVisible(false)}
               trackAction={trackAction}
+              networkOptions={networkOptions}
+              selectorLabel={selectorLabel}
+              onNetworkSelect={onNetworkSelect}
               setWalletModalVisible={setWalletModalVisible}
               showNetworkSelectorModal={showNetworkSelectorModal}
               disconnectAccountAndCloseSettings={disconnectAccountAndCloseSettings}

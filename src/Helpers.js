@@ -383,6 +383,21 @@ export const platformTokens = {
   },
 };
 
+export const networkOptions = [
+  {
+    label: "Arbitrum",
+    value: ARBITRUM,
+    icon: "ic_arbitrum_24.svg",
+    color: "#264f79",
+  },
+  {
+    label: "Testnet",
+    value: ARBITRUM_TESTNET,
+    icon: "ic_arbitrum_24.svg",
+    color: "#264f79",
+  },
+];
+
 const supportedChainIds = [ARBITRUM, AVALANCHE, ARBITRUM_TESTNET];
 const injectedConnector = new InjectedConnector({
   supportedChainIds,

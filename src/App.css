@@ -707,6 +707,7 @@ button.App-connect-wallet:hover {
   transition: color 0.3s ease;
   text-decoration: none;
 }
+
 .App-header-links .switch-link {
   background: var(--background-navigation);
   border: 0.5px solid var(--border-navigation);
@@ -996,6 +997,7 @@ button.App-button-option:disabled {
 
 .App-header-user-netowork {
   margin-right: 24px;
+  color: white;
 }
 
 .App-content {
