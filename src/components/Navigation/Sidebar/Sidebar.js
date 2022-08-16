@@ -1,8 +1,8 @@
 import { SideMenu, Logo, NavMenu, MenuItem, SocialLinksMenu, PullTab } from "./Sidebar.styles";
 import { NavLink } from "react-router-dom";
-import logoImg from "../../../img/logo_MYC.svg";
 import { FaChartLine, FaArrowUp, FaShoppingCart, FaAward, FaBook, FaCoins } from "react-icons/fa";
 
+import logoImg from "../../../img/logo_MYC.svg";
 import gitbookIcon from "../../../img/gitbook.svg";
 import twitterIcon from "../../../img/twitter.svg";
 import githubIcon from "../../../img/github.svg";
