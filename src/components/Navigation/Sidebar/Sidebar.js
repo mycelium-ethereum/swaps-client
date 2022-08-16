@@ -1,4 +1,4 @@
-import { SideMenu, Logo, NavMenu, MenuItem, SocialLinksMenu } from "./Sidebar.styles";
+import { SideMenu, Logo, NavMenu, MenuItem, SocialLinksMenu, PullTab } from "./Sidebar.styles";
 import { NavLink } from "react-router-dom";
 import logoImg from "../../../img/logo_MYC.svg";
 import { FaChartLine, FaArrowUp, FaShoppingCart, FaAward, FaBook, FaCoins } from "react-icons/fa";
@@ -6,6 +6,7 @@ import { FaChartLine, FaArrowUp, FaShoppingCart, FaAward, FaBook, FaCoins } from
 import gitbookIcon from "./gitbook.svg";
 import twitterIcon from "./twitter.svg";
 import githubIcon from "./github.svg";
+import arrowLeftIcon from "./arrow-left.svg";
 import discordIcon from "./discord.svg";
 
 const navLinks = [
@@ -64,9 +65,12 @@ const socialLinks = [
   },
 ];
 
-export default function Sidebar() {
+export default function Sidebar({ sidebarVisible, setSidebarVisible }) {
   return (
-    <SideMenu>
+    <SideMenu visible={sidebarVisible}>
+      <PullTab visible={sidebarVisible} onClick={() => setSidebarVisible(!sidebarVisible)}>
+        <img src={arrowLeftIcon} alt="Close" />
+      </PullTab>
       <Logo>
         <NavLink exact className="App-header-link-main" to="/">
           <img src={logoImg} alt="Tracer Logo" />

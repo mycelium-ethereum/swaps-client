@@ -79,7 +79,7 @@ import "react-toastify/dist/ReactToastify.css";
 import NetworkSelector from "./components/NetworkSelector/NetworkSelector";
 import Modal from "./components/Modal/Modal";
 import Checkbox from "./components/Checkbox/Checkbox";
-import Footer from "./Footer";
+// import Footer from "./Footer";
 
 import { RiMenuLine } from "react-icons/ri";
 import { FaTimes } from "react-icons/fa";
@@ -92,7 +92,7 @@ import "./Input.css";
 import "./AppOrder.css";
 
 import logoImg from "./img/logo_MYC.svg";
-// import logoSmallImg from "./img/logo_MYC_small.svg";
+import logoSmallImg from "./img/logo_MYC_small.svg";
 import poolsSmallImg from "./img/myc_pools_short.svg";
 import connectWalletImg from "./img/ic_wallet_24.svg";
 
@@ -380,6 +380,7 @@ function AppHeaderUser({
 }
 
 function FullApp() {
+  const [sidebarVisible, setSidebarVisible] = useState(false);
   const [loggedInTracked, setLoggedInTracked] = useState(false);
   const { trackLogin, trackPageWithTraits, trackAction, analytics } = useAnalytics();
 
@@ -746,7 +747,11 @@ function FullApp() {
 
   return (
     <>
-      <div className="App">
+      <div
+        className={cx("App", {
+          "full-width": sidebarVisible,
+        })}
+      >
         {/* <div className="App-background-side-1"></div>
         <div className="App-background-side-2"></div>
         <div className="App-background"></div>
@@ -787,7 +792,7 @@ function FullApp() {
           <nav>
             <div className="App-header large">
               <div className="App-header-container-left">
-                {/* <Link
+                <Link
                   className="App-header-link-main"
                   to="/"
                   onClick={() =>
@@ -799,7 +804,7 @@ function FullApp() {
                 >
                   <img src={logoImg} className="big" alt="Tracer TRS Logo" />
                   <img src={logoSmallImg} className="small" alt="Tracer TRS Logo" />
-                </Link> */}
+                </Link>
               </div>
               <div className="App-header-container-right">
                 {/* <AppHeaderLinks trackAction={trackAction} /> */}
@@ -963,7 +968,7 @@ function FullApp() {
             </Route>
           </Switch>
         </div>
-        <Sidebar />
+        <Sidebar sidebarVisible={sidebarVisible} setSidebarVisible={setSidebarVisible} />
         {/* <Footer /> */}
       </div>
 

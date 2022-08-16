@@ -1,6 +1,7 @@
 import styled from "styled-components";
 
-export const SideMenu = styled.aside`
+export const SideMenu = styled.aside(
+  (props) => `
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -13,7 +14,14 @@ export const SideMenu = styled.aside`
   z-index: 999;
   box-shadow: 1px -6px 32px -12px rgba(9, 130, 0, 1);
   padding: 0 24px 24px;
-`;
+  transition: transform 0.5s ease;
+  transform: ${props.visible ? "translateX(-310px)" : "translateX(0)"};
+  @media (max-width: 1280px) {
+    opacity: 0;
+    pointer-events: none;
+  }
+`
+);
 
 export const Logo = styled.div`
   display: flex;
@@ -73,7 +81,22 @@ export const SocialLinksMenu = styled.div`
   }
 `;
 
-// export const MenuItem = styled.li`
-//   margin-bottom: 20px;
-//   font-family: "aileron", sans-serif;
-// `;
+export const PullTab = styled.button(
+  (props) => `
+  position: absolute;
+  left: 100%;
+  top: 50%;
+  transform: translateY(-50%);
+  margin-left: -10px;
+  width: 30px;
+  height: 60px;
+  border-radius: 7px;
+  border: 0;
+  background-color: var(--background-primary);
+  > img {
+    width: 10px;
+    transition: transform 0.5s ease;
+    transform: ${props.visible ? "rotate(180deg) translateX(-3px)" : "rotate(0deg) translateX(3px)"};
+  }
+`
+);
