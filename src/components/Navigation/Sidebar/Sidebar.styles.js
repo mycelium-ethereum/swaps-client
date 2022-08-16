@@ -4,7 +4,7 @@ export const SideMenu = styled.aside`
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  position: absolute;
+  position: fixed;
   left: 0;
   top: 0;
   background: var(--background-primary);
