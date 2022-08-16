@@ -141,7 +141,6 @@ function inPreviewMode() {
   return false;
 }
 
-// const arbWsProvider = new ethers.providers.WebSocketProvider("wss://arb1.arbitrum.io/ws");
 const arbWsProvider = new ethers.providers.WebSocketProvider(getDefaultArbitrumRpcUrl(true));
 // const arbTestnetWsProvider = new ethers.providers.WebSocketProvider("wss://rinkeby.arbitrum.io/ws");
 const arbTestnetWsProvider = new ethers.providers.JsonRpcProvider("https://rinkeby.arbitrum.io/rpc");

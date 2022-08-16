@@ -68,6 +68,9 @@ export function getDefaultArbitrumRpcUrl(useWebsocket) {
     }
     return "https://arb-mainnet.g.alchemy.com/v2/SKz5SvTuqIVjE38XsFsy0McZbgfFPOng";
   }
+  if (useWebsocket) {
+    return "wss://arb1.arbitrum.io/ws";
+  }
   return "https://arb1.arbitrum.io/rpc";
 }
 
