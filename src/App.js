@@ -212,22 +212,22 @@ function AppHeaderLinks({ small, openSettings, clickCloseIcon, trackAction }) {
         </NavLink>
       </div>
       <div className="App-header-link-container">
-        <NavLink activeClassName="active" to="/dashboard">
+        <NavLink exact activeClassName="active" to="/dashboard">
           Dashboard
         </NavLink>
       </div>
       <div className="App-header-link-container">
-        <NavLink activeClassName="active" to="/earn">
+        <NavLink exact activeClassName="active" to="/earn">
           Earn
         </NavLink>
       </div>
       <div className="App-header-link-container">
-        <NavLink activeClassName="active" to="/buy_mlp">
+        <NavLink exact activeClassName="active" to="/buy_mlp">
           Buy
         </NavLink>
       </div>
       <div className="App-header-link-container">
-        <NavLink activeClassName="active" to="/rewards">
+        <NavLink exact activeClassName="active" to="/rewards">
           Rewards
         </NavLink>
       </div>

@@ -17,7 +17,11 @@
 }
 
 .App-content header {
-  position: relative;
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 62px;
+  width: 100%;
   z-index: 800;
 }
 
@@ -85,19 +89,19 @@
 
 .App-header-drawer .App-header-link-container a {
   font-size: 14px;
-  line-height: 18px;
+  line-height: 21px;
   font-weight: normal;
   letter-spacing: 0.1px;
   color: var(--action-active);
   padding: 15px 16px;
   text-decoration: none;
   display: block;
+  font-family: "aileron", sans-serif;
 }
 
 .App-header-drawer .App-header-link-container a:hover,
 .App-header-drawer .App-header-link-container a:focus,
 .App-header-drawer .App-header-link-container a.active {
-  background: #303fd024;
   color: white;
 }
 
@@ -402,6 +406,9 @@ button.App-connect-wallet:hover {
   background: var(--background-navigation);
   border: 0.5px solid var(--border-navigation);
 }
+.App-header-user-link .trade-link:hover {
+  background: var(--action-active);
+}
 
 .App-header-user-link .switch-link {
   background: var(--background-navigation);
@@ -655,13 +662,16 @@ button.App-connect-wallet:hover {
   padding: 18px 17px;
   display: block;
   color: var(--text-navigation);
+  font-family: "aileron", sans-serif;
   font-size: 14px;
-  line-height: 1.2rem;
+  line-height: 21px;
   font-weight: normal;
+  transition: color 0.3s ease;
 }
 
+.App-header-links a:hover,
 .App-header-links a.active {
-  color: white;
+  color: var(--action-active);
 }
 
 .App-header-links a.disabled {
@@ -936,6 +946,7 @@ button.App-button-option:disabled {
 
 .App-content {
   position: static !important;
+  padding-top: 62px;
 }
 
 .App-footer {

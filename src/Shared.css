@@ -227,6 +227,7 @@ a.plain {
   cursor: pointer;
   border: none;
   appearance: none;
+  transition: all 0.3s ease;
 }
 
 .default-btn:hover {
