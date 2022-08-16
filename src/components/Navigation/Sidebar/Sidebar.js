@@ -110,11 +110,7 @@ export default function Sidebar({ sidebarVisible, setSidebarVisible }) {
         <LegalMenu>
           {legalLinks.map((item) => (
             <MenuItem key={item.name}>
-              <a
-                href="https://swaps.docs.mycelium.xyz/perpetual-swaps/mycelium-perpetual-swaps"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
+              <a href={item.path} target="_blank" rel="noopener noreferrer">
                 <item.icon /> {item.name}
               </a>
             </MenuItem>
