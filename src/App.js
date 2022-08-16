@@ -53,6 +53,7 @@ import {
   REFERRAL_CODE_QUERY_PARAMS,
   ARBITRUM_TESTNET,
   PLACEHOLDER_ACCOUNT,
+  getDefaultArbitrumRpcUrl,
 } from "./Helpers";
 import ReaderV2 from "./abis/ReaderV2.json";
 
@@ -141,7 +142,7 @@ function inPreviewMode() {
 }
 
 // const arbWsProvider = new ethers.providers.WebSocketProvider("wss://arb1.arbitrum.io/ws");
-const arbWsProvider = new ethers.providers.JsonRpcProvider("https://arb1.arbitrum.io/rpc");
+const arbWsProvider = new ethers.providers.WebSocketProvider(getDefaultArbitrumRpcUrl(true));
 // const arbTestnetWsProvider = new ethers.providers.WebSocketProvider("wss://rinkeby.arbitrum.io/ws");
 const arbTestnetWsProvider = new ethers.providers.JsonRpcProvider("https://rinkeby.arbitrum.io/rpc");
 const avaxWsProvider = new ethers.providers.JsonRpcProvider("https://api.avax.network/ext/bc/C/rpc");

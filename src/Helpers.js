@@ -59,10 +59,13 @@ const MAX_GAS_PRICE_MAP = {
   [AVALANCHE]: "200000000000", // 200 gwei
 };
 
-const alchemyWhitelistedDomains = ["swaps.mycelium.xyz", "perpetual-swaps-git-add-mainnet-mycelium.vercel.app"];
+const alchemyWhitelistedDomains = ["swaps.mycelium.xyz", "perpetual-swaps-git-feat-enable-trading-overlay-mycelium.vercel.app"];
 
-export function getDefaultArbitrumRpcUrl() {
+export function getDefaultArbitrumRpcUrl(useWebsocket) {
   if (alchemyWhitelistedDomains.includes(window.location.host)) {
+    if (useWebsocket) {
+      return 'wss://arb-mainnet.g.alchemy.com/v2/SKz5SvTuqIVjE38XsFsy0McZbgfFPOng';
+    }
     return "https://arb-mainnet.g.alchemy.com/v2/SKz5SvTuqIVjE38XsFsy0McZbgfFPOng";
   }
   return "https://arb1.arbitrum.io/rpc";
