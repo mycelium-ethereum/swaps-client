@@ -90,16 +90,18 @@ async function getChartPricesFromStats(_chainId, symbol, period) {
     }
     reject(lastEx);
   });
+
   if (!res.ok) {
     throw new Error(`request failed ${res.status} ${res.statusText}`);
   }
+
+  // TODO uncomment if we revert back to myc-stats
   // let prices = (await res.json())?.prices;
   let prices = (await res.json());
   if (!prices || prices?.length < 10) {
     throw new Error(`not enough prices data: ${prices?.length}`);
   }
 
-  // TODO uncomment if we revert back to myc-stats
   // const OBSOLETE_THRESHOLD = Date.now() / 1000 - 60 * 30; // 30 min ago
   // const updatedAt = prices[prices.length - 1].t || 0;
   // if (updatedAt < OBSOLETE_THRESHOLD) {
