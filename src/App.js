@@ -315,7 +315,7 @@ function AppHeaderUser({
         >
           {small ? "Connect" : "Connect Wallet"}
         </ConnectWalletButton>
-        <div className="App-header-user-link">
+        <div className="App-header-user-link switch">
           <a
             href="https://pools.mycelium.xyz"
             rel="noopener noreferrer"

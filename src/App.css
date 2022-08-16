@@ -432,6 +432,9 @@ button.App-connect-wallet:hover {
 .App-header-user-link {
   margin-right: 24px;
 }
+.App-header-user-link.switch {
+  margin-right: 0;
+}
 
 .App-header-user-link .trade-link {
   background: var(--background-navigation);
