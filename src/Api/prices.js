@@ -56,16 +56,15 @@ function fillGaps(prices, periodSeconds) {
   return newPrices;
 }
 
-async function getChartPricesFromStats(chainId, symbol, period) {
+async function getChartPricesFromStats(_chainId, symbol, period) {
   if (["WBTC", "WETH", "WAVAX"].includes(symbol)) {
     symbol = symbol.substr(1);
   }
-  const hostname = "https://myc-stats.vercel.app/";
-  // const hostname = "http://localhost:3113/";
+  const hostname = "https://swaps-stats-kltusqhvaa-uw.a.run.app/";
+  // const hostname = "http://localhost:8080/";
   const timeDiff = CHART_PERIODS[period] * 3000;
   const from = Math.floor(Date.now() / 1000 - timeDiff);
-
-  const url = `${hostname}api/candles/${symbol}?preferableChainId=${chainId}&period=${period}&from=${from}&preferableSource=fast`;
+  const url = `${hostname}api/candles/${symbol}?preferableChainId=42161&period=${period}&from=${from}&preferableSource=fast`;
   const TIMEOUT = 5000;
   const res = await new Promise(async (resolve, reject) => {
     let done = false;
@@ -95,6 +94,7 @@ async function getChartPricesFromStats(chainId, symbol, period) {
 
   let json = (await res.json());
   let prices = json?.prices;
+  console.log("wala", prices)
   if (!prices || prices?.length < 10) {
     throw new Error(`not enough prices data: ${prices?.length}`);
   }
