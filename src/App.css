@@ -1434,6 +1434,9 @@ button.App-button {
   .App-header-menu-icon-block {
     display: flex;
   }
+  .App-header-container-right {
+    display: none;
+  }
 }
 
 @media (max-width: 500px) {

@@ -22,7 +22,6 @@ export const ScrollContainer = styled.div`
   overflow: hidden;
   height: 100vh;
   @media (max-height: 750px) {
-    height: 750px;
     overflow-y: auto;
     overflow-x: hidden;
   }
@@ -112,6 +111,7 @@ export const SwitchButton = styled.button`
   border: 0.5px solid var(--border-navigation);
   margin-left: 24px;
   transition: background 0.3s ease;
+  white-space: nowrap;
 
   @media (max-width: 350px) {
     font-size: 14px;
@@ -179,6 +179,26 @@ export const AccountDropdownContainer = styled(ButtonContainer)`
       background-color: #003000 !important;
     }
   }
+
+  /* Wallet dropdown */
+  .connect-wallet {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    span {
+      font-size: 20px;
+    }
+  }
+
+  @media (max-width: 350px) {
+    .connect-wallet {
+      span {
+        font-size: 14px;
+      }
+    }
+  }
 `;
 
 export const NetworkDropdownContainer = styled(ButtonContainer)`
@@ -204,6 +224,12 @@ export const NetworkDropdownContainer = styled(ButtonContainer)`
     justify-content: center;
     > img {
       margin-right: 8px;
+    }
+  }
+
+  @media (max-width: 350px) {
+    .network-label {
+      font-size: 14px;
     }
   }
 `;

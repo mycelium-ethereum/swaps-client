@@ -830,8 +830,7 @@ function FullApp() {
                         });
                     }}
                   >
-                    <img src={logoImg} className="big" alt="Tracer TRS Logo" />
-                    <img src={logoSmallImg} className="small" alt="Tracer TRS Logo" />
+                    <img src={logoImg} alt="Tracer TRS Logo" />
                   </div>
                 </div>
                 <div>
