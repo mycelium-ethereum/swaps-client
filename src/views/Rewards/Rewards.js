@@ -42,12 +42,17 @@ export default function Rewards(props) {
   const { infoTokens } = useInfoTokens(library, chainId, active, undefined, undefined);
 
   // Fetch all week data from server
-  const { data: allWeeksRewardsData, error: failedFetchingRewards } = useSWR(
+  let { data: allWeeksRewardsData, error: failedFetchingRewards } = useSWR(
     [getTracerServerUrl(chainId, "/rewards")],
     {
       fetcher: (...args) => fetch(...args).then((res) => res.json()),
     }
   );
+
+  // TEMPORARY: Set no reward weeks until backend fixed
+  if (chainId === 42161) {
+    allWeeksRewardsData = [];
+  }
 
   // Fetch only the latest week's data from server
   const { data: currentRewardWeek, error: failedFetchingWeekRewards } = useSWR(
