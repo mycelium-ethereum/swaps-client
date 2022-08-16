@@ -55,6 +55,8 @@ body,
   --background-primary: #000a00;
   --background-secondary: rgba(0, 9, 0, 0.2);
   --background-navigation: linear-gradient(83.12deg, rgba(9, 130, 0, 0.5) -208.54%, rgba(9, 130, 0, 0) 159.09%);
+  --background-gradient: linear-gradient(83.12deg, rgba(9, 130, 0, 0.6) -208.54%, rgba(9, 130, 0, 0) 159.09%),
+    rgba(0, 10, 0, 0.9);
 
   --border-navigation: #098200;
 
@@ -227,6 +229,7 @@ a.plain {
   cursor: pointer;
   border: none;
   appearance: none;
+  transition: all 0.3s ease;
 }
 
 .default-btn:hover {
@@ -383,7 +386,7 @@ button.btn-link:hover .logout-icon {
 }
 
 .page-layout {
-  min-height: calc(100vh - 62px);
+  min-height: calc(100vh - 137px);
   display: flex;
   flex-direction: column;
 }

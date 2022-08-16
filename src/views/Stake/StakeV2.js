@@ -5,7 +5,6 @@ import { useWeb3React } from "@web3-react/core";
 import Modal from "../../components/Modal/Modal";
 import Checkbox from "../../components/Checkbox/Checkbox";
 import Tooltip from "../../components/Tooltip/Tooltip";
-import Footer from "../../Footer";
 
 import Vault from "../../abis/Vault.json";
 import ReaderV2 from "../../abis/ReaderV2.json";
@@ -1081,7 +1080,6 @@ export default function StakeV2({ setPendingTxns, connectWallet, trackAction }) 
           </div>
         </div>
       </div>
-      <Footer />
     </div>
   );
 }

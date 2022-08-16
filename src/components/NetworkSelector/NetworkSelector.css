@@ -122,6 +122,12 @@
   border: 1px solid var(--action-stroke);
   border-radius: 4px;
 }
+.react-select__control {
+  transition: background-color 0.3s ease;
+}
+.react-select__control:hover {
+  background-color: var(--action-active);
+}
 
 .react-select__option {
   border: 1px solid transparent;

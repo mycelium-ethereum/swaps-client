@@ -1,5 +1,5 @@
 import React, { useEffect, useCallback } from "react";
-import Footer from "../../Footer";
+
 import "./BuyMYC.css";
 
 import { ARBITRUM, AVALANCHE, switchNetwork, useChainId } from "../../Helpers";
@@ -256,7 +256,6 @@ export default function BuyMYC() {
           </div>
         )}
       </div>
-      <Footer />
     </div>
   );
 }

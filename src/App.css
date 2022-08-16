@@ -3,8 +3,9 @@
   overflow: hidden;
   min-height: 100%;
   background-position-y: bottom;
-  background-image: url("./img/background_mesh.svg");
-  background-size: cover;
+  background-repeat: no-repeat;
+  background-image: url("./img/background_mesh.png");
+  background-size: 1440px;
 }
 
 .App-header-backdrop {
@@ -16,8 +17,12 @@
   right: 0;
 }
 
-.App-content header {
-  position: relative;
+.App-content nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 62px;
+  width: 100%;
   z-index: 800;
 }
 
@@ -30,6 +35,8 @@
   padding-left: 32px;
   padding-right: 32px;
   background: transparent 0% 0% no-repeat padding-box;
+  margin: 0 auto;
+  max-width: 1920px;
 }
 
 .App-header.large::after {
@@ -56,16 +63,21 @@
   display: none;
 }
 
+.App-header.small .App-header-links {
+  display: flex;
+}
+
+.App-header.small .App-header-container-left + div {
+  display: flex;
+  align-items: center;
+}
+
 .App-header-link-home {
   display: none;
 }
 
 .App-header-drawer {
-  background: #17182c88 0% 0% no-repeat padding-box;
   box-shadow: 8px 3px 6px #00000029;
-  background: url("./img/background_mesh_mobile.svg"), rgba(0, 49, 0, 0.95);
-  background-size: cover;
-  backdrop-filter: blur(5px);
   opacity: 1;
   position: fixed;
   z-index: 801;
@@ -74,10 +86,16 @@
   top: 0;
   height: 100vh;
   width: 100%;
-  max-width: 375px;
-  overflow-y: auto;
+  transition: height 0.5s ease;
+  overflow: hidden;
   -ms-overflow-style: none; /* Internet Explorer 10+ */
   scrollbar-width: none; /* Firefox */
+}
+.App-header-drawer * {
+  font-family: "aileron", sans-serif;
+}
+.App-header-drawer.closed {
+  height: 0vh;
 }
 .App-header-drawer::-webkit-scrollbar {
   display: none; /* Safari and Chrome */
@@ -85,19 +103,19 @@
 
 .App-header-drawer .App-header-link-container a {
   font-size: 14px;
-  line-height: 18px;
+  line-height: 21px;
   font-weight: normal;
   letter-spacing: 0.1px;
   color: var(--action-active);
   padding: 15px 16px;
   text-decoration: none;
   display: block;
+  font-family: "aileron", sans-serif;
 }
 
 .App-header-drawer .App-header-link-container a:hover,
 .App-header-drawer .App-header-link-container a:focus,
 .App-header-drawer .App-header-link-container a.active {
-  background: #303fd024;
   color: white;
 }
 
@@ -122,12 +140,29 @@
 }
 
 .App-header-menu-icon-block {
-  margin-right: 12px;
-  margin-left: 0px;
-  display: flex;
+  display: none;
+  flex-direction: column;
+  justify-content: center;
   align-items: center;
+  width: 41px;
+  height: 36px;
+  background: var(--background-navigation);
+  border-radius: 4px;
+  border: 1px solid var(--action-active);
+  transition: background 0.3s ease;
 }
-
+.App-header-menu-icon-block:hover {
+  background: var(--action-active);
+}
+.App-header-menu-icon-block span {
+  width: 17px;
+  height: 2px;
+  background-color: white;
+  margin-bottom: 4px;
+}
+.App-header-menu-icon-block span:last-of-type {
+  margin-bottom: 0;
+}
 .App-header-menu-icon {
   color: white;
   font-size: 1.3rem;
@@ -397,16 +432,30 @@ button.App-connect-wallet:hover {
 .App-header-user-link {
   margin-right: 24px;
 }
+.App-header-user-link.switch {
+  margin-right: 0;
+}
 
 .App-header-user-link .trade-link {
   background: var(--background-navigation);
   border: 0.5px solid var(--border-navigation);
+}
+.App-header-user-link .trade-link.active {
+  color: var(--action-active) !important;
+}
+.App-header-user-link .trade-link:hover {
+  background: var(--action-active);
 }
 
 .App-header-user-link .switch-link {
   background: var(--background-navigation);
   border: 0.5px solid var(--border-navigation);
   margin-left: 24px;
+  transition: background 0.3s ease;
+}
+
+.App-header-user-link .switch-link:hover {
+  background: var(--action-active);
 }
 
 .App-header-user-link .switch-link img {
@@ -655,13 +704,32 @@ button.App-connect-wallet:hover {
   padding: 18px 17px;
   display: block;
   color: var(--text-navigation);
+  font-family: "aileron", sans-serif;
   font-size: 14px;
-  line-height: 1.2rem;
+  line-height: 21px;
   font-weight: normal;
+  transition: color 0.3s ease;
+  text-decoration: none;
 }
 
+.App-header-links .switch-link {
+  background: var(--background-navigation);
+  border: 0.5px solid var(--border-navigation);
+  margin-left: 24px;
+  transition: background 0.3s ease;
+}
+
+.App-header-links .switch-link:hover {
+  background: var(--action-active);
+}
+
+.App-header-links .switch-link img {
+  margin-left: 8px;
+}
+
+.App-header-links a:hover,
 .App-header-links a.active {
-  color: white;
+  color: var(--action-active);
 }
 
 .App-header-links a.disabled {
@@ -844,17 +912,18 @@ button.App-button-option {
   cursor: pointer;
   display: inline-block;
   padding: 0.4rem 0.7rem;
-  border-radius: 3px;
+  border-radius: 7px;
   color: white;
   text-decoration: none;
   border: none;
   font-size: 1rem;
-  background: var(--action-active);
+  background-color: var(--action-active);
+  transition: all 0.3s ease;
 }
 
 a.App-button-option:hover,
 button.App-button-option:hover:enabled {
-  background: var(--action-hover);
+  background-color: var(--action-hover);
   box-shadow: var(--action-shadow);
 }
 
@@ -932,10 +1001,12 @@ button.App-button-option:disabled {
 
 .App-header-user-netowork {
   margin-right: 24px;
+  color: white;
 }
 
 .App-content {
   position: static !important;
+  padding-top: 62px;
 }
 
 .App-footer {
@@ -1202,6 +1273,12 @@ button.App-button {
 }
 
 @media (max-width: 1380px) {
+  .App-header-user-link .switch-link span {
+    display: none;
+  }
+  .App-header-user-link .switch-link img {
+    margin: 0;
+  }
   .long-connect-btn {
     display: none !important;
   }
@@ -1268,6 +1345,7 @@ button.App-button {
     height: 62px;
     backdrop-filter: blur(4px);
     display: flex;
+    align-items: center;
     justify-content: space-between;
     position: relative;
     padding-left: 16px;
@@ -1297,6 +1375,12 @@ button.App-button {
     grid-template-columns: 1fr 1fr;
   }
 }
+@media (max-width: 1280px) {
+  .App-header.small .App-header-links {
+    display: none;
+  }
+  /* Display link dropdown here */
+}
 
 @media (max-width: 1000px) {
   .App-card-long-content {
@@ -1317,6 +1401,9 @@ button.App-button {
   }
   .App-header-user-link .switch-link {
     display: none !important;
+  }
+  .App-header-menu-icon-block {
+    margin-left: 16px;
   }
 }
 
@@ -1347,6 +1434,12 @@ button.App-button {
   .App-header-link-main img.small {
     display: inline-block;
   }
+  .App-header-menu-icon-block {
+    display: flex;
+  }
+  .App-header-container-right {
+    display: none;
+  }
 }
 
 @media (max-width: 500px) {
@@ -1374,8 +1467,8 @@ button.App-button {
   }
 
   .App-header.small {
-    padding-left: 6px;
-    padding-right: 6px;
+    padding-left: 24px;
+    padding-right: 24px;
   }
 
   .Home-faqs-content {
@@ -1396,6 +1489,12 @@ button.App-button {
   .App-header .App-header-link-main {
     padding: 0.1rem !important;
     margin-left: 0rem !important;
+  }
+  .App-header-menu-icon-block {
+    margin-left: 6px;
+  }
+  .App-header-container-right {
+    display: none;
   }
 }
 
