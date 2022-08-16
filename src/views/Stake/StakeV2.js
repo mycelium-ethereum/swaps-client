@@ -317,7 +317,7 @@ function ClaimModal(props) {
       <Modal isVisible={isVisible} setIsVisible={setIsVisible} label="Claim Rewards">
         <div className="CompoundModal-menu">
           <div>
-            <Checkbox isChecked={setShouldClaimMyc} setIsChecked={setShouldClaimMyc}>
+            <Checkbox isChecked={shouldClaimMyc} setIsChecked={setShouldClaimMyc}>
               Claim MYC Rewards
             </Checkbox>
           </div>
