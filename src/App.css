@@ -6,6 +6,11 @@
   background-repeat: no-repeat;
   background-image: url("./img/background_mesh.png");
   background-size: 1440px;
+  transition: padding-left 0.5s ease;
+  padding-left: 326px;
+}
+.App.full-width {
+  padding-left: 0px;
 }
 
 .App-header-backdrop {
@@ -669,7 +674,7 @@ button.App-connect-wallet:hover {
   font-size: 1.1rem;
   padding: 1rem;
   margin-left: -1rem;
-  display: flex;
+  display: none;
   margin-right: 0.7742rem;
 }
 
@@ -1379,7 +1384,14 @@ button.App-button {
   .App-header.small .App-header-links {
     display: none;
   }
-  /* Display link dropdown here */
+  .App-header a.App-header-link-main,
+  .App-header .App-header-link-main {
+    display: flex;
+  }
+  .App,
+  .App.full-width {
+    padding-left: 0;
+  }
 }
 
 @media (max-width: 1000px) {

@@ -79,7 +79,7 @@ import "react-toastify/dist/ReactToastify.css";
 import NetworkSelector from "./components/NetworkSelector/NetworkSelector";
 import Modal from "./components/Modal/Modal";
 import Checkbox from "./components/Checkbox/Checkbox";
-import Footer from "./Footer";
+// import Footer from "./Footer";
 
 import { RiMenuLine } from "react-icons/ri";
 import { FaTimes } from "react-icons/fa";
@@ -116,6 +116,7 @@ import PositionRouter from "./abis/PositionRouter.json";
 import PageNotFound from "./views/PageNotFound/PageNotFound";
 import useSWR from "swr";
 import LinkDropdown from "./components/Navigation/LinkDropdown/LinkDropdown";
+import Sidebar from "./components/Navigation/Sidebar/Sidebar";
 
 if ("ethereum" in window) {
   window.ethereum.autoRefreshOnNetworkChange = false;
@@ -288,11 +289,11 @@ function AppHeaderUser({
   if (!active) {
     return (
       <div className="App-header-user">
-        <div className="App-header-user-link">
+        {/* <div className="App-header-user-link">
           <NavLink exact activeClassName="active" className="default-btn trade-link" to="/">
             Trade
           </NavLink>
-        </div>
+        </div> */}
         {showSelector && (
           <NetworkSelector
             options={networkOptions}
@@ -379,6 +380,7 @@ function AppHeaderUser({
 }
 
 function FullApp() {
+  const [sidebarVisible, setSidebarVisible] = useState(false);
   const [loggedInTracked, setLoggedInTracked] = useState(false);
   const { trackLogin, trackPageWithTraits, trackAction, analytics } = useAnalytics();
 
@@ -745,7 +747,11 @@ function FullApp() {
 
   return (
     <>
-      <div className="App">
+      <div
+        className={cx("App", {
+          "full-width": sidebarVisible,
+        })}
+      >
         {/* <div className="App-background-side-1"></div>
         <div className="App-background-side-2"></div>
         <div className="App-background"></div>
@@ -801,7 +807,7 @@ function FullApp() {
                 </Link>
               </div>
               <div className="App-header-container-right">
-                <AppHeaderLinks trackAction={trackAction} />
+                {/* <AppHeaderLinks trackAction={trackAction} /> */}
                 <AppHeaderUser
                   disconnectAccountAndCloseSettings={disconnectAccountAndCloseSettings}
                   openSettings={openSettings}
@@ -894,6 +900,7 @@ function FullApp() {
                 trackPageWithTraits={trackPageWithTraits}
                 trackAction={trackAction}
                 analytics={analytics}
+                sidebarVisible={sidebarVisible}
               />
             </Route>
             <Route exact path="/dashboard">
@@ -962,7 +969,8 @@ function FullApp() {
             </Route>
           </Switch>
         </div>
-        <Footer />
+        <Sidebar sidebarVisible={sidebarVisible} setSidebarVisible={setSidebarVisible} />
+        {/* <Footer /> */}
       </div>
 
       <ToastContainer
