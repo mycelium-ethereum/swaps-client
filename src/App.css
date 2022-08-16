@@ -3,8 +3,9 @@
   overflow: hidden;
   min-height: 100%;
   background-position-y: bottom;
-  background-image: url("./img/background_mesh.svg");
-  background-size: cover;
+  background-repeat: no-repeat;
+  background-image: url("./img/background_mesh.png");
+  background-size: 1440px;
 }
 
 .App-header-backdrop {
@@ -854,17 +855,18 @@ button.App-button-option {
   cursor: pointer;
   display: inline-block;
   padding: 0.4rem 0.7rem;
-  border-radius: 3px;
+  border-radius: 7px;
   color: white;
   text-decoration: none;
   border: none;
   font-size: 1rem;
-  background: var(--action-active);
+  background-color: var(--action-active);
+  transition: all 0.3s ease;
 }
 
 a.App-button-option:hover,
 button.App-button-option:hover:enabled {
-  background: var(--action-hover);
+  background-color: var(--action-hover);
   box-shadow: var(--action-shadow);
 }
 

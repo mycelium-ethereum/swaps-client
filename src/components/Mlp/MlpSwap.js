@@ -1051,24 +1051,24 @@ export default function MlpSwap(props) {
           </div>
         )}
       </div>
-      <div className="App-card MlpSwap-token-list">
+      <div className="MlpSwap-token-list">
         {/* <div className="MlpSwap-token-list-content"> */}
         <table className="token-table">
           <thead>
             <tr>
-              <th>TOKEN</th>
-              <th>PRICE</th>
+              <th>Token</th>
+              <th>Price</th>
               <th>
                 {isBuying ? (
                   <Tooltip
-                    handle={"AVAILABLE"}
+                    handle={"Available"}
                     tooltipIconPosition="right"
                     position="right-bottom text-none"
                     renderContent={() => "Available amount to deposit into MLP."}
                   />
                 ) : (
                   <Tooltip
-                    handle={"AVAILABLE"}
+                    handle={"Available"}
                     tooltipIconPosition="right"
                     position="right-bottom text-none"
                     renderContent={() => {
@@ -1082,10 +1082,10 @@ export default function MlpSwap(props) {
                   />
                 )}
               </th>
-              <th>WALLET</th>
+              <th>Wallet</th>
               <th>
                 <Tooltip
-                  handle={"FEES"}
+                  handle={"Fees"}
                   tooltipIconPosition="right"
                   position="right-bottom text-none"
                   renderContent={() => {
@@ -1156,7 +1156,7 @@ export default function MlpSwap(props) {
                 );
               }
               function renderFees() {
-                const swapUrl = `https://app.uniswap.org/#/swap?inputCurrency=${token.address}&chain=arbitrum`
+                const swapUrl = `https://app.uniswap.org/#/swap?inputCurrency=${token.address}&chain=arbitrum`;
                 switch (true) {
                   case (isBuying && isCapReached) || (!isBuying && managedUsd?.lt(1)):
                     return (

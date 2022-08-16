@@ -17,6 +17,15 @@
   box-shadow: var(--tooltip-shadow);
 
   z-index: 1000;
+  opacity: 0;
+  pointer-events: none;
+
+  transition: opacity 0.3s ease;
+}
+
+.Tooltip-popup.visible {
+  opacity: 1;
+  pointer-events: auto;
 }
 
 .Tooltip.nowrap .Tooltip-popup {

@@ -147,14 +147,17 @@ export default function DashboardV2() {
   // this is a buffer for when the manually update fees, it gives them an hour window to update
   // const shouldIncludeCurrrentFees = feeHistory.length && parseInt(Date.now() / 1000) - feeHistory[0].to > 60 * 60;
   // let totalFeesDistributed = shouldIncludeCurrrentFees
-    // ? parseFloat(bigNumberify(formatAmount(currentFeesUsd, USD_DECIMALS - 2, 0, false)).toNumber()) / 100
-    // : 0;
+  // ? parseFloat(bigNumberify(formatAmount(currentFeesUsd, USD_DECIMALS - 2, 0, false)).toNumber()) / 100
+  // : 0;
   // for (let i = 0; i < feeHistory.length; i++) {
-    // totalFeesDistributed += parseFloat(feeHistory[i].feeUsd);
+  // totalFeesDistributed += parseFloat(feeHistory[i].feeUsd);
   // }
 
   if (allFees) {
-    totalFeesDistributed = bigNumberify(allFees.mint).add(allFees.burn).add(allFees.marginAndLiquidation).add(allFees.swap);
+    totalFeesDistributed = bigNumberify(allFees.mint)
+      .add(allFees.burn)
+      .add(allFees.marginAndLiquidation)
+      .add(allFees.swap);
   }
 
   const { tcrPrice, tcrPriceFromMainnet, tcrPriceFromArbitrum } = useTCRPrice(
@@ -678,11 +681,11 @@ export default function DashboardV2() {
               <table className="token-table">
                 <thead>
                   <tr>
-                    <th>TOKEN</th>
-                    <th>PRICE</th>
-                    <th>POOL</th>
-                    <th>WEIGHT</th>
-                    <th>UTILIZATION</th>
+                    <th>Token</th>
+                    <th>Price</th>
+                    <th>Pool</th>
+                    <th>Weight</th>
+                    <th>Utilization</th>
                   </tr>
                 </thead>
                 <tbody>
