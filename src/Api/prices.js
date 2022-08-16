@@ -15,6 +15,9 @@ const FEED_ID_MAP = {
   BNB_USD: "0xc45ebd0f901ba6b2b8c7e70b717778f055ef5e6d",
   LINK_USD: "0xdfd03bfc3465107ce570a0397b247f546a42d0fa",
   UNI_USD: "0x68577f915131087199fe48913d8b416b3984fd38",
+  FXS_USD: "0x6c363c5a33ef6aa7030fade33b3ed1fe9d9c44a5",
+  CRV_USD: "0x5ea974a35c37e42dfb91004cfe2b8aab9210f772",
+  BAL_USD: "0xa022ce3aea73cbeb245fcead10e3c001551c0dd4",
   SUSHI_USD: "0x7213536a36094cd8a768a5e45203ec286cba2d74",
   AVAX_USD: "0x0fc3657899693648bba4dbd2d8b33b82e875105d",
   AAVE_USD: "0xe3f0dede4b499c07e12475087ab1a084b5f93bc0",
@@ -53,15 +56,15 @@ function fillGaps(prices, periodSeconds) {
   return newPrices;
 }
 
-async function getChartPricesFromStats(chainId, symbol, period) {
+async function getChartPricesFromStats(_chainId, symbol, period) {
   if (["WBTC", "WETH", "WAVAX"].includes(symbol)) {
     symbol = symbol.substr(1);
   }
-  const hostname = "https://myc-stats.vercel.app/"
-  // const hostname = "http://localhost:3113/";
+  const hostname = "https://dev.api.tracer.finance/"
+  // const hostname = "http://localhost:3030/";
   const timeDiff = CHART_PERIODS[period] * 3000;
   const from = Math.floor(Date.now() / 1000 - timeDiff);
-  const url = `${hostname}api/candles/${symbol}?preferableChainId=${chainId}&period=${period}&from=${from}&preferableSource=fast`;
+  const url = `${hostname}trs/candles?ticker=${symbol}&period=${period}&from=${from}`;
   const TIMEOUT = 5000;
   const res = await new Promise(async (resolve, reject) => {
     let done = false;
@@ -87,14 +90,13 @@ async function getChartPricesFromStats(chainId, symbol, period) {
   if (!res.ok) {
     throw new Error(`request failed ${res.status} ${res.statusText}`);
   }
-  const json = await res.json();
-  let prices = json?.prices;
+  const prices = await res.json();
   if (!prices || prices.length < 10) {
     throw new Error(`not enough prices data: ${prices?.length}`);
   }
 
   const OBSOLETE_THRESHOLD = Date.now() / 1000 - 60 * 30; // 30 min ago
-  const updatedAt = json?.updatedAt || 0;
+  const updatedAt = prices[prices.length - 1].t || 0;
   if (updatedAt < OBSOLETE_THRESHOLD) {
     throw new Error(
       "chart data is obsolete, last price record at " +
@@ -162,7 +164,6 @@ function getChainlinkChartPricesFromGraph(tokenSymbol, period) {
   if (!feedId) {
     throw new Error(`undefined marketName ${marketName}`);
   }
-
   const PER_CHUNK = 1000;
   const CHUNKS_TOTAL = 6;
   const requests = [];
@@ -173,7 +174,7 @@ function getChainlinkChartPricesFromGraph(tokenSymbol, period) {
         skip: ${i * PER_CHUNK},
         orderBy: unixTimestamp,
         orderDirection: desc,
-        where: {feed: "${feedId}"}
+        where: {feed: "${feedId.toLowerCase()}"}
       ) {
         unixTimestamp,
         value
@@ -202,7 +203,7 @@ function getChainlinkChartPricesFromGraph(tokenSymbol, period) {
       return prices;
     })
     .catch((err) => {
-      console.error(err);
+      console.error("Failed to fetch chainlink prices", err);
     });
 }
 
