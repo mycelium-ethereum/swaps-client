@@ -374,6 +374,7 @@
   left: 0;
   right: 0;
   top: 0.5rem;
+  overflow: hidden;
 }
 
 .Exchange-price-tooltip {
@@ -638,7 +639,7 @@ table.Exchange-list th {
 }
 
 .Selector .Modal-content {
-  /* height: max-content; */
+  height: max-content;
 }
 
 .Exchange-swap-box .Tab {

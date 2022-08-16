@@ -4,7 +4,7 @@ import { useWeb3React } from "@web3-react/core";
 import Card from "../../components/Common/Card";
 import SEO from "../../components/Common/SEO";
 import Tab from "../../components/Tab/Tab";
-import Footer from "../../Footer";
+
 import {
   useChainId,
   getPageTitle,
@@ -302,7 +302,6 @@ function Referrals({ connectWallet, setPendingTxns, pendingTxns }) {
         </div>
         {activeTab === AFFILIATES ? renderAffiliatesTab() : renderTradersTab()}
       </div>
-      <Footer />
     </SEO>
   );
 }

@@ -26,7 +26,7 @@ function getDotColor(network) {
 
 export default function NetworkSelector(props) {
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const { small, options, disabled, label, modalLabel, className, showCaret = true, trackAction } = props;
+  const { isMobileNav, small, options, disabled, label, modalLabel, className, showCaret = true, trackAction } = props;
   const [selectedLabel, setSelectedLabel] = useState(label);
   const [networkChanged, setNetworkChanged] = useState(false);
   useEffect(() => {
@@ -195,6 +195,7 @@ export default function NetworkSelector(props) {
         >
           <img src={valueIcon.default} alt="valueIcon" />
           {showCaret && <img src={selectorDropdowns} alt="selectorDropdowns" />}
+          {isMobileNav && <span className="network-label">{value.label}</span>}
         </div>
       ) : (
         <Select

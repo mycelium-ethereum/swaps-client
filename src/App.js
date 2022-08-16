@@ -46,6 +46,7 @@ import {
   getUserTokenBalances,
   hasChangedAccount,
   setCurrentAccount,
+  networkOptions,
   SHOULD_EAGER_CONNECT_LOCALSTORAGE_KEY,
   CURRENT_PROVIDER_LOCALSTORAGE_KEY,
   REFERRAL_CODE_KEY,
@@ -78,6 +79,7 @@ import "react-toastify/dist/ReactToastify.css";
 import NetworkSelector from "./components/NetworkSelector/NetworkSelector";
 import Modal from "./components/Modal/Modal";
 import Checkbox from "./components/Checkbox/Checkbox";
+// import Footer from "./Footer";
 
 import { RiMenuLine } from "react-icons/ri";
 import { FaTimes } from "react-icons/fa";
@@ -113,6 +115,8 @@ import VaultV2b from "./abis/VaultV2b.json";
 import PositionRouter from "./abis/PositionRouter.json";
 import PageNotFound from "./views/PageNotFound/PageNotFound";
 import useSWR from "swr";
+import LinkDropdown from "./components/Navigation/LinkDropdown/LinkDropdown";
+import Sidebar from "./components/Navigation/Sidebar/Sidebar";
 
 if ("ethereum" in window) {
   window.ethereum.autoRefreshOnNetworkChange = false;
@@ -212,22 +216,22 @@ function AppHeaderLinks({ small, openSettings, clickCloseIcon, trackAction }) {
         </NavLink>
       </div>
       <div className="App-header-link-container">
-        <NavLink activeClassName="active" to="/dashboard">
+        <NavLink exact activeClassName="active" to="/dashboard">
           Dashboard
         </NavLink>
       </div>
       <div className="App-header-link-container">
-        <NavLink activeClassName="active" to="/earn">
+        <NavLink exact activeClassName="active" to="/earn">
           Earn
         </NavLink>
       </div>
       <div className="App-header-link-container">
-        <NavLink activeClassName="active" to="/buy_mlp">
+        <NavLink exact activeClassName="active" to="/buy_mlp">
           Buy
         </NavLink>
       </div>
       <div className="App-header-link-container">
-        <NavLink activeClassName="active" to="/rewards">
+        <NavLink exact activeClassName="active" to="/rewards">
           Rewards
         </NavLink>
       </div>
@@ -263,26 +267,6 @@ function AppHeaderUser({
   const { chainId } = useChainId();
   const { active, account } = useWeb3React();
   const showSelector = true;
-  const networkOptions = [
-    {
-      label: "Arbitrum",
-      value: ARBITRUM,
-      icon: "ic_arbitrum_24.svg",
-      color: "#264f79",
-    },
-    {
-      label: "Testnet",
-      value: ARBITRUM_TESTNET,
-      icon: "ic_arbitrum_24.svg",
-      color: "#264f79",
-    },
-    // {
-    // label: "Avalanche",
-    // value: AVALANCHE,
-    // icon: "ic_avalanche_24.svg",
-    // color: "#E841424D",
-    // },
-  ];
 
   useEffect(() => {
     if (active) {
@@ -305,11 +289,11 @@ function AppHeaderUser({
   if (!active) {
     return (
       <div className="App-header-user">
-        <div className="App-header-user-link">
+        {/* <div className="App-header-user-link">
           <NavLink exact activeClassName="active" className="default-btn trade-link" to="/">
             Trade
           </NavLink>
-        </div>
+        </div> */}
         {showSelector && (
           <NetworkSelector
             options={networkOptions}
@@ -332,7 +316,7 @@ function AppHeaderUser({
         >
           {small ? "Connect" : "Connect Wallet"}
         </ConnectWalletButton>
-        <div className="App-header-user-link">
+        <div className="App-header-user-link switch">
           <a
             href="https://pools.mycelium.xyz"
             rel="noopener noreferrer"
@@ -340,7 +324,7 @@ function AppHeaderUser({
             onClick={() => trackAction && trackAction("Button clicked", { buttonName: "Switch to Perpetual Pools" })}
           >
             <button className="default-btn switch-link">
-              Switch to <img src={poolsSmallImg} alt="Perpetual Pools" />
+              <span>Switch to</span> <img src={poolsSmallImg} alt="Perpetual Pools" />
             </button>
           </a>
         </div>
@@ -387,7 +371,7 @@ function AppHeaderUser({
           onClick={() => trackAction && trackAction("Button clicked", { buttonName: "Switch to Perpetual Pools" })}
         >
           <button exact activeClassName="active" className="default-btn switch-link" to="/">
-            Switch to <img src={poolsSmallImg} alt="Perpetual Pools" />
+            <span>Switch to</span> <img src={poolsSmallImg} alt="Perpetual Pools" />
           </button>
         </a>
       </div>
@@ -396,6 +380,7 @@ function AppHeaderUser({
 }
 
 function FullApp() {
+  const [sidebarVisible, setSidebarVisible] = useState(false);
   const [loggedInTracked, setLoggedInTracked] = useState(false);
   const { trackLogin, trackPageWithTraits, trackAction, analytics } = useAnalytics();
 
@@ -748,9 +733,25 @@ function FullApp() {
     }
   }, [account, chainId, tokenBalances, trackLogin, loggedInTracked, library, infoTokens, tokens]);
 
+  const selectorLabel = getChainName(chainId);
+
+  const onNetworkSelect = useCallback(
+    (option) => {
+      if (option.value === chainId) {
+        return;
+      }
+      return switchNetwork(option.value, active);
+    },
+    [chainId, active]
+  );
+
   return (
     <>
-      <div className="App">
+      <div
+        className={cx("App", {
+          "full-width": sidebarVisible,
+        })}
+      >
         {/* <div className="App-background-side-1"></div>
         <div className="App-background-side-2"></div>
         <div className="App-background"></div>
@@ -788,7 +789,7 @@ function FullApp() {
               )}
             </AnimatePresence>
           )}
-          <header>
+          <nav>
             <div className="App-header large">
               <div className="App-header-container-left">
                 <Link
@@ -806,7 +807,7 @@ function FullApp() {
                 </Link>
               </div>
               <div className="App-header-container-right">
-                <AppHeaderLinks trackAction={trackAction} />
+                {/* <AppHeaderLinks trackAction={trackAction} /> */}
                 <AppHeaderUser
                   disconnectAccountAndCloseSettings={disconnectAccountAndCloseSettings}
                   openSettings={openSettings}
@@ -825,10 +826,6 @@ function FullApp() {
                 })}
               >
                 <div className="App-header-container-left">
-                  <div className="App-header-menu-icon-block" onClick={() => setIsDrawerVisible(!isDrawerVisible)}>
-                    {!isDrawerVisible && <RiMenuLine className="App-header-menu-icon" />}
-                    {isDrawerVisible && <FaTimes className="App-header-menu-icon" />}
-                  </div>
                   <div
                     className="App-header-link-main clickable"
                     onClick={() => {
@@ -839,47 +836,53 @@ function FullApp() {
                         });
                     }}
                   >
-                    <img src={logoImg} className="big" alt="Tracer TRS Logo" />
-                    <img src={logoSmallImg} className="small" alt="Tracer TRS Logo" />
+                    <img src={logoImg} alt="Tracer TRS Logo" />
                   </div>
                 </div>
-                <div className="App-header-container-right">
-                  <AppHeaderUser
-                    disconnectAccountAndCloseSettings={disconnectAccountAndCloseSettings}
-                    openSettings={openSettings}
-                    small
-                    setActivatingConnector={setActivatingConnector}
-                    walletModalVisible={walletModalVisible}
-                    setWalletModalVisible={setWalletModalVisible}
-                    showNetworkSelectorModal={showNetworkSelectorModal}
-                    trackAction={trackAction}
-                  />
+                <div>
+                  <div className="App-header-container-right">
+                    <AppHeaderLinks trackAction={trackAction} />
+                    <LinkDropdown />
+                    <AppHeaderUser
+                      disconnectAccountAndCloseSettings={disconnectAccountAndCloseSettings}
+                      openSettings={openSettings}
+                      small
+                      setActivatingConnector={setActivatingConnector}
+                      walletModalVisible={walletModalVisible}
+                      setWalletModalVisible={setWalletModalVisible}
+                      showNetworkSelectorModal={showNetworkSelectorModal}
+                      trackAction={trackAction}
+                    />
+                  </div>
+                  {/* Hamburger menu */}
+                  <button className="App-header-menu-icon-block" onClick={() => setIsDrawerVisible(!isDrawerVisible)}>
+                    {/* {!isDrawerVisible && <RiMenuLine className="App-header-menu-icon" />}
+                    {isDrawerVisible && <FaTimes className="App-header-menu-icon" />} */}
+                    <span />
+                    <span />
+                    <span />
+                  </button>
                 </div>
               </div>
             </div>
-          </header>
-          <AnimatePresence>
-            {isDrawerVisible && (
-              <motion.div
-                onClick={() => setIsDrawerVisible(false)}
-                className="App-header-links-container App-header-drawer"
-                initial="hidden"
-                animate="visible"
-                exit="hidden"
-                variants={slideVariants}
-                transition={{ duration: 0.2 }}
-              >
-                <MobileLinks
-                  openSettings={openSettings}
-                  clickCloseIcon={() => setIsDrawerVisible(false)}
-                  trackAction={trackAction}
-                  setWalletModalVisible={setWalletModalVisible}
-                  showNetworkSelectorModal={showNetworkSelectorModal}
-                  disconnectAccountAndCloseSettings={disconnectAccountAndCloseSettings}
-                />
-              </motion.div>
-            )}
-          </AnimatePresence>
+          </nav>
+          <div
+            className={cx("App-header-links-container App-header-drawer", {
+              closed: !isDrawerVisible,
+            })}
+          >
+            <MobileLinks
+              openSettings={openSettings}
+              clickCloseIcon={() => setIsDrawerVisible(false)}
+              trackAction={trackAction}
+              networkOptions={networkOptions}
+              selectorLabel={selectorLabel}
+              onNetworkSelect={onNetworkSelect}
+              setWalletModalVisible={setWalletModalVisible}
+              showNetworkSelectorModal={showNetworkSelectorModal}
+              disconnectAccountAndCloseSettings={disconnectAccountAndCloseSettings}
+            />
+          </div>
           <Switch>
             <Route exact path="/">
               <Exchange
@@ -897,6 +900,7 @@ function FullApp() {
                 trackPageWithTraits={trackPageWithTraits}
                 trackAction={trackAction}
                 analytics={analytics}
+                sidebarVisible={sidebarVisible}
               />
             </Route>
             <Route exact path="/dashboard">
@@ -965,7 +969,10 @@ function FullApp() {
             </Route>
           </Switch>
         </div>
+        <Sidebar sidebarVisible={sidebarVisible} setSidebarVisible={setSidebarVisible} />
+        {/* <Footer /> */}
       </div>
+
       <ToastContainer
         transition={Zoom}
         position="bottom-right"

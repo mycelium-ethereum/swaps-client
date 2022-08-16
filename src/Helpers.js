@@ -99,9 +99,9 @@ export const MLP_DECIMALS = 18;
 export const MYC_DECIMALS = 18;
 export const DEFAULT_MAX_USDG_AMOUNT = expandDecimals(200 * 1000 * 1000, 18);
 
-export const TAX_BASIS_POINTS = 0;
+export const TAX_BASIS_POINTS = 20;
 export const STABLE_TAX_BASIS_POINTS = 2;
-export const MINT_BURN_FEE_BASIS_POINTS = 0;
+export const MINT_BURN_FEE_BASIS_POINTS = 18;
 export const SWAP_FEE_BASIS_POINTS = 15;
 export const STABLE_SWAP_FEE_BASIS_POINTS = 3;
 export const MARGIN_FEE_BASIS_POINTS = 3;
@@ -383,6 +383,21 @@ export const platformTokens = {
   },
 };
 
+export const networkOptions = [
+  {
+    label: "Arbitrum",
+    value: ARBITRUM,
+    icon: "ic_arbitrum_24.svg",
+    color: "#264f79",
+  },
+  {
+    label: "Testnet",
+    value: ARBITRUM_TESTNET,
+    icon: "ic_arbitrum_24.svg",
+    color: "#264f79",
+  },
+];
+
 const supportedChainIds = [ARBITRUM, AVALANCHE, ARBITRUM_TESTNET];
 const injectedConnector = new InjectedConnector({
   supportedChainIds,
@@ -523,6 +538,19 @@ export function getSupplyUrl(_chainId) {
   // same supply across networks
   return "https://stats.tracer.finance/supply";
 }
+
+const BASE_TRACER_URL = process.env.REACT_APP_TRACER_API ?? 'https://api.tracer.finance'
+
+export function getTracerServerUrl(chainId, path) {
+  if (!chainId) {
+    throw new Error("chainId is not provided");
+  } else if (chainId !== ARBITRUM && chainId !== ARBITRUM_TESTNET) {
+    throw new Error("chainId is not supported")
+  }
+
+  return `${BASE_TRACER_URL}/trs${path}?network=${chainId}`;
+}
+
 export function getServerBaseUrl(chainId) {
   if (!chainId) {
     throw new Error("chainId is not provided");
@@ -1404,7 +1432,7 @@ const RPC_PROVIDERS = {
 };
 
 const FALLBACK_PROVIDERS = {
-  [ARBITRUM]: ["https://arb-mainnet.g.alchemy.com/v2/ha7CFsr1bx5ZItuR6VZBbhKozcKDY4LZ"],
+  [ARBITRUM]: ["https://arb-mainnet.g.alchemy.com/v2/SKz5SvTuqIVjE38XsFsy0McZbgfFPOng"],
   [AVALANCHE]: ["https://avax-mainnet.gateway.pokt.network/v1/lb/626f37766c499d003aada23b"],
 };
 
@@ -1604,7 +1632,7 @@ export function useEagerConnect(setActivatingConnector) {
           setActivatingConnector(connector);
           await activate(connector, undefined, true);
         }
-      } catch (ex) {}
+      } catch (ex) { }
 
       setTried(true);
     })();
@@ -2003,7 +2031,9 @@ export function useAccountOrders(flagOrdersEnabled, overrideAccount) {
       };
 
       try {
-        const [serverIndexes, lastIndexes] = await Promise.all([fetchIndexesFromServer(), fetchLastIndexes()]);
+        const lastIndexes = await fetchLastIndexes();
+        const serverIndexes = { swap: [], increase: [], decrease: [] };
+
         const [swapOrders = [], increaseOrders = [], decreaseOrders = []] = await Promise.all([
           getOrders("getSwapOrders", serverIndexes.swap, lastIndexes.swap, parseSwapOrdersData),
           getOrders("getIncreaseOrders", serverIndexes.increase, lastIndexes.increase, parseIncreaseOrdersData),

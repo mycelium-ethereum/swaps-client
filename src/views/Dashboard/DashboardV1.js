@@ -19,8 +19,6 @@ import { getContract, XGMT_EXCLUDED_ACCOUNTS } from "../../Addresses";
 import { getToken, getTokens } from "../../data/Tokens";
 import { getFeeHistory } from "../../data/Fees";
 
-import Footer from "../../Footer";
-
 import Reader from "../../abis/Reader.json";
 import YieldToken from "../../abis/YieldToken.json";
 
@@ -678,8 +676,6 @@ export default function DashboardV1() {
           ))}
         </div>
       </div>
-
-      <Footer />
     </div>
   );
 }

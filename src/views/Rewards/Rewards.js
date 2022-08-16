@@ -2,16 +2,15 @@ import React, { useState, useMemo, useEffect } from "react";
 
 import useSWR from "swr";
 
-import { getPageTitle, getTokenInfo, useChainId, useENS } from "../../Helpers";
+import { getTracerServerUrl, getPageTitle, getTokenInfo, useChainId, useENS } from "../../Helpers";
 import { useWeb3React } from "@web3-react/core";
-import { getTracerServerUrl } from "../../Api/rewards";
 import { useInfoTokens } from "../../Api";
 import { ethers } from "ethers";
 import TraderRewards from "./TraderRewards";
 import Leaderboard from "./Leaderboard";
 import * as Styles from "./Rewards.styles";
 import { LeaderboardSwitch } from "./ViewSwitch";
-import Footer from "../../Footer";
+
 import SEO from "../../components/Common/SEO";
 
 const PersonalHeader = () => (
@@ -43,12 +42,17 @@ export default function Rewards(props) {
   const { infoTokens } = useInfoTokens(library, chainId, active, undefined, undefined);
 
   // Fetch all week data from server
-  const { data: allWeeksRewardsData, error: failedFetchingRewards } = useSWR(
+  let { data: allWeeksRewardsData, error: failedFetchingRewards } = useSWR(
     [getTracerServerUrl(chainId, "/rewards")],
     {
       fetcher: (...args) => fetch(...args).then((res) => res.json()),
     }
   );
+
+  // TEMPORARY: Set no reward weeks until backend fixed
+  if (chainId === 42161) {
+    allWeeksRewardsData = [];
+  }
 
   // Fetch only the latest week's data from server
   const { data: currentRewardWeek, error: failedFetchingWeekRewards } = useSWR(
@@ -109,17 +113,17 @@ export default function Rewards(props) {
     // trader's data found
     if (traderData) {
       traderData.position = leaderboardPosition;
-      return ({
+      return {
         volume: ethers.BigNumber.from(traderData.volume),
         reward: ethers.BigNumber.from(traderData.reward),
-        position: leaderboardPosition
-      });
+        position: leaderboardPosition,
+      };
     } else {
       // trader not found but data exists so user has no rewards
       return {
         volume: ethers.BigNumber.from(0),
         reward: ethers.BigNumber.from(0),
-        rewardAmountUsd: ethers.BigNumber.from(0)
+        rewardAmountUsd: ethers.BigNumber.from(0),
       };
     }
   }, [account, currentRewardWeek]);
@@ -128,7 +132,7 @@ export default function Rewards(props) {
   const ethPrice = eth?.maxPrimaryPrice;
 
   if (ethPrice && userWeekData?.reward) {
-    userWeekData.rewardAmountUsd = userWeekData.reward?.mul(ethPrice)
+    userWeekData.rewardAmountUsd = userWeekData.reward?.mul(ethPrice);
   }
 
   let unclaimedRewardsUsd, totalRewardAmountUsd;
@@ -164,14 +168,13 @@ export default function Rewards(props) {
       setNextRewards(currentRewardWeek.end);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentRewardWeek])
-
+  }, [currentRewardWeek]);
 
   // Segment Analytics Page tracking
   useEffect(() => {
     if (!pageTracked && currentRewardWeek && analytics) {
       const traits = {
-        week: currentRewardWeek.key
+        week: currentRewardWeek.key,
       };
       trackPageWithTraits(traits);
       setPageTracked(true); // Prevent Page function being called twice
@@ -184,10 +187,12 @@ export default function Rewards(props) {
       description="Claim fees earned via being in the top 50% of traders on Mycelium Perpetual Swaps."
     >
       <Styles.StyledRewardsPage className="default-container page-layout">
-        {{
-          Personal: <PersonalHeader />,
-          Leaderboard: <LeaderboardHeader />,
-        }[currentView]}
+        {
+          {
+            Personal: <PersonalHeader />,
+            Leaderboard: <LeaderboardHeader />,
+          }[currentView]
+        }
         <LeaderboardSwitch
           switchView={switchView}
           currentView={currentView}
@@ -223,7 +228,6 @@ export default function Rewards(props) {
           connectWallet={connectWallet}
           trackAction={trackAction}
         />
-        <Footer />
       </Styles.StyledRewardsPage>
     </SEO>
   );

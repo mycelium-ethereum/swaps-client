@@ -63,7 +63,17 @@ export default function Tooltip(props) {
       >
         {props.handle}
       </span>
-      {visible && <div className={cx(["Tooltip-popup", position])}>{props.renderContent()}</div>}
+      <div
+        className={cx([
+          "Tooltip-popup",
+          position,
+          {
+            visible: visible,
+          },
+        ])}
+      >
+        {props.renderContent()}
+      </div>
     </span>
   );
 }
