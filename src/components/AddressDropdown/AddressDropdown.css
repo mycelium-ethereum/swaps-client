@@ -49,7 +49,6 @@
   padding: 8.5px 8px;
   font-size: 14px;
   line-height: 150%;
-  border-right: 1px solid var(--cell-highlight);
   border-bottom: 1px solid var(--cell-highlight);
   transition: background-color 0.3s ease;
   display: flex;
