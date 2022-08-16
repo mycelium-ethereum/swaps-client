@@ -437,7 +437,7 @@ button.App-connect-wallet:hover {
 .App-header-user-link {
   margin-right: 24px;
 }
-.App-header-user-link.switch {
+.App-header-user-link.Switch-app-btn {
   margin-right: 0;
 }
 
@@ -450,6 +450,7 @@ button.App-connect-wallet:hover {
 }
 .App-header-user-link .trade-link:hover {
   background: var(--action-active);
+  color: white !important;
 }
 
 .App-header-user-link .switch-link {
@@ -1353,8 +1354,8 @@ button.App-button {
     align-items: center;
     justify-content: space-between;
     position: relative;
-    padding-left: 16px;
-    padding-right: 16px;
+    padding-left: 32px;
+    padding-right: 32px;
     background: transparent 0% 0% no-repeat padding-box;
   }
 
@@ -1379,18 +1380,18 @@ button.App-button {
   .App-card-long-content.card-list {
     grid-template-columns: 1fr 1fr;
   }
-}
-@media (max-width: 1280px) {
-  .App-header.small .App-header-links {
-    display: none;
+  .App,
+  .App.full-width {
+    padding-left: 0;
   }
   .App-header a.App-header-link-main,
   .App-header .App-header-link-main {
     display: flex;
   }
-  .App,
-  .App.full-width {
-    padding-left: 0;
+}
+@media (max-width: 1280px) {
+  .App-header.small .App-header-links {
+    display: none;
   }
 }
 
@@ -1425,6 +1426,10 @@ button.App-button {
   }
   .Wallet-btn {
     width: 17rem;
+  }
+  .App-header.small {
+    padding-left: 16px;
+    padding-right: 16px;
   }
 }
 
@@ -1479,8 +1484,7 @@ button.App-button {
   }
 
   .App-header.small {
-    padding-left: 24px;
-    padding-right: 24px;
+    padding: 0 16px;
   }
 
   .Home-faqs-content {

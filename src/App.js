@@ -202,19 +202,14 @@ function AppHeaderLinks({ small, openSettings, clickCloseIcon, trackAction }) {
             onClick={() =>
               trackAction &&
               trackAction("Button clicked", {
-                buttonName: "Tracer Nav Logo",
+                buttonName: "Mycelium Nav Logo",
               })
             }
           >
-            <img src={logoImg} alt="Tracer TRS Logo" />
+            <img src={logoImg} alt="Mycelium Swaps Logo" />
           </Link>
         </div>
       )}
-      <div className="App-header-link-container App-header-link-home">
-        <NavLink activeClassName="active" exact to="/">
-          Home
-        </NavLink>
-      </div>
       <div className="App-header-link-container">
         <NavLink exact activeClassName="active" to="/dashboard">
           Dashboard
@@ -798,12 +793,12 @@ function FullApp() {
                   onClick={() =>
                     trackAction &&
                     trackAction("Button clicked", {
-                      buttonName: "Tracer Nav Logo",
+                      buttonName: "Mycelium Nav Logo",
                     })
                   }
                 >
-                  <img src={logoImg} className="big" alt="Tracer TRS Logo" />
-                  <img src={logoSmallImg} className="small" alt="Tracer TRS Logo" />
+                  <img src={logoImg} className="big" alt="Mycelium Swaps Logo" />
+                  <img src={logoSmallImg} className="small" alt="Mycelium Swaps Logo" />
                 </Link>
               </div>
               <div className="App-header-container-right">
@@ -826,18 +821,18 @@ function FullApp() {
                 })}
               >
                 <div className="App-header-container-left">
-                  <div
+                  <Link
                     className="App-header-link-main clickable"
+                    to="/"
                     onClick={() => {
-                      setIsDrawerVisible(!isDrawerVisible);
                       trackAction &&
                         trackAction("Button clicked", {
-                          buttonName: "Tracer Nav Logo",
+                          buttonName: "Mycelium Nav Logo",
                         });
                     }}
                   >
-                    <img src={logoImg} alt="Tracer TRS Logo" />
-                  </div>
+                    <img src={logoImg} alt="Mycelium Swaps Logo" />
+                  </Link>
                 </div>
                 <div>
                   <div className="App-header-container-right">
@@ -1109,7 +1104,7 @@ function PreviewApp() {
             <div className="App-header large preview">
               <div className="App-header-container-left">
                 <NavLink exact activeClassName="active" className="App-header-link-main" to="/">
-                  <img src={logoImg} alt="Tracer TRS Logo" />
+                  <img src={logoImg} alt="Mycelium Swaps Logo" />
                   MYC
                 </NavLink>
               </div>
@@ -1125,7 +1120,7 @@ function PreviewApp() {
               >
                 <div className="App-header-container-left">
                   <div className="App-header-link-main">
-                    <img src={logoImg} alt="Tracer TRS Logo" />
+                    <img src={logoImg} alt="Mycelium Swaps Logo" />
                   </div>
                 </div>
                 <div className="App-header-container-right">
