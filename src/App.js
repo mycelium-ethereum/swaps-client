@@ -900,6 +900,7 @@ function FullApp() {
                 trackPageWithTraits={trackPageWithTraits}
                 trackAction={trackAction}
                 analytics={analytics}
+                sidebarVisible={sidebarVisible}
               />
             </Route>
             <Route exact path="/dashboard">

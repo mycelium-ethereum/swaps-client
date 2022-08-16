@@ -364,6 +364,7 @@ export const Exchange = forwardRef((props, ref) => {
     infoTokens,
     trackPageWithTraits,
     trackAction,
+    sidebarVisible,
     analytics,
   } = props;
 
@@ -892,6 +893,7 @@ export const Exchange = forwardRef((props, ref) => {
         savedShouldShowPositionLines={savedShouldShowPositionLines}
         orders={orders}
         setToTokenAddress={setToTokenAddress}
+        sidebarVisible={sidebarVisible}
         trackAction={trackAction}
       />
     );
