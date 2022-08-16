@@ -15,7 +15,9 @@
   background: var(--action-active) !important;
 }
 .user-address {
+  display: inline-block;
   margin-left: 10px;
+  margin-right: 10px !important;
   margin-right: auto;
 }
 
