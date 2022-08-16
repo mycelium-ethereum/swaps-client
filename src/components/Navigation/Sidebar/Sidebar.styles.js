@@ -36,7 +36,12 @@ export const Logo = styled.div`
 
 export const NavMenu = styled.ul`
   padding: 0;
-  padding-bottom: 120px;
+  padding-bottom: 40px;
+`;
+
+export const LegalMenu = styled.ul`
+  padding: 0;
+  padding-bottom: 40px;
 `;
 
 export const MenuItem = styled.li`

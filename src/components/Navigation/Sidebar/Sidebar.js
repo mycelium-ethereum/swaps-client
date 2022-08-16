@@ -1,6 +1,6 @@
-import { SideMenu, Logo, NavMenu, MenuItem, SocialLinksMenu, PullTab } from "./Sidebar.styles";
+import { SideMenu, Logo, NavMenu, MenuItem, SocialLinksMenu, PullTab, LegalMenu } from "./Sidebar.styles";
 import { NavLink } from "react-router-dom";
-import { FaChartLine, FaArrowUp, FaShoppingCart, FaAward, FaBook, FaCoins } from "react-icons/fa";
+import { FaChartLine, FaArrowUp, FaShoppingCart, FaAward, FaBook, FaCoins, FaFile, FaLayerGroup } from "react-icons/fa";
 
 import logoImg from "../../../img/logo_MYC.svg";
 import gitbookIcon from "../../../img/gitbook.svg";
@@ -42,6 +42,18 @@ const navLinks = [
   },
 ];
 
+const legalLinks = [
+  {
+    name: "Privacy Policy",
+    path: "https://mycelium.xyz/privacy-policy",
+    icon: FaLayerGroup,
+  },
+  {
+    name: "Terms of Use",
+    path: "https://mycelium.xyz/terms-of-use",
+    icon: FaFile,
+  },
+];
 const socialLinks = [
   {
     name: "GitBook",
@@ -76,24 +88,39 @@ export default function Sidebar({ sidebarVisible, setSidebarVisible }) {
           <img src={logoImg} alt="Tracer Logo" />
         </NavLink>
       </Logo>
-      <NavMenu>
-        {navLinks.slice(0, navLinks.length - 1).map((item) => (
-          <MenuItem key={item.name}>
-            <NavLink activeClassName="active" exact className="App-header-link-main" to={item.path}>
-              <item.icon /> {item.name}
-            </NavLink>
+      <div>
+        <NavMenu>
+          {navLinks.slice(0, navLinks.length - 1).map((item) => (
+            <MenuItem key={item.name}>
+              <NavLink activeClassName="active" exact className="App-header-link-main" to={item.path}>
+                <item.icon /> {item.name}
+              </NavLink>
+            </MenuItem>
+          ))}
+          <MenuItem>
+            <a
+              href="https://swaps.docs.mycelium.xyz/perpetual-swaps/mycelium-perpetual-swaps"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <FaBook /> Docs
+            </a>
           </MenuItem>
-        ))}
-        <MenuItem>
-          <a
-            href="https://swaps.docs.mycelium.xyz/perpetual-swaps/mycelium-perpetual-swaps"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <FaBook /> Docs
-          </a>
-        </MenuItem>
-      </NavMenu>
+        </NavMenu>
+        <LegalMenu>
+          {legalLinks.map((item) => (
+            <MenuItem key={item.name}>
+              <a
+                href="https://swaps.docs.mycelium.xyz/perpetual-swaps/mycelium-perpetual-swaps"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <item.icon /> {item.name}
+              </a>
+            </MenuItem>
+          ))}
+        </LegalMenu>
+      </div>
       <SocialLinksMenu>
         {socialLinks.map((item) => (
           <NavLink activeClassName="active" exact className="App-header-link-main" to={item.path}>
