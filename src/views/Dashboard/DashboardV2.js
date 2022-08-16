@@ -30,6 +30,7 @@ import {
   DEFAULT_MAX_USDG_AMOUNT,
   getPageTitle,
   ARBITRUM_TESTNET,
+  getTracerServerUrl
 } from "../../Helpers";
 import { useTotalTCRInLiquidity, useTCRPrice, useTotalTCRSupply, useInfoTokens, useFees } from "../../Api";
 
@@ -50,7 +51,6 @@ import avalanche24Icon from "../../img/ic_avalanche_24.svg";
 
 import AssetDropdown from "./AssetDropdown";
 import SEO from "../../components/Common/SEO";
-import { getTracerServerUrl } from "../../Api/rewards";
 
 const { AddressZero } = ethers.constants;
 

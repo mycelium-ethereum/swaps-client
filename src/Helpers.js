@@ -538,6 +538,19 @@ export function getSupplyUrl(_chainId) {
   // same supply across networks
   return "https://stats.tracer.finance/supply";
 }
+
+const BASE_TRACER_URL = process.env.REACT_APP_TRACER_API ?? 'https://api.tracer.finance'
+
+export function getTracerServerUrl(chainId, path) {
+  if (!chainId) {
+    throw new Error("chainId is not provided");
+  } else if (chainId !== ARBITRUM && chainId !== ARBITRUM_TESTNET) {
+    throw new Error("chainId is not supported")
+  }
+
+  return `${BASE_TRACER_URL}/trs${path}?network=${chainId}`;
+}
+
 export function getServerBaseUrl(chainId) {
   if (!chainId) {
     throw new Error("chainId is not provided");

@@ -17,14 +17,12 @@ import ReferralStorage from "../abis/ReferralStorage.json";
 import { getContract } from "../Addresses";
 import { getConstant } from "../Constants";
 import {
-  UI_VERSION,
   ARBITRUM,
   AVALANCHE,
   ARBITRUM_TESTNET,
   ETHEREUM,
   bigNumberify,
   getExplorerUrl,
-  getServerUrl,
   setGasPrice,
   getGasLimit,
   replaceNativeTokenAddress,
@@ -37,11 +35,11 @@ import {
   isAddressZero,
   helperToast,
   getSupplyUrl,
+  getTracerServerUrl
 } from "../Helpers";
 import { getTokens, getTokenBySymbol, getWhitelistedTokens } from "../data/Tokens";
 
 import { nissohGraphClient, arbitrumGraphClient, avalancheGraphClient, arbitrumTestnetGraphClient } from "./common";
-import { getTracerServerUrl } from "./rewards";
 export * from "./prices";
 
 const { AddressZero } = ethers.constants;

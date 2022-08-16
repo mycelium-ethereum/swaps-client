@@ -2,9 +2,8 @@ import React, { useState, useMemo, useEffect } from "react";
 
 import useSWR from "swr";
 
-import { getPageTitle, getTokenInfo, useChainId, useENS } from "../../Helpers";
+import { getTracerServerUrl, getPageTitle, getTokenInfo, useChainId, useENS } from "../../Helpers";
 import { useWeb3React } from "@web3-react/core";
-import { getTracerServerUrl } from "../../Api/rewards";
 import { useInfoTokens } from "../../Api";
 import { ethers } from "ethers";
 import TraderRewards from "./TraderRewards";
