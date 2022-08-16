@@ -61,9 +61,12 @@ async function getChartPricesFromStats(_chainId, symbol, period) {
     symbol = symbol.substr(1);
   }
   const hostname = "https://dev.api.tracer.finance/"
+  // const hostname = "https://myc-stats.vercel.app/";
   // const hostname = "http://localhost:3030/";
   const timeDiff = CHART_PERIODS[period] * 3000;
   const from = Math.floor(Date.now() / 1000 - timeDiff);
+
+  // const url = `${hostname}api/candles/${symbol}?preferableChainId=${chainId}&period=${period}&from=${from}&preferableSource=fast`;
   const url = `${hostname}trs/candles?ticker=${symbol}&period=${period}&from=${from}`;
   const TIMEOUT = 5000;
   const res = await new Promise(async (resolve, reject) => {
@@ -90,29 +93,39 @@ async function getChartPricesFromStats(_chainId, symbol, period) {
   if (!res.ok) {
     throw new Error(`request failed ${res.status} ${res.statusText}`);
   }
-  const prices = await res.json();
-  if (!prices || prices.length < 10) {
+  // let prices = (await res.json())?.prices;
+  let prices = (await res.json());
+  if (!prices || prices?.length < 10) {
     throw new Error(`not enough prices data: ${prices?.length}`);
   }
 
-  const OBSOLETE_THRESHOLD = Date.now() / 1000 - 60 * 30; // 30 min ago
-  const updatedAt = prices[prices.length - 1].t || 0;
-  if (updatedAt < OBSOLETE_THRESHOLD) {
-    throw new Error(
-      "chart data is obsolete, last price record at " +
-        new Date(updatedAt * 1000).toISOString() +
-        " now: " +
-        new Date().toISOString()
-    );
-  }
+  // TODO uncomment if we revert back to myc-stats
+  // const OBSOLETE_THRESHOLD = Date.now() / 1000 - 60 * 30; // 30 min ago
+  // const updatedAt = prices[prices.length - 1].t || 0;
+  // if (updatedAt < OBSOLETE_THRESHOLD) {
+    // throw new Error(
+      // "chart data is obsolete, last price record at " +
+        // new Date(updatedAt * 1000).toISOString() +
+        // " now: " +
+        // new Date().toISOString()
+    // );
+  // }
 
-  prices = prices.map(({ t, o: open, c: close, h: high, l: low }) => ({
-    time: t + timezoneOffset,
-    open,
-    close,
-    high,
-    low,
-  }));
+  prices = prices.map(({ t, o: open, c: close, h: high, l: low }) => {
+    return ({
+      // time: t + timezoneOffset,
+      // open,
+      // close,
+      // high,
+      // low
+      time: parseInt(t) + timezoneOffset,
+      open: parseFloat(open),
+      close: parseFloat(close),
+      high: parseFloat(high),
+      low: parseFloat(low),
+    })
+  });
+
   return prices;
 }
 
