@@ -47,7 +47,6 @@ import OrdersList from "../../components/Exchange/OrdersList";
 import TradeHistory from "../../components/Exchange/TradeHistory";
 import ExchangeWalletTokens from "../../components/Exchange/ExchangeWalletTokens";
 import Tab from "../../components/Tab/Tab";
-import Footer from "../../Footer";
 
 import "./Exchange.css";
 import SEO from "../../components/Common/SEO";
@@ -899,9 +898,7 @@ export const Exchange = forwardRef((props, ref) => {
   };
 
   return (
-    <SEO
-      description="Trade Mycelium Perpetual Swaps to gain leveraged long or short exposure to crypto assets with low fees and zero price impact."
-    >
+    <SEO description="Trade Mycelium Perpetual Swaps to gain leveraged long or short exposure to crypto assets with low fees and zero price impact.">
       <div className="Exchange page-layout">
         <div className="Exchange-content">
           <div className="Exchange-left">
@@ -961,7 +958,6 @@ export const Exchange = forwardRef((props, ref) => {
           </div>
           <div className="Exchange-lists small">{getListSection()}</div>
         </div>
-        <Footer />
       </div>
     </SEO>
   );

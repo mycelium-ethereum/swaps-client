@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import Footer from "../../Footer";
+
 import SEO from "../../components/Common/SEO";
 import { getPageTitle } from "../../Helpers";
 import "./ReferralTerms.css";
@@ -219,7 +219,6 @@ export default function ReferralTerms(props) {
             </div>
           </div>
         </div>
-        <Footer />
       </div>
     </SEO>
   );

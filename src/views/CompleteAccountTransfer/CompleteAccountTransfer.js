@@ -9,7 +9,6 @@ import { callContract } from "../../Api";
 import { useChainId, helperToast } from "../../Helpers";
 
 import Modal from "../../components/Modal/Modal";
-import Footer from "../../Footer";
 
 import RewardRouter from "../../abis/RewardRouter.json";
 
@@ -127,7 +126,6 @@ export default function CompleteAccountTransfer(props) {
           </div>
         </div>
       )}
-      <Footer />
     </div>
   );
 }

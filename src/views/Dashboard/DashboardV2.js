@@ -38,7 +38,6 @@ import { getContract } from "../../Addresses";
 import VaultV2 from "../../abis/VaultV2.json";
 import ReaderV2 from "../../abis/ReaderV2.json";
 import MlpManager from "../../abis/MlpManager.json";
-import Footer from "../../Footer";
 
 import "./DashboardV2.css";
 
@@ -815,7 +814,6 @@ export default function DashboardV2() {
             </div>
           </div>
         </div>
-        <Footer />
       </div>
     </SEO>
   );

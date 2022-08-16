@@ -78,6 +78,7 @@ import "react-toastify/dist/ReactToastify.css";
 import NetworkSelector from "./components/NetworkSelector/NetworkSelector";
 import Modal from "./components/Modal/Modal";
 import Checkbox from "./components/Checkbox/Checkbox";
+import Footer from "./Footer";
 
 import { RiMenuLine } from "react-icons/ri";
 import { FaTimes } from "react-icons/fa";
@@ -788,7 +789,7 @@ function FullApp() {
               )}
             </AnimatePresence>
           )}
-          <header>
+          <nav>
             <div className="App-header large">
               <div className="App-header-container-left">
                 <Link
@@ -857,7 +858,7 @@ function FullApp() {
                 </div>
               </div>
             </div>
-          </header>
+          </nav>
           <AnimatePresence>
             {isDrawerVisible && (
               <motion.div
@@ -965,7 +966,9 @@ function FullApp() {
             </Route>
           </Switch>
         </div>
+        <Footer />
       </div>
+
       <ToastContainer
         transition={Zoom}
         position="bottom-right"

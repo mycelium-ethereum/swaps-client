@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import SEO from "../../components/Common/SEO";
-import Footer from "../../Footer";
+
 import { getPageTitle } from "../../Helpers";
 import PageNotFoundImg from "../../img/page-not-found.svg";
 import "./PageNotFound.css";
@@ -17,7 +17,6 @@ function PageNotFound() {
             <Link to="/">Home</Link>
           </p>
         </div>
-        <Footer />
       </div>
     </SEO>
   );

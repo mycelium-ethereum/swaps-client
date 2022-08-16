@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Link, useHistory } from "react-router-dom";
 
 import MlpSwap from "../../components/Mlp/MlpSwap";
-import Footer from "../../Footer";
+
 import "./BuyMlp.css";
 
 import { getPageTitle, useChainId } from "../../Helpers";
@@ -59,7 +59,6 @@ export default function BuyMlp(props) {
           </div>
         </div>
         <MlpSwap {...props} isBuying={isBuying} setIsBuying={setIsBuying} />
-        <Footer />
       </div>
     </SEO>
   );

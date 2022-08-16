@@ -17,7 +17,7 @@
   right: 0;
 }
 
-.App-content header {
+.App-content nav {
   position: fixed;
   top: 0;
   left: 0;
@@ -35,6 +35,8 @@
   padding-left: 32px;
   padding-right: 32px;
   background: transparent 0% 0% no-repeat padding-box;
+  margin: 0 auto;
+  max-width: 1920px;
 }
 
 .App-header.large::after {
@@ -407,6 +409,9 @@ button.App-connect-wallet:hover {
   background: var(--background-navigation);
   border: 0.5px solid var(--border-navigation);
 }
+.App-header-user-link .trade-link.active {
+  color: var(--action-active) !important;
+}
 .App-header-user-link .trade-link:hover {
   background: var(--action-active);
 }
@@ -415,6 +420,11 @@ button.App-connect-wallet:hover {
   background: var(--background-navigation);
   border: 0.5px solid var(--border-navigation);
   margin-left: 24px;
+  transition: background 0.3s ease;
+}
+
+.App-header-user-link .switch-link:hover {
+  background: var(--action-active);
 }
 
 .App-header-user-link .switch-link img {

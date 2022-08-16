@@ -2,13 +2,18 @@
   border: 1px solid #262638;
 }
 .address-btn {
-  display: inline-flex!important;
+  display: inline-flex !important;
   align-items: center;
   justify-content: center;
   color: var(--text-navigation) !important;
   background: var(--background-navigation) !important;
+  transition: background 0.3s ease;
+  height: 36px;
+  border-radius: 4px;
 }
-
+.address-btn:hover {
+  background: var(--action-active) !important;
+}
 .user-address {
   margin-left: 10px;
   margin-right: auto;

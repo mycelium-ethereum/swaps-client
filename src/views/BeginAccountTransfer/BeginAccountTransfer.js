@@ -8,7 +8,6 @@ import { getContract } from "../../Addresses";
 import { callContract } from "../../Api";
 
 import Modal from "../../components/Modal/Modal";
-import Footer from "../../Footer";
 
 import Token from "../../abis/Token.json";
 import Vester from "../../abis/Vester.json";
@@ -272,7 +271,6 @@ export default function BeginAccountTransfer(props) {
           </div>
         </div>
       </div>
-      <Footer />
     </div>
   );
 }

@@ -384,7 +384,7 @@ button.btn-link:hover .logout-icon {
 }
 
 .page-layout {
-  min-height: calc(100vh - 62px);
+  min-height: calc(100vh - 137px);
   display: flex;
   flex-direction: column;
 }

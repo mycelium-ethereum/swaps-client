@@ -5,7 +5,6 @@ import { useWeb3React } from "@web3-react/core";
 import Modal from "../../components/Modal/Modal";
 import Checkbox from "../../components/Checkbox/Checkbox";
 import Tooltip from "../../components/Tooltip/Tooltip";
-import Footer from "../../Footer";
 
 import Vault from "../../abis/Vault.json";
 import ReaderV2 from "../../abis/ReaderV2.json";
@@ -660,7 +659,7 @@ export default function StakeV2({ setPendingTxns, connectWallet, trackAction }) 
 
   const { tcrPrice } = useTCRPrice(chainId, { arbitrum: chainId === ARBITRUM ? library : undefined }, active);
 
-  const supplyUrl = getSupplyUrl()
+  const supplyUrl = getSupplyUrl();
   const { data: mycSupply_ } = useSWR([supplyUrl], {
     fetcher: (...args) => fetch(...args).then((res) => res.json()),
   });
@@ -1057,7 +1056,6 @@ export default function StakeV2({ setPendingTxns, connectWallet, trackAction }) 
           </div>
         </div>
       </div>
-      <Footer />
     </div>
   );
 }

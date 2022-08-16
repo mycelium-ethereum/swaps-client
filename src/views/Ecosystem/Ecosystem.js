@@ -1,7 +1,6 @@
 import React from "react";
 import SEO from "../../components/Common/SEO";
 
-import Footer from "../../Footer";
 import { getPageTitle } from "../../Helpers";
 
 import arbitrumIcon from "../../img/ic_arbitrum_16.svg";
@@ -666,7 +665,6 @@ export default function Ecosystem() {
           </div>
           */}
         </div>
-        <Footer />
       </div>
     </SEO>
   );
