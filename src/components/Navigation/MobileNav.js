@@ -45,7 +45,7 @@ export default function AppHeaderLinks({
 
   useEffect(() => {
     const handleResize = () => {
-      if (window.innerWidth > 1380) {
+      if (window.innerWidth > 670) {
         clickCloseIcon();
       }
     };

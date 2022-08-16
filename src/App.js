@@ -115,6 +115,7 @@ import VaultV2b from "./abis/VaultV2b.json";
 import PositionRouter from "./abis/PositionRouter.json";
 import PageNotFound from "./views/PageNotFound/PageNotFound";
 import useSWR from "swr";
+import LinkDropdown from "./components/Navigation/LinkDropdown/LinkDropdown";
 
 if ("ethereum" in window) {
   window.ethereum.autoRefreshOnNetworkChange = false;
@@ -836,6 +837,7 @@ function FullApp() {
                 <div>
                   <div className="App-header-container-right">
                     <AppHeaderLinks trackAction={trackAction} />
+                    <LinkDropdown />
                     <AppHeaderUser
                       disconnectAccountAndCloseSettings={disconnectAccountAndCloseSettings}
                       openSettings={openSettings}

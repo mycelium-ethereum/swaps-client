@@ -1380,9 +1380,6 @@ button.App-button {
 }
 
 @media (max-width: 1000px) {
-  .App-header-menu-icon-block {
-    display: flex;
-  }
   .App-card-long-content {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
@@ -1433,6 +1430,9 @@ button.App-button {
 
   .App-header-link-main img.small {
     display: inline-block;
+  }
+  .App-header-menu-icon-block {
+    display: flex;
   }
 }
 

@@ -157,6 +157,28 @@ export const AccountDropdownContainer = styled(ButtonContainer)`
     color: var(--action-active);
     margin-left: 8px;
   }
+  .menu-items {
+    background: linear-gradient(83.12deg, rgba(9, 130, 0, 0.6) -208.54%, rgba(9, 130, 0, 0) 159.09%),
+      rgba(0, 10, 0, 0.9);
+  }
+  .menu-item {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 40px;
+    width: 100%;
+    transition: background-color 0.3s ease;
+    background-color: transparent;
+    > img {
+      filter: invert(1) brightness(100);
+    }
+    > p {
+      font-size: 14px;
+    }
+    &:hover {
+      background-color: #003000 !important;
+    }
+  }
 `;
 
 export const NetworkDropdownContainer = styled(ButtonContainer)`
@@ -239,15 +261,3 @@ export const PoolsSwitch = styled.div`
     }
   }
 `;
-
-// export const AddressDropdownContainer = styled.div`
-//   .address-btn-container {
-//     padding-left: 1.5rem;
-//     padding-right: 1.5rem;
-//     button {
-//       ${mobileButton}
-//       width: 100%;
-//       border-radius: 4px;
-//     }
-//   }
-// `;
