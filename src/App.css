@@ -918,6 +918,12 @@ button.App-button-option:disabled {
   text-align: right;
 }
 
+.App-slippage-tolerance-error {
+  color: red;
+  font-size: 0.8rem;
+  margin: 0.5rem 0;
+}
+
 .Network-icon {
   vertical-align: middle;
   width: 1.2rem;

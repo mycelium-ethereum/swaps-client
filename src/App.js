@@ -527,8 +527,28 @@ function FullApp() {
     DEFAULT_SLIPPAGE_AMOUNT
   );
   const [slippageAmount, setSlippageAmount] = useState(0);
+  const [slippageError, setSlippageError] = useState("");
   const [isPnlInLeverage, setIsPnlInLeverage] = useState(false);
   const [showPnlAfterFees, setShowPnlAfterFees] = useState(false);
+
+  const MAX_DECIMALS = 2;
+
+  const parseSlippageAmount = (amount) => {
+    const strWithoutLeadingsZeroes = amount.replace(/^[0]+/g, "0");
+    const decimals = strWithoutLeadingsZeroes.toString().split(".")[1];
+    if (parseFloat(amount) > 5.0) {
+      setSlippageError("Slippage should be less than 5%");
+    } else if (decimals?.length > MAX_DECIMALS) {
+      setSlippageError("Max slippage precision is 0.01%");
+    }
+    // limit the amount of decimals
+    else if (!decimals || decimals?.length <= MAX_DECIMALS) {
+      // replace commas with periods for other locales
+      setSlippageAmount(strWithoutLeadingsZeroes.replace(/,/g, "."));
+      setSlippageError("");
+    }
+    setSlippageAmount(amount);
+  };
 
   const [savedIsPnlInLeverage, setSavedIsPnlInLeverage] = useLocalStorageSerializeKey(
     [chainId, IS_PNL_IN_LEVERAGE_KEY],
@@ -558,26 +578,28 @@ function FullApp() {
   };
 
   const saveAndCloseSettings = () => {
-    const slippage = parseFloat(slippageAmount);
-    if (isNaN(slippage)) {
-      helperToast.error("Invalid slippage value");
-      return;
-    }
-    if (slippage > 5) {
-      helperToast.error("Slippage should be less than 5%");
-      return;
-    }
+    if (slippageError === "") {
+      const slippage = parseFloat(slippageAmount);
+      if (isNaN(slippage)) {
+        helperToast.error("Invalid slippage value");
+        return;
+      }
+      if (slippage > 5) {
+        helperToast.error("Slippage should be less than 5%");
+        return;
+      }
 
-    const basisPoints = (slippage * BASIS_POINTS_DIVISOR) / 100;
-    if (parseInt(basisPoints) !== parseFloat(basisPoints)) {
-      helperToast.error("Max slippage precision is 0.01%");
-      return;
-    }
+      const basisPoints = (slippage * BASIS_POINTS_DIVISOR) / 100;
+      if (parseInt(basisPoints) !== parseFloat(basisPoints)) {
+        helperToast.error("Max slippage precision is 0.01%");
+        return;
+      }
 
-    setSavedIsPnlInLeverage(isPnlInLeverage);
-    setSavedShowPnlAfterFees(showPnlAfterFees);
-    setSavedSlippageAmount(basisPoints);
-    setIsSettingsVisible(false);
+      setSavedIsPnlInLeverage(isPnlInLeverage);
+      setSavedShowPnlAfterFees(showPnlAfterFees);
+      setSavedSlippageAmount(basisPoints);
+      setIsSettingsVisible(false);
+    }
   };
   useEffect(() => {
     if (isDrawerVisible) {
@@ -1004,12 +1026,14 @@ function FullApp() {
             <input
               type="number"
               className="App-slippage-tolerance-input"
+              step="0.01"
               min="0"
               value={slippageAmount}
-              onChange={(e) => setSlippageAmount(e.target.value)}
+              onChange={(e) => parseSlippageAmount(e.target.value)}
             />
             <div className="App-slippage-tolerance-input-percent">%</div>
           </div>
+          {slippageError !== "" && <div className="App-slippage-tolerance-error">{slippageError}</div>}
         </div>
         <div className="Exchange-settings-row">
           <Checkbox isChecked={showPnlAfterFees} setIsChecked={setShowPnlAfterFees}>
