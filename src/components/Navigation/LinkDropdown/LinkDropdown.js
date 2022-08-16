@@ -6,10 +6,6 @@ import { NavLink } from "react-router-dom";
 
 const navLinks = [
   {
-    name: "Home",
-    path: "/",
-  },
-  {
     name: "Dashboard",
     path: "/dashboard",
   },
