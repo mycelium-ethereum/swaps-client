@@ -57,6 +57,8 @@ body,
   --background-navigation: linear-gradient(83.12deg, rgba(9, 130, 0, 0.5) -208.54%, rgba(9, 130, 0, 0) 159.09%);
   --background-gradient: linear-gradient(83.12deg, rgba(9, 130, 0, 0.6) -208.54%, rgba(9, 130, 0, 0) 159.09%),
     rgba(0, 10, 0, 0.9);
+  --background-gradient-solid: linear-gradient(83.12deg, rgba(9, 130, 0, 1) -208.54%, rgba(9, 130, 0, 0) 159.09%),
+    rgba(0, 10, 0, 1);
 
   --border-navigation: #098200;
 

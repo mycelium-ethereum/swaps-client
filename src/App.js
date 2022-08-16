@@ -92,7 +92,7 @@ import "./Input.css";
 import "./AppOrder.css";
 
 import logoImg from "./img/logo_MYC.svg";
-import logoSmallImg from "./img/logo_MYC_small.svg";
+// import logoSmallImg from "./img/logo_MYC_small.svg";
 import poolsSmallImg from "./img/myc_pools_short.svg";
 import connectWalletImg from "./img/ic_wallet_24.svg";
 
@@ -116,6 +116,7 @@ import PositionRouter from "./abis/PositionRouter.json";
 import PageNotFound from "./views/PageNotFound/PageNotFound";
 import useSWR from "swr";
 import LinkDropdown from "./components/Navigation/LinkDropdown/LinkDropdown";
+import Sidebar from "./components/Navigation/Sidebar/Sidebar";
 
 if ("ethereum" in window) {
   window.ethereum.autoRefreshOnNetworkChange = false;
@@ -288,11 +289,11 @@ function AppHeaderUser({
   if (!active) {
     return (
       <div className="App-header-user">
-        <div className="App-header-user-link">
+        {/* <div className="App-header-user-link">
           <NavLink exact activeClassName="active" className="default-btn trade-link" to="/">
             Trade
           </NavLink>
-        </div>
+        </div> */}
         {showSelector && (
           <NetworkSelector
             options={networkOptions}
@@ -315,7 +316,7 @@ function AppHeaderUser({
         >
           {small ? "Connect" : "Connect Wallet"}
         </ConnectWalletButton>
-        <div className="App-header-user-link">
+        <div className="App-header-user-link switch">
           <a
             href="https://pools.mycelium.xyz"
             rel="noopener noreferrer"
@@ -786,7 +787,7 @@ function FullApp() {
           <nav>
             <div className="App-header large">
               <div className="App-header-container-left">
-                <Link
+                {/* <Link
                   className="App-header-link-main"
                   to="/"
                   onClick={() =>
@@ -798,10 +799,10 @@ function FullApp() {
                 >
                   <img src={logoImg} className="big" alt="Tracer TRS Logo" />
                   <img src={logoSmallImg} className="small" alt="Tracer TRS Logo" />
-                </Link>
+                </Link> */}
               </div>
               <div className="App-header-container-right">
-                <AppHeaderLinks trackAction={trackAction} />
+                {/* <AppHeaderLinks trackAction={trackAction} /> */}
                 <AppHeaderUser
                   disconnectAccountAndCloseSettings={disconnectAccountAndCloseSettings}
                   openSettings={openSettings}
@@ -962,7 +963,8 @@ function FullApp() {
             </Route>
           </Switch>
         </div>
-        <Footer />
+        <Sidebar />
+        {/* <Footer /> */}
       </div>
 
       <ToastContainer
