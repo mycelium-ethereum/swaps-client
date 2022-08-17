@@ -259,8 +259,6 @@ export default function ExchangeTVChart(props) {
       return;
     }
     const resizeChart = () => {
-      console.log(chartRef.current.offsetWidth);
-      console.log(chartRef.current.offsetHeight);
       currentChart.resize(chartRef.current.offsetWidth, chartRef.current.offsetHeight);
     };
     window.addEventListener("resize", resizeChart);
