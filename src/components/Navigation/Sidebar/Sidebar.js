@@ -119,9 +119,11 @@ export default function Sidebar({ sidebarVisible, setSidebarVisible }) {
       </div>
       <SocialLinksMenu>
         {socialLinks.map((item) => (
-          <NavLink key={item.path} activeClassName="active" exact className="App-header-link-main" to={item.path}>
-            <img src={item.icon} alt={item.name} />
-          </NavLink>
+          <MenuItem key={item.name}>
+            <a href={item.path} target="_blank" rel="noopener noreferrer">
+              <img src={item.icon} alt={item.name} />
+            </a>
+          </MenuItem>
         ))}
       </SocialLinksMenu>
     </SideMenu>

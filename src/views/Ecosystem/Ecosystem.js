@@ -10,7 +10,8 @@ import "./Ecosystem.css";
 
 export default function Ecosystem() {
   return (
-    <SEO title={getPageTitle("Ecosystem Projects")}>
+    <>
+      <SEO title={getPageTitle("Ecosystem Projects")} />
       <div className="DashboardV2 Page page-layout">
         <div>
           <div className="Page-title-section">
@@ -666,6 +667,6 @@ export default function Ecosystem() {
           */}
         </div>
       </div>
-    </SEO>
+    </>
   );
 }

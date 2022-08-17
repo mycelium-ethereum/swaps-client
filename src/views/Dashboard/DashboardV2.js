@@ -30,7 +30,7 @@ import {
   DEFAULT_MAX_USDG_AMOUNT,
   getPageTitle,
   ARBITRUM_TESTNET,
-  getTracerServerUrl
+  getTracerServerUrl,
 } from "../../Helpers";
 import { useTotalTCRInLiquidity, useTCRPrice, useTotalTCRSupply, useInfoTokens, useFees } from "../../Api";
 
@@ -390,10 +390,11 @@ export default function DashboardV2() {
   };
 
   return (
-    <SEO
-      title={getPageTitle("Dashboard")}
-      description="View stats on Mycelium Perpetual Swaps, the MYC token, the MLP token and the MLP liquidity pool."
-    >
+    <>
+      <SEO
+        title={getPageTitle("Dashboard")}
+        description="View stats on Mycelium Perpetual Swaps, the MYC token, the MLP token and the MLP liquidity pool."
+      />
       <div className="default-container DashboardV2 page-layout">
         <div className="section-title-block">
           <div className="section-title-content">
@@ -815,6 +816,6 @@ export default function DashboardV2() {
           </div>
         </div>
       </div>
-    </SEO>
+    </>
   );
 }

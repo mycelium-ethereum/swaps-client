@@ -2838,7 +2838,7 @@ export function sleep(ms) {
 }
 
 export function getPageTitle(data) {
-  return `${data} | Mycelium Perpetual Swaps`;
+  return `${data} | Perpetual Swaps`;
 }
 
 export function isHashZero(value) {
