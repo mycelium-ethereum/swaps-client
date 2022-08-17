@@ -56,7 +56,7 @@ export const LinkMenu = styled.ul(
 `
 );
 
-export const LinkItem = styled.li`
+export const ListItem = styled.li`
   display: flex;
   align-items: center;
   justify-content: center;
