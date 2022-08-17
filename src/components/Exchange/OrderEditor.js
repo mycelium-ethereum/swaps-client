@@ -257,58 +257,6 @@ export default function OrderEditor(props) {
     return "Update Order";
   };
 
-  // const trackEditOrder = (modalName, tradeType) => {
-  //   const actionName = `${modalName}`;
-
-  //   try {
-  //     const fromToken = getToken(chainId, fromTokenAddress);
-  //     const toToken = getToken(chainId, toTokenAddress);
-  //     const leverage = (isLong || isShort) && hasLeverageOption && parseFloat(leverageOption).toFixed(2);
-  //     const market = swapOption !== "Swap" ? `${toToken.symbol}/USD` : "No market - swap"; //No market for Swap
-  //     const collateralAfterFees = feesUsd ? fromUsdMin.sub(feesUsd) : "No collateral - swap";
-  //     const spread = getSpread(fromTokenInfo, toTokenInfo, isLong, nativeTokenAddress);
-  //     const entryPrice =
-  //       isLong || isShort ? formatAmount(entryMarkPrice, USD_DECIMALS, 2, false) : "No entry price - swap";
-  //     let liqPrice = parseFloat(determineLiquidationPrice());
-  //     liqPrice = liqPrice < 0 ? 0 : liqPrice;
-
-  //     // Format user ERC20 token balances from BigNumber to float
-  //     const [userBalances, tokenPrices, poolBalances] = getUserTokenBalances(infoTokens);
-
-  //     const traits = {
-  //       tradeType: tradeType,
-  //       position: swapOption,
-  //       market: market,
-  //       tokenToPay: fromToken.symbol,
-  //       tokenToReceive: toToken.symbol,
-  //       amountToPay: parseFloat(fromValue),
-  //       amountToReceive: parseFloat(toValue),
-  //       fromCurrencyBalance: parseFloat(formatAmount(fromBalance, fromToken.decimals, 4, false)),
-  //       fromCurrencyToken: fromToken.symbol,
-  //       leverage: parseFloat(leverage),
-  //       feesUsd: parseFloat(formatAmount(feesUsd, 4, 4, false)),
-  //       [`fees${fromToken.symbol}`]: parseFloat(formatAmount(fees, fromToken.decimals, 4, false)),
-  //       walletAddress: account,
-  //       network: NETWORK_NAME[chainId],
-  //       profitsIn: toToken.symbol,
-  //       liqPrice: liqPrice,
-  //       collateral: `$${parseFloat(formatAmount(collateralAfterFees, USD_DECIMALS, 2, false))}`,
-  //       spreadIsHigh: spread.isHigh,
-  //       spreadValue: parseFloat(formatAmount(spread.value, 4, 4, true)),
-  //       entryPrice: parseFloat(entryPrice),
-  //       borrowFee: determineBorrowFee(),
-  //       allowedSlippage: parseFloat(formatAmount(allowedSlippage, 2, 2)),
-  //       upToOnePercentSlippageEnabled: isHigherSlippageAllowed,
-  //       ...userBalances,
-  //       ...tokenPrices,
-  //       ...poolBalances,
-  //     };
-  //     trackAction && trackAction(actionName, traits);
-  //   } catch (err) {
-  //     console.error(`Unable to track ${actionName} event`, err);
-  //   }
-  // };
-
   if (order.type !== SWAP) {
     const triggerPricePrefix = order.triggerAboveThreshold ? TRIGGER_PREFIX_ABOVE : TRIGGER_PREFIX_BELOW;
     return (
