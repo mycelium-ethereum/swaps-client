@@ -2881,6 +2881,7 @@ export function getSpread(fromTokenInfo, toTokenInfo, isLong, nativeTokenAddress
   if (fromTokenInfo && fromTokenInfo.maxPrice && toTokenInfo && toTokenInfo.minPrice) {
     const fromDiff = fromTokenInfo.maxPrice.sub(fromTokenInfo.minPrice);
     const fromSpread = fromDiff.mul(PRECISION).div(fromTokenInfo.maxPrice);
+
     const toDiff = toTokenInfo.maxPrice.sub(toTokenInfo.minPrice);
     const toSpread = toDiff.mul(PRECISION).div(toTokenInfo.maxPrice);
 
