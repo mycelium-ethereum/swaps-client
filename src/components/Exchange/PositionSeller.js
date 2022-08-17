@@ -30,13 +30,16 @@ import {
   MARKET,
   STOP,
   DECREASE,
+  LIMIT,
   useLocalStorageSerializeKey,
   calculatePositionDelta,
   getDeltaStr,
   getProfitPrice,
   formatDateTime,
   getTimeRemaining,
-  LIMIT,
+  getAnalyticsEventStage,
+  convertStringToFloat,
+  getUserTokenBalances,
 } from "../../Helpers";
 import { getConstant } from "../../Constants";
 import { createDecreaseOrder, callContract, useHasOutdatedUi } from "../../Api";
@@ -599,6 +602,7 @@ export default function PositionSeller(props) {
             size: nextSize,
           },
         };
+        trackClosePosition(3);
 
         setPendingPositions({ ...pendingPositions });
       })
@@ -678,107 +682,66 @@ export default function PositionSeller(props) {
 
   const shouldShowExistingOrderWarning = false;
 
-  // const determineLiquidationPrice = () => {
-  //   switch (true) {
-  //     case !!existingLiquidationPrice:
-  //       return formatAmount(existingLiquidationPrice, USD_DECIMALS, 2, false);
-  //     case !!displayLiquidationPrice:
-  //       return formatAmount(displayLiquidationPrice, USD_DECIMALS, 2, false);
-  //     default:
-  //       return 0;
-  //   }
-  // };
+  const trackClosePosition = (stage) => {
+    const eventName = getAnalyticsEventStage(stage);
+    try {
+      const size = convertStringToFloat(formatAmount(position.size, USD_DECIMALS, 2, true));
+      const collateral = convertStringToFloat(formatAmount(position.collateral, USD_DECIMALS, 2, true));
+      const nextCollateralValue = nextCollateral
+        ? convertStringToFloat(formatAmount(nextCollateral, USD_DECIMALS, 2, true))
+        : 0;
+      const leverage = convertStringToFloat(formatAmount(position.leverage, 4, 2, true));
+      const nextLeverageValue = nextLeverage ? convertStringToFloat(formatAmount(nextLeverage, 4, 2, true)) : 0;
+      const liqPrice = convertStringToFloat(formatAmount(liquidationPrice, USD_DECIMALS, 2, true));
+      const nextLiqPriceValue = nextLiquidationPrice
+        ? convertStringToFloat(formatAmount(nextLiquidationPrice, USD_DECIMALS, 2, true))
+        : 0;
+      const amountToPay = convertedAmountFormatted;
+      const allowedSlippageValue = convertStringToFloat(formatAmount(allowedSlippage, 2, 2));
+      const entryPrice = convertStringToFloat(formatAmount(position.averagePrice, USD_DECIMALS, 2, true));
+      const exitPrice = convertStringToFloat(formatAmount(position.markPrice, USD_DECIMALS, 2, true));
+      const borrowFeeValue = convertStringToFloat(formatAmount(fundingFee, USD_DECIMALS, 2, true));
+      const closingFee = convertStringToFloat(formatAmount(positionFee, USD_DECIMALS, 2, true));
+      const amountToReceiveUsd = convertStringToFloat(formatAmount(receiveAmount, USD_DECIMALS, 2, true));
+      // const tokenToPay = isDeposit ? "USD" : position.collateralToken.symbol;
+      const amountToReceive = convertStringToFloat(
+        formatAmount(convertedReceiveAmount, position.collateralToken.decimals, 4, true)
+      );
+      const [userBalances, tokenPrices, poolBalances] = getUserTokenBalances(infoTokens);
 
-  // const determineBorrowFee = () => {
-  //   let borrowFee = 0;
-  //   switch (true) {
-  //     case isLong && toTokenInfo:
-  //       borrowFee = parseFloat(formatAmount(toTokenInfo.fundingRate, 4, 4));
-  //       break;
-  //     case isShort && shortCollateralToken:
-  //       borrowFee = parseFloat(formatAmount(shortCollateralToken.fundingRate, 4, 4));
-  //       break;
-  //     default:
-  //       borrowFee = 0;
-  //       break;
-  //   }
-  //   if (
-  //     (isLong && toTokenInfo && toTokenInfo.fundingRate) ||
-  //     (isShort && shortCollateralToken && shortCollateralToken.fundingRate)
-  //   ) {
-  //     return `${borrowFee}% / 1h`;
-  //   } else {
-  //     return borrowFee;
-  //   }
-  // };
-
-  // const trackTrade = (stage, tradeType) => {
-  //   let stageName = "";
-  //   switch (stage) {
-  //     case 1:
-  //       stageName = "Approve";
-  //       break;
-  //     case 2:
-  //       stageName = "Pre-confirmation";
-  //       break;
-  //     case 3:
-  //       stageName = "Post-confirmation";
-  //       break;
-  //     default:
-  //       stageName = "Approve";
-  //       break;
-  //   }
-
-  //   const actionName = `${stageName}`;
-
-  //   try {
-  //     const fromToken = getToken(chainId, fromTokenAddress);
-  //     const toToken = getToken(chainId, toTokenAddress);
-  //     const leverage = (isLong || isShort) && hasLeverageOption && parseFloat(leverageOption).toFixed(2);
-  //     const market = swapOption !== "Swap" ? `${toToken.symbol}/USD` : "No market - swap"; //No market for Swap
-  //     const collateralAfterFees = feesUsd ? fromUsdMin.sub(feesUsd) : "No collateral - swap";
-  //     const spread = getSpread(fromTokenInfo, toTokenInfo, isLong, nativeTokenAddress);
-  //     const entryPrice =
-  //       isLong || isShort ? formatAmount(entryMarkPrice, USD_DECIMALS, 2, false) : "No entry price - swap";
-  //     let liqPrice = parseFloat(determineLiquidationPrice());
-  //     liqPrice = liqPrice < 0 ? 0 : liqPrice;
-
-  //     // Format user ERC20 token balances from BigNumber to float
-  //     const [userBalances, tokenPrices, poolBalances] = getUserTokenBalances(infoTokens);
-
-  //     const traits = {
-  //       tradeType: tradeType,
-  //       position: swapOption,
-  //       market: market,
-  //       tokenToPay: fromToken.symbol,
-  //       tokenToReceive: toToken.symbol,
-  //       amountToPay: parseFloat(fromValue),
-  //       amountToReceive: parseFloat(toValue),
-  //       fromCurrencyBalance: parseFloat(formatAmount(fromBalance, fromToken.decimals, 4, false)),
-  //       fromCurrencyToken: fromToken.symbol,
-  //       leverage: parseFloat(leverage),
-  //       feesUsd: parseFloat(formatAmount(feesUsd, 4, 4, false)),
-  //       [`fees${fromToken.symbol}`]: parseFloat(formatAmount(fees, fromToken.decimals, 4, false)),
-  //       walletAddress: account,
-  //       network: NETWORK_NAME[chainId],
-  //       profitsIn: toToken.symbol,
-  //       liqPrice: liqPrice,
-  //       collateral: `$${parseFloat(formatAmount(collateralAfterFees, USD_DECIMALS, 2, false))}`,
-  //       spreadIsHigh: spread.isHigh,
-  //       spreadValue: parseFloat(formatAmount(spread.value, 4, 4, true)),
-  //       entryPrice: parseFloat(entryPrice),
-  //       borrowFee: determineBorrowFee(),
-  //       allowedSlippage: parseFloat(formatAmount(allowedSlippage, 2, 2)),
-  //       upToOnePercentSlippageEnabled: isHigherSlippageAllowed,
-  //       ...userBalances,
-  //       ...tokenPrices,
-  //       ...poolBalances,
-  //     };
-  //     trackAction && trackAction(actionName, traits);
-  //   } catch (err) {
-  //     console.error(`Unable to track ${actionName} event`, err);
-  //   }
-  // };
+      const traits = {
+        actionType: "Close",
+        positionType: position.isLong ? "long" : "short",
+        transactionType: orderOption === MARKET ? "market" : "trigger",
+        size: size,
+        collateral: collateral,
+        nextCollateral: nextCollateralValue,
+        leverage: leverage,
+        nextLeverage: nextLeverageValue,
+        keepOriginalLeverage: keepLeverage,
+        upToOnePercentSlippageEnabled: isHigherSlippageAllowed,
+        liqPrice: liqPrice,
+        nextLiqPrice: nextLiqPriceValue,
+        amountToPay: amountToPay,
+        allowedSlippage: allowedSlippageValue,
+        entryPrice: entryPrice,
+        exitPrice: exitPrice,
+        borrowFee: borrowFeeValue,
+        closingFee: closingFee,
+        pnlActual: deltaStr,
+        pnlPercentage: deltaPercentageStr,
+        amountToReceiveUsd: amountToReceiveUsd,
+        amountToReceive: amountToReceive,
+        tokenToReceive: position.collateralToken.symbol,
+        ...userBalances,
+        ...tokenPrices,
+        ...poolBalances,
+      };
+      trackAction && trackAction(eventName, traits);
+    } catch (err) {
+      console.error(`Unable to track ${eventName} event`, err);
+    }
+  };
 
   return (
     <div className="PositionEditor">
@@ -1025,7 +988,15 @@ export default function PositionSeller(props) {
             {renderExecutionFee()}
           </div>
           <div className="Exchange-swap-button-container">
-            <button className="App-cta Exchange-swap-button" onClick={onClickPrimary} disabled={!isPrimaryEnabled()}>
+            <button
+              className="App-cta Exchange-swap-button"
+              onClick={() => {
+                const stage = getPrimaryText() === "Approve" ? 1 : 2;
+                trackClosePosition(stage);
+                onClickPrimary();
+              }}
+              disabled={!isPrimaryEnabled()}
+            >
               {getPrimaryText()}
             </button>
           </div>

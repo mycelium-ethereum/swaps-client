@@ -459,7 +459,7 @@ export default function PositionEditor(props) {
 
       const traits = {
         actionType: "Edit",
-        positionType: position.isLong ? "long" : "short",
+        positionType: position.isLong ? "Long" : "Short",
         transactionType: isDeposit ? "Buy" : "Sell",
         size: size,
         collateral: collateral,
