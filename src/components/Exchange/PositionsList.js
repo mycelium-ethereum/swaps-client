@@ -552,7 +552,10 @@ export default function PositionsList(props) {
                   <td>
                     <button
                       className="Exchange-list-action"
-                      onClick={() => editPosition(position)}
+                      onClick={() => {
+                        trackAction("Button clicked", { buttonName: "Edit Position" });
+                        editPosition(position);
+                      }}
                       disabled={position.size.eq(0)}
                     >
                       Edit
@@ -561,7 +564,10 @@ export default function PositionsList(props) {
                   <td>
                     <button
                       className="Exchange-list-action"
-                      onClick={() => sellPosition(position)}
+                      onClick={() => {
+                        trackAction("Button clicked", { buttonName: "Close Position" });
+                        sellPosition(position);
+                      }}
                       disabled={position.size.eq(0)}
                     >
                       Close

@@ -689,12 +689,14 @@ export default function MlpSwap(props) {
       const feesEth = (swapValue * parseFloat(feePercentage)) / 100;
       const amountToPay = isBuy ? swapValue : mlpValue;
       const amountToReceive = isBuy ? mlpValue : swapValue;
+      const amountToReceiveUsd = isBuy ? receiveBalance?.replace("$", "") : payBalance?.replace("$", "");
       const tokenToPay = isBuy ? swapTokenInfo.symbol : "MLP";
       const tokenToReceive = isBuy ? "MLP" : swapTokenInfo.symbol;
 
       const [userBalances, tokenPrices, poolBalances] = getUserTokenBalances(infoTokens);
 
       const traits = {
+        amountToReceiveUsd: amountToReceiveUsd.toFixed(2),
         tradeType: tradeType,
         position: tabLabel.split(" ")[1],
         tokenToPay: tokenToPay,

@@ -863,6 +863,7 @@ export const Exchange = forwardRef((props, ref) => {
             orders={orders}
             totalTokenWeights={totalTokenWeights}
             usdgSupply={usdgSupply}
+            trackAction={trackAction}
           />
         )}
         {listSection === "Trades" && (

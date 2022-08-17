@@ -137,6 +137,7 @@ export default function Actions(props) {
             orders={orders}
             updateOrders={updateOrders}
             hideActions
+            trackAction={trackAction}
           />
         </div>
       )}
