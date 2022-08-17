@@ -703,7 +703,6 @@ export default function PositionSeller(props) {
       const borrowFeeValue = convertStringToFloat(formatAmount(fundingFee, USD_DECIMALS, 2, true));
       const closingFee = convertStringToFloat(formatAmount(positionFee, USD_DECIMALS, 2, true));
       const amountToReceiveUsd = convertStringToFloat(formatAmount(receiveAmount, USD_DECIMALS, 2, true));
-      // const tokenToPay = isDeposit ? "USD" : position.collateralToken.symbol;
       const amountToReceive = convertStringToFloat(
         formatAmount(convertedReceiveAmount, position.collateralToken.decimals, 4, true)
       );
