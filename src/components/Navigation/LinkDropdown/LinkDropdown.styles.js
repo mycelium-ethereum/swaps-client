@@ -47,7 +47,7 @@ export const LinkMenu = styled.ul(
   opacity: ${props.open ? 1 : 0};
   pointer-events: ${props.open ? "all" : "none"};
 
-  @media (min-width: 1280px) {
+  @media (min-width: 1281px) {
     display: none;
   }
   @media (max-width: 670px) {
