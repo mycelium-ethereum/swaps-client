@@ -136,6 +136,7 @@ export default function PositionsList(props) {
         isWaitingForPositionRouterApproval={isWaitingForPositionRouterApproval}
         approvePositionRouter={approvePositionRouter}
         chainId={chainId}
+        trackAction={trackAction}
       />
       {ordersToaOpen && (
         <OrdersToa

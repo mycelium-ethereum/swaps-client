@@ -696,9 +696,9 @@ export default function MlpSwap(props) {
       const [userBalances, tokenPrices, poolBalances] = getUserTokenBalances(infoTokens);
 
       const traits = {
-        amountToReceiveUsd: amountToReceiveUsd.toFixed(2),
+        actionType: "Create",
+        amountToReceiveUsd: parseFloat(amountToReceiveUsd).toFixed(2),
         tradeType: tradeType,
-        position: tabLabel.split(" ")[1],
         tokenToPay: tokenToPay,
         tokenToReceive: tokenToReceive,
         amountToPay: parseFloat(amountToPay),

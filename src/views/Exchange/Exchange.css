@@ -706,6 +706,7 @@ table.Exchange-list th {
   z-index: 1;
   cursor: pointer;
   background: var(--action-active);
+  transition: background-color 0.3s ease;
 }
 
 .Exchange-swap-max:hover {

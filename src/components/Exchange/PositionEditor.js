@@ -20,6 +20,7 @@ import {
   getTokenInfo,
   getLiquidationPrice,
   approveTokens,
+  getUserTokenBalances,
 } from "../../Helpers";
 import { getContract } from "../../Addresses";
 import Tab from "../Tab/Tab";
@@ -57,6 +58,7 @@ export default function PositionEditor(props) {
     isPositionRouterApproving,
     approvePositionRouter,
     chainId,
+    trackAction,
   } = props;
   const nativeTokenAddress = getContract(chainId, "NATIVE_TOKEN");
   const position = positionsMap && positionKey ? positionsMap[positionKey] : undefined;
@@ -431,6 +433,38 @@ export default function PositionEditor(props) {
     withdrawCollateral();
   };
 
+  const trackEditPosition = (stage) => {
+    let eventName = "";
+    switch (stage) {
+      case 1:
+        eventName = "Pre-confirmation";
+        break;
+      case 2:
+        eventName = "Post-confirmation";
+        break;
+      default:
+        eventName = "Pre-confirmation";
+    }
+    try {
+      formatAmount(position.size, USD_DECIMALS, 2, true);
+
+      // Format user ERC20 token balances from BigNumber to float
+      const [userBalances, tokenPrices, poolBalances] = getUserTokenBalances(infoTokens);
+
+      const traits = {
+        actionType: "Edit",
+        positionType: position.isLong ? "longEth" : "shortEth",
+        transactionType: isDeposit ? "Buy" : "Sell",
+        ...userBalances,
+        ...tokenPrices,
+        ...poolBalances,
+      };
+      trackAction && trackAction(eventName, traits);
+    } catch (err) {
+      console.error(`Unable to track ${eventName} event`, err);
+    }
+  };
+
   return (
     <div className="PositionEditor">
       {position && (
@@ -546,7 +580,10 @@ export default function PositionEditor(props) {
                 <div className="Exchange-swap-button-container">
                   <button
                     className="App-cta Exchange-swap-button"
-                    onClick={onClickPrimary}
+                    onClick={() => {
+                      onClickPrimary();
+                      trackEditPosition(1);
+                    }}
                     disabled={!isPrimaryEnabled()}
                   >
                     {getPrimaryText()}
