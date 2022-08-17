@@ -10,7 +10,7 @@ export const MobileNavMenu = styled.menu`
     display: block;
     text-decoration: none;
     padding: 0;
-    width: calc(100% - 48px);
+    width: calc(100% - 32px);
     margin: 30px auto 48px;
   }
 `;
@@ -27,7 +27,7 @@ export const ScrollContainer = styled.div`
   }
 `;
 export const Header = styled.div`
-  padding: 11px 24px;
+  padding: 11px 16px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -77,7 +77,7 @@ export const ButtonContainer = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  width: calc(100% - 48px);
+  width: calc(100% - 32px);
   margin: 0 auto;
   height: 48px;
   border-radius: 4px;
@@ -245,7 +245,7 @@ export const AppHeaderLinkContainer = styled.div`
     font-weight: normal;
     letter-spacing: 0.1px;
     color: #fff;
-    padding: 21px 24px;
+    padding: 21px 16px;
     text-decoration: none;
     display: block;
     transition: background-color 0.3s ease;
@@ -262,7 +262,7 @@ export const AppHeaderLinkContainer = styled.div`
 export const MyceliumCopy = styled.div`
   color: var(--action-active);
   font-size: 16px;
-  padding: 21px 24px;
+  padding: 21px 16px;
 `;
 
 const mobileButton = `
@@ -275,8 +275,8 @@ const mobileButton = `
 
 export const PoolsSwitch = styled.div`
   font-size: 20px;
-  padding-left: 1.5rem;
-  padding-right: 1.5rem;
+  padding-left: 16px;
+  padding-right: 16px;
   a {
     ${mobileButton}
     display: flex;
