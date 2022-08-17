@@ -557,7 +557,7 @@ export default function MlpSwap(props) {
       setPendingTxns,
     })
       .then(async () => {
-        trackMlpTrade(3, "Buy Tlp");
+        trackMlpTrade(3, "Buy MLP");
       })
       .finally(() => {
         setIsSubmitting(false);
@@ -586,7 +586,7 @@ export default function MlpSwap(props) {
       setPendingTxns,
     })
       .then(async () => {
-        trackMlpTrade(3, "Sell Tlp");
+        trackMlpTrade(3, "Sell MLP");
       })
       .finally(() => {
         setIsSubmitting(false);
@@ -689,8 +689,8 @@ export default function MlpSwap(props) {
       const feesEth = (swapValue * parseFloat(feePercentage)) / 100;
       const amountToPay = isBuy ? swapValue : mlpValue;
       const amountToReceive = isBuy ? mlpValue : swapValue;
-      const tokenToPay = isBuy ? swapTokenInfo.symbol : "TLP";
-      const tokenToReceive = isBuy ? "TLP" : swapTokenInfo.symbol;
+      const tokenToPay = isBuy ? swapTokenInfo.symbol : "MLP";
+      const tokenToReceive = isBuy ? "MLP" : swapTokenInfo.symbol;
 
       const [userBalances, tokenPrices, poolBalances] = getUserTokenBalances(infoTokens);
 
@@ -729,8 +729,8 @@ export default function MlpSwap(props) {
       const hash = history.location.hash.replace("#", "");
       const isBuying = hash === "redeem" ? false : true;
       // Swap pay and receive tokens depending on isBuying
-      const tokenToPay = isBuying ? getToken(chainId, swapTokenAddress).symbol : "TLP";
-      const tokenToReceive = isBuying ? "TLP" : getToken(chainId, swapTokenAddress).symbol;
+      const tokenToPay = isBuying ? getToken(chainId, swapTokenAddress).symbol : "MLP";
+      const tokenToReceive = isBuying ? "MLP" : getToken(chainId, swapTokenAddress).symbol;
       const traits = {
         action: isBuying ? "Buy" : "Sell",
         tokenToPay: tokenToPay,
@@ -923,7 +923,7 @@ export default function MlpSwap(props) {
                   switchSwapOption(isBuying ? "redeem" : "");
                   trackAction &&
                     trackAction("Button clicked", {
-                      buttonName: `Swap action - ${isBuying ? "Sell TLP" : "Buy TLP"}`,
+                      buttonName: `Swap action - ${isBuying ? "Sell MLP" : "Buy MLP"}`,
                     });
                 }}
               />

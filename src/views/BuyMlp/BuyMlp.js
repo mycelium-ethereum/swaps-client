@@ -44,7 +44,7 @@ export default function BuyMlp(props) {
                 onClick={() =>
                   props.trackAction &&
                   props.trackAction("Button clicked", {
-                    buttonName: "TLP tokens link",
+                    buttonName: "MLP tokens link",
                   })
                 }
               >

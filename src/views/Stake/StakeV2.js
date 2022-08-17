@@ -176,7 +176,7 @@ function CompoundModal(props) {
     setShouldConvertWeth(value);
   };
 
-  const toggleBuyTlp = (value) => {
+  const toggleBuyMlp = (value) => {
     if (value) {
       setShouldClaimWeth(true);
       setShouldConvertWeth(false);
@@ -213,7 +213,7 @@ function CompoundModal(props) {
             </Checkbox>
           </div>
           <div>
-            <Checkbox isChecked={shouldBuyMlpWithEth} setIsChecked={toggleBuyTlp}>
+            <Checkbox isChecked={shouldBuyMlpWithEth} setIsChecked={toggleBuyMlp}>
               Buy MLP with {wrappedTokenSymbol}
             </Checkbox>
           </div>

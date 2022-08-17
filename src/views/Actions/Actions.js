@@ -21,7 +21,8 @@ import Reader from "../../abis/Reader.json";
 
 const USD_DECIMALS = 30;
 
-export default function Actions() {
+export default function Actions(props) {
+  const { trackAction } = props;
   const { account } = useParams();
   const { active, library } = useWeb3React();
 
@@ -121,6 +122,7 @@ export default function Actions() {
             chainId={chainId}
             nativeTokenAddress={nativeTokenAddress}
             showPnlAfterFees={false}
+            trackAction={trackAction}
           />
         </div>
       )}

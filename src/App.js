@@ -940,7 +940,7 @@ function FullApp() {
             </Route>
             */}
             <Route exact path="/actions/:account">
-              <Actions />
+              <Actions trackAction={trackAction} />
             </Route>
             <Route exact path="/orders_overview">
               <OrdersOverview />
@@ -949,7 +949,7 @@ function FullApp() {
               <PositionsOverview />
             </Route>
             <Route exact path="/actions">
-              <Actions />
+              <Actions trackAction={trackAction} />
             </Route>
             {/*
             <Route exact path="/begin_account_transfer">

@@ -105,6 +105,7 @@ export default function PositionSeller(props) {
     approvePositionRouter,
     isHigherSlippageAllowed,
     setIsHigherSlippageAllowed,
+    trackAction,
   } = props;
   const [savedSlippageAmount] = useLocalStorageSerializeKey([chainId, SLIPPAGE_BPS_KEY], DEFAULT_SLIPPAGE_AMOUNT);
   const [keepLeverage, setKeepLeverage] = useLocalStorageSerializeKey([chainId, "Exchange-keep-leverage"], true);
@@ -676,6 +677,108 @@ export default function PositionSeller(props) {
   }
 
   const shouldShowExistingOrderWarning = false;
+
+  // const determineLiquidationPrice = () => {
+  //   switch (true) {
+  //     case !!existingLiquidationPrice:
+  //       return formatAmount(existingLiquidationPrice, USD_DECIMALS, 2, false);
+  //     case !!displayLiquidationPrice:
+  //       return formatAmount(displayLiquidationPrice, USD_DECIMALS, 2, false);
+  //     default:
+  //       return 0;
+  //   }
+  // };
+
+  // const determineBorrowFee = () => {
+  //   let borrowFee = 0;
+  //   switch (true) {
+  //     case isLong && toTokenInfo:
+  //       borrowFee = parseFloat(formatAmount(toTokenInfo.fundingRate, 4, 4));
+  //       break;
+  //     case isShort && shortCollateralToken:
+  //       borrowFee = parseFloat(formatAmount(shortCollateralToken.fundingRate, 4, 4));
+  //       break;
+  //     default:
+  //       borrowFee = 0;
+  //       break;
+  //   }
+  //   if (
+  //     (isLong && toTokenInfo && toTokenInfo.fundingRate) ||
+  //     (isShort && shortCollateralToken && shortCollateralToken.fundingRate)
+  //   ) {
+  //     return `${borrowFee}% / 1h`;
+  //   } else {
+  //     return borrowFee;
+  //   }
+  // };
+
+  // const trackTrade = (stage, tradeType) => {
+  //   let stageName = "";
+  //   switch (stage) {
+  //     case 1:
+  //       stageName = "Approve";
+  //       break;
+  //     case 2:
+  //       stageName = "Pre-confirmation";
+  //       break;
+  //     case 3:
+  //       stageName = "Post-confirmation";
+  //       break;
+  //     default:
+  //       stageName = "Approve";
+  //       break;
+  //   }
+
+  //   const actionName = `${stageName}`;
+
+  //   try {
+  //     const fromToken = getToken(chainId, fromTokenAddress);
+  //     const toToken = getToken(chainId, toTokenAddress);
+  //     const leverage = (isLong || isShort) && hasLeverageOption && parseFloat(leverageOption).toFixed(2);
+  //     const market = swapOption !== "Swap" ? `${toToken.symbol}/USD` : "No market - swap"; //No market for Swap
+  //     const collateralAfterFees = feesUsd ? fromUsdMin.sub(feesUsd) : "No collateral - swap";
+  //     const spread = getSpread(fromTokenInfo, toTokenInfo, isLong, nativeTokenAddress);
+  //     const entryPrice =
+  //       isLong || isShort ? formatAmount(entryMarkPrice, USD_DECIMALS, 2, false) : "No entry price - swap";
+  //     let liqPrice = parseFloat(determineLiquidationPrice());
+  //     liqPrice = liqPrice < 0 ? 0 : liqPrice;
+
+  //     // Format user ERC20 token balances from BigNumber to float
+  //     const [userBalances, tokenPrices, poolBalances] = getUserTokenBalances(infoTokens);
+
+  //     const traits = {
+  //       tradeType: tradeType,
+  //       position: swapOption,
+  //       market: market,
+  //       tokenToPay: fromToken.symbol,
+  //       tokenToReceive: toToken.symbol,
+  //       amountToPay: parseFloat(fromValue),
+  //       amountToReceive: parseFloat(toValue),
+  //       fromCurrencyBalance: parseFloat(formatAmount(fromBalance, fromToken.decimals, 4, false)),
+  //       fromCurrencyToken: fromToken.symbol,
+  //       leverage: parseFloat(leverage),
+  //       feesUsd: parseFloat(formatAmount(feesUsd, 4, 4, false)),
+  //       [`fees${fromToken.symbol}`]: parseFloat(formatAmount(fees, fromToken.decimals, 4, false)),
+  //       walletAddress: account,
+  //       network: NETWORK_NAME[chainId],
+  //       profitsIn: toToken.symbol,
+  //       liqPrice: liqPrice,
+  //       collateral: `$${parseFloat(formatAmount(collateralAfterFees, USD_DECIMALS, 2, false))}`,
+  //       spreadIsHigh: spread.isHigh,
+  //       spreadValue: parseFloat(formatAmount(spread.value, 4, 4, true)),
+  //       entryPrice: parseFloat(entryPrice),
+  //       borrowFee: determineBorrowFee(),
+  //       allowedSlippage: parseFloat(formatAmount(allowedSlippage, 2, 2)),
+  //       upToOnePercentSlippageEnabled: isHigherSlippageAllowed,
+  //       ...userBalances,
+  //       ...tokenPrices,
+  //       ...poolBalances,
+  //     };
+  //     trackAction && trackAction(actionName, traits);
+  //   } catch (err) {
+  //     console.error(`Unable to track ${actionName} event`, err);
+  //   }
+  // };
 
   return (
     <div className="PositionEditor">
