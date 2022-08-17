@@ -61,7 +61,6 @@ const MAX_GAS_PRICE_MAP = {
 
 const alchemyWhitelistedDomains = [
   "swaps.mycelium.xyz",
-  "perpetual-swaps-git-feat-enable-trading-overlay-mycelium.vercel.app",
 ];
 
 export function getDefaultArbitrumRpcUrl(useWebsocket) {
