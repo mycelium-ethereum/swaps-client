@@ -5,7 +5,7 @@
   border-radius: 3px;
   overflow: hidden;
   color: rgba(255, 255, 255, 0.7);
-  background: var(--backround-primary);
+  background-color: var(--backround-primary);
 }
 
 .Tab-option-icon {
@@ -21,6 +21,7 @@
   cursor: pointer;
   border-radius: 0px;
   border: 1px solid var(--cell-stroke);
+  transition: all 0.3s ease;
 }
 
 .Tab.block .Tab-option:first-child {
@@ -35,7 +36,7 @@
 
 .Tab.block .Tab-option:hover {
   color: rgba(255, 255, 255, 1);
-  background: var(--action-hover);
+  background-color: var(--action-hover);
 }
 
 .Tab.block .Tab-option.active {

@@ -17,15 +17,12 @@ import ReferralStorage from "../abis/ReferralStorage.json";
 import { getContract } from "../Addresses";
 import { getConstant } from "../Constants";
 import {
-  UI_VERSION,
   ARBITRUM,
   AVALANCHE,
   ARBITRUM_TESTNET,
   ETHEREUM,
-  // DEFAULT_GAS_LIMIT,
   bigNumberify,
   getExplorerUrl,
-  getServerUrl,
   setGasPrice,
   getGasLimit,
   replaceNativeTokenAddress,
@@ -37,11 +34,12 @@ import {
   getInfoTokens,
   isAddressZero,
   helperToast,
+  getSupplyUrl,
+  getTracerServerUrl
 } from "../Helpers";
 import { getTokens, getTokenBySymbol, getWhitelistedTokens } from "../data/Tokens";
 
 import { nissohGraphClient, arbitrumGraphClient, avalancheGraphClient, arbitrumTestnetGraphClient } from "./common";
-import { getTracerServerUrl } from "./rewards";
 export * from "./prices";
 
 const { AddressZero } = ethers.constants;
@@ -463,18 +461,7 @@ export function useStakedMycSupply(library, active) {
 }
 
 export function useHasOutdatedUi() {
-  const url = getServerUrl(ARBITRUM, "/ui_version");
-  const { data, mutate } = useSWR([url], {
-    fetcher: (...args) => fetch(...args).then((res) => res.text()),
-  });
-
-  let hasOutdatedUi = false;
-
-  if (data && parseFloat(data) > parseFloat(UI_VERSION)) {
-    hasOutdatedUi = true;
-  }
-
-  return { data: hasOutdatedUi, mutate };
+  return { data: false };
 }
 
 export function useTCRPrice(chainId, libraries, active) {
@@ -498,7 +485,7 @@ export function useTCRPrice(chainId, libraries, active) {
 }
 
 export function useTotalTCRSupply() {
-  const tcrSupplyUrl = "https://stats.tracer.finance/supply";
+  const tcrSupplyUrl = getSupplyUrl();
 
   const { data: tcrSupply, mutate: updateTCRSupply } = useSWR([tcrSupplyUrl], {
     fetcher: (...args) => fetch(...args, { headers: { "Content-Type": "application/json" } }).then((res) => res.json()),

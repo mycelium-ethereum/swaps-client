@@ -1,5 +1,5 @@
 import React, { useEffect, useCallback } from "react";
-import Footer from "../../Footer";
+
 import "./BuyMYC.css";
 
 import { ARBITRUM, AVALANCHE, switchNetwork, useChainId } from "../../Helpers";
@@ -228,7 +228,7 @@ export default function BuyMYC() {
                     <Button
                       size="xl"
                       imgSrc={mycArbitrum}
-                      href="https://app.uniswap.org/#/swap?inputCurrency=ETH&outputCurrency=0xfc5A1A6EB076a2C7aD06eD22C90d7E710E35ad0a"
+                      href="https://app.uniswap.org/#/swap?inputCurrency=ETH&outputCurrency=0xfc5A1A6EB076a2C7aD06eD22C90d7E710E35ad0a&chain=arbitrum"
                     >
                       Purchase MYC
                     </Button>
@@ -256,7 +256,6 @@ export default function BuyMYC() {
           </div>
         )}
       </div>
-      <Footer />
     </div>
   );
 }

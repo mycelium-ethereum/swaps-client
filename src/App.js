@@ -46,12 +46,14 @@ import {
   getUserTokenBalances,
   hasChangedAccount,
   setCurrentAccount,
+  networkOptions,
   SHOULD_EAGER_CONNECT_LOCALSTORAGE_KEY,
   CURRENT_PROVIDER_LOCALSTORAGE_KEY,
   REFERRAL_CODE_KEY,
   REFERRAL_CODE_QUERY_PARAMS,
   ARBITRUM_TESTNET,
   PLACEHOLDER_ACCOUNT,
+  getDefaultArbitrumRpcUrl,
 } from "./Helpers";
 import ReaderV2 from "./abis/ReaderV2.json";
 
@@ -78,6 +80,7 @@ import "react-toastify/dist/ReactToastify.css";
 import NetworkSelector from "./components/NetworkSelector/NetworkSelector";
 import Modal from "./components/Modal/Modal";
 import Checkbox from "./components/Checkbox/Checkbox";
+// import Footer from "./Footer";
 
 import { RiMenuLine } from "react-icons/ri";
 import { FaTimes } from "react-icons/fa";
@@ -112,6 +115,8 @@ import VaultV2b from "./abis/VaultV2b.json";
 import PositionRouter from "./abis/PositionRouter.json";
 import PageNotFound from "./views/PageNotFound/PageNotFound";
 import useSWR from "swr";
+import LinkDropdown from "./components/Navigation/LinkDropdown/LinkDropdown";
+import Sidebar from "./components/Navigation/Sidebar/Sidebar";
 
 if ("ethereum" in window) {
   window.ethereum.autoRefreshOnNetworkChange = false;
@@ -135,8 +140,7 @@ function inPreviewMode() {
   return false;
 }
 
-// const arbWsProvider = new ethers.providers.WebSocketProvider("wss://arb1.arbitrum.io/ws");
-const arbWsProvider = new ethers.providers.JsonRpcProvider("https://arb1.arbitrum.io/rpc");
+const arbWsProvider = new ethers.providers.WebSocketProvider(getDefaultArbitrumRpcUrl(true));
 // const arbTestnetWsProvider = new ethers.providers.WebSocketProvider("wss://rinkeby.arbitrum.io/ws");
 const arbTestnetWsProvider = new ethers.providers.JsonRpcProvider("https://rinkeby.arbitrum.io/rpc");
 const avaxWsProvider = new ethers.providers.JsonRpcProvider("https://api.avax.network/ext/bc/C/rpc");
@@ -197,36 +201,31 @@ function AppHeaderLinks({ small, openSettings, clickCloseIcon, trackAction }) {
             onClick={() =>
               trackAction &&
               trackAction("Button clicked", {
-                buttonName: "Tracer Nav Logo",
+                buttonName: "Mycelium Nav Logo",
               })
             }
           >
-            <img src={logoImg} alt="Tracer TRS Logo" />
+            <img src={logoImg} alt="Mycelium Swaps Logo" />
           </Link>
         </div>
       )}
-      <div className="App-header-link-container App-header-link-home">
-        <NavLink activeClassName="active" exact to="/">
-          Home
-        </NavLink>
-      </div>
       <div className="App-header-link-container">
-        <NavLink activeClassName="active" to="/dashboard">
+        <NavLink exact activeClassName="active" to="/dashboard">
           Dashboard
         </NavLink>
       </div>
       <div className="App-header-link-container">
-        <NavLink activeClassName="active" to="/earn">
+        <NavLink exact activeClassName="active" to="/earn">
           Earn
         </NavLink>
       </div>
       <div className="App-header-link-container">
-        <NavLink activeClassName="active" to="/buy_mlp">
+        <NavLink exact activeClassName="active" to="/buy_mlp">
           Buy
         </NavLink>
       </div>
       <div className="App-header-link-container">
-        <NavLink activeClassName="active" to="/rewards">
+        <NavLink exact activeClassName="active" to="/rewards">
           Rewards
         </NavLink>
       </div>
@@ -262,26 +261,6 @@ function AppHeaderUser({
   const { chainId } = useChainId();
   const { active, account } = useWeb3React();
   const showSelector = true;
-  const networkOptions = [
-    {
-      label: "Arbitrum",
-      value: ARBITRUM,
-      icon: "ic_arbitrum_24.svg",
-      color: "#264f79",
-    },
-    {
-      label: "Testnet",
-      value: ARBITRUM_TESTNET,
-      icon: "ic_arbitrum_24.svg",
-      color: "#264f79",
-    },
-    // {
-    // label: "Avalanche",
-    // value: AVALANCHE,
-    // icon: "ic_avalanche_24.svg",
-    // color: "#E841424D",
-    // },
-  ];
 
   useEffect(() => {
     if (active) {
@@ -304,11 +283,11 @@ function AppHeaderUser({
   if (!active) {
     return (
       <div className="App-header-user">
-        <div className="App-header-user-link">
+        {/* <div className="App-header-user-link">
           <NavLink exact activeClassName="active" className="default-btn trade-link" to="/">
             Trade
           </NavLink>
-        </div>
+        </div> */}
         {showSelector && (
           <NetworkSelector
             options={networkOptions}
@@ -331,7 +310,7 @@ function AppHeaderUser({
         >
           {small ? "Connect" : "Connect Wallet"}
         </ConnectWalletButton>
-        <div className="App-header-user-link">
+        <div className="App-header-user-link switch">
           <a
             href="https://pools.mycelium.xyz"
             rel="noopener noreferrer"
@@ -339,7 +318,7 @@ function AppHeaderUser({
             onClick={() => trackAction && trackAction("Button clicked", { buttonName: "Switch to Perpetual Pools" })}
           >
             <button className="default-btn switch-link">
-              Switch to <img src={poolsSmallImg} alt="Perpetual Pools" />
+              <span>Switch to</span> <img src={poolsSmallImg} alt="Perpetual Pools" />
             </button>
           </a>
         </div>
@@ -386,7 +365,7 @@ function AppHeaderUser({
           onClick={() => trackAction && trackAction("Button clicked", { buttonName: "Switch to Perpetual Pools" })}
         >
           <button exact activeClassName="active" className="default-btn switch-link" to="/">
-            Switch to <img src={poolsSmallImg} alt="Perpetual Pools" />
+            <span>Switch to</span> <img src={poolsSmallImg} alt="Perpetual Pools" />
           </button>
         </a>
       </div>
@@ -395,6 +374,7 @@ function AppHeaderUser({
 }
 
 function FullApp() {
+  const [sidebarVisible, setSidebarVisible] = useState(false);
   const [loggedInTracked, setLoggedInTracked] = useState(false);
   const { trackLogin, trackPageWithTraits, trackAction, analytics } = useAnalytics();
 
@@ -429,18 +409,6 @@ function FullApp() {
       }
     }
   }, [query]);
-
-  useEffect(() => {
-    if (window.ethereum) {
-      // hack
-      // for some reason after network is changed to Avalanche through Metamask
-      // it triggers event with chainId = 1
-      // reload helps web3 to return correct chain data
-      return window.ethereum.on("chainChanged", () => {
-        document.location.reload();
-      });
-    }
-  }, []);
 
   const disconnectAccount = useCallback(() => {
     // only works with WalletConnect
@@ -526,8 +494,28 @@ function FullApp() {
     DEFAULT_SLIPPAGE_AMOUNT
   );
   const [slippageAmount, setSlippageAmount] = useState(0);
+  const [slippageError, setSlippageError] = useState("");
   const [isPnlInLeverage, setIsPnlInLeverage] = useState(false);
   const [showPnlAfterFees, setShowPnlAfterFees] = useState(false);
+
+  const MAX_DECIMALS = 2;
+
+  const parseSlippageAmount = (amount) => {
+    const strWithoutLeadingsZeroes = amount.replace(/^[0]+/g, "0");
+    const decimals = strWithoutLeadingsZeroes.toString().split(".")[1];
+    if (parseFloat(amount) > 5.0) {
+      setSlippageError("Slippage should be less than 5%");
+    } else if (decimals?.length > MAX_DECIMALS) {
+      setSlippageError("Max slippage precision is 0.01%");
+    }
+    // limit the amount of decimals
+    else if (!decimals || decimals?.length <= MAX_DECIMALS) {
+      // replace commas with periods for other locales
+      setSlippageAmount(strWithoutLeadingsZeroes.replace(/,/g, "."));
+      setSlippageError("");
+    }
+    setSlippageAmount(amount);
+  };
 
   const [savedIsPnlInLeverage, setSavedIsPnlInLeverage] = useLocalStorageSerializeKey(
     [chainId, IS_PNL_IN_LEVERAGE_KEY],
@@ -557,26 +545,28 @@ function FullApp() {
   };
 
   const saveAndCloseSettings = () => {
-    const slippage = parseFloat(slippageAmount);
-    if (isNaN(slippage)) {
-      helperToast.error("Invalid slippage value");
-      return;
-    }
-    if (slippage > 5) {
-      helperToast.error("Slippage should be less than 5%");
-      return;
-    }
+    if (slippageError === "") {
+      const slippage = parseFloat(slippageAmount);
+      if (isNaN(slippage)) {
+        helperToast.error("Invalid slippage value");
+        return;
+      }
+      if (slippage > 5) {
+        helperToast.error("Slippage should be less than 5%");
+        return;
+      }
 
-    const basisPoints = (slippage * BASIS_POINTS_DIVISOR) / 100;
-    if (parseInt(basisPoints) !== parseFloat(basisPoints)) {
-      helperToast.error("Max slippage precision is 0.01%");
-      return;
-    }
+      const basisPoints = (slippage * BASIS_POINTS_DIVISOR) / 100;
+      if (parseInt(basisPoints) !== parseFloat(basisPoints)) {
+        helperToast.error("Max slippage precision is 0.01%");
+        return;
+      }
 
-    setSavedIsPnlInLeverage(isPnlInLeverage);
-    setSavedShowPnlAfterFees(showPnlAfterFees);
-    setSavedSlippageAmount(basisPoints);
-    setIsSettingsVisible(false);
+      setSavedIsPnlInLeverage(isPnlInLeverage);
+      setSavedShowPnlAfterFees(showPnlAfterFees);
+      setSavedSlippageAmount(basisPoints);
+      setIsSettingsVisible(false);
+    }
   };
   useEffect(() => {
     if (isDrawerVisible) {
@@ -725,9 +715,25 @@ function FullApp() {
     }
   }, [account, chainId, tokenBalances, trackLogin, loggedInTracked, library, infoTokens, tokens]);
 
+  const selectorLabel = getChainName(chainId);
+
+  const onNetworkSelect = useCallback(
+    (option) => {
+      if (option.value === chainId) {
+        return;
+      }
+      return switchNetwork(option.value, active);
+    },
+    [chainId, active]
+  );
+
   return (
     <>
-      <div className="App">
+      <div
+        className={cx("App", {
+          "full-width": sidebarVisible,
+        })}
+      >
         {/* <div className="App-background-side-1"></div>
         <div className="App-background-side-2"></div>
         <div className="App-background"></div>
@@ -765,7 +771,7 @@ function FullApp() {
               )}
             </AnimatePresence>
           )}
-          <header>
+          <nav>
             <div className="App-header large">
               <div className="App-header-container-left">
                 <Link
@@ -774,16 +780,16 @@ function FullApp() {
                   onClick={() =>
                     trackAction &&
                     trackAction("Button clicked", {
-                      buttonName: "Tracer Nav Logo",
+                      buttonName: "Mycelium Nav Logo",
                     })
                   }
                 >
-                  <img src={logoImg} className="big" alt="Tracer TRS Logo" />
-                  <img src={logoSmallImg} className="small" alt="Tracer TRS Logo" />
+                  <img src={logoImg} className="big" alt="Mycelium Swaps Logo" />
+                  <img src={logoSmallImg} className="small" alt="Mycelium Swaps Logo" />
                 </Link>
               </div>
               <div className="App-header-container-right">
-                <AppHeaderLinks trackAction={trackAction} />
+                {/* <AppHeaderLinks trackAction={trackAction} /> */}
                 <AppHeaderUser
                   disconnectAccountAndCloseSettings={disconnectAccountAndCloseSettings}
                   openSettings={openSettings}
@@ -802,61 +808,63 @@ function FullApp() {
                 })}
               >
                 <div className="App-header-container-left">
-                  <div className="App-header-menu-icon-block" onClick={() => setIsDrawerVisible(!isDrawerVisible)}>
-                    {!isDrawerVisible && <RiMenuLine className="App-header-menu-icon" />}
-                    {isDrawerVisible && <FaTimes className="App-header-menu-icon" />}
-                  </div>
-                  <div
+                  <Link
                     className="App-header-link-main clickable"
+                    to="/"
                     onClick={() => {
-                      setIsDrawerVisible(!isDrawerVisible);
                       trackAction &&
                         trackAction("Button clicked", {
-                          buttonName: "Tracer Nav Logo",
+                          buttonName: "Mycelium Nav Logo",
                         });
                     }}
                   >
-                    <img src={logoImg} className="big" alt="Tracer TRS Logo" />
-                    <img src={logoSmallImg} className="small" alt="Tracer TRS Logo" />
-                  </div>
+                    <img src={logoImg} alt="Mycelium Swaps Logo" />
+                  </Link>
                 </div>
-                <div className="App-header-container-right">
-                  <AppHeaderUser
-                    disconnectAccountAndCloseSettings={disconnectAccountAndCloseSettings}
-                    openSettings={openSettings}
-                    small
-                    setActivatingConnector={setActivatingConnector}
-                    walletModalVisible={walletModalVisible}
-                    setWalletModalVisible={setWalletModalVisible}
-                    showNetworkSelectorModal={showNetworkSelectorModal}
-                    trackAction={trackAction}
-                  />
+                <div>
+                  <div className="App-header-container-right">
+                    <AppHeaderLinks trackAction={trackAction} />
+                    <LinkDropdown />
+                    <AppHeaderUser
+                      disconnectAccountAndCloseSettings={disconnectAccountAndCloseSettings}
+                      openSettings={openSettings}
+                      small
+                      setActivatingConnector={setActivatingConnector}
+                      walletModalVisible={walletModalVisible}
+                      setWalletModalVisible={setWalletModalVisible}
+                      showNetworkSelectorModal={showNetworkSelectorModal}
+                      trackAction={trackAction}
+                    />
+                  </div>
+                  {/* Hamburger menu */}
+                  <button className="App-header-menu-icon-block" onClick={() => setIsDrawerVisible(!isDrawerVisible)}>
+                    {/* {!isDrawerVisible && <RiMenuLine className="App-header-menu-icon" />}
+                    {isDrawerVisible && <FaTimes className="App-header-menu-icon" />} */}
+                    <span />
+                    <span />
+                    <span />
+                  </button>
                 </div>
               </div>
             </div>
-          </header>
-          <AnimatePresence>
-            {isDrawerVisible && (
-              <motion.div
-                onClick={() => setIsDrawerVisible(false)}
-                className="App-header-links-container App-header-drawer"
-                initial="hidden"
-                animate="visible"
-                exit="hidden"
-                variants={slideVariants}
-                transition={{ duration: 0.2 }}
-              >
-                <MobileLinks
-                  openSettings={openSettings}
-                  clickCloseIcon={() => setIsDrawerVisible(false)}
-                  trackAction={trackAction}
-                  setWalletModalVisible={setWalletModalVisible}
-                  showNetworkSelectorModal={showNetworkSelectorModal}
-                  disconnectAccountAndCloseSettings={disconnectAccountAndCloseSettings}
-                />
-              </motion.div>
-            )}
-          </AnimatePresence>
+          </nav>
+          <div
+            className={cx("App-header-links-container App-header-drawer", {
+              closed: !isDrawerVisible,
+            })}
+          >
+            <MobileLinks
+              openSettings={openSettings}
+              clickCloseIcon={() => setIsDrawerVisible(false)}
+              trackAction={trackAction}
+              networkOptions={networkOptions}
+              selectorLabel={selectorLabel}
+              onNetworkSelect={onNetworkSelect}
+              setWalletModalVisible={setWalletModalVisible}
+              showNetworkSelectorModal={showNetworkSelectorModal}
+              disconnectAccountAndCloseSettings={disconnectAccountAndCloseSettings}
+            />
+          </div>
           <Switch>
             <Route exact path="/">
               <Exchange
@@ -874,6 +882,7 @@ function FullApp() {
                 trackPageWithTraits={trackPageWithTraits}
                 trackAction={trackAction}
                 analytics={analytics}
+                sidebarVisible={sidebarVisible}
               />
             </Route>
             <Route exact path="/dashboard">
@@ -942,7 +951,10 @@ function FullApp() {
             </Route>
           </Switch>
         </div>
+        <Sidebar sidebarVisible={sidebarVisible} setSidebarVisible={setSidebarVisible} />
+        {/* <Footer /> */}
       </div>
+
       <ToastContainer
         transition={Zoom}
         position="bottom-right"
@@ -1003,12 +1015,14 @@ function FullApp() {
             <input
               type="number"
               className="App-slippage-tolerance-input"
+              step="0.01"
               min="0"
               value={slippageAmount}
-              onChange={(e) => setSlippageAmount(e.target.value)}
+              onChange={(e) => parseSlippageAmount(e.target.value)}
             />
             <div className="App-slippage-tolerance-input-percent">%</div>
           </div>
+          {slippageError !== "" && <div className="App-slippage-tolerance-error">{slippageError}</div>}
         </div>
         <div className="Exchange-settings-row">
           <Checkbox isChecked={showPnlAfterFees} setIsChecked={setShowPnlAfterFees}>
@@ -1077,7 +1091,7 @@ function PreviewApp() {
             <div className="App-header large preview">
               <div className="App-header-container-left">
                 <NavLink exact activeClassName="active" className="App-header-link-main" to="/">
-                  <img src={logoImg} alt="Tracer TRS Logo" />
+                  <img src={logoImg} alt="Mycelium Swaps Logo" />
                   MYC
                 </NavLink>
               </div>
@@ -1093,7 +1107,7 @@ function PreviewApp() {
               >
                 <div className="App-header-container-left">
                   <div className="App-header-link-main">
-                    <img src={logoImg} alt="Tracer TRS Logo" />
+                    <img src={logoImg} alt="Mycelium Swaps Logo" />
                   </div>
                 </div>
                 <div className="App-header-container-right">

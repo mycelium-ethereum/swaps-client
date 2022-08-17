@@ -55,6 +55,10 @@ body,
   --background-primary: #000a00;
   --background-secondary: rgba(0, 9, 0, 0.2);
   --background-navigation: linear-gradient(83.12deg, rgba(9, 130, 0, 0.5) -208.54%, rgba(9, 130, 0, 0) 159.09%);
+  --background-gradient: linear-gradient(83.12deg, rgba(9, 130, 0, 0.6) -208.54%, rgba(9, 130, 0, 0) 159.09%),
+    rgba(0, 10, 0, 0.9);
+  --background-gradient-solid: linear-gradient(83.12deg, rgba(9, 130, 0, 1) -208.54%, rgba(9, 130, 0, 0) 159.09%),
+    rgba(0, 10, 0, 1);
 
   --border-navigation: #098200;
 
@@ -227,6 +231,7 @@ a.plain {
   cursor: pointer;
   border: none;
   appearance: none;
+  transition: all 0.3s ease;
 }
 
 .default-btn:hover {
@@ -271,8 +276,8 @@ a.plain {
 
 .default-container {
   max-width: 1264px;
-  padding-left: 32px;
-  padding-right: 32px;
+  padding-left: 16px;
+  padding-right: 16px;
   margin: 0 auto;
 }
 
@@ -383,7 +388,7 @@ button.btn-link:hover .logout-icon {
 }
 
 .page-layout {
-  min-height: calc(100vh - 62px);
+  min-height: calc(100vh - 137px);
   display: flex;
   flex-direction: column;
 }

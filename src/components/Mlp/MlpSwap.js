@@ -755,7 +755,7 @@ export default function MlpSwap(props) {
       {/* <div className="Page-title-section">
         <div className="Page-title">{isBuying ? "Buy MLP" : "Sell MLP"}</div>
         {isBuying && <div className="Page-description">
-          Purchase <a href="https://tracer-1.gitbook.io/tracer-perpetual-swaps/6VOYVKGbCCw0I8cj7vdF/protocol-design/shared-liquidity-pool/tlp-token-pricing" target="_blank" rel="noopener noreferrer">MLP tokens</a> to earn {nativeTokenSymbol} fees from swaps and leverage trading.<br/>
+          Purchase <a href="https://swaps.docs.mycelium.xyz/protocol-design/shared-liquidity-pool/tlp-token-pricing" target="_blank" rel="noopener noreferrer">MLP tokens</a> to earn {nativeTokenSymbol} fees from swaps and leverage trading.<br/>
           Note that there is a minimum holding time of 15 minutes after a purchase.<br/>
           <div>View <Link to="/earn">staking</Link> page.</div>
         </div>}
@@ -921,9 +921,10 @@ export default function MlpSwap(props) {
                 onClick={() => {
                   setIsBuying(!isBuying);
                   switchSwapOption(isBuying ? "redeem" : "");
-                  trackAction && trackAction("Button clicked", {
-                    buttonName: `Swap action - ${isBuying ? "Sell TLP" : "Buy TLP"}`,
-                  });
+                  trackAction &&
+                    trackAction("Button clicked", {
+                      buttonName: `Swap action - ${isBuying ? "Sell TLP" : "Buy TLP"}`,
+                    });
                 }}
               />
             </div>
@@ -1015,15 +1016,17 @@ export default function MlpSwap(props) {
 
                 if (buttonText.includes("Approve")) {
                   trackMlpTrade(1, buttonText.split(" ")[1]); // Get token symbol
-                  trackAction && trackAction("Button clicked", {
-                    buttonName: "Approve",
-                    fromToken: buttonText.split(" ")[1],
-                  });
+                  trackAction &&
+                    trackAction("Button clicked", {
+                      buttonName: "Approve",
+                      fromToken: buttonText.split(" ")[1],
+                    });
                 } else {
                   trackMlpTrade(2, buttonText);
-                  trackAction && trackAction("Button clicked", {
-                    buttonName: buttonText,
-                  });
+                  trackAction &&
+                    trackAction("Button clicked", {
+                      buttonName: buttonText,
+                    });
                 }
               }}
               disabled={!isPrimaryEnabled()}
@@ -1048,24 +1051,24 @@ export default function MlpSwap(props) {
           </div>
         )}
       </div>
-      <div className="App-card MlpSwap-token-list">
+      <div className="MlpSwap-token-list">
         {/* <div className="MlpSwap-token-list-content"> */}
         <table className="token-table">
           <thead>
             <tr>
-              <th>TOKEN</th>
-              <th>PRICE</th>
+              <th>Token</th>
+              <th>Price</th>
               <th>
                 {isBuying ? (
                   <Tooltip
-                    handle={"AVAILABLE"}
+                    handle={"Available"}
                     tooltipIconPosition="right"
                     position="right-bottom text-none"
                     renderContent={() => "Available amount to deposit into MLP."}
                   />
                 ) : (
                   <Tooltip
-                    handle={"AVAILABLE"}
+                    handle={"Available"}
                     tooltipIconPosition="right"
                     position="right-bottom text-none"
                     renderContent={() => {
@@ -1079,10 +1082,10 @@ export default function MlpSwap(props) {
                   />
                 )}
               </th>
-              <th>WALLET</th>
+              <th>Wallet</th>
               <th>
                 <Tooltip
-                  handle={"FEES"}
+                  handle={"Fees"}
                   tooltipIconPosition="right"
                   position="right-bottom text-none"
                   renderContent={() => {
@@ -1153,10 +1156,7 @@ export default function MlpSwap(props) {
                 );
               }
               function renderFees() {
-                const swapUrl =
-                  chainId === ARBITRUM
-                    ? `https://app.uniswap.org/#/swap?inputCurrency=${token.address}`
-                    : `https://traderjoexyz.com/trade?inputCurrency=${token.address}`;
+                const swapUrl = `https://app.uniswap.org/#/swap?inputCurrency=${token.address}&chain=arbitrum`;
                 switch (true) {
                   case (isBuying && isCapReached) || (!isBuying && managedUsd?.lt(1)):
                     return (
@@ -1247,9 +1247,10 @@ export default function MlpSwap(props) {
                       className={cx("App-button-option action-btn", isBuying ? "buying" : "selling")}
                       onClick={() => {
                         selectToken(token);
-                        trackAction && trackAction("Button clicked", {
-                          buttonName: isBuying ? "Buy with " + token.symbol : "Sell for " + token.symbol,
-                        });
+                        trackAction &&
+                          trackAction("Button clicked", {
+                            buttonName: isBuying ? "Buy with " + token.symbol : "Sell for " + token.symbol,
+                          });
                       }}
                     >
                       {isBuying ? "Buy with " + token.symbol : "Sell for " + token.symbol}

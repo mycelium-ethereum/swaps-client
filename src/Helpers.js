@@ -59,11 +59,19 @@ const MAX_GAS_PRICE_MAP = {
   [AVALANCHE]: "200000000000", // 200 gwei
 };
 
-const alchemyWhitelistedDomains = ["swaps.mycelium.xyz", "perpetual-swaps-git-add-mainnet-mycelium.vercel.app"];
+const alchemyWhitelistedDomains = [
+  "swaps.mycelium.xyz",
+];
 
-export function getDefaultArbitrumRpcUrl() {
+export function getDefaultArbitrumRpcUrl(useWebsocket) {
   if (alchemyWhitelistedDomains.includes(window.location.host)) {
+    if (useWebsocket) {
+      return "wss://arb-mainnet.g.alchemy.com/v2/SKz5SvTuqIVjE38XsFsy0McZbgfFPOng";
+    }
     return "https://arb-mainnet.g.alchemy.com/v2/SKz5SvTuqIVjE38XsFsy0McZbgfFPOng";
+  }
+  if (useWebsocket) {
+    return "wss://arb1.arbitrum.io/ws";
   }
   return "https://arb1.arbitrum.io/rpc";
 }
@@ -99,9 +107,9 @@ export const MLP_DECIMALS = 18;
 export const MYC_DECIMALS = 18;
 export const DEFAULT_MAX_USDG_AMOUNT = expandDecimals(200 * 1000 * 1000, 18);
 
-export const TAX_BASIS_POINTS = 0;
+export const TAX_BASIS_POINTS = 20;
 export const STABLE_TAX_BASIS_POINTS = 2;
-export const MINT_BURN_FEE_BASIS_POINTS = 0;
+export const MINT_BURN_FEE_BASIS_POINTS = 18;
 export const SWAP_FEE_BASIS_POINTS = 15;
 export const STABLE_SWAP_FEE_BASIS_POINTS = 3;
 export const MARGIN_FEE_BASIS_POINTS = 3;
@@ -157,7 +165,7 @@ export const MLP_POOL_COLORS = {
   CTM: "#F8B500",
   FXS: "#3B3B3B",
   BAL: "#1B1B1B",
-  CRV: "#CF0301"
+  CRV: "#CF0301",
 };
 
 export const HIGH_SPREAD_THRESHOLD = expandDecimals(1, USD_DECIMALS).div(100); // 1%;
@@ -173,7 +181,7 @@ export const ICONLINKS = {
     },
     MYC: {
       coingecko: "https://www.coingecko.com/en/coins/mycelium",
-      arbitrum: "https://arbiscan.io/address/0xfc5a1a6eb076a2c7ad06ed22c90d7e710e35ad0a",
+      arbitrum: "https://arbiscan.io/token/0xc74fe4c715510ec2f8c61d70d397b32043f55abe",
     },
     ETH: {
       coingecko: "https://www.coingecko.com/en/coins/ethereum",
@@ -227,7 +235,7 @@ export const ICONLINKS = {
     },
     MYC: {
       coingecko: "https://www.coingecko.com/en/coins/mycelium",
-      arbitrum: "https://arbiscan.io/address/0xfc5a1a6eb076a2c7ad06ed22c90d7e710e35ad0a",
+      arbitrum: "https://arbiscan.io/token/0xc74fe4c715510ec2f8c61d70d397b32043f55abe",
     },
     ETH: {
       coingecko: "https://www.coingecko.com/en/coins/ethereum",
@@ -383,6 +391,21 @@ export const platformTokens = {
   },
 };
 
+export const networkOptions = [
+  {
+    label: "Arbitrum",
+    value: ARBITRUM,
+    icon: "ic_arbitrum_24.svg",
+    color: "#264f79",
+  },
+  {
+    label: "Testnet",
+    value: ARBITRUM_TESTNET,
+    icon: "ic_arbitrum_24.svg",
+    color: "#264f79",
+  },
+];
+
 const supportedChainIds = [ARBITRUM, AVALANCHE, ARBITRUM_TESTNET];
 const injectedConnector = new InjectedConnector({
   supportedChainIds,
@@ -517,6 +540,23 @@ export function getMarginFee(sizeDelta) {
   }
   const afterFeeUsd = sizeDelta.mul(BASIS_POINTS_DIVISOR - MARGIN_FEE_BASIS_POINTS).div(BASIS_POINTS_DIVISOR);
   return sizeDelta.sub(afterFeeUsd);
+}
+
+export function getSupplyUrl(_chainId) {
+  // same supply across networks
+  return "https://stats.tracer.finance/supply";
+}
+
+const BASE_TRACER_URL = process.env.REACT_APP_TRACER_API ?? "https://api.tracer.finance";
+
+export function getTracerServerUrl(chainId, path) {
+  if (!chainId) {
+    throw new Error("chainId is not provided");
+  } else if (chainId !== ARBITRUM && chainId !== ARBITRUM_TESTNET) {
+    throw new Error("chainId is not supported");
+  }
+
+  return `${BASE_TRACER_URL}/trs${path}?network=${chainId}`;
 }
 
 export function getServerBaseUrl(chainId) {
@@ -1400,7 +1440,7 @@ const RPC_PROVIDERS = {
 };
 
 const FALLBACK_PROVIDERS = {
-  [ARBITRUM]: ["https://arb-mainnet.g.alchemy.com/v2/ha7CFsr1bx5ZItuR6VZBbhKozcKDY4LZ"],
+  [ARBITRUM]: ["https://arb-mainnet.g.alchemy.com/v2/SKz5SvTuqIVjE38XsFsy0McZbgfFPOng"],
   [AVALANCHE]: ["https://avax-mainnet.gateway.pokt.network/v1/lb/626f37766c499d003aada23b"],
 };
 
@@ -1425,17 +1465,15 @@ export function formatTimeTill(time) {
     return "0d 0h 0s";
   }
 
-
-  const secondsTill = Math.floor((time - dateNow));
+  const secondsTill = Math.floor(time - dateNow);
 
   let minutes = Math.floor(secondsTill / 60);
   let hours = Math.floor(minutes / 60);
   const days = Math.floor(hours / 24);
 
-  hours = hours - (days * 24);
-  minutes = minutes - (days * 24 * 60) - (hours * 60);
-  return `${days}d ${hours}h ${minutes}m`
-
+  hours = hours - days * 24;
+  minutes = minutes - days * 24 * 60 - hours * 60;
+  return `${days}d ${hours}h ${minutes}m`;
 }
 
 export function formatDateTime(time) {
@@ -1602,7 +1640,7 @@ export function useEagerConnect(setActivatingConnector) {
           setActivatingConnector(connector);
           await activate(connector, undefined, true);
         }
-      } catch (ex) { }
+      } catch (ex) {}
 
       setTried(true);
     })();
@@ -2001,7 +2039,9 @@ export function useAccountOrders(flagOrdersEnabled, overrideAccount) {
       };
 
       try {
-        const [serverIndexes, lastIndexes] = await Promise.all([fetchIndexesFromServer(), fetchLastIndexes()]);
+        const lastIndexes = await fetchLastIndexes();
+        const serverIndexes = { swap: [], increase: [], decrease: [] };
+
         const [swapOrders = [], increaseOrders = [], decreaseOrders = []] = await Promise.all([
           getOrders("getSwapOrders", serverIndexes.swap, lastIndexes.swap, parseSwapOrdersData),
           getOrders("getIncreaseOrders", serverIndexes.increase, lastIndexes.increase, parseIncreaseOrdersData),

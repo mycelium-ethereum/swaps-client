@@ -47,7 +47,6 @@ import OrdersList from "../../components/Exchange/OrdersList";
 import TradeHistory from "../../components/Exchange/TradeHistory";
 import ExchangeWalletTokens from "../../components/Exchange/ExchangeWalletTokens";
 import Tab from "../../components/Tab/Tab";
-import Footer from "../../Footer";
 
 import "./Exchange.css";
 import SEO from "../../components/Common/SEO";
@@ -365,6 +364,7 @@ export const Exchange = forwardRef((props, ref) => {
     infoTokens,
     trackPageWithTraits,
     trackAction,
+    sidebarVisible,
     analytics,
   } = props;
 
@@ -893,6 +893,7 @@ export const Exchange = forwardRef((props, ref) => {
         savedShouldShowPositionLines={savedShouldShowPositionLines}
         orders={orders}
         setToTokenAddress={setToTokenAddress}
+        sidebarVisible={sidebarVisible}
         trackAction={trackAction}
       />
     );
@@ -959,7 +960,6 @@ export const Exchange = forwardRef((props, ref) => {
           </div>
           <div className="Exchange-lists small">{getListSection()}</div>
         </div>
-        <Footer />
       </div>
     </SEO>
   );

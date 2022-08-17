@@ -1025,7 +1025,7 @@ export default function SwapBox(props) {
     } else {
       outputCurrency = shortCollateralToken.address;
     }
-    let uniswapUrl = `https://app.uniswap.org/#/swap?inputCurrency=${inputCurrency}&outputCurrency=${outputCurrency}`;
+    let uniswapUrl = `https://app.uniswap.org/#/swap?inputCurrency=${inputCurrency}&outputCurrency=${outputCurrency}&chain=arbitrum`;
     const label =
       modalError === "BUFFER" ? `${shortCollateralToken.symbol} Required` : `${fromToken.symbol} Capacity Reached`;
     const swapTokenSymbol = isLong ? toToken.symbol : shortCollateralToken.symbol;
@@ -1861,10 +1861,7 @@ export default function SwapBox(props) {
         {active && <div className="Exchange-swap-account" >
         </div>}
       </div> */}
-      <div className={`Exchange-swap-box-inner App-box-highlight ${chainId === ARBITRUM ? "disabled" : ""}`}>
-        <div className="coming-soon-tooltip">
-          Trading coming soon
-        </div>
+      <div className="Exchange-swap-box-inner App-box-highlight">
         <div>
           <Tab
             icons={SWAP_ICONS}

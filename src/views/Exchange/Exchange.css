@@ -374,6 +374,7 @@
   left: 0;
   right: 0;
   top: 0.5rem;
+  overflow: hidden;
 }
 
 .Exchange-price-tooltip {
@@ -530,7 +531,6 @@ table.Exchange-list th {
   color: var(--text-primary);
 }
 
-
 .Exchange-info-row.top-line {
   border-top: 1px solid var(--cell-stroke);
   margin-top: 1rem;
@@ -587,36 +587,6 @@ table.Exchange-list th {
   padding: 1rem;
 }
 
-/* Disabled Trading styles when on mainnet */
-
-.Exchange-swap-box-inner.disabled {
-  cursor: not-allowed;
-}
-
-.Exchange-swap-box-inner.disabled * {
-  pointer-events: none;
-  opacity: 0.5;
-}
-
-.Exchange-swap-box-inner .coming-soon-tooltip {
-  display: none;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  font-size: 0.9rem;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.3s ease;
-}
-
-.Exchange-swap-box-inner.disabled .coming-soon-tooltip {
-  display: block;
-}
-
-.Exchange-swap-box-inner.disabled:hover .coming-soon-tooltip {
-  opacity: 1;
-}
 .Exchange-swap-market-box {
   padding: 1rem;
   margin-top: 0.8rem;
@@ -669,7 +639,7 @@ table.Exchange-list th {
 }
 
 .Selector .Modal-content {
-  /* height: max-content; */
+  height: max-content;
 }
 
 .Exchange-swap-box .Tab {
@@ -770,11 +740,13 @@ input.Exchange-swap-input::placeholder {
   opacity: 1; /* Firefox */
 }
 
-input.Exchange-swap-input:-ms-input-placeholder { /* Internet Explorer 10-11 */
+input.Exchange-swap-input:-ms-input-placeholder {
+  /* Internet Explorer 10-11 */
   color: var(--color-primary);
 }
 
-input.Exchange-swap-input::-ms-input-placeholder { /* Microsoft Edge */
+input.Exchange-swap-input::-ms-input-placeholder {
+  /* Microsoft Edge */
   color: var(--color-primary);
 }
 
@@ -928,19 +900,20 @@ table.Exchange-list-small td {
   height: 5rem;
 }
 
-@media (max-width: 1500px) {
-  .Exchange-swap-box {
-    width: 25rem;
-  }
-}
-
-@media (max-width: 1300px) {
-  .App-box.large, .Exchange-list.large {
+@media (max-width: 1640px) {
+  .App-box.large,
+  .Exchange-list.large {
     display: none;
   }
 
   .Exchange-list.small {
     display: table;
+  }
+}
+
+@media (max-width: 1500px) {
+  .Exchange-swap-box {
+    width: 25rem;
   }
 }
 
@@ -983,14 +956,6 @@ table.Exchange-list-small td {
 
   .Exchange-content {
     grid-template-columns: 1fr;
-  }
-
-  .Exchange-lists.large {
-    display: none;
-  }
-
-  .Exchange-lists.small {
-    display: block;
   }
 
   .Exchange-list-title {
@@ -1086,4 +1051,3 @@ table.Exchange-list-small td {
     padding: 1rem;
   }
 }
-

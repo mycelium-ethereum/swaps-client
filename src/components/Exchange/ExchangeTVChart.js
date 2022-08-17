@@ -133,6 +133,7 @@ export default function ExchangeTVChart(props) {
     savedShouldShowPositionLines,
     orders,
     setToTokenAddress,
+    sidebarVisible,
     trackAction,
   } = props;
   const [currentChart, setCurrentChart] = useState();
@@ -263,6 +264,19 @@ export default function ExchangeTVChart(props) {
     window.addEventListener("resize", resizeChart);
     return () => window.removeEventListener("resize", resizeChart);
   }, [currentChart]);
+
+  useEffect(() => {
+    if (!currentChart) {
+      return;
+    }
+    const resizeChart = () => {
+      currentChart.resize(chartRef.current.offsetWidth, chartRef.current.offsetHeight);
+    };
+    let timeout = setTimeout(() => {
+      resizeChart();
+    }, 500);
+    return () => clearTimeout(timeout);
+  }, [currentChart, sidebarVisible]);
 
   useEffect(() => {
     if (currentSeries && priceData && priceData.length) {
