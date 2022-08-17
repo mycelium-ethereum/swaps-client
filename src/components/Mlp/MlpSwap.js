@@ -32,6 +32,7 @@ import {
   getUsd,
   adjustForDecimals,
   getUserTokenBalances,
+  getAnalyticsEventStage,
   NETWORK_NAME,
   MLP_DECIMALS,
   USD_DECIMALS,
@@ -665,21 +666,7 @@ export default function MlpSwap(props) {
   };
 
   const trackMlpTrade = (stage, tradeType) => {
-    let stageName = "";
-    switch (stage) {
-      case 1:
-        stageName = "Approve";
-        break;
-      case 2:
-        stageName = "Pre-confirmation";
-        break;
-      case 3:
-        stageName = "Post-confirmation";
-        break;
-      default:
-        stageName = "Approve";
-        break;
-    }
+    const stageName = getAnalyticsEventStage(stage);
 
     const actionName = `${stageName}`;
     const isBuy = tradeType.includes("Buy");

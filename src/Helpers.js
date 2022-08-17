@@ -59,9 +59,7 @@ const MAX_GAS_PRICE_MAP = {
   [AVALANCHE]: "200000000000", // 200 gwei
 };
 
-const alchemyWhitelistedDomains = [
-  "swaps.mycelium.xyz",
-];
+const alchemyWhitelistedDomains = ["swaps.mycelium.xyz"];
 
 export function getDefaultArbitrumRpcUrl(useWebsocket) {
   if (alchemyWhitelistedDomains.includes(window.location.host)) {
@@ -3003,4 +3001,21 @@ export function truncateMiddleEthAddress(address, truncateLength) {
   const trailingCharsNum = strLength - leadingCharsNum - 3;
 
   return `${address.slice(0, leadingCharsNum)}...${address.slice(-trailingCharsNum)}`;
+}
+
+export function convertStringToFloat(str, decimals = 0) {
+  return parseFloat(str).toFixed(decimals);
+}
+
+export function getAnalyticsEventStage(stage) {
+  switch (stage) {
+    case 1:
+      return "Approve";
+    case 2:
+      return "Pre-confirmation";
+    case 3:
+      return "Post-confirmation";
+    default:
+      return "Approve";
+  }
 }
