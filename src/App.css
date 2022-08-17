@@ -1349,8 +1349,7 @@ button.App-button {
     align-items: center;
     justify-content: space-between;
     position: relative;
-    padding-left: 32px;
-    padding-right: 32px;
+    padding: 0 16px;
     background: transparent 0% 0% no-repeat padding-box;
   }
 

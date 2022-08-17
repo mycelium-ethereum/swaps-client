@@ -801,7 +801,7 @@ function FullApp() {
                 />
               </div>
             </div>
-            <div className={cx("App-header", "small", { active: isDrawerVisible })}>
+            <div className={cx("App-header small  default-container", { active: isDrawerVisible })}>
               <div
                 className={cx("App-header-link-container", "App-header-top", {
                   active: isDrawerVisible,
