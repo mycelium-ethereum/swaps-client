@@ -59,12 +59,14 @@ const MAX_GAS_PRICE_MAP = {
   [AVALANCHE]: "200000000000", // 200 gwei
 };
 
-const alchemyWhitelistedDomains = ["swaps.mycelium.xyz", "perpetual-swaps-git-feat-enable-trading-overlay-mycelium.vercel.app"];
+const alchemyWhitelistedDomains = [
+  "swaps.mycelium.xyz",
+];
 
 export function getDefaultArbitrumRpcUrl(useWebsocket) {
   if (alchemyWhitelistedDomains.includes(window.location.host)) {
     if (useWebsocket) {
-      return 'wss://arb-mainnet.g.alchemy.com/v2/SKz5SvTuqIVjE38XsFsy0McZbgfFPOng';
+      return "wss://arb-mainnet.g.alchemy.com/v2/SKz5SvTuqIVjE38XsFsy0McZbgfFPOng";
     }
     return "https://arb-mainnet.g.alchemy.com/v2/SKz5SvTuqIVjE38XsFsy0McZbgfFPOng";
   }
@@ -545,13 +547,13 @@ export function getSupplyUrl(_chainId) {
   return "https://stats.tracer.finance/supply";
 }
 
-const BASE_TRACER_URL = process.env.REACT_APP_TRACER_API ?? 'https://api.tracer.finance'
+const BASE_TRACER_URL = process.env.REACT_APP_TRACER_API ?? "https://api.tracer.finance";
 
 export function getTracerServerUrl(chainId, path) {
   if (!chainId) {
     throw new Error("chainId is not provided");
   } else if (chainId !== ARBITRUM && chainId !== ARBITRUM_TESTNET) {
-    throw new Error("chainId is not supported")
+    throw new Error("chainId is not supported");
   }
 
   return `${BASE_TRACER_URL}/trs${path}?network=${chainId}`;
@@ -1638,7 +1640,7 @@ export function useEagerConnect(setActivatingConnector) {
           setActivatingConnector(connector);
           await activate(connector, undefined, true);
         }
-      } catch (ex) { }
+      } catch (ex) {}
 
       setTried(true);
     })();

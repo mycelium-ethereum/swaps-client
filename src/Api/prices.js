@@ -92,9 +92,8 @@ async function getChartPricesFromStats(_chainId, symbol, period) {
     throw new Error(`request failed ${res.status} ${res.statusText}`);
   }
 
-  let json = (await res.json());
+  let json = await res.json();
   let prices = json?.prices;
-  console.log("wala", prices)
   if (!prices || prices?.length < 10) {
     throw new Error(`not enough prices data: ${prices?.length}`);
   }
@@ -111,13 +110,13 @@ async function getChartPricesFromStats(_chainId, symbol, period) {
   }
 
   prices = prices.map(({ t, o: open, c: close, h: high, l: low }) => {
-    return ({
+    return {
       time: t + timezoneOffset,
       open,
       close,
       high,
-      low
-    })
+      low,
+    };
   });
 
   return prices;
