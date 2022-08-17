@@ -40,6 +40,7 @@ export default function OrdersList(props) {
     orders,
     hideActions,
     chainId,
+    trackAction,
   } = props;
 
   const [editingOrder, setEditingOrder] = useState(null);
@@ -353,10 +354,22 @@ export default function OrdersList(props) {
               <>
                 <div className="App-card-divider"></div>
                 <div className="App-card-options">
-                  <button className="App-button-option App-card-option" onClick={() => onEditClick(order)}>
+                  <button
+                    className="App-button-option App-card-option"
+                    onClick={() => {
+                      trackAction("Button clicked", { buttonName: "Edit order" });
+                      onEditClick(order);
+                    }}
+                  >
                     Edit
                   </button>
-                  <button className="App-button-option App-card-option" onClick={() => onCancelClick(order)}>
+                  <button
+                    className="App-button-option App-card-option"
+                    onClick={() => {
+                      trackAction("Button clicked", { buttonName: "Cancel order" });
+                      onCancelClick(order);
+                    }}
+                  >
                     Cancel
                   </button>
                 </div>
@@ -366,18 +379,18 @@ export default function OrdersList(props) {
         </div>
       );
     });
-  }, [orders, onEditClick, onCancelClick, infoTokens, positionsMap, hideActions, chainId, account]);
+  }, [orders, onEditClick, onCancelClick, infoTokens, positionsMap, hideActions, chainId, account, trackAction]);
 
   return (
     <React.Fragment>
       <div className="App-box large">
-      <table className="Exchange-list Orders large">
-        <tbody>
-          {renderHead()}
-          {renderEmptyRow()}
-          {renderLargeList()}
-        </tbody>
-      </table>
+        <table className="Exchange-list Orders large">
+          <tbody>
+            {renderHead()}
+            {renderEmptyRow()}
+            {renderLargeList()}
+          </tbody>
+        </table>
       </div>
       <div className="Exchange-list Orders small">
         {(!orders || orders.length === 0) && (
@@ -398,6 +411,7 @@ export default function OrdersList(props) {
           library={library}
           totalTokenWeights={totalTokenWeights}
           usdgSupply={usdgSupply}
+          trackAction={trackAction}
         />
       )}
     </React.Fragment>

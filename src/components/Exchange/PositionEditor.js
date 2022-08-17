@@ -20,6 +20,9 @@ import {
   getTokenInfo,
   getLiquidationPrice,
   approveTokens,
+  getUserTokenBalances,
+  convertStringToFloat,
+  getAnalyticsEventStage,
 } from "../../Helpers";
 import { getContract } from "../../Addresses";
 import Tab from "../Tab/Tab";
@@ -57,6 +60,7 @@ export default function PositionEditor(props) {
     isPositionRouterApproving,
     approvePositionRouter,
     chainId,
+    trackAction,
   } = props;
   const nativeTokenAddress = getContract(chainId, "NATIVE_TOKEN");
   const position = positionsMap && positionKey ? positionsMap[positionKey] : undefined;
@@ -345,6 +349,7 @@ export default function PositionEditor(props) {
       })
       .finally(() => {
         setIsSwapping(false);
+        trackEditPosition(3);
       });
   };
 
@@ -396,6 +401,7 @@ export default function PositionEditor(props) {
       })
       .finally(() => {
         setIsSwapping(false);
+        trackEditPosition(3);
       });
   };
 
@@ -429,6 +435,50 @@ export default function PositionEditor(props) {
     }
 
     withdrawCollateral();
+  };
+
+  const trackEditPosition = (stage) => {
+    const eventName = getAnalyticsEventStage(stage);
+    try {
+      const size = convertStringToFloat(formatAmount(position.size, USD_DECIMALS, 2, true));
+      const collateral = convertStringToFloat(formatAmount(position.collateral, USD_DECIMALS, 2, true));
+      const nextCollateralValue = nextCollateral
+        ? convertStringToFloat(formatAmount(nextCollateral, USD_DECIMALS, 2, true))
+        : 0;
+      const leverage = convertStringToFloat(formatAmount(position.leverage, 4, 2, true));
+      const nextLeverageValue = nextLeverage ? convertStringToFloat(formatAmount(nextLeverage, 4, 2, true)) : 0;
+      const markPrice = convertStringToFloat(formatAmount(position.markPrice, USD_DECIMALS, 2, true));
+      const liqPrice = convertStringToFloat(formatAmount(liquidationPrice, USD_DECIMALS, 2, true));
+      const nextLiqPriceValue = nextLiquidationPrice
+        ? convertStringToFloat(formatAmount(nextLiquidationPrice, USD_DECIMALS, 2, true))
+        : 0;
+      const amountToPay = convertedAmountFormatted;
+      const tokenToPay = isDeposit ? "USD" : position.collateralToken.symbol;
+
+      const [userBalances, tokenPrices, poolBalances] = getUserTokenBalances(infoTokens);
+
+      const traits = {
+        actionType: "Edit",
+        positionType: position.isLong ? "Long" : "Short",
+        transactionType: isDeposit ? "Buy" : "Sell",
+        size: size,
+        collateral: collateral,
+        nextCollateral: nextCollateralValue,
+        leverage: leverage,
+        nextLeverage: nextLeverageValue,
+        markPrice: markPrice,
+        liqPrice: liqPrice,
+        nextLiqPrice: nextLiqPriceValue,
+        amountToPay: amountToPay,
+        tokenToPay: tokenToPay,
+        ...userBalances,
+        ...tokenPrices,
+        ...poolBalances,
+      };
+      trackAction && trackAction(eventName, traits);
+    } catch (err) {
+      console.error(`Unable to track ${eventName} event`, err);
+    }
   };
 
   return (
@@ -546,7 +596,11 @@ export default function PositionEditor(props) {
                 <div className="Exchange-swap-button-container">
                   <button
                     className="App-cta Exchange-swap-button"
-                    onClick={onClickPrimary}
+                    onClick={() => {
+                      const stage = getPrimaryText() === "Approve" ? 1 : 2;
+                      trackEditPosition(stage);
+                      onClickPrimary();
+                    }}
                     disabled={!isPrimaryEnabled()}
                   >
                     {getPrimaryText()}

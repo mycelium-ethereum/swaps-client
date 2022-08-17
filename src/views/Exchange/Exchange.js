@@ -847,6 +847,7 @@ export const Exchange = forwardRef((props, ref) => {
             setMarket={setMarket}
             orders={orders}
             showPnlAfterFees={savedShowPnlAfterFees}
+            trackAction={trackAction}
           />
         )}
         {listSection === "Orders" && (
@@ -862,6 +863,7 @@ export const Exchange = forwardRef((props, ref) => {
             orders={orders}
             totalTokenWeights={totalTokenWeights}
             usdgSupply={usdgSupply}
+            trackAction={trackAction}
           />
         )}
         {listSection === "Trades" && (

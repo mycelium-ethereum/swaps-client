@@ -30,13 +30,16 @@ import {
   MARKET,
   STOP,
   DECREASE,
+  LIMIT,
   useLocalStorageSerializeKey,
   calculatePositionDelta,
   getDeltaStr,
   getProfitPrice,
   formatDateTime,
   getTimeRemaining,
-  LIMIT,
+  getAnalyticsEventStage,
+  convertStringToFloat,
+  getUserTokenBalances,
 } from "../../Helpers";
 import { getConstant } from "../../Constants";
 import { createDecreaseOrder, callContract, useHasOutdatedUi } from "../../Api";
@@ -105,6 +108,7 @@ export default function PositionSeller(props) {
     approvePositionRouter,
     isHigherSlippageAllowed,
     setIsHigherSlippageAllowed,
+    trackAction,
   } = props;
   const [savedSlippageAmount] = useLocalStorageSerializeKey([chainId, SLIPPAGE_BPS_KEY], DEFAULT_SLIPPAGE_AMOUNT);
   const [keepLeverage, setKeepLeverage] = useLocalStorageSerializeKey([chainId, "Exchange-keep-leverage"], true);
@@ -598,6 +602,7 @@ export default function PositionSeller(props) {
             size: nextSize,
           },
         };
+        trackClosePosition(3);
 
         setPendingPositions({ ...pendingPositions });
       })
@@ -676,6 +681,66 @@ export default function PositionSeller(props) {
   }
 
   const shouldShowExistingOrderWarning = false;
+
+  const trackClosePosition = (stage) => {
+    const eventName = getAnalyticsEventStage(stage);
+    try {
+      const size = convertStringToFloat(formatAmount(position.size, USD_DECIMALS, 2, true));
+      const collateral = convertStringToFloat(formatAmount(position.collateral, USD_DECIMALS, 2, true));
+      const nextCollateralValue = nextCollateral
+        ? convertStringToFloat(formatAmount(nextCollateral, USD_DECIMALS, 2, true))
+        : 0;
+      const leverage = convertStringToFloat(formatAmount(position.leverage, 4, 2, true));
+      const nextLeverageValue = nextLeverage ? convertStringToFloat(formatAmount(nextLeverage, 4, 2, true)) : 0;
+      const liqPrice = convertStringToFloat(formatAmount(liquidationPrice, USD_DECIMALS, 2, true));
+      const nextLiqPriceValue = nextLiquidationPrice
+        ? convertStringToFloat(formatAmount(nextLiquidationPrice, USD_DECIMALS, 2, true))
+        : 0;
+      const amountToPay = convertedAmountFormatted;
+      const allowedSlippageValue = convertStringToFloat(formatAmount(allowedSlippage, 2, 2));
+      const entryPrice = convertStringToFloat(formatAmount(position.averagePrice, USD_DECIMALS, 2, true));
+      const exitPrice = convertStringToFloat(formatAmount(position.markPrice, USD_DECIMALS, 2, true));
+      const borrowFeeValue = convertStringToFloat(formatAmount(fundingFee, USD_DECIMALS, 2, true));
+      const closingFee = convertStringToFloat(formatAmount(positionFee, USD_DECIMALS, 2, true));
+      const amountToReceiveUsd = convertStringToFloat(formatAmount(receiveAmount, USD_DECIMALS, 2, true));
+      const amountToReceive = convertStringToFloat(
+        formatAmount(convertedReceiveAmount, position.collateralToken.decimals, 4, true)
+      );
+      const [userBalances, tokenPrices, poolBalances] = getUserTokenBalances(infoTokens);
+
+      const traits = {
+        actionType: "Close",
+        positionType: position.isLong ? "long" : "short",
+        transactionType: orderOption === MARKET ? "market" : "trigger",
+        size: size,
+        collateral: collateral,
+        nextCollateral: nextCollateralValue,
+        leverage: leverage,
+        nextLeverage: nextLeverageValue,
+        keepOriginalLeverage: keepLeverage,
+        upToOnePercentSlippageEnabled: isHigherSlippageAllowed,
+        liqPrice: liqPrice,
+        nextLiqPrice: nextLiqPriceValue,
+        amountToPay: amountToPay,
+        allowedSlippage: allowedSlippageValue,
+        entryPrice: entryPrice,
+        exitPrice: exitPrice,
+        borrowFee: borrowFeeValue,
+        closingFee: closingFee,
+        pnlActual: deltaStr,
+        pnlPercentage: deltaPercentageStr,
+        amountToReceiveUsd: amountToReceiveUsd,
+        amountToReceive: amountToReceive,
+        tokenToReceive: position.collateralToken.symbol,
+        ...userBalances,
+        ...tokenPrices,
+        ...poolBalances,
+      };
+      trackAction && trackAction(eventName, traits);
+    } catch (err) {
+      console.error(`Unable to track ${eventName} event`, err);
+    }
+  };
 
   return (
     <div className="PositionEditor">
@@ -922,7 +987,15 @@ export default function PositionSeller(props) {
             {renderExecutionFee()}
           </div>
           <div className="Exchange-swap-button-container">
-            <button className="App-cta Exchange-swap-button" onClick={onClickPrimary} disabled={!isPrimaryEnabled()}>
+            <button
+              className="App-cta Exchange-swap-button"
+              onClick={() => {
+                const stage = getPrimaryText() === "Approve" ? 1 : 2;
+                trackClosePosition(stage);
+                onClickPrimary();
+              }}
+              disabled={!isPrimaryEnabled()}
+            >
               {getPrimaryText()}
             </button>
           </div>

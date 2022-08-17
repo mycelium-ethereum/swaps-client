@@ -32,6 +32,7 @@ import {
   getUsd,
   adjustForDecimals,
   getUserTokenBalances,
+  getAnalyticsEventStage,
   NETWORK_NAME,
   MLP_DECIMALS,
   USD_DECIMALS,
@@ -557,7 +558,7 @@ export default function MlpSwap(props) {
       setPendingTxns,
     })
       .then(async () => {
-        trackMlpTrade(3, "Buy Tlp");
+        trackMlpTrade(3, "Buy MLP");
       })
       .finally(() => {
         setIsSubmitting(false);
@@ -586,7 +587,7 @@ export default function MlpSwap(props) {
       setPendingTxns,
     })
       .then(async () => {
-        trackMlpTrade(3, "Sell Tlp");
+        trackMlpTrade(3, "Sell MLP");
       })
       .finally(() => {
         setIsSubmitting(false);
@@ -665,23 +666,8 @@ export default function MlpSwap(props) {
   };
 
   const trackMlpTrade = (stage, tradeType) => {
-    let stageName = "";
-    switch (stage) {
-      case 1:
-        stageName = "Approve";
-        break;
-      case 2:
-        stageName = "Pre-confirmation";
-        break;
-      case 3:
-        stageName = "Post-confirmation";
-        break;
-      default:
-        stageName = "Approve";
-        break;
-    }
+    const eventName = getAnalyticsEventStage(stage);
 
-    const actionName = `${stageName}`;
     const isBuy = tradeType.includes("Buy");
     try {
       const feePercentage = formatAmount(feeBasisPoints, 2, 2, false, "-");
@@ -689,14 +675,16 @@ export default function MlpSwap(props) {
       const feesEth = (swapValue * parseFloat(feePercentage)) / 100;
       const amountToPay = isBuy ? swapValue : mlpValue;
       const amountToReceive = isBuy ? mlpValue : swapValue;
-      const tokenToPay = isBuy ? swapTokenInfo.symbol : "TLP";
-      const tokenToReceive = isBuy ? "TLP" : swapTokenInfo.symbol;
+      const amountToReceiveUsd = isBuy ? receiveBalance?.replace("$", "") : payBalance?.replace("$", "");
+      const tokenToPay = isBuy ? swapTokenInfo.symbol : "MLP";
+      const tokenToReceive = isBuy ? "MLP" : swapTokenInfo.symbol;
 
       const [userBalances, tokenPrices, poolBalances] = getUserTokenBalances(infoTokens);
 
       const traits = {
+        actionType: "Create",
+        amountToReceiveUsd: parseFloat(amountToReceiveUsd).toFixed(2),
         tradeType: tradeType,
-        position: tabLabel.split(" ")[1],
         tokenToPay: tokenToPay,
         tokenToReceive: tokenToReceive,
         amountToPay: parseFloat(amountToPay),
@@ -711,9 +699,9 @@ export default function MlpSwap(props) {
         ...tokenPrices,
         ...poolBalances,
       };
-      trackAction && trackAction(actionName, traits);
+      trackAction && trackAction(eventName, traits);
     } catch (err) {
-      console.error(`Unable to track ${actionName} event`, err);
+      console.error(`Unable to track ${eventName} event`, err);
     }
   };
 
@@ -729,8 +717,8 @@ export default function MlpSwap(props) {
       const hash = history.location.hash.replace("#", "");
       const isBuying = hash === "redeem" ? false : true;
       // Swap pay and receive tokens depending on isBuying
-      const tokenToPay = isBuying ? getToken(chainId, swapTokenAddress).symbol : "TLP";
-      const tokenToReceive = isBuying ? "TLP" : getToken(chainId, swapTokenAddress).symbol;
+      const tokenToPay = isBuying ? getToken(chainId, swapTokenAddress).symbol : "MLP";
+      const tokenToReceive = isBuying ? "MLP" : getToken(chainId, swapTokenAddress).symbol;
       const traits = {
         action: isBuying ? "Buy" : "Sell",
         tokenToPay: tokenToPay,
@@ -923,7 +911,7 @@ export default function MlpSwap(props) {
                   switchSwapOption(isBuying ? "redeem" : "");
                   trackAction &&
                     trackAction("Button clicked", {
-                      buttonName: `Swap action - ${isBuying ? "Sell TLP" : "Buy TLP"}`,
+                      buttonName: `Swap action - ${isBuying ? "Sell MLP" : "Buy MLP"}`,
                     });
                 }}
               />

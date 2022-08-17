@@ -1212,12 +1212,13 @@ export default function SwapBox(props) {
     Api.callContract(chainId, contract, "deposit", {
       value: fromAmount,
       sentMsg: "Swap submitted.",
-      successMsg: `Swapped ${formatAmount(fromAmount, fromToken.decimals, 4, true)} ${fromToken.symbol
-        } for ${formatAmount(toAmount, toToken.decimals, 4, true)} ${toToken.symbol}!`,
+      successMsg: `Swapped ${formatAmount(fromAmount, fromToken.decimals, 4, true)} ${
+        fromToken.symbol
+      } for ${formatAmount(toAmount, toToken.decimals, 4, true)} ${toToken.symbol}!`,
       failMsg: "Swap failed.",
       setPendingTxns,
     })
-      .then(async (res) => { })
+      .then(async (res) => {})
       .finally(() => {
         setIsSubmitting(false);
       });
@@ -1230,11 +1231,12 @@ export default function SwapBox(props) {
     Api.callContract(chainId, contract, "withdraw", [fromAmount], {
       sentMsg: "Swap submitted!",
       failMsg: "Swap failed.",
-      successMsg: `Swapped ${formatAmount(fromAmount, fromToken.decimals, 4, true)} ${fromToken.symbol
-        } for ${formatAmount(toAmount, toToken.decimals, 4, true)} ${toToken.symbol}!`,
+      successMsg: `Swapped ${formatAmount(fromAmount, fromToken.decimals, 4, true)} ${
+        fromToken.symbol
+      } for ${formatAmount(toAmount, toToken.decimals, 4, true)} ${toToken.symbol}!`,
       setPendingTxns,
     })
-      .then(async (res) => { })
+      .then(async (res) => {})
       .finally(() => {
         setIsSubmitting(false);
       });
@@ -1338,8 +1340,9 @@ export default function SwapBox(props) {
     Api.callContract(chainId, contract, method, params, {
       value,
       sentMsg: `Swap ${!isMarketOrder ? " order " : ""} submitted!`,
-      successMsg: `Swapped ${formatAmount(fromAmount, fromToken.decimals, 4, true)} ${fromToken.symbol
-        } for ${formatAmount(toAmount, toToken.decimals, 4, true)} ${toToken.symbol}!`,
+      successMsg: `Swapped ${formatAmount(fromAmount, fromToken.decimals, 4, true)} ${
+        fromToken.symbol
+      } for ${formatAmount(toAmount, toToken.decimals, 4, true)} ${toToken.symbol}!`,
       failMsg: "Swap failed.",
       setPendingTxns,
     })
@@ -1558,9 +1561,10 @@ export default function SwapBox(props) {
       }
     }
 
-    trackAction && trackAction("Swap option changed", {
-      option: opt,
-    });
+    trackAction &&
+      trackAction("Swap option changed", {
+        option: opt,
+      });
   };
 
   const onConfirmationClick = () => {
@@ -1811,7 +1815,7 @@ export default function SwapBox(props) {
       const toToken = getToken(chainId, toTokenAddress);
       const leverage = (isLong || isShort) && hasLeverageOption && parseFloat(leverageOption).toFixed(2);
       const market = swapOption !== "Swap" ? `${toToken.symbol}/USD` : "No market - swap"; //No market for Swap
-      const collateralAfterFees = feesUsd ? fromUsdMin.sub(feesUsd) : "No collateral - swap";
+      const collateralAfterFees = feesUsd ? fromUsdMin.sub(feesUsd) : 0; //No collateral for Swap
       const spread = getSpread(fromTokenInfo, toTokenInfo, isLong, nativeTokenAddress);
       const entryPrice =
         isLong || isShort ? formatAmount(entryMarkPrice, USD_DECIMALS, 2, false) : "No entry price - swap";
@@ -1833,12 +1837,13 @@ export default function SwapBox(props) {
         fromCurrencyToken: fromToken.symbol,
         leverage: parseFloat(leverage),
         feesUsd: parseFloat(formatAmount(feesUsd, 4, 4, false)),
+        feesUsdFormatted: parseFloat(formatAmount(feesUsd, 4, 4, false).toFixed(2)),
         [`fees${fromToken.symbol}`]: parseFloat(formatAmount(fees, fromToken.decimals, 4, false)),
         walletAddress: account,
         network: NETWORK_NAME[chainId],
         profitsIn: toToken.symbol,
         liqPrice: liqPrice,
-        collateral: `$${parseFloat(formatAmount(collateralAfterFees, USD_DECIMALS, 2, false))}`,
+        collateralUsd: `${parseFloat(formatAmount(collateralAfterFees, USD_DECIMALS, 2, false))}`,
         spreadIsHigh: spread.isHigh,
         spreadValue: parseFloat(formatAmount(spread.value, 4, 4, true)),
         entryPrice: parseFloat(entryPrice),
@@ -1911,9 +1916,10 @@ export default function SwapBox(props) {
                       className="Exchange-swap-max"
                       onClick={() => {
                         setFromValueToMaximumAvailable();
-                        trackAction && trackAction("Button clicked", {
-                          buttonName: "Max amount",
-                        });
+                        trackAction &&
+                          trackAction("Button clicked", {
+                            buttonName: "Max amount",
+                          });
                       }}
                     >
                       MAX
@@ -2131,7 +2137,8 @@ export default function SwapBox(props) {
                 isChecked={isLeverageSliderEnabled}
                 setIsChecked={setIsLeverageSliderEnabled}
                 onClick={() =>
-                  trackAction && trackAction("Button clicked", {
+                  trackAction &&
+                  trackAction("Button clicked", {
                     buttonName: `Leverage slider toggled ${isLeverageSliderEnabled ? "on" : "off"}`,
                   })
                 }
@@ -2244,7 +2251,8 @@ export default function SwapBox(props) {
                             </div>
                           )}
                           <div>
-                            Position Fee ({MARGIN_FEE_BASIS_POINTS / 100}% of position size): ${formatAmount(positionFee, USD_DECIMALS, 2, true)}
+                            Position Fee ({MARGIN_FEE_BASIS_POINTS / 100}% of position size): $
+                            {formatAmount(positionFee, USD_DECIMALS, 2, true)}
                           </div>
                         </>
                       );
@@ -2263,14 +2271,16 @@ export default function SwapBox(props) {
               onClickPrimary();
               if (buttonText.includes("Approve")) {
                 trackTrade(1, fromToken?.symbol);
-                trackAction && trackAction("Button clicked", {
-                  buttonName: "Approve",
-                  fromToken: fromToken?.symbol,
-                });
+                trackAction &&
+                  trackAction("Button clicked", {
+                    buttonName: "Approve",
+                    fromToken: fromToken?.symbol,
+                  });
               } else {
-                trackAction && trackAction("Button clicked", {
-                  buttonName: buttonText,
-                });
+                trackAction &&
+                  trackAction("Button clicked", {
+                    buttonName: buttonText,
+                  });
               }
             }}
             disabled={!isPrimaryEnabled()}
