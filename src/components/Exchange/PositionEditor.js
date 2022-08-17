@@ -20,7 +20,11 @@ import {
   getTokenInfo,
   getLiquidationPrice,
   approveTokens,
+<<<<<<< Updated upstream
+=======
   getUserTokenBalances,
+  convertStringToFloat,
+>>>>>>> Stashed changes
 } from "../../Helpers";
 import { getContract } from "../../Addresses";
 import Tab from "../Tab/Tab";
@@ -58,7 +62,6 @@ export default function PositionEditor(props) {
     isPositionRouterApproving,
     approvePositionRouter,
     chainId,
-    trackAction,
   } = props;
   const nativeTokenAddress = getContract(chainId, "NATIVE_TOKEN");
   const position = positionsMap && positionKey ? positionsMap[positionKey] : undefined;
@@ -433,28 +436,22 @@ export default function PositionEditor(props) {
     withdrawCollateral();
   };
 
+<<<<<<< Updated upstream
+=======
   const trackEditPosition = (stage) => {
-    let eventName = "";
-    switch (stage) {
-      case 1:
-        eventName = "Pre-confirmation";
-        break;
-      case 2:
-        eventName = "Post-confirmation";
-        break;
-      default:
-        eventName = "Pre-confirmation";
-    }
+    const eventName = getAnalyticsEventStage(stage);
     try {
-      const size = formatAmount(position.size, USD_DECIMALS, 2, true).toFixed();
-      const collateral = formatAmount(position.collateral, USD_DECIMALS, 2, true).toFixed();
-      const nextCollateralValue = nextCollateral ? formatAmount(nextCollateral, USD_DECIMALS, 2, true).toFixed() : 0;
-      const leverage = formatAmount(position.leverage, 4, 2, true).toFixed();
-      const nextLeverageValue = nextLeverage ? formatAmount(nextLeverage, 4, 2, true).toFixed() : 0;
-      const markPrice = formatAmount(position.markPrice, USD_DECIMALS, 2, true).toFixed();
-      const liqPrice = formatAmount(liquidationPrice, USD_DECIMALS, 2, true).toFixed();
+      const size = convertStringToFloat(formatAmount(position.size, USD_DECIMALS, 2, true));
+      const collateral = convertStringToFloat(formatAmount(position.collateral, USD_DECIMALS, 2, true));
+      const nextCollateralValue = nextCollateral
+        ? convertStringToFloat(formatAmount(nextCollateral, USD_DECIMALS, 2, true))
+        : 0;
+      const leverage = convertStringToFloat(formatAmount(position.leverage, 4, 2, true));
+      const nextLeverageValue = nextLeverage ? convertStringToFloat(formatAmount(nextLeverage, 4, 2, true)) : 0;
+      const markPrice = convertStringToFloat(formatAmount(position.markPrice, USD_DECIMALS, 2, true));
+      const liqPrice = convertStringToFloat(formatAmount(liquidationPrice, USD_DECIMALS, 2, true));
       const nextLiqPriceValue = nextLiquidationPrice
-        ? formatAmount(nextLiquidationPrice, USD_DECIMALS, 2, true).toFixed()
+        ? convertStringToFloat(formatAmount(nextLiquidationPrice, USD_DECIMALS, 2, true))
         : 0;
       const amountToPay = convertedAmountFormatted;
       const tokenToPay = isDeposit ? "USD" : position.collateralToken.symbol;
@@ -479,12 +476,14 @@ export default function PositionEditor(props) {
         ...tokenPrices,
         ...poolBalances,
       };
+      console.log(traits);
       trackAction && trackAction(eventName, traits);
     } catch (err) {
       console.error(`Unable to track ${eventName} event`, err);
     }
   };
 
+>>>>>>> Stashed changes
   return (
     <div className="PositionEditor">
       {position && (
@@ -600,10 +599,7 @@ export default function PositionEditor(props) {
                 <div className="Exchange-swap-button-container">
                   <button
                     className="App-cta Exchange-swap-button"
-                    onClick={() => {
-                      onClickPrimary();
-                      trackEditPosition(1);
-                    }}
+                    onClick={onClickPrimary}
                     disabled={!isPrimaryEnabled()}
                   >
                     {getPrimaryText()}
