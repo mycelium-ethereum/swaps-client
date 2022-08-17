@@ -44,9 +44,7 @@
   display: grid;
   grid-template-columns: 1fr auto;
   grid-gap: 1rem;
-  padding: 2rem;
-  padding-top: 2rem;
-
+  padding-top: 3rem;
   color: var(--text-secondary);
 }
 

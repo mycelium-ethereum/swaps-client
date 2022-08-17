@@ -772,7 +772,7 @@ function FullApp() {
             </AnimatePresence>
           )}
           <nav>
-            <div className="App-header large">
+            <div className="App-header large default-container">
               <div className="App-header-container-left">
                 <Link
                   className="App-header-link-main"

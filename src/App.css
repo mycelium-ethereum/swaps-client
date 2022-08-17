@@ -23,7 +23,7 @@
 }
 
 .App-content nav {
-  position: fixed;
+  position: sticky;
   top: 0;
   left: 0;
   height: 62px;
@@ -37,11 +37,8 @@
   display: flex;
   justify-content: space-between;
   position: relative;
-  padding-left: 32px;
-  padding-right: 32px;
   background: transparent 0% 0% no-repeat padding-box;
   margin: 0 auto;
-  max-width: 1920px;
 }
 
 .App-header.large::after {
@@ -489,7 +486,6 @@ button.App-connect-wallet:hover {
 }
 
 .Page {
-  max-width: 70rem;
   margin: auto;
   padding-top: 3rem;
 }
@@ -1012,7 +1008,6 @@ button.App-button-option:disabled {
 
 .App-content {
   position: static !important;
-  padding-top: 62px;
 }
 
 .App-footer {

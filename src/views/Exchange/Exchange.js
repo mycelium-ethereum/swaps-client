@@ -904,7 +904,7 @@ export const Exchange = forwardRef((props, ref) => {
   return (
     <>
       <SEO description="Trade with liquidity, leverage, low fees. Trade with Mycelium. Trade Perpetual Swaps and Perpetual Pools on Ethereum scaling solution, Arbitrum with liquid markets for BTC, ETH, LINK, UNI, CRV, FXS, & BAL." />
-      <div className="Exchange page-layout">
+      <div className="Exchange default-container">
         <div className="Exchange-content">
           <div className="Exchange-left">
             {renderChart()}

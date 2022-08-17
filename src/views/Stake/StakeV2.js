@@ -775,7 +775,7 @@ export default function StakeV2({ setPendingTxns, connectWallet, trackAction }) 
   };
 
   return (
-    <div className="StakeV2 Page page-layout">
+    <div className="StakeV2 Page page-layout default-container">
       <VesterDepositModal
         isVisible={isVesterDepositModalVisible}
         setIsVisible={setIsVesterDepositModalVisible}
