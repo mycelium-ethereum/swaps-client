@@ -8,7 +8,7 @@ function SEO(props) {
     type: "exchange",
     ...customMeta,
   };
-  const defaultImage = "https://swaps.mycelium.xyz/preview.png";
+  const defaultImage = "https://swaps.mycelium.xyz/opengraph.png";
   const image = !!meta.image ? meta.image : defaultImage;
   return (
     <>
@@ -22,7 +22,7 @@ function SEO(props) {
         <meta property="og:title" content={meta.title} />
         <meta property="og:image" content={image} />
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:site" content="@mycelium_eth" />
+        <meta name="twitter:site" content="@mycelium_xyz" />
         <meta name="twitter:title" content={meta.title} />
         <meta name="twitter:description" content={meta.description} />
         <meta name="twitter:image" content={image} />
