@@ -280,7 +280,8 @@ function Referrals({ connectWallet, setPendingTxns, pendingTxns }) {
   }
 
   return (
-    <SEO title={getPageTitle("Referrals")}>
+    <>
+      <SEO title={getPageTitle("Referrals")} />
       <div className="default-container page-layout Referrals">
         <div className="section-title-block">
           <div className="section-title-icon"></div>
@@ -302,7 +303,7 @@ function Referrals({ connectWallet, setPendingTxns, pendingTxns }) {
         </div>
         {activeTab === AFFILIATES ? renderAffiliatesTab() : renderTradersTab()}
       </div>
-    </SEO>
+    </>
   );
 }
 

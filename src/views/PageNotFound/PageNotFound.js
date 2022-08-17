@@ -7,7 +7,8 @@ import "./PageNotFound.css";
 
 function PageNotFound() {
   return (
-    <SEO title={getPageTitle("Page not found")}>
+    <>
+      <SEO title={getPageTitle("Page not found")} />
       <div className="page-layout">
         <div className="page-not-found">
           <img src={PageNotFoundImg} alt="Page not found!" />
@@ -18,7 +19,7 @@ function PageNotFound() {
           </p>
         </div>
       </div>
-    </SEO>
+    </>
   );
 }
 

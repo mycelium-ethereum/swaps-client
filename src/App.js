@@ -105,7 +105,6 @@ import { ConnectWalletButton } from "./components/Common/Button";
 import useEventToast from "./components/EventToast/useEventToast";
 import { Link } from "react-router-dom";
 import EventToastContainer from "./components/EventToast/EventToastContainer";
-import SEO from "./components/Common/SEO";
 import useRouteQuery from "./hooks/useRouteQuery";
 import { useInfoTokens } from "./Api";
 import { encodeReferralCode } from "./Api/referrals";
@@ -1167,11 +1166,9 @@ function App() {
   return (
     <SWRConfig value={{ refreshInterval: 5000 }}>
       <Web3ReactProvider getLibrary={getLibrary}>
-        <SEO>
-          <ThemeProvider>
-            <FullApp />
-          </ThemeProvider>
-        </SEO>
+        <ThemeProvider>
+          <FullApp />
+        </ThemeProvider>
         <ConsentModal hasConsented={hasConsented} setConsented={setConsented} />
       </Web3ReactProvider>
     </SWRConfig>

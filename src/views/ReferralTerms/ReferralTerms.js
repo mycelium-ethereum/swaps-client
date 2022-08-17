@@ -10,7 +10,8 @@ export default function ReferralTerms(props) {
   }, []);
 
   return (
-    <SEO title={getPageTitle("Referral Terms")}>
+    <>
+      <SEO title={getPageTitle("Referral Terms")} />
       <div className="default-container Page page-layout">
         <div>
           <div className="Page-title-section center">
@@ -220,6 +221,6 @@ export default function ReferralTerms(props) {
           </div>
         </div>
       </div>
-    </SEO>
+    </>
   );
 }
