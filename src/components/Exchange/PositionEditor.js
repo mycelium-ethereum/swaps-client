@@ -446,15 +446,35 @@ export default function PositionEditor(props) {
         eventName = "Pre-confirmation";
     }
     try {
-      formatAmount(position.size, USD_DECIMALS, 2, true);
+      const size = formatAmount(position.size, USD_DECIMALS, 2, true).toFixed();
+      const collateral = formatAmount(position.collateral, USD_DECIMALS, 2, true).toFixed();
+      const nextCollateralValue = nextCollateral ? formatAmount(nextCollateral, USD_DECIMALS, 2, true).toFixed() : 0;
+      const leverage = formatAmount(position.leverage, 4, 2, true).toFixed();
+      const nextLeverageValue = nextLeverage ? formatAmount(nextLeverage, 4, 2, true).toFixed() : 0;
+      const markPrice = formatAmount(position.markPrice, USD_DECIMALS, 2, true).toFixed();
+      const liqPrice = formatAmount(liquidationPrice, USD_DECIMALS, 2, true).toFixed();
+      const nextLiqPriceValue = nextLiquidationPrice
+        ? formatAmount(nextLiquidationPrice, USD_DECIMALS, 2, true).toFixed()
+        : 0;
+      const amountToPay = convertedAmountFormatted;
+      const tokenToPay = isDeposit ? "USD" : position.collateralToken.symbol;
 
-      // Format user ERC20 token balances from BigNumber to float
       const [userBalances, tokenPrices, poolBalances] = getUserTokenBalances(infoTokens);
 
       const traits = {
         actionType: "Edit",
-        positionType: position.isLong ? "longEth" : "shortEth",
+        positionType: position.isLong ? "long" : "short",
         transactionType: isDeposit ? "Buy" : "Sell",
+        size: size,
+        collateral: collateral,
+        nextCollateral: nextCollateralValue,
+        leverage: leverage,
+        nextLeverage: nextLeverageValue,
+        markPrice: markPrice,
+        liqPrice: liqPrice,
+        nextLiqPrice: nextLiqPriceValue,
+        amountToPay: amountToPay,
+        tokenToPay: tokenToPay,
         ...userBalances,
         ...tokenPrices,
         ...poolBalances,
