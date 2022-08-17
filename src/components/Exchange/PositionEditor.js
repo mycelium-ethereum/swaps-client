@@ -20,11 +20,9 @@ import {
   getTokenInfo,
   getLiquidationPrice,
   approveTokens,
-<<<<<<< Updated upstream
-=======
   getUserTokenBalances,
   convertStringToFloat,
->>>>>>> Stashed changes
+  getAnalyticsEventStage,
 } from "../../Helpers";
 import { getContract } from "../../Addresses";
 import Tab from "../Tab/Tab";
@@ -62,6 +60,7 @@ export default function PositionEditor(props) {
     isPositionRouterApproving,
     approvePositionRouter,
     chainId,
+    trackAction,
   } = props;
   const nativeTokenAddress = getContract(chainId, "NATIVE_TOKEN");
   const position = positionsMap && positionKey ? positionsMap[positionKey] : undefined;
@@ -350,6 +349,7 @@ export default function PositionEditor(props) {
       })
       .finally(() => {
         setIsSwapping(false);
+        trackEditPosition(3);
       });
   };
 
@@ -401,6 +401,7 @@ export default function PositionEditor(props) {
       })
       .finally(() => {
         setIsSwapping(false);
+        trackEditPosition(3);
       });
   };
 
@@ -436,8 +437,6 @@ export default function PositionEditor(props) {
     withdrawCollateral();
   };
 
-<<<<<<< Updated upstream
-=======
   const trackEditPosition = (stage) => {
     const eventName = getAnalyticsEventStage(stage);
     try {
@@ -476,14 +475,12 @@ export default function PositionEditor(props) {
         ...tokenPrices,
         ...poolBalances,
       };
-      console.log(traits);
       trackAction && trackAction(eventName, traits);
     } catch (err) {
       console.error(`Unable to track ${eventName} event`, err);
     }
   };
 
->>>>>>> Stashed changes
   return (
     <div className="PositionEditor">
       {position && (
@@ -599,7 +596,11 @@ export default function PositionEditor(props) {
                 <div className="Exchange-swap-button-container">
                   <button
                     className="App-cta Exchange-swap-button"
-                    onClick={onClickPrimary}
+                    onClick={() => {
+                      const stage = getPrimaryText() === "Approve" ? 1 : 2;
+                      trackEditPosition(stage);
+                      onClickPrimary();
+                    }}
                     disabled={!isPrimaryEnabled()}
                   >
                     {getPrimaryText()}

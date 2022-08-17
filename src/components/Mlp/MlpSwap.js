@@ -666,9 +666,8 @@ export default function MlpSwap(props) {
   };
 
   const trackMlpTrade = (stage, tradeType) => {
-    const stageName = getAnalyticsEventStage(stage);
+    const eventName = getAnalyticsEventStage(stage);
 
-    const actionName = `${stageName}`;
     const isBuy = tradeType.includes("Buy");
     try {
       const feePercentage = formatAmount(feeBasisPoints, 2, 2, false, "-");
@@ -700,9 +699,9 @@ export default function MlpSwap(props) {
         ...tokenPrices,
         ...poolBalances,
       };
-      trackAction && trackAction(actionName, traits);
+      trackAction && trackAction(eventName, traits);
     } catch (err) {
-      console.error(`Unable to track ${actionName} event`, err);
+      console.error(`Unable to track ${eventName} event`, err);
     }
   };
 
