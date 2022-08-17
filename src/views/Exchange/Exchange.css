@@ -900,13 +900,7 @@ table.Exchange-list-small td {
   height: 5rem;
 }
 
-@media (max-width: 1500px) {
-  .Exchange-swap-box {
-    width: 25rem;
-  }
-}
-
-@media (max-width: 1300px) {
+@media (max-width: 1640px) {
   .App-box.large,
   .Exchange-list.large {
     display: none;
@@ -914,6 +908,12 @@ table.Exchange-list-small td {
 
   .Exchange-list.small {
     display: table;
+  }
+}
+
+@media (max-width: 1500px) {
+  .Exchange-swap-box {
+    width: 25rem;
   }
 }
 
@@ -956,14 +956,6 @@ table.Exchange-list-small td {
 
   .Exchange-content {
     grid-template-columns: 1fr;
-  }
-
-  .Exchange-lists.large {
-    display: none;
-  }
-
-  .Exchange-lists.small {
-    display: block;
   }
 
   .Exchange-list-title {
