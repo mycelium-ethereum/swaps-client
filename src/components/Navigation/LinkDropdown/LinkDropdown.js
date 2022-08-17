@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { DropdownContainer, DropdownButton, LinkMenu, LinkItem } from "./LinkDropdown.styles";
 import { useOutsideClick } from "../../../hooks/useOutsideClick";
 import chevronDown from "../../../img/chevron-down.svg";
-import { NavLink } from "react-router-dom";
+import { NavLink, useLocation } from "react-router-dom";
 
 const navLinks = [
   {
@@ -28,6 +28,7 @@ const navLinks = [
 ];
 
 export default function LinkDropdown() {
+  const location = useLocation();
   const [isOpen, setIsOpen] = useState(false);
   const [currentItem, setCurrentItem] = useState(null);
 
@@ -45,13 +46,9 @@ export default function LinkDropdown() {
   };
 
   useEffect(() => {
-    const currentPage = navLinks.filter((item) => item.path === window.location.pathname)?.name;
-    if (currentPage) {
-      setCurrentItem(currentPage);
-    } else {
-      setCurrentItem("Home");
-    }
-  }, []);
+    const currentPage = navLinks.filter((item) => item.path === location.pathname)[0]?.name || "Home";
+    setCurrentItem(currentPage);
+  }, [location]);
 
   const containerRef = useRef(null);
   useOutsideClick(containerRef, handleClose);

@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import AddressDropdown from "../AddressDropdown/AddressDropdown";
 import { ConnectWalletButton } from "../Common/Button";
 import NetworkSelector from "../NetworkSelector/NetworkSelector";
@@ -23,6 +23,25 @@ import poolsSmallImg from "../../img/myc_pools_short.svg";
 import mobileMeshBackground from "../../img/background_mesh_mobile.png";
 import connectWalletImg from "../../img/ic_wallet_24.svg";
 
+const navLinks = [
+  {
+    name: "Dashboard",
+    path: "/dashboard",
+  },
+  {
+    name: "Earn",
+    path: "/earn",
+  },
+  {
+    name: "Buy",
+    path: "/buy_mlp",
+  },
+  {
+    name: "Rewards",
+    path: "/rewards",
+  },
+];
+
 export default function AppHeaderLinks({
   openSettings,
   clickCloseIcon,
@@ -37,6 +56,8 @@ export default function AppHeaderLinks({
   const { chainId } = useChainId();
   const { active, account } = useWeb3React();
 
+  const yearRef = useRef(null);
+
   useEffect(() => {
     if (active) {
       setWalletModalVisible(false);
@@ -44,6 +65,8 @@ export default function AppHeaderLinks({
   }, [active, setWalletModalVisible]);
 
   useEffect(() => {
+    const year = new Date().getFullYear();
+    yearRef.current.innerHTML = year.toString();
     const handleResize = () => {
       if (window.innerWidth > 670) {
         clickCloseIcon();
@@ -53,7 +76,7 @@ export default function AppHeaderLinks({
     return () => {
       window.removeEventListener("resize", handleResize);
     };
-  }, [clickCloseIcon]);
+  }, [yearRef, clickCloseIcon]);
 
   const accountUrl = getAccountUrl(chainId, account);
 
@@ -118,42 +141,38 @@ export default function AppHeaderLinks({
           </NetworkDropdownContainer>
         </div>
         <div>
-          <AppHeaderLinkContainer>
-            <NavLink activeClassName="active" to="/dashboard">
-              Dashboard
-            </NavLink>
-          </AppHeaderLinkContainer>
-          <AppHeaderLinkContainer>
-            <NavLink activeClassName="active" to="/earn">
-              Earn
-            </NavLink>
-          </AppHeaderLinkContainer>
-          <AppHeaderLinkContainer>
-            <NavLink activeClassName="active" to="/buy_mlp">
-              Buy
-            </NavLink>
-          </AppHeaderLinkContainer>
-          <AppHeaderLinkContainer>
-            <NavLink activeClassName="active" to="/rewards">
-              Rewards
-            </NavLink>
-          </AppHeaderLinkContainer>
+          {navLinks.map((navLink) => (
+            <AppHeaderLinkContainer key={navLink.name}>
+              <NavLink activeClassName="active" to={navLink.path} onClick={clickCloseIcon}>
+                {navLink.name}
+              </NavLink>
+            </AppHeaderLinkContainer>
+          ))}
           <AppHeaderLinkContainer>
             <a
               href="https://swaps.docs.mycelium.xyz/perpetual-swaps/mycelium-perpetual-swaps"
               target="_blank"
               rel="noopener noreferrer"
+              onClick={clickCloseIcon}
             >
               Docs
             </a>
           </AppHeaderLinkContainer>
           <AppHeaderLinkContainer>
             {/* eslint-disable-next-line */}
-            <a href="#" onClick={openSettings}>
+            <a
+              href="#"
+              onClick={() => {
+                openSettings();
+                clickCloseIcon();
+              }}
+            >
               Settings
             </a>
           </AppHeaderLinkContainer>
-          <MyceliumCopy>© 2022 Mycelium</MyceliumCopy>
+          <MyceliumCopy>
+            © <span ref={yearRef} /> Mycelium
+          </MyceliumCopy>
         </div>
       </ScrollContainer>
     </MobileNavMenu>

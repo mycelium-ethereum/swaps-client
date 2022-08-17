@@ -14,11 +14,12 @@ export const SideMenu = styled.aside(
   z-index: 999;
   box-shadow: 1px -6px 32px -12px rgba(9, 130, 0, 1);
   padding: 0 24px 24px;
-  transition: transform 0.5s ease;
+  transition: transform 0.5s ease, opacity 0.5s ease;
   transform: ${props.visible ? "translateX(-310px)" : "translateX(0)"};
-  @media (max-width: 1280px) {
+  @media (max-width: 1380px) {
     opacity: 0;
     pointer-events: none;
+    transform: translateX(-310px);
   }
 `
 );
