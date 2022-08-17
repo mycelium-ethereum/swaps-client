@@ -77,10 +77,15 @@ export const SocialLinksMenu = styled.div`
   grid-gap: 1rem;
   grid-template-columns: repeat(4, minmax(0, 1fr));
   img {
+    height: 21px;
     filter: invert(1);
     transition: opacity 0.3s ease;
   }
+  a {
+    padding: 0;
+  }
   a:hover {
+    background-color: unset;
     img {
       opacity: 0.6;
     }
