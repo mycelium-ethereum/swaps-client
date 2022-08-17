@@ -22,10 +22,11 @@ export default function BuyMlp(props) {
   }, [history.location.hash]);
 
   return (
-    <SEO
-      title={getPageTitle("Buy")}
-      description="Buy MLP tokens to provide liquidity to Mycelium’s Perpetual Swaps. MLP tokens represent a share in a yield bearing diversified pool of blue-chip crypto assets."
-    >
+    <>
+      <SEO
+        title={getPageTitle("Buy")}
+        description="Buy MLP tokens to provide liquidity to Mycelium’s Perpetual Swaps. MLP tokens represent a share in a yield bearing diversified pool of blue-chip crypto assets."
+      />
       <div className="default-container buy-tlp-content page-layout">
         <div className="section-title-block">
           {/*
@@ -60,6 +61,6 @@ export default function BuyMlp(props) {
         </div>
         <MlpSwap {...props} isBuying={isBuying} setIsBuying={setIsBuying} />
       </div>
-    </SEO>
+    </>
   );
 }

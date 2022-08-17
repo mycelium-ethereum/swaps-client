@@ -421,10 +421,11 @@ function VesterDepositModal(props) {
   };
 
   return (
-    <SEO
-      title={getPageTitle("Earn")}
-      description="Claim fees and liquidity mining rewards earned via providing liquidity to the Mycelium Perpetual Swap liquidity pool."
-    >
+    <>
+      <SEO
+        title={getPageTitle("Earn")}
+        description="Claim fees and liquidity mining rewards earned via providing liquidity to the Mycelium Perpetual Swap liquidity pool."
+      />
       <div className="StakeModal">
         <Modal isVisible={isVisible} setIsVisible={setIsVisible} label={title} className="non-scrollable">
           <div className="Exchange-swap-section">
@@ -492,7 +493,7 @@ function VesterDepositModal(props) {
           </div>
         </Modal>
       </div>
-    </SEO>
+    </>
   );
 }
 

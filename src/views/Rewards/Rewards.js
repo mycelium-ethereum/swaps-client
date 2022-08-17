@@ -42,12 +42,9 @@ export default function Rewards(props) {
   const { infoTokens } = useInfoTokens(library, chainId, active, undefined, undefined);
 
   // Fetch all week data from server
-  let { data: allWeeksRewardsData, error: failedFetchingRewards } = useSWR(
-    [getTracerServerUrl(chainId, "/rewards")],
-    {
-      fetcher: (...args) => fetch(...args).then((res) => res.json()),
-    }
-  );
+  let { data: allWeeksRewardsData, error: failedFetchingRewards } = useSWR([getTracerServerUrl(chainId, "/rewards")], {
+    fetcher: (...args) => fetch(...args).then((res) => res.json()),
+  });
 
   // TEMPORARY: Set no reward weeks until backend fixed
   if (chainId === 42161) {
@@ -182,10 +179,11 @@ export default function Rewards(props) {
   }, [currentRewardWeek, pageTracked, trackPageWithTraits, analytics]);
 
   return (
-    <SEO
-      title={getPageTitle("Rewards")}
-      description="Claim fees earned via being in the top 50% of traders on Mycelium Perpetual Swaps."
-    >
+    <>
+      <SEO
+        title={getPageTitle("Rewards")}
+        description="Claim fees earned via being in the top 50% of traders on Mycelium Perpetual Swaps."
+      />
       <Styles.StyledRewardsPage className="default-container page-layout">
         {
           {
@@ -229,6 +227,6 @@ export default function Rewards(props) {
           trackAction={trackAction}
         />
       </Styles.StyledRewardsPage>
-    </SEO>
+    </>
   );
 }
