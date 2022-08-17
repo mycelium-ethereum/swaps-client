@@ -365,7 +365,7 @@ function AppHeaderUser({
           rel="noopener noreferrer"
           onClick={() => trackAction && trackAction("Button clicked", { buttonName: "Switch to Perpetual Pools" })}
         >
-          <button exact activeClassName="active" className="default-btn switch-link" to="/">
+          <button className="default-btn switch-link">
             <span>Switch to</span> <img src={poolsSmallImg} alt="Perpetual Pools" />
           </button>
         </a>

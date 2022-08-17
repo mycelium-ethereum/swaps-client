@@ -119,7 +119,7 @@ export default function Sidebar({ sidebarVisible, setSidebarVisible }) {
       </div>
       <SocialLinksMenu>
         {socialLinks.map((item) => (
-          <NavLink activeClassName="active" exact className="App-header-link-main" to={item.path}>
+          <NavLink key={item.path} activeClassName="active" exact className="App-header-link-main" to={item.path}>
             <img src={item.icon} alt={item.name} />
           </NavLink>
         ))}
