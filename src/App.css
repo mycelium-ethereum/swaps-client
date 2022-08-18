@@ -560,6 +560,8 @@ button.App-connect-wallet:hover {
 }
 
 .Page-title {
+  display: flex;
+  align-items: center;
   font-size: 1.5rem;
   font-weight: 600;
   margin-bottom: 0.5rem;
@@ -567,6 +569,9 @@ button.App-connect-wallet:hover {
   /*font-family: "Relative Bold";*/
 }
 
+.Page-title img {
+  margin-left: 0.5rem;
+}
 .Page-description {
   color: var(--text-secondary);
   font-size: 0.75rem;
