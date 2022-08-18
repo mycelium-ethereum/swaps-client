@@ -51,7 +51,6 @@ export const AccountBanner = styled.div`
 `;
 
 export const PersonalRewardsContainer = styled.div`
-  max-width: 900px;
   width: 100%;
 
   /* Remove to enable Rewards */
@@ -195,7 +194,6 @@ export const StyledRewardsPage = styled.div`
   align-items: center;
   padding-top: 3rem;
   ${RewardsData}, ${AccountBanner}, .Page-title-section {
-    max-width: 900px;
     width: 100%;
   }
 
@@ -208,7 +206,6 @@ export const ViewSwitchContainer = styled.div`
   display: flex;
   justify-content: space-between;
   margin: 16px 0 24px;
-  max-width: 900px;
   width: 100%;
 
   /* Remove to enable Rewards */
@@ -270,7 +267,6 @@ export const LeaderboardTitle = styled(Title)`
 `;
 
 export const LeaderboardContainer = styled.div`
-  max-width: 900px;
   width: 100%;
 `;
 

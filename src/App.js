@@ -310,7 +310,7 @@ function AppHeaderUser({
         >
           {small ? "Connect" : "Connect Wallet"}
         </ConnectWalletButton>
-        <div className="App-header-user-link switch">
+        <div className="App-header-user-link Switch-app-btn">
           <a
             href="https://pools.mycelium.xyz"
             rel="noopener noreferrer"
@@ -772,7 +772,7 @@ function FullApp() {
             </AnimatePresence>
           )}
           <nav>
-            <div className="App-header large">
+            <div className="App-header large default-container">
               <div className="App-header-container-left">
                 <Link
                   className="App-header-link-main"
@@ -801,7 +801,7 @@ function FullApp() {
                 />
               </div>
             </div>
-            <div className={cx("App-header", "small", { active: isDrawerVisible })}>
+            <div className={cx("App-header small  default-container", { active: isDrawerVisible })}>
               <div
                 className={cx("App-header-link-container", "App-header-top", {
                   active: isDrawerVisible,

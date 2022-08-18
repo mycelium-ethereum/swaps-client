@@ -3,10 +3,6 @@
   padding-right: 1rem;
 }
 
-.StakeV2.Page {
-  max-width: 76rem;
-}
-
 .StakeV2 .Page-title-section {
   position: relative;
   z-index: 2;
@@ -72,8 +68,6 @@
   display: grid;
   grid-template-columns: 1fr 1fr;
   grid-gap: 1rem;
-  margin-top: 0.5rem;
-  padding-top: 1rem;
 }
 
 .StakeV2-cards .App-card-title {
@@ -81,11 +75,11 @@
   justify-content: start;
 }
 
-.StakeV2-myc-card .App-card-row a.label{
+.StakeV2-myc-card .App-card-row a.label {
   color: var(--text-secondary);
 }
 
-.StakeV2-cards .App-card-row .label{
+.StakeV2-cards .App-card-row .label {
   color: var(--text-secondary);
 }
 
