@@ -88,7 +88,6 @@ export function getChainName(chainId) {
 }
 
 export const USDG_ADDRESS = getContract(CHAIN_ID, "USDG");
-export const MAX_LEVERAGE = 100 * 10000;
 
 export const MAX_PRICE_DEVIATION_BASIS_POINTS = 250;
 export const DEFAULT_GAS_LIMIT = 1 * 1000 * 1000;
@@ -104,6 +103,8 @@ export const ETH_DECIMALS = 18;
 export const MLP_DECIMALS = 18;
 export const MYC_DECIMALS = 18;
 export const DEFAULT_MAX_USDG_AMOUNT = expandDecimals(200 * 1000 * 1000, 18);
+
+export const MAX_LEVERAGE = 30 * BASIS_POINTS_DIVISOR;
 
 export const TAX_BASIS_POINTS = 20;
 export const STABLE_TAX_BASIS_POINTS = 2;
