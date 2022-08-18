@@ -110,7 +110,7 @@ export const STABLE_TAX_BASIS_POINTS = 2;
 export const MINT_BURN_FEE_BASIS_POINTS = 18;
 export const SWAP_FEE_BASIS_POINTS = 15;
 export const STABLE_SWAP_FEE_BASIS_POINTS = 3;
-export const MARGIN_FEE_BASIS_POINTS = 10;
+export const MARGIN_FEE_BASIS_POINTS = 3;
 
 export const LIQUIDATION_FEE = expandDecimals(5, USD_DECIMALS);
 
