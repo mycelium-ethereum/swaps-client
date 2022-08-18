@@ -7,7 +7,7 @@ import {
 import { toast } from "react-toastify";
 import { useWeb3React, UnsupportedChainIdError } from "@web3-react/core";
 import { useLocalStorage } from "react-use";
-import { ethers } from "ethers";
+import { BigNumber, ethers } from "ethers";
 import { format as formatDateFn } from "date-fns";
 import Token from "./abis/Token.json";
 import _ from "lodash";
@@ -1429,7 +1429,7 @@ export const BSC_RPC_PROVIDERS = [
   "https://bsc-dataseed4.binance.org",
 ];
 
-const RPC_PROVIDERS = {
+export const RPC_PROVIDERS = {
   [ETHEREUM]: ETHEREUM_RPC_PROVIDERS,
   [MAINNET]: BSC_RPC_PROVIDERS,
   [ARBITRUM]: ARBITRUM_RPC_PROVIDERS,

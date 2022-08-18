@@ -117,6 +117,7 @@ import PageNotFound from "./views/PageNotFound/PageNotFound";
 import useSWR from "swr";
 import LinkDropdown from "./components/Navigation/LinkDropdown/LinkDropdown";
 import Sidebar from "./components/Navigation/Sidebar/Sidebar";
+import { useCumulativeFundingRates } from "./hooks/useCumulativeFundingRates";
 
 if ("ethereum" in window) {
   window.ethereum.autoRefreshOnNetworkChange = false;
@@ -684,6 +685,18 @@ function FullApp() {
   });
 
   const { infoTokens } = useInfoTokens(library, chainId, active, tokenBalances, fundingRateInfo);
+
+  // The "fundingRateInfo" sometimes gets an incorrect value for the cumulative funding rates
+  // when the vault has a nextFundingRate > 0
+  // This corrects the values for the cumulative funding rates
+  const cumulativeFundingRates = useCumulativeFundingRates(chainId, nativeTokenAddress, whitelistedTokenAddresses);
+  if (infoTokens && cumulativeFundingRates) {
+    Object.keys(cumulativeFundingRates).forEach((tokenAddress) => {
+      if (infoTokens[tokenAddress]) {
+        infoTokens[tokenAddress].cumulativeFundingRate = cumulativeFundingRates[tokenAddress];
+      }
+    })
+  }
 
   // Track user wallet connect
   useEffect(() => {
