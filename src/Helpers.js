@@ -104,7 +104,7 @@ export const MLP_DECIMALS = 18;
 export const MYC_DECIMALS = 18;
 export const DEFAULT_MAX_USDG_AMOUNT = expandDecimals(200 * 1000 * 1000, 18);
 
-export const MAX_LEVERAGE = 30 * BASIS_POINTS_DIVISOR;
+export const MAX_LEVERAGE = 100 * BASIS_POINTS_DIVISOR;
 
 export const TAX_BASIS_POINTS = 20;
 export const STABLE_TAX_BASIS_POINTS = 2;
