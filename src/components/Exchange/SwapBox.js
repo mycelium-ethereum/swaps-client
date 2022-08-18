@@ -1826,8 +1826,6 @@ export default function SwapBox(props) {
       const [userBalances, tokenPrices, poolBalances] = getUserTokenBalances(infoTokens);
 
       const traits = {
-        actionType: "Create",
-        transactionType: "Buy",
         tradeType: tradeType,
         position: swapOption,
         market: market,
