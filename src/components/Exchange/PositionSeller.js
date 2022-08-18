@@ -710,8 +710,8 @@ export default function PositionSeller(props) {
 
       const traits = {
         actionType: "Close",
-        positionType: position.isLong ? "long" : "short",
-        transactionType: orderOption === MARKET ? "market" : "trigger",
+        position: position.isLong ? "Long" : "Short",
+        transactionType: orderOption === MARKET ? "Market" : "Trigger",
         size: size,
         collateral: collateral,
         nextCollateral: nextCollateralValue,
