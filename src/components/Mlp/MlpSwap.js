@@ -675,7 +675,7 @@ export default function MlpSwap(props) {
       const feesEth = (swapValue * parseFloat(feePercentage)) / 100;
       const amountToPay = isBuy ? swapValue : mlpValue;
       const amountToReceive = isBuy ? mlpValue : swapValue;
-      const amountToReceiveUsd = isBuy ? receiveBalance?.replace("$", "") : payBalance?.replace("$", "");
+      const amountToReceiveUsd = receiveBalance?.replace("$", "");
       const tokenToPay = isBuy ? swapTokenInfo.symbol : "MLP";
       const tokenToReceive = isBuy ? "MLP" : swapTokenInfo.symbol;
 
@@ -683,7 +683,8 @@ export default function MlpSwap(props) {
 
       const traits = {
         actionType: "Create",
-        amountToReceiveUsd: parseFloat(amountToReceiveUsd).toFixed(2),
+        transactionType: isBuy ? "Buy" : "Sell",
+        amountToReceiveUsd: parseFloat(amountToReceiveUsd),
         tradeType: tradeType,
         tokenToPay: tokenToPay,
         tokenToReceive: tokenToReceive,
@@ -1001,20 +1002,21 @@ export default function MlpSwap(props) {
               onClick={() => {
                 const buttonText = getPrimaryText();
                 onClickPrimary();
-
-                if (buttonText.includes("Approve")) {
-                  trackMlpTrade(1, buttonText.split(" ")[1]); // Get token symbol
-                  trackAction &&
-                    trackAction("Button clicked", {
-                      buttonName: "Approve",
-                      fromToken: buttonText.split(" ")[1],
-                    });
-                } else {
-                  trackMlpTrade(2, buttonText);
-                  trackAction &&
-                    trackAction("Button clicked", {
-                      buttonName: buttonText,
-                    });
+                if (!buttonText.includes("Connect")) {
+                  if (buttonText.includes("Approve")) {
+                    trackMlpTrade(1, buttonText.split(" ")[1]); // Get token symbol
+                    trackAction &&
+                      trackAction("Button clicked", {
+                        buttonName: "Approve",
+                        fromToken: buttonText.split(" ")[1],
+                      });
+                  } else {
+                    trackMlpTrade(2, buttonText);
+                    trackAction &&
+                      trackAction("Button clicked", {
+                        buttonName: buttonText,
+                      });
+                  }
                 }
               }}
               disabled={!isPrimaryEnabled()}
