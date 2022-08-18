@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { DropdownContainer, DropdownButton, LinkMenu, LinkItem } from "./LinkDropdown.styles";
+import { DropdownContainer, DropdownButton, LinkMenu, ListItem } from "./LinkDropdown.styles";
 import { useOutsideClick } from "../../../hooks/useOutsideClick";
 import chevronDown from "../../../img/chevron-down.svg";
 import { NavLink, useLocation } from "react-router-dom";
@@ -20,10 +20,6 @@ const navLinks = [
   {
     name: "Rewards",
     path: "/rewards",
-  },
-  {
-    name: "Docs",
-    path: "https://swaps.docs.mycelium.xyz/perpetual-swaps/mycelium-perpetual-swaps",
   },
 ];
 
@@ -64,15 +60,24 @@ export default function LinkDropdown() {
             {item.name}
           </MenuItem>
         ))}
+        <ListItem>
+          <a
+            href="https://swaps.docs.mycelium.xyz/perpetual-swaps/mycelium-perpetual-swaps"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Docs
+          </a>
+        </ListItem>
       </LinkMenu>
     </DropdownContainer>
   );
 }
 
 const MenuItem = ({ path, onClick, children }) => (
-  <LinkItem>
+  <ListItem>
     <NavLink activeClassName="active" exact to={path} onClick={() => onClick(children)}>
-      {children}{" "}
+      {children}
     </NavLink>
-  </LinkItem>
+  </ListItem>
 );
