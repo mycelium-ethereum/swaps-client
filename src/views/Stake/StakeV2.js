@@ -845,7 +845,11 @@ export default function StakeV2({ setPendingTxns, connectWallet, trackAction }) 
                 >
                   MLP
                 </a>{" "}
-                to earn rewards.
+                to earn rewards. Read the Terms of Use{" "}
+                <a href="https://mycelium.xyz/rewards-terms-of-use" target="_blank" rel="noopener noreferrer">
+                  here
+                </a>
+                .
               </div>
               {earnMsg && <div className="Page-description">{earnMsg}</div>}
             </div>

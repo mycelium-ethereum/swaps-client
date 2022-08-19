@@ -55,7 +55,11 @@ export default function BuyMlp(props) {
               <br />
               Note that there is a minimum holding time of 15 minutes after a purchase.
               <br />
-              View <Link to="/earn">staking</Link> page.
+              View <Link to="/earn">staking</Link> page. Read the Terms of Use{" "}
+              <a href="https://mycelium.xyz/rewards-terms-of-use" target="_blank" rel="noopener noreferrer">
+                here
+              </a>
+              .
             </div>
           </div>
         </div>
