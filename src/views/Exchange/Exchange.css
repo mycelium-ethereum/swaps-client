@@ -373,6 +373,12 @@
   right: 0;
   top: 0.5rem;
   overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.tv-lightweight-charts,
+.tv-lightweight-charts table {
+  transition: all 0.3s ease;
 }
 
 .Exchange-price-tooltip {
