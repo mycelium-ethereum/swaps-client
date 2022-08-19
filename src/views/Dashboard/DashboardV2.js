@@ -32,7 +32,7 @@ import {
   ARBITRUM_TESTNET,
   getTracerServerUrl,
 } from "../../Helpers";
-import { useTotalTCRInLiquidity, useTCRPrice, useTotalTCRSupply, useInfoTokens, useFees } from "../../Api";
+import { useTotalMYCInLiquidity, useMYCPrice, useTotalMYCSupply, useInfoTokens, useFees } from "../../Api";
 
 import { getContract } from "../../Addresses";
 
@@ -90,7 +90,7 @@ export default function DashboardV2() {
     fetcher: (...args) => fetch(...args).then((res) => res.json()),
   });
 
-  let { total: totalTCRSupply } = useTotalTCRSupply();
+  let { total: mycSupply, circulating: circulatingMYCSupply } = useTotalMYCSupply();
 
   let totalLongPositionSizes;
   let totalShortPositionSizes;
@@ -107,11 +107,11 @@ export default function DashboardV2() {
   const vaultAddress = getContract(chainId, "Vault");
   const mlpManagerAddress = getContract(chainId, "MlpManager");
 
-  const tcrAddress = getContract(chainId, "TCR");
+  const mycAddress = getContract(chainId, "MYC");
   const mlpAddress = getContract(chainId, "MLP");
   const usdgAddress = getContract(chainId, "USDG");
 
-  const tokensForSupplyQuery = [tcrAddress, mlpAddress, usdgAddress];
+  const tokensForSupplyQuery = [mycAddress, mlpAddress, usdgAddress];
 
   const { data: aums } = useSWR([`Dashboard:getAums:${active}`, chainId, mlpManagerAddress, "getAums"], {
     fetcher: fetcher(library, MlpManager),
@@ -159,20 +159,25 @@ export default function DashboardV2() {
       .add(allFees.swap);
   }
 
-  const { tcrPrice, tcrPriceFromMainnet, tcrPriceFromArbitrum } = useTCRPrice(
+  const { mycPrice, mycPriceFromMainnet, mycPriceFromArbitrum } = useMYCPrice(
     chainId,
     { arbitrum: chainId === ARBITRUM ? library : undefined },
     active
   );
 
-  let { mainnet: totalTCRInLiquidityMainnet, arbitrum: totalTCRInLiquidityArbitrum } = useTotalTCRInLiquidity(
+  let { mainnet: totalMYCInLiquidityMainnet, arbitrum: totalMYCInLiquidityArbitrum } = useTotalMYCInLiquidity(
     chainId,
     active
   );
 
   let mycMarketCap;
-  if (tcrPrice && totalTCRSupply) {
-    mycMarketCap = tcrPrice.mul(totalTCRSupply).div(expandDecimals(1, MYC_DECIMALS));
+  if (mycPrice && circulatingMYCSupply) {
+    mycMarketCap = mycPrice.mul(circulatingMYCSupply).div(expandDecimals(1, MYC_DECIMALS));
+  }
+
+  let mycFullyDilutedMarketCap;
+  if (mycPrice && mycSupply) {
+    mycFullyDilutedMarketCap = mycPrice.mul(mycSupply).div(expandDecimals(1, MYC_DECIMALS));
   }
 
   let aum;
@@ -278,20 +283,20 @@ export default function DashboardV2() {
     );
   };
 
-  // TODO change this to TCR liquidity
+  // TODO change this to MYC liquidity
   // let stakedPercent = 0;
-  // if (totalTCRSupply && !totalTCRSupply.isZero() && !totalStakedMyc.isZero()) {
-  // stakedPercent = totalStakedMyc.mul(100).div(totalTCRSupply).toNumber();
+  // if (circulatingMYCSupply && !circulatingMYCSupply.isZero() && !totalStakedMyc.isZero()) {
+  // stakedPercent = totalStakedMyc.mul(100).div(circulatingMYCSupply).toNumber();
   // }
 
   let arbitrumLiquidityPercent = 0;
-  if (totalTCRSupply && !totalTCRSupply.isZero() && totalTCRInLiquidityArbitrum) {
-    arbitrumLiquidityPercent = totalTCRInLiquidityArbitrum.mul(100).div(totalTCRSupply).toNumber();
+  if (circulatingMYCSupply && !circulatingMYCSupply.isZero() && totalMYCInLiquidityArbitrum) {
+    arbitrumLiquidityPercent = totalMYCInLiquidityArbitrum.mul(100).div(circulatingMYCSupply).toNumber();
   }
 
   let mainnetLiquidityPercent = 0;
-  if (totalTCRSupply && !totalTCRSupply.isZero() && totalTCRInLiquidityMainnet) {
-    mainnetLiquidityPercent = totalTCRInLiquidityMainnet.mul(100).div(totalTCRSupply).toNumber();
+  if (circulatingMYCSupply && !circulatingMYCSupply.isZero() && totalMYCInLiquidityMainnet) {
+    mainnetLiquidityPercent = totalMYCInLiquidityMainnet.mul(100).div(circulatingMYCSupply).toNumber();
   }
 
   let notStakedPercent = 100 - arbitrumLiquidityPercent - mainnetLiquidityPercent; // - stakedPercent;
@@ -501,17 +506,17 @@ export default function DashboardV2() {
                     <div className="App-card-row">
                       <div className="label">Price</div>
                       <div>
-                        {!tcrPrice && "..."}
-                        {tcrPrice && (
+                        {!mycPrice && "..."}
+                        {mycPrice && (
                           <TooltipComponent
                             position="right-bottom"
                             className="nowrap"
-                            handle={`$${formatAmount(tcrPrice, USD_DECIMALS, 3, true)}`}
+                            handle={`$${formatAmount(mycPrice, USD_DECIMALS, 3, true)}`}
                             renderContent={() => (
                               <>
-                                Price on Arbitrum: ${formatAmount(tcrPriceFromArbitrum, USD_DECIMALS, 4, true)}
+                                Price on Arbitrum: ${formatAmount(mycPriceFromArbitrum, USD_DECIMALS, 4, true)}
                                 <br />
-                                Price on Mainnet: ${formatAmount(tcrPriceFromMainnet, USD_DECIMALS, 4, true)}
+                                Price on Mainnet: ${formatAmount(mycPriceFromMainnet, USD_DECIMALS, 4, true)}
                               </>
                             )}
                           />
@@ -520,7 +525,20 @@ export default function DashboardV2() {
                     </div>
                     <div className="App-card-row">
                       <div className="label">Supply</div>
-                      <div>{formatAmount(totalTCRSupply, MYC_DECIMALS, 0, true)} MYC</div>
+                      <div>
+                        <TooltipComponent
+                          position="right-bottom"
+                          className="nowrap"
+                          handle={`${formatAmount(circulatingMYCSupply, MYC_DECIMALS, 0, true)} MYC`}
+                          renderContent={() => (
+                            <>
+                              Circulating: {formatAmount(circulatingMYCSupply, MYC_DECIMALS, 0, true)} MYC
+                              <br />
+                              Total: {formatAmount(mycSupply, MYC_DECIMALS, 0, true)} MYC
+                            </>
+                          )}
+                        />
+                      </div>
                     </div>
                     {/*<div className="App-card-row">
                       <div className="label">Total Staked</div>
@@ -543,7 +561,18 @@ export default function DashboardV2() {
                     </div>*/}
                     <div className="App-card-row">
                       <div className="label">Market Cap</div>
-                      <div>${formatAmount(mycMarketCap, USD_DECIMALS, 0, true)}</div>
+                      <div>
+                        <TooltipComponent
+                          position="right-bottom"
+                          className="nowrap"
+                          handle={`$${formatAmount(mycMarketCap, USD_DECIMALS, 0, true)}`}
+                          renderContent={() => (
+                            <>
+                              Fully Diluted: ${formatAmount(mycFullyDilutedMarketCap, USD_DECIMALS, 0, true)}
+                            </>
+                          )}
+                        />
+                      </div>
                     </div>
                   </div>
                 </div>

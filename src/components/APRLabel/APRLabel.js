@@ -22,7 +22,7 @@ import MlpManager from "../../abis/MlpManager.json";
 
 import { useWeb3React } from "@web3-react/core";
 
-import { useTCRPrice } from "../../Api";
+import { useMYCPrice } from "../../Api";
 
 import { getContract } from "../../Addresses";
 
@@ -124,7 +124,7 @@ export default function APRLabel({ chainId, label }) {
     }
   );
 
-  const { tcrPrice } = useTCRPrice(chainId, {}, active);
+  const { tcrPrice } = useMYCPrice(chainId, {}, active);
 
   const mycSupplyUrl = getSupplyUrl();
   const { data: mycSupply_ } = useSWR([mycSupplyUrl], {

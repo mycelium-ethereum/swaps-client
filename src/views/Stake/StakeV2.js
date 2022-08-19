@@ -39,7 +39,7 @@ import {
   getPageTitle,
   getSupplyUrl,
 } from "../../Helpers";
-import { callContract, useTCRPrice } from "../../Api";
+import { callContract, useMYCPrice } from "../../Api";
 import { getConstant } from "../../Constants";
 
 import useSWR from "swr";
@@ -682,7 +682,7 @@ export default function StakeV2({ setPendingTxns, connectWallet, trackAction }) 
     }
   );
 
-  const { tcrPrice } = useTCRPrice(chainId, { arbitrum: chainId === ARBITRUM ? library : undefined }, active);
+  const { mycPrice } = useMYCPrice(chainId, { arbitrum: chainId === ARBITRUM ? library : undefined }, active);
 
   const supplyUrl = getSupplyUrl();
   const { data: mycSupply_ } = useSWR([supplyUrl], {
@@ -709,7 +709,7 @@ export default function StakeV2({ setPendingTxns, connectWallet, trackAction }) 
     aum,
     nativeTokenPrice,
     stakedMycSupply,
-    tcrPrice,
+    mycPrice,
     mycSupply
   );
 

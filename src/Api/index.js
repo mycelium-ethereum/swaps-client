@@ -464,12 +464,12 @@ export function useHasOutdatedUi() {
   return { data: false };
 }
 
-export function useTCRPrice(chainId, libraries, active) {
+export function useMYCPrice(chainId, libraries, active) {
   const arbitrumLibrary = libraries && libraries.arbitrum ? libraries.arbitrum : undefined;
-  const { data: tcrPriceFromArbitrum, mutate: mutateFromArbitrum } = useTCRPriceFromArbitrum(arbitrumLibrary, active);
-  const { data: tcrPriceFromMainnet, mutate: mutateFromMainnet } = useTCRPriceFromMainnet(active);
+  const { data: mycPriceFromArbitrum, mutate: mutateFromArbitrum } = useMYCPriceFromArbitrum(arbitrumLibrary, active);
+  const { data: mycPriceFromMainnet, mutate: mutateFromMainnet } = useMYCPriceFromMainnet(active);
 
-  const tcrPrice = chainId === ARBITRUM ? tcrPriceFromArbitrum : tcrPriceFromMainnet;
+  const mycPrice = chainId === ARBITRUM ? mycPriceFromArbitrum : mycPriceFromMainnet;
 
   const mutate = useCallback(() => {
     mutateFromMainnet();
@@ -477,23 +477,31 @@ export function useTCRPrice(chainId, libraries, active) {
   }, [mutateFromMainnet, mutateFromArbitrum]);
 
   return {
-    tcrPrice,
-    tcrPriceFromArbitrum,
-    tcrPriceFromMainnet,
+    mycPrice,
+    mycPriceFromArbitrum,
+    mycPriceFromMainnet,
     mutate,
   };
 }
 
-export function useTotalTCRSupply() {
-  const tcrSupplyUrl = getSupplyUrl();
-
-  const { data: tcrSupply, mutate: updateTCRSupply } = useSWR([tcrSupplyUrl], {
-    fetcher: (...args) => fetch(...args, { headers: { "Content-Type": "application/json" } }).then((res) => res.json()),
+export function useTotalMYCSupply() {
+  const { data: mycSupply, mutate: updateMYCSupply } = useSWR([getSupplyUrl('/totalSupply')], {
+    fetcher: (...args) => fetch(...args).then((res) => res.text()),
   });
 
+  const { data: circulatingMycSupply, mutate: updateMYCCirculatingSupply } = useSWR([getSupplyUrl('/circulatingSupply')], {
+    fetcher: (...args) => fetch(...args).then((res) => res.text()),
+  });
+
+  const mutate = useCallback(() => {
+    updateMYCSupply();
+    updateMYCCirculatingSupply();
+  }, [updateMYCSupply, updateMYCCirculatingSupply])
+
   return {
-    total: tcrSupply?.totalSupply ? bigNumberify(tcrSupply.totalSupply) : undefined,
-    mutate: updateTCRSupply,
+    total: mycSupply ? bigNumberify(ethers.utils.parseUnits(mycSupply, 18)) : undefined,
+    circulating: circulatingMycSupply ? bigNumberify(ethers.utils.parseUnits(circulatingMycSupply, 18)) : undefined,
+    mutate,
   };
 }
 
@@ -544,23 +552,26 @@ export function useTotalMycStaked() {
   };
 }
 
-export function useTotalTCRInLiquidity() {
+export function useTotalMYCInLiquidity() {
   let poolAddressArbitrum = {
-    uniswap: getContract(ARBITRUM, "UniswapTcrEthPool"),
-    balancer: getContract(ARBITRUM, "BalancerTcrEthPool"),
+    uniswap: getContract(ARBITRUM, "UniswapMycEthPool"),
+    balancer: getContract(ARBITRUM, "BalancerVault"),
+    // uniswapTcr: getContract(ARBITRUM, "UniswapTcrEthPool"),
   };
   let poolAddressMainnet = {
-    uniswap: getContract(ETHEREUM, "UniswapTcrEthPool"),
-    sushiswap: getContract(ETHEREUM, "SushiswapTcrEthPool"),
+    uniswap: getContract(ETHEREUM, "UniswapMycEthPool"),
+    balancer: getContract(ETHEREUM, "BalancerVault"),
+    // uniswap: getContract(ETHEREUM, "UniswapTcrEthPool"),
+    // sushiswap: getContract(ETHEREUM, "SushiswapTcrEthPool"),
   };
-  let totalTCRArbitrum = useRef(bigNumberify(0));
-  let totalTCRMainnet = useRef(bigNumberify(0));
+  let totalMYCArbitrum = useRef(bigNumberify(0));
+  let totalMYCMainnet = useRef(bigNumberify(0));
 
-  const { data: tcrInUniswapLiquidityOnArbitrum, mutate: mutateTCRInUniswapLiquidityOnArbitrum } = useSWR(
+  const { data: mycInUniswapLiquidityOnArbitrum, mutate: mutateMYCInUniswapLiquidityOnArbitrum } = useSWR(
     [
-      `StakeV2:tcrInLiquidity:${ARBITRUM}`,
+      `StakeV2:mycInLiquidity:${ARBITRUM}`,
       ARBITRUM,
-      getContract(ARBITRUM, "TCR"),
+      getContract(ARBITRUM, "MYC"),
       "balanceOf",
       poolAddressArbitrum.uniswap,
     ],
@@ -569,11 +580,11 @@ export function useTotalTCRInLiquidity() {
     }
   );
 
-  const { data: tcrInBalancerLiquidityOnArbitrum, mutate: mutateTCRInBalancerLiquidityOnArbitrum } = useSWR(
+  const { data: mycInBalancerLiquidityOnArbitrum, mutate: mutateMYCInBalancerLiquidityOnArbitrum } = useSWR(
     [
-      `StakeV2:tcrBalancerLiquidity:${ARBITRUM}`,
+      `StakeV2:mycBalancerLiquidity:${ARBITRUM}`,
       ARBITRUM,
-      getContract(ARBITRUM, "TCR"),
+      getContract(ARBITRUM, "MYC"),
       "balanceOf",
       poolAddressArbitrum.balancer,
     ],
@@ -582,11 +593,37 @@ export function useTotalTCRInLiquidity() {
     }
   );
 
-  const { data: tcrInUniswapLiquidityOnMainnet, mutate: mutateTCRInUniswapLiquidityOnMainnet } = useSWR(
+  // const { data: tcrInUniswapLiquidityOnArbitrum, mutate: mutateTCRInUniswapLiquidityOnArbitrum } = useSWR(
+    // [
+      // `StakeV2:tcrInLiquidity:${ARBITRUM}`,
+      // ARBITRUM,
+      // getContract(ARBITRUM, "TCR"),
+      // "balanceOf",
+      // poolAddressArbitrum.uniswapTcr,
+    // ],
+    // {
+      // fetcher: fetcher(undefined, Token),
+    // }
+  // );
+
+  // const { data: tcrInBalancerLiquidityOnArbitrum, mutate: mutateTCRInBalancerLiquidityOnArbitrum } = useSWR(
+    // [
+      // `StakeV2:mycBalancerLiquidity:${ARBITRUM}`,
+      // ARBITRUM,
+      // getContract(ARBITRUM, "TCR"),
+      // "balanceOf",
+      // poolAddressArbitrum.balancer,
+    // ],
+    // {
+      // fetcher: fetcher(undefined, Token),
+    // }
+  // );
+
+  const { data: mycInUniswapLiquidityOnMainnet, mutate: mutateMYCInUniswapLiquidityOnMainnet } = useSWR(
     [
-      `StakeV2:tcrInUniswapLiquidity:${ETHEREUM}`,
+      `StakeV2:mycInUniswapLiquidity:${ETHEREUM}`,
       ETHEREUM,
-      getContract(ETHEREUM, "TCR"),
+      getContract(ETHEREUM, "MYC"),
       "balanceOf",
       poolAddressMainnet.uniswap,
     ],
@@ -595,45 +632,81 @@ export function useTotalTCRInLiquidity() {
     }
   );
 
-  const { data: tcrInSushiswapLiquidityOnMainnet, mutate: mutateTCRInSushiSwapLiquidityOnMainnet } = useSWR(
+  const { data: mycInBalancerLiquidityOnMainnet, mutate: mutateMYCInBalancerLiquidityOnMainnet } = useSWR(
     [
-      `StakeV2:tcrInSushiswapLiquidity:${ETHEREUM}`,
+      `StakeV2:mycBalancerLiquidity:${ETHEREUM}`,
       ETHEREUM,
-      getContract(ETHEREUM, "TCR"),
+      getContract(ETHEREUM, "MYC"),
       "balanceOf",
-      poolAddressMainnet.sushiswap,
+      poolAddressMainnet.balancer,
     ],
     {
       fetcher: fetcher(undefined, Token),
     }
   );
 
+  console.log({
+    balancerArbitrum: mycInBalancerLiquidityOnArbitrum && ethers.utils.formatEther(mycInBalancerLiquidityOnArbitrum),
+    uniswapArbitrum: mycInUniswapLiquidityOnArbitrum && ethers.utils.formatEther(mycInUniswapLiquidityOnArbitrum),
+    balanceMainnet: mycInBalancerLiquidityOnMainnet && ethers.utils.formatEther(mycInBalancerLiquidityOnMainnet),
+    uniswapMainnet: mycInUniswapLiquidityOnMainnet && ethers.utils.formatEther(mycInUniswapLiquidityOnMainnet)
+  })
+
+  // const { data: tcrInSushiswapLiquidityOnMainnet, mutate: mutateTCRInSushiSwapLiquidityOnMainnet } = useSWR(
+    // [
+      // `StakeV2:tcrInSushiswapLiquidity:${ETHEREUM}`,
+      // ETHEREUM,
+      // getContract(ETHEREUM, "TCR"),
+      // "balanceOf",
+      // poolAddressMainnet.sushiswap,
+    // ],
+    // {
+      // fetcher: fetcher(undefined, Token),
+    // }
+  // );
+
   const mutate = useCallback(() => {
-    mutateTCRInUniswapLiquidityOnArbitrum();
-    mutateTCRInBalancerLiquidityOnArbitrum();
-    mutateTCRInUniswapLiquidityOnMainnet();
-    mutateTCRInSushiSwapLiquidityOnMainnet();
+    mutateMYCInUniswapLiquidityOnArbitrum();
+    mutateMYCInBalancerLiquidityOnArbitrum();
+    // mutateTCRInUniswapLiquidityOnArbitrum();
+    // mutateTCRInBalancerLiquidityOnArbitrum();
+
+    mutateMYCInUniswapLiquidityOnMainnet();
+    // mutateTCRInSushiSwapLiquidityOnMainnet();
+    mutateMYCInBalancerLiquidityOnMainnet();
   }, [
-    mutateTCRInUniswapLiquidityOnArbitrum,
-    mutateTCRInBalancerLiquidityOnArbitrum,
-    mutateTCRInUniswapLiquidityOnMainnet,
-    mutateTCRInSushiSwapLiquidityOnMainnet,
+    mutateMYCInUniswapLiquidityOnArbitrum,
+    mutateMYCInBalancerLiquidityOnArbitrum,
+    // mutateTCRInUniswapLiquidityOnArbitrum,
+    // mutateTCRInBalancerLiquidityOnArbitrum,
+
+    mutateMYCInUniswapLiquidityOnMainnet,
+    // mutateTCRInSushiSwapLiquidityOnMainnet,
+    mutateMYCInBalancerLiquidityOnMainnet
   ]);
 
-  if (tcrInSushiswapLiquidityOnMainnet && tcrInUniswapLiquidityOnMainnet) {
-    let total = bigNumberify(tcrInSushiswapLiquidityOnMainnet).add(tcrInUniswapLiquidityOnMainnet);
-    totalTCRMainnet.current = total;
+  if (mycInUniswapLiquidityOnMainnet && mycInBalancerLiquidityOnMainnet) {
+    let total = bigNumberify(mycInUniswapLiquidityOnMainnet).add(mycInBalancerLiquidityOnMainnet);
+    totalMYCMainnet.current = total;
+  }
+  // if (tcrInSushiswapLiquidityOnMainnet) {
+    // let total = bigNumberify(tcrInSushiswapLiquidityOnMainnet);
+    // totalTCRMainnet.current = total;
+  // }
+  
+
+  if (mycInUniswapLiquidityOnArbitrum && mycInBalancerLiquidityOnArbitrum) {
+    let total = bigNumberify(mycInUniswapLiquidityOnArbitrum).add(mycInBalancerLiquidityOnArbitrum);
+    totalMYCArbitrum.current = total;
   }
 
-  if (tcrInUniswapLiquidityOnArbitrum && tcrInBalancerLiquidityOnArbitrum) {
-    let total = bigNumberify(tcrInUniswapLiquidityOnArbitrum).add(tcrInBalancerLiquidityOnArbitrum);
-    totalTCRArbitrum.current = total;
-  }
+  console.log('m', totalMYCMainnet?.current?.toString())
+  console.log('a', totalMYCArbitrum?.current?.toString())
 
   return {
-    mainnet: totalTCRMainnet.current,
-    arbitrum: totalTCRArbitrum.current,
-    total: totalTCRArbitrum.current.add(totalTCRMainnet.current),
+    mainnet: totalMYCMainnet.current,
+    arbitrum: totalMYCArbitrum.current,
+    total: totalMYCArbitrum.current.add(totalMYCMainnet.current),
     mutate,
   };
 }
@@ -678,9 +751,9 @@ export function useCodeOwner(library, chainId, account, code) {
   };
 }
 
-function useTCRPriceFromMainnet(active) {
-  const poolAddress = getContract(ETHEREUM, "UniswapTcrEthPool");
-  const { data: tcrEthUniPoolSlot0, mutate: updateTcrEthUniPoolSlot0 } = useSWR(
+function useMYCPriceFromMainnet(active) {
+  const poolAddress = getContract(ETHEREUM, "UniswapMycEthPool");
+  const { data: mycEthUniPoolSlot0, mutate: updateTcrEthUniPoolSlot0 } = useSWR(
     [`StakeV2:mainnetUniPoolSlot0:${active}`, ETHEREUM, poolAddress, "slot0"],
     {
       fetcher: fetcher(undefined, UniPool),
@@ -696,7 +769,7 @@ function useTCRPriceFromMainnet(active) {
   );
 
   const mycPrice = useMemo(() => {
-    if (tcrEthUniPoolSlot0 && ethUsdcUniPoolSlot0) {
+    if (mycEthUniPoolSlot0 && ethUsdcUniPoolSlot0) {
       const ethAddress = getContract(ETHEREUM, "WETH");
       const ETH = new UniToken(ETHEREUM, ethAddress, 18, "SYMBOL", "NAME");
 
@@ -705,28 +778,28 @@ function useTCRPriceFromMainnet(active) {
 
       const ethUsdcPool = new Pool(ETH, USDC, 0, ethUsdcUniPoolSlot0.sqrtPriceX96, 1, ethUsdcUniPoolSlot0.tick);
 
-      const tcrAddress = getContract(ETHEREUM, "TCR");
-      const TCR = new UniToken(ETHEREUM, tcrAddress, 18, "SYMBOL", "NAME");
+      const mycAddress = getContract(ETHEREUM, "TCR");
+      const MYC = new UniToken(ETHEREUM, mycAddress, 18, "SYMBOL", "NAME");
 
-      const tcrEthPool = new Pool(
+      const mycEthPool = new Pool(
         ETH, // tokenA
-        TCR, // tokenB
+        MYC, // tokenB
         10000, // fee
-        tcrEthUniPoolSlot0.sqrtPriceX96, // sqrtRatioX96
+        mycEthUniPoolSlot0.sqrtPriceX96, // sqrtRatioX96
         1, // liquidity
-        tcrEthUniPoolSlot0.tick, // tickCurrent
+        mycEthUniPoolSlot0.tick, // tickCurrent
         []
       );
 
       const ethPrice = ethUsdcPool.priceOf(ETH).toSignificant(6);
       // USDC is 6 decimals need to parse into 18 + 6 decimal places
       const ethPriceAmount = parseValue(ethPrice, 24);
-      const poolTokenPrice = tcrEthPool.priceOf(TCR).toSignificant(6);
+      const poolTokenPrice = mycEthPool.priceOf(MYC).toSignificant(6);
       const poolTokenPriceAmount = parseValue(poolTokenPrice, 18);
       // here everything is in 10 ** 24 precision
       return poolTokenPriceAmount.mul(ethPriceAmount);
     }
-  }, [ethUsdcUniPoolSlot0, tcrEthUniPoolSlot0]);
+  }, [ethUsdcUniPoolSlot0, mycEthUniPoolSlot0]);
 
   const mutate = useCallback(() => {
     updateTcrEthUniPoolSlot0(undefined, true);
@@ -736,7 +809,8 @@ function useTCRPriceFromMainnet(active) {
   return { data: mycPrice, mutate };
 }
 
-function useTCRPriceFromArbitrum(library, active) {
+function useMYCPriceFromArbitrum(library, active) {
+  // liquidity is too low for uniswap on arbitrum can use tcr for now
   const poolAddress = getContract(ARBITRUM, "UniswapTcrEthPool");
   const { data: uniPoolSlot0, mutate: updateUniPoolSlot0 } = useSWR(
     [`StakeV2:uniPoolSlot0:${active}`, ARBITRUM, poolAddress, "slot0"],
@@ -758,8 +832,8 @@ function useTCRPriceFromArbitrum(library, active) {
     if (uniPoolSlot0 && ethPrice) {
       const tokenA = new UniToken(ARBITRUM, ethAddress, 18, "SYMBOL", "NAME");
 
-      const tcrAddress = getContract(ARBITRUM, "TCR");
-      const tokenB = new UniToken(ARBITRUM, tcrAddress, 18, "SYMBOL", "NAME");
+      const mycAddress = getContract(ARBITRUM, "MYC");
+      const tokenB = new UniToken(ARBITRUM, mycAddress, 18, "SYMBOL", "NAME");
 
       const pool = new Pool(
         tokenA, // tokenA
