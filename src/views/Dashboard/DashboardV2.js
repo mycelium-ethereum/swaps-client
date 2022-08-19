@@ -318,7 +318,7 @@ export default function DashboardV2() {
     },
   ];
 
-  const totalStatsStartDate = "14 Sep 2022";
+  const totalStatsStartDate = "14 Aug 2022";
 
   let stableMlp = 0;
   let totalMlp = 0;
