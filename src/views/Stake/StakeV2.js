@@ -37,9 +37,8 @@ import {
   getStakingData,
   getProcessedData,
   getPageTitle,
-  getSupplyUrl,
 } from "../../Helpers";
-import { callContract, useMYCPrice } from "../../Api";
+import { callContract, useMYCPrice, useTotalMYCSupply } from "../../Api";
 import { getConstant } from "../../Constants";
 
 import useSWR from "swr";
@@ -684,11 +683,7 @@ export default function StakeV2({ setPendingTxns, connectWallet, trackAction }) 
 
   const { mycPrice } = useMYCPrice(chainId, { arbitrum: chainId === ARBITRUM ? library : undefined }, active);
 
-  const supplyUrl = getSupplyUrl();
-  const { data: mycSupply_ } = useSWR([supplyUrl], {
-    fetcher: (...args) => fetch(...args).then((res) => res.json()),
-  });
-  const mycSupply = mycSupply_?.totalSupply;
+  const { total: mycSupply } = useTotalMYCSupply();
 
   let aum;
   if (aums && aums.length > 0) {
