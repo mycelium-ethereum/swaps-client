@@ -1,6 +1,6 @@
 const CONTRACTS = {
   1: {
-    UniswapMycEthPool: "0x66dd48889df1fc32cba3abfa2c453906d527eb2e",
+    UniswapMycEthPool: "0x66dD48889Df1Fc32cBa3aBfA2c453906d527eB2e",
     
     UniswapTcrEthPool: "0x10b5c63a0a94ec3036238190bc88608a02e91e2c",
     SushiswapTcrEthPool: "0xe55c3e83852429334a986b265d03b879a3d188ac",
@@ -147,7 +147,8 @@ const CONTRACTS = {
     PositionRouter: "0xE510571cAc76279DADf6c4b6eAcE5370F86e3dC2",
     PositionManager: "0x3892b8cF646b17709C91E653319bA5504a5FEafe",
 
-    // TODO this is the actual address but liquidity is to low
+    UniswapMycTcrPool: "0xc9f423c406e690b7f7715f9e048489caafb2266b",
+    // TODO this uniswap pool has low liquidity so cant use for pricing
     UniswapMycEthPool: "0x6a034ac28064ffa8375e4668f4ecebdf3aafcba0",
     UniswapTcrEthPool: "0xe8bfb2918853576f0965e29bb86001ea93019003",
 

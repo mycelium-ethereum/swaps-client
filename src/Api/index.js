@@ -555,8 +555,8 @@ export function useTotalMycStaked() {
 export function useTotalMYCInLiquidity() {
   let poolAddressArbitrum = {
     uniswap: getContract(ARBITRUM, "UniswapMycEthPool"),
+    uniswapMycTcr: getContract(ARBITRUM, "UniswapMycTcrPool"),
     balancer: getContract(ARBITRUM, "BalancerVault"),
-    // uniswapTcr: getContract(ARBITRUM, "UniswapTcrEthPool"),
   };
   let poolAddressMainnet = {
     uniswap: getContract(ETHEREUM, "UniswapMycEthPool"),
@@ -574,6 +574,20 @@ export function useTotalMYCInLiquidity() {
       getContract(ARBITRUM, "MYC"),
       "balanceOf",
       poolAddressArbitrum.uniswap,
+    ],
+    {
+      fetcher: fetcher(undefined, Token),
+    }
+  );
+
+  // TODO this pool will slowly get phased out
+  const { data: mycTcrInUniswapLiquidityOnArbitrum, mutate: mutateMYCTCRInUniswapLiquidityOnArbitrum } = useSWR(
+    [
+      `StakeV2:mycTcrInLiquidity:${ARBITRUM}`,
+      ARBITRUM,
+      getContract(ARBITRUM, "MYC"),
+      "balanceOf",
+      poolAddressArbitrum.uniswapMycTcr,
     ],
     {
       fetcher: fetcher(undefined, Token),
@@ -668,6 +682,7 @@ export function useTotalMYCInLiquidity() {
   const mutate = useCallback(() => {
     mutateMYCInUniswapLiquidityOnArbitrum();
     mutateMYCInBalancerLiquidityOnArbitrum();
+    mutateMYCTCRInUniswapLiquidityOnArbitrum();
     // mutateTCRInUniswapLiquidityOnArbitrum();
     // mutateTCRInBalancerLiquidityOnArbitrum();
 
@@ -677,6 +692,7 @@ export function useTotalMYCInLiquidity() {
   }, [
     mutateMYCInUniswapLiquidityOnArbitrum,
     mutateMYCInBalancerLiquidityOnArbitrum,
+    mutateMYCTCRInUniswapLiquidityOnArbitrum,
     // mutateTCRInUniswapLiquidityOnArbitrum,
     // mutateTCRInBalancerLiquidityOnArbitrum,
 
@@ -685,8 +701,8 @@ export function useTotalMYCInLiquidity() {
     mutateMYCInBalancerLiquidityOnMainnet
   ]);
 
-  if (mycInUniswapLiquidityOnMainnet && mycInBalancerLiquidityOnMainnet) {
-    let total = bigNumberify(mycInUniswapLiquidityOnMainnet).add(mycInBalancerLiquidityOnMainnet);
+  if (mycInUniswapLiquidityOnMainnet && mycInBalancerLiquidityOnMainnet && mycTcrInUniswapLiquidityOnArbitrum) {
+    let total = bigNumberify(mycInUniswapLiquidityOnMainnet).add(mycInBalancerLiquidityOnMainnet).add(mycTcrInUniswapLiquidityOnArbitrum);
     totalMYCMainnet.current = total;
   }
   // if (tcrInSushiswapLiquidityOnMainnet) {
