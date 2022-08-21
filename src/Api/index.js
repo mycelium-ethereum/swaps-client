@@ -659,13 +659,6 @@ export function useTotalMYCInLiquidity() {
     }
   );
 
-  console.log({
-    balancerArbitrum: mycInBalancerLiquidityOnArbitrum && ethers.utils.formatEther(mycInBalancerLiquidityOnArbitrum),
-    uniswapArbitrum: mycInUniswapLiquidityOnArbitrum && ethers.utils.formatEther(mycInUniswapLiquidityOnArbitrum),
-    balanceMainnet: mycInBalancerLiquidityOnMainnet && ethers.utils.formatEther(mycInBalancerLiquidityOnMainnet),
-    uniswapMainnet: mycInUniswapLiquidityOnMainnet && ethers.utils.formatEther(mycInUniswapLiquidityOnMainnet)
-  })
-
   // const { data: tcrInSushiswapLiquidityOnMainnet, mutate: mutateTCRInSushiSwapLiquidityOnMainnet } = useSWR(
     // [
       // `StakeV2:tcrInSushiswapLiquidity:${ETHEREUM}`,
@@ -705,19 +698,11 @@ export function useTotalMYCInLiquidity() {
     let total = bigNumberify(mycInUniswapLiquidityOnMainnet).add(mycInBalancerLiquidityOnMainnet).add(mycTcrInUniswapLiquidityOnArbitrum);
     totalMYCMainnet.current = total;
   }
-  // if (tcrInSushiswapLiquidityOnMainnet) {
-    // let total = bigNumberify(tcrInSushiswapLiquidityOnMainnet);
-    // totalTCRMainnet.current = total;
-  // }
-  
 
   if (mycInUniswapLiquidityOnArbitrum && mycInBalancerLiquidityOnArbitrum) {
     let total = bigNumberify(mycInUniswapLiquidityOnArbitrum).add(mycInBalancerLiquidityOnArbitrum);
     totalMYCArbitrum.current = total;
   }
-
-  console.log('m', totalMYCMainnet?.current?.toString())
-  console.log('a', totalMYCArbitrum?.current?.toString())
 
   return {
     mainnet: totalMYCMainnet.current,
