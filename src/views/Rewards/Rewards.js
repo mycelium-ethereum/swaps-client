@@ -2,7 +2,7 @@ import React, { useState, useMemo, useEffect } from "react";
 
 import useSWR from "swr";
 
-import { getTracerServerUrl, getPageTitle, getTokenInfo, useChainId, useENS } from "../../Helpers";
+import { getTracerServerUrl, getPageTitle, getTokenInfo, useChainId, useENS, fetcher } from "../../Helpers";
 import { useWeb3React } from "@web3-react/core";
 import { useInfoTokens } from "../../Api";
 import { ethers } from "ethers";
@@ -12,6 +12,9 @@ import * as Styles from "./Rewards.styles";
 import { LeaderboardSwitch } from "./ViewSwitch";
 
 import SEO from "../../components/Common/SEO";
+import { getContract } from "../../Addresses";
+
+import FeeDistributorReader from "../../abis/FeeDistributorReader.json";
 
 const PersonalHeader = () => (
   <div className="Page-title-section mt-0">
@@ -41,6 +44,9 @@ export default function Rewards(props) {
 
   const { infoTokens } = useInfoTokens(library, chainId, active, undefined, undefined);
 
+  const feeDistributor = getContract(chainId, "FeeDistributor");
+  const feeDistributorReader = getContract(chainId, "FeeDistributorReader");
+
   // Fetch all week data from server
   const { data: allWeeksRewardsData, error: failedFetchingRewards } = useSWR([getTracerServerUrl(chainId, "/rewards")], {
     fetcher: (...args) => fetch(...args).then((res) => res.json()),
@@ -54,6 +60,13 @@ export default function Rewards(props) {
     }
   );
 
+  const { data: hasClaimed } = useSWR(
+    [`Rewards:claimed:${active}`, chainId, feeDistributorReader, "getUserClaimed", feeDistributor, account, 2],
+    {
+      fetcher: fetcher(library, FeeDistributorReader),
+    }
+  );
+
   // Get the data for the current user
   const userData = useMemo(
     () =>
@@ -63,11 +76,14 @@ export default function Rewards(props) {
           if (!trader) {
             return totals;
           }
+          let unclaimedRewards = totals.unclaimedRewards;
+          if (hasClaimed && hasClaimed[week]) {
+            unclaimedRewards.add(trader.reward);
+          }
           return {
             totalTradingVolume: totals.totalTradingVolume.add(trader.volume),
             totalRewards: totals.totalRewards.add(trader.reward),
-            // TODO calc what has been claimed
-            unclaimedRewards: totals.unclaimedRewards.add(trader.reward),
+            unclaimedRewards: unclaimedRewards
           };
         },
         {
@@ -76,7 +92,7 @@ export default function Rewards(props) {
           unclaimedRewards: ethers.BigNumber.from(0),
         }
       ),
-    [allWeeksRewardsData, account]
+    [allWeeksRewardsData, hasClaimed, account]
   );
 
   // Extract week data from full API response
@@ -142,7 +158,7 @@ export default function Rewards(props) {
     rewardsMessage = "Failed fetching rewards";
   } else {
     if (allWeeksRewardsData?.length === 0) {
-      rewardsMessage = "No rewards for network";
+      rewardsMessage = "No rewards";
     } else if (selectedWeek === "latest") {
       rewardsMessage = `Week ${Number.parseInt(currentRewardWeek.week) + 1}`;
     } else {

@@ -52,21 +52,6 @@ export const AccountBanner = styled.div`
 
 export const PersonalRewardsContainer = styled.div`
   width: 100%;
-
-  /* Remove to enable Rewards */
-  position: relative;
-  cursor: not-allowed;
-  * {
-    pointer-events: none;
-    opacity: 0.5;
-  }
-  &:before {
-    content: "Rewards coming soon";
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-  }
 `;
 
 export const AppCardTitle = styled.div`
@@ -207,10 +192,6 @@ export const ViewSwitchContainer = styled.div`
   justify-content: space-between;
   margin: 16px 0 24px;
   width: 100%;
-
-  /* Remove to enable Rewards */
-  opacity: 0.3;
-  cursor: not-allowed;
 `;
 
 export const ViewSwitch = styled.div`
@@ -221,7 +202,7 @@ export const ViewSwitch = styled.div`
   border: 1px solid var(--cell-stroke);
   width: 392px;
   height: 56px;
-  pointer-events: none;
+  // pointer-events: none;
 `;
 
 export const ViewOption = styled.button`

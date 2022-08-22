@@ -105,6 +105,9 @@ const CONTRACTS = {
     // UniswapMycEthPool: "0x80A9ae39310abf666A87C743d6ebBD0E8C42158E",
     ReferralStorage: "0xcDA344Dac3b6fA38245BAd1FD61900b68b3C8857",
     ReferralReader: "0x9A3d3D5Df8F105cadb1F67587ab49d42146D5389",
+
+    FeeDistributor: "0x057B99E0112A0D9fDA7503bDc8b6995fA2ff997D",
+    FeeDistributorReader: "0x55ce0A81b697f1eff846e8a56D3f303A5BE490b1"
   },
   42161: {
     // arbitrum mainnet
@@ -147,6 +150,9 @@ const CONTRACTS = {
 
     ReferralStorage: "0x3Cd316df040f8A76eb2b496B92b358d3b2EFB9F5",
     ReferralReader: "0xb220724b6b68a84392eC22e841eDe5519863A21F",
+
+    FeeDistributor: "0x057B99E0112A0D9fDA7503bDc8b6995fA2ff997D",
+    FeeDistributorReader: "0x55ce0A81b697f1eff846e8a56D3f303A5BE490b1"
   },
   43114: {
     // avalanche

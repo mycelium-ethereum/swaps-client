@@ -4,6 +4,7 @@ import * as Styles from "./Rewards.styles";
 import Davatar from '@davatar/react';
 import { EmptyAvatar } from './Rewards.styles'
 import WeekDropdown from "./WeekDropdown";
+import {Link} from "react-router-dom";
 
 export default function TraderRewards(props) {
   const {
@@ -93,7 +94,6 @@ export default function TraderRewards(props) {
             </div>
           </Styles.RewardsDataBox>
         </Styles.RewardsDataBoxes>
-        {active && latestWeek && <Styles.RewardsButton disabled className="App-cta large">Week ends in {timeTillRewards}</Styles.RewardsButton>}
         {active && !latestWeek && <Styles.RewardsButton className="App-cta large"> Claim ETH </Styles.RewardsButton>}
         {!active && (
           <Styles.RewardsButton className="App-cta large" onClick={() => connectWallet()}>
