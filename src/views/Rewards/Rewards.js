@@ -2,7 +2,7 @@ import React, { useState, useMemo, useEffect, useRef } from "react";
 
 import useSWR from "swr";
 
-import { getTracerServerUrl, getPageTitle, getTokenInfo, useChainId, useENS, fetcher, expandDecimals, ETH_DECIMALS } from "../../Helpers";
+import { getTracerServerUrl, getPageTitle, getTokenInfo, useChainId, useENS, fetcher, expandDecimals, ETH_DECIMALS, helperToast } from "../../Helpers";
 import { useWeb3React } from "@web3-react/core";
 import { useInfoTokens } from "../../Api";
 import { ethers } from "ethers";
@@ -102,12 +102,11 @@ export default function Rewards(props) {
       middleRow.current = null;
       return undefined;
     }
-    const allWeeksRewardsData = currentRewardWeek;
-    if (!allWeeksRewardsData) {
+    if (!currentRewardWeek) {
       middleRow.current = null;
       return undefined;
     }
-    allWeeksRewardsData.traders = allWeeksRewardsData.traders?.sort((a, b) => b.volume - a.volume).map((trader, index) => {
+    currentRewardWeek.traders = currentRewardWeek.traders?.sort((a, b) => b.volume - a.volume).map((trader, index) => {
       const positionReward = ethers.BigNumber.from(trader.reward);
       const degenReward = ethers.BigNumber.from(trader.degen_reward);
       if (middleRow.current === null && positionReward.eq(0)) {
@@ -120,7 +119,7 @@ export default function Rewards(props) {
         degenReward,
       })
     }); // Sort traders by highest to lowest in volume
-    return allWeeksRewardsData
+    return currentRewardWeek
   }, [currentRewardWeek]);
 
   // Get volume, position and reward from user week data
@@ -213,6 +212,10 @@ export default function Rewards(props) {
     trackAction("Button clicked", {
       buttonName: "Claim rewards",
     });
+
+    if (selectedWeek === 'latest') {
+      helperToast.error("Rewards week has not ended");
+    }
   }
 
   return (
