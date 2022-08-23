@@ -67,6 +67,7 @@ import PositionsOverview from "./views/PositionsOverview/PositionsOverview";
 import BuyMlp from "./views/BuyMlp/BuyMlp";
 import SellMlp from "./views/SellMlp/SellMlp";
 import Rewards from "./views/Rewards/Rewards";
+import Referrals from "./views/Referrals/Referrals";
 // import NftWallet from "./views/NftWallet/NftWallet";
 // import BeginAccountTransfer from "./views/BeginAccountTransfer/BeginAccountTransfer";
 // import CompleteAccountTransfer from "./views/CompleteAccountTransfer/CompleteAccountTransfer";
@@ -227,6 +228,11 @@ function AppHeaderLinks({ small, openSettings, clickCloseIcon, trackAction }) {
       <div className="App-header-link-container">
         <NavLink exact activeClassName="active" to="/rewards">
           Rewards
+        </NavLink>
+      </div>
+      <div className="App-header-link-container">
+        <NavLink exact activeClassName="active" to="/referrals">
+          Referrals
         </NavLink>
       </div>
       <div className="App-header-link-container">
@@ -910,6 +916,14 @@ function FullApp() {
             </Route>
             <Route exact path="/rewards">
               <Rewards
+                connectWallet={connectWallet}
+                trackPageWithTraits={trackPageWithTraits}
+                trackAction={trackAction}
+                analytics={analytics}
+              />
+            </Route>
+            <Route exact path="/referrals">
+              <Referrals
                 connectWallet={connectWallet}
                 trackPageWithTraits={trackPageWithTraits}
                 trackAction={trackAction}
