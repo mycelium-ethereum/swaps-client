@@ -141,7 +141,7 @@ export default function Rewards(props) {
     if (!currentRewardWeek) {
       return undefined;
     }
-    const leaderboardPosition = currentRewardWeek.traders?.findIndex((trader) => trader.user_address.toLowerCase() === account.toLowerCase());
+    const leaderboardPosition = currentRewardWeek.traders?.findIndex((trader) => trader.user_address.toLowerCase() === account?.toLowerCase());
     let traderData
     if (leaderboardPosition && leaderboardPosition >= 0) {
       traderData = currentRewardWeek.traders[leaderboardPosition];
@@ -241,6 +241,10 @@ export default function Rewards(props) {
       helperToast.error(`No rewards for week: ${selectedWeek}`);
       return;
     }
+    if (!!userProof?.message) {
+      helperToast.error(`Invalid user proof`);
+      return;
+    }
     const contract = new ethers.Contract(feeDistributor, FeeDistributor.abi, library.getSigner());
     callContract(
       chainId,
@@ -264,7 +268,7 @@ export default function Rewards(props) {
   }
 
   const isLatestWeek = selectedWeek === "latest";
-  const hasClaimedWeek = selectedWeek !== 'latest' && hasClaimed[selectedWeek]
+  const hasClaimedWeek = selectedWeek !== 'latest' && hasClaimed && hasClaimed[selectedWeek]
 
   return (
     <>
