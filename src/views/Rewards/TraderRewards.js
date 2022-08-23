@@ -22,7 +22,8 @@ export default function TraderRewards(props) {
     trackAction,
     nextRewards,
     latestWeek,
-    handleClaim
+    handleClaim,
+    isClaiming
   } = props;
 
   const timeTillRewards = formatTimeTill(nextRewards / 1000);
@@ -94,7 +95,7 @@ export default function TraderRewards(props) {
             </div>
           </Styles.RewardsDataBox>
         </Styles.RewardsDataBoxes>
-        {active && !latestWeek && <Styles.RewardsButton className="App-cta large" disabled={!userWeekData?.totalReward || userWeekData.eq(0)} onClick={handleClaim}> Claim ETH </Styles.RewardsButton>}
+        {active && !latestWeek && <Styles.RewardsButton className="App-cta large" disabled={!userWeekData?.totalReward || userWeekData.totalReward.eq(0) || isClaiming} onClick={handleClaim}> Claim ETH </Styles.RewardsButton>}
         {!active && (
           <Styles.RewardsButton className="App-cta large" onClick={() => connectWallet()}>
             Connect Wallet

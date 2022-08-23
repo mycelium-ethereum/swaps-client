@@ -4,7 +4,7 @@ import useSWR from "swr";
 
 import { getTracerServerUrl, getPageTitle, getTokenInfo, useChainId, useENS, fetcher, expandDecimals, ETH_DECIMALS, helperToast } from "../../Helpers";
 import { useWeb3React } from "@web3-react/core";
-import { useInfoTokens } from "../../Api";
+import { callContract, useInfoTokens } from "../../Api";
 import { ethers } from "ethers";
 import TraderRewards from "./TraderRewards";
 import Leaderboard from "./Leaderboard";
@@ -14,6 +14,7 @@ import { LeaderboardSwitch } from "./ViewSwitch";
 import SEO from "../../components/Common/SEO";
 import { getContract } from "../../Addresses";
 
+import FeeDistributor from "../../abis/FeeDistributorReader.json";
 import FeeDistributorReader from "../../abis/FeeDistributorReader.json";
 
 const PersonalHeader = () => (
@@ -31,7 +32,7 @@ const LeaderboardHeader = () => (
 );
 
 export default function Rewards(props) {
-  const { connectWallet, trackPageWithTraits, trackAction, analytics } = props;
+  const { connectWallet, trackPageWithTraits, trackAction, analytics, setPendingTxns } = props;
   const [currentView, setCurrentView] = useState("Personal");
 
   const { chainId } = useChainId();
@@ -41,6 +42,7 @@ export default function Rewards(props) {
   const [selectedWeek, setSelectedWeek] = useState("latest");
   const [pageTracked, setPageTracked] = useState(false);
   const [nextRewards, setNextRewards] = useState(undefined);
+  const [isClaiming, setIsClaiming] = useState(false);
 
   const { infoTokens } = useInfoTokens(library, chainId, active, undefined, undefined);
 
@@ -64,6 +66,14 @@ export default function Rewards(props) {
     [`Rewards:claimed:${active}`, chainId, feeDistributorReader, "getUserClaimed", feeDistributor, account, allWeeksRewardsData?.length ?? 1],
     {
       fetcher: fetcher(library, FeeDistributorReader),
+    }
+  );
+
+  // Fetch user proof
+  const { data: userProof } = useSWR(
+    [getTracerServerUrl(chainId, "/userRewardProof"), selectedWeek, account],
+    {
+      fetcher: (url, week, account) => fetch(`${url}&week=${week}&userAddress=${account}`).then((res) => res.json()),
     }
   );
 
@@ -210,11 +220,44 @@ export default function Rewards(props) {
   }, [currentRewardWeek, pageTracked, trackPageWithTraits, analytics]);
 
   const handleClaim = () => {
+    setIsClaiming(true);
+    // TODO remove
     helperToast.error("Claiming rewards is currently disabled");
     trackAction("Button clicked", {
       buttonName: "Claim rewards",
     });
-
+    if (selectedWeek === 'latest') {
+      helperToast.error("Cannot claim rewards before week has ended");
+      return;
+    }
+    if (!userProof) {
+      helperToast.error("Fetching merkle proof");
+      return;
+    }
+    if (userProof.amount === '0') {
+      helperToast.error(`No rewards for week: ${selectedWeek}`);
+      return;
+    }
+    const contract = new ethers.Contract(feeDistributor, FeeDistributor.abi, library.getSigner());
+    callContract(
+      chainId,
+      contract,
+      "withdraw",
+      [
+        userProof.merkleProof, // proof
+        userProof.amount, // amount
+        selectedWeek // week
+      ],
+      {
+        sentMsg: "Claim submitted!",
+        failMsg: "Claim failed.",
+        successMsg: "Claim completed!",
+        setPendingTxns,
+      }
+    )
+      .finally(() => {
+        setIsClaiming(false);
+      });
   }
 
   const isLatestWeek = selectedWeek === "latest";
@@ -257,6 +300,7 @@ export default function Rewards(props) {
           nextRewards={nextRewards}
           latestWeek={isLatestWeek}
           handleClaim={handleClaim}
+          isClaiming={isClaiming}
         />
         <Leaderboard
           weekData={weekData}
@@ -270,6 +314,7 @@ export default function Rewards(props) {
           trackAction={trackAction}
           handleClaim={handleClaim}
           latestWeek={isLatestWeek}
+          isClaiming={isClaiming}
         />
       </Styles.StyledRewardsPage>
     </>

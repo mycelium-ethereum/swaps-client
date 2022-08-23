@@ -58,7 +58,20 @@ function TopFiftyIndicatorRow() {
     </TopFiftyRow>
   );
 }
-function TableRow({ ensName, position, account, volume, totalReward, positionReward, degenReward, handleClaim, userRow, rewardAmountUsd, latestWeek }) {
+function TableRow({
+  ensName,
+  position,
+  account,
+  volume,
+  totalReward,
+  positionReward,
+  degenReward,
+  handleClaim,
+  userRow,
+  rewardAmountUsd,
+  latestWeek,
+  isClaiming
+}) {
   return (
     <>
       <tr
@@ -103,9 +116,10 @@ function TableRow({ ensName, position, account, volume, totalReward, positionRew
         >
           {userRow && !totalReward.eq(0) && !latestWeek && (
             <ClaimButton
+              disabled={isClaiming}
               onClick={handleClaim}
             >
-              Claim ETH
+              {isClaiming ? 'Claiming ETH' : 'Claim ETH'}
             </ClaimButton>
           )}
         </ClaimCell>
@@ -115,7 +129,20 @@ function TableRow({ ensName, position, account, volume, totalReward, positionRew
 }
 
 export default function Leaderboard(props) {
-  const { weekData, middleRow, userWeekData, userAccount, ensName, currentView, selectedWeek, connectWallet, trackAction, handleClaim, latestWeek } = props;
+  const {
+    weekData,
+    middleRow,
+    userWeekData,
+    userAccount,
+    ensName,
+    currentView,
+    selectedWeek,
+    connectWallet,
+    trackAction,
+    handleClaim,
+    latestWeek,
+    isClaiming
+  } = props;
 
   return (
     <LeaderboardContainer hidden={currentView === "Personal"}>
@@ -136,6 +163,7 @@ export default function Leaderboard(props) {
               userRow={true}
               handleClaim={handleClaim}
               latestWeek={latestWeek}
+              isClaiming={isClaiming}
             />
           </RewardsTableWrapper>
         ) : userAccount ? (
@@ -199,6 +227,7 @@ export default function Leaderboard(props) {
                       handleClaim={handleClaim}
                       userRow={isUserRow}
                       latestWeek={latestWeek}
+                      isClaiming={isClaiming}
                     />
                   </>
                 )
