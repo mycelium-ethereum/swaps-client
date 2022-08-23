@@ -10,7 +10,7 @@ export default function ReferralCodeModal(props) {
       setIsVisible={setIsCodeModalVisible}
       label="Create Referral Code"
     >
-      <Styles.CodeInput type="text" placeholder="Enter a code" maxLength={20} />
+      <Styles.CodeInput type="text" placeholder="Enter a code" maxLength="20" />
       <span className="error-text" />
       <Styles.CodeButton className="default-btn">Enter a code</Styles.CodeButton>
     </Styles.CodeModal>

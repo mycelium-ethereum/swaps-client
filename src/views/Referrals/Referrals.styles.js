@@ -301,6 +301,11 @@ export const WalletIcon = styled.img`
   margin-left: 10px;
 `;
 
+export const FlexContainer = styled.div`
+  display: flex;
+  align-items: center;
+`;
+
 export const TableContainer = styled.div`
   @media (max-width: 1000px) {
     overflow-y: hidden;
@@ -388,7 +393,7 @@ export const CodeInput = styled.input`
   }
 
   &:invalid + .error-text {
-    content: "The referral code can’t be more than 20 characters.";
+    content: "Invalid code.";
   }
   &:invalid + .error-text + button {
     background: var(--danger);
@@ -409,7 +414,7 @@ export const CopyButton = styled.button`
   border: 0;
   width: 14px;
   height: 14px;
-  margin-left: 22px;
+  margin-left: 15px;
   > img {
     width: 14px;
     height: 14px;

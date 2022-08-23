@@ -7,17 +7,11 @@ import { copyReferralCode } from "../../Helpers";
 export function TableRow(props) {
   const { code, totalVolume, tradersReferred, totalRebates } = props;
 
-  // TODO: get referral code from URL on page load
-  const createReferralLink = () => {
-    const link = `${window.location.origin}/?ref=${code}`;
-    copyReferralCode(link);
-  };
-
   return (
     <tr>
       <Styles.TableCell leftAlign>
         {code}
-        <Styles.CopyButton onClick={createReferralLink}>
+        <Styles.CopyButton onClick={() => copyReferralCode(code)}>
           <img src={CopyIcon} alt="Copy" />{" "}
         </Styles.CopyButton>
       </Styles.TableCell>

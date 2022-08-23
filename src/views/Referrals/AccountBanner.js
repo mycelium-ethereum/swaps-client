@@ -1,11 +1,13 @@
 import React from "react";
 import Davatar from "@davatar/react";
 import * as Styles from "./Referrals.styles";
-import { ETH_DECIMALS, formatAmount, shortenAddress, USD_DECIMALS } from "../../Helpers";
+import { ETH_DECIMALS, formatAmount, shortenAddress, USD_DECIMALS, copyReferralCode } from "../../Helpers";
+import CopyIcon from "../../img/copy.svg";
 
 export default function AccountBanner(props) {
   const { active, account, ensName, userData, totalRewardAmountUsd, unclaimedReferralUsd } = props;
 
+  const DUMMY_CODE = "helloworld13";
   return (
     <Styles.AccountBanner className="App-card">
       {active && (
@@ -35,7 +37,12 @@ export default function AccountBanner(props) {
         </div>
         <div className="App-card-row">
           <div className="label">Active Code</div>
-          <div>.........................................</div>
+          <Styles.FlexContainer>
+            {DUMMY_CODE}
+            <Styles.CopyButton onClick={() => copyReferralCode(DUMMY_CODE)}>
+              <img src={CopyIcon} alt="Copy" />{" "}
+            </Styles.CopyButton>
+          </Styles.FlexContainer>
         </div>
         <div className="App-card-row">
           <div className="label">Tier Level</div>

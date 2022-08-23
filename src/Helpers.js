@@ -3024,13 +3024,14 @@ export function copyToClipboard(item) {
   navigator.clipboard.writeText(item);
 }
 
-export function copyReferralCode(item) {
+export function copyReferralCode(code) {
+  const referralLink = createReferralLink(code);
   // Open native share dialog
   if (navigator.share) {
     navigator
       .share({
         title: "Share Referral Link",
-        url: item,
+        url: referralLink,
       })
       .then(() => {})
       .catch(console.error);
@@ -3039,3 +3040,7 @@ export function copyReferralCode(item) {
     copyToClipboard();
   }
 }
+
+export const createReferralLink = (code) => {
+  return `${window.location.origin}/?ref=${code}`;
+};
