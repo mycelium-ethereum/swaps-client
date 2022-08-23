@@ -96,13 +96,24 @@ export default function TraderRewards(props) {
             </div>
           </Styles.RewardsDataBox>
         </Styles.RewardsDataBoxes>
-        {active && !latestWeek && !hasClaimed && <Styles.RewardsButton className="App-cta large" disabled={!userWeekData?.totalReward || userWeekData.totalReward.eq(0) || isClaiming} onClick={handleClaim}> Claim ETH </Styles.RewardsButton>}
+        {active && <Styles.RewardsButton
+          className={'App-cta large'}
+          disabled={!userWeekData?.totalReward || userWeekData.totalReward.eq(0) || isClaiming || hasClaimed || !latestWeek}
+          onClick={handleClaim}
+        >
+          Claim ETH
+        </Styles.RewardsButton>}
         {!active && (
           <Styles.RewardsButton className="App-cta large" onClick={() => connectWallet()}>
             Connect Wallet
           </Styles.RewardsButton>
         )}
       </Styles.RewardsData>
+      {hasClaimed && <Styles.ClaimedRewards>
+        <span />
+        <span>Rewards have been claimed</span>
+        <span />
+      </Styles.ClaimedRewards>}
     </Styles.PersonalRewardsContainer>
   );
 }

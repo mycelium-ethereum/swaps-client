@@ -163,7 +163,33 @@ export const RewardsButton = styled.button`
   min-width: 200px;
 
   font-size: 16px;
+
+  &:disabled,
+  &[disabled]{
+    background: var(--cell-unavailable);
+    border: 1px solid var(--cell-unavailable-stroke);
+    color: rgba(49, 87, 136, 0.2);
+  }
 `;
+
+export const ClaimedRewards = styled.div`
+  display: flex;
+  position: relative;
+  width: 100%;
+  margin-top: 1.5rem;
+  text-align: center;
+  font-size: 16px;
+  color: var(--text-secondary);
+
+  & * {
+    width: 100%;
+    margin: auto;
+  }
+  & span:first-child, & span:last-child {
+    height: 1px;
+    background: var(--cell-stroke);
+  }
+`
 
 export const RewardsData = styled.div`
   margin-top: 1rem;
