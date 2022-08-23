@@ -187,7 +187,7 @@ export default function Rewards(props) {
   } else if (!!failedFetchingRewards) {
     rewardsMessage = "Failed fetching rewards";
   } else {
-    if (allWeeksRewardsData?.length === 0) {
+    if (currentRewardWeek?.length === 0) {
       rewardsMessage = "No rewards";
     } else if (selectedWeek === "latest") {
       rewardsMessage = `Week ${Number.parseInt(currentRewardWeek.week) + 1}`;

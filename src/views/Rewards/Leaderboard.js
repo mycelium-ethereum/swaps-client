@@ -31,6 +31,8 @@ import {
 } from "./Rewards.styles";
 import TooltipComponent from "../../components/Tooltip/Tooltip";
 
+import degenScore from '../../img/ic_degen.svg';
+
 const ARBISCAN_URL = "https://arbiscan.io/address/";
 const headings = ["Rank", "User", "Volume", "Reward", ""];
 
@@ -93,6 +95,10 @@ function TableRow({
               </a>
               <span>{ensName}</span>
             </UserDetails>
+            {!!degenReward && !degenReward.eq(0) && <TooltipComponent
+              handle={<img src={degenScore}/>}
+              renderContent={() => 'Rewards boosted by DegenScore'}
+            />}
           </div>
         </UserCell>
         <VolumeCell>${formatAmount(volume, USD_DECIMALS, 2, true)}</VolumeCell>
