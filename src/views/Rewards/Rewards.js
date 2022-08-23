@@ -1,8 +1,8 @@
-import React, { useState, useMemo, useEffect } from "react";
+import React, { useState, useMemo, useEffect, useRef } from "react";
 
 import useSWR from "swr";
 
-import { getTracerServerUrl, getPageTitle, getTokenInfo, useChainId, useENS, fetcher } from "../../Helpers";
+import { getTracerServerUrl, getPageTitle, getTokenInfo, useChainId, useENS, fetcher, expandDecimals, ETH_DECIMALS } from "../../Helpers";
 import { useWeb3React } from "@web3-react/core";
 import { useInfoTokens } from "../../Api";
 import { ethers } from "ethers";
@@ -96,19 +96,31 @@ export default function Rewards(props) {
   );
 
   // Extract week data from full API response
+  let middleRow = useRef(null);
   const weekData = useMemo(() => {
-    if (!currentRewardWeek) {
-      return undefined;
-    }
-    if (!!currentRewardWeek?.message) {
+    if (!currentRewardWeek || !!currentRewardWeek?.message) {
+      middleRow.current = null;
       return undefined;
     }
     const allWeeksRewardsData = currentRewardWeek;
     if (!allWeeksRewardsData) {
+      middleRow.current = null;
       return undefined;
     }
-    allWeeksRewardsData.traders?.sort((a, b) => b.volume - a.volume); // Sort traders by highest to lowest in volume
-    return allWeeksRewardsData;
+    allWeeksRewardsData.traders = allWeeksRewardsData.traders?.sort((a, b) => b.volume - a.volume).map((trader, index) => {
+      const positionReward = ethers.BigNumber.from(trader.reward);
+      const degenReward = ethers.BigNumber.from(trader.degen_reward);
+      if (middleRow.current === null && positionReward.eq(0)) {
+        middleRow.current = index;
+      }
+      return ({
+        ...trader,
+        totalReward: positionReward.add(degenReward),
+        positionReward,
+        degenReward,
+      })
+    }); // Sort traders by highest to lowest in volume
+    return allWeeksRewardsData
   }, [currentRewardWeek]);
 
   // Get volume, position and reward from user week data
@@ -121,10 +133,14 @@ export default function Rewards(props) {
     // trader's data found
     if (traderData) {
       traderData.position = leaderboardPosition;
+      const positionReward = ethers.BigNumber.from(traderData.reward);
+      const degenReward = ethers.BigNumber.from(traderData.degen_reward);
       return {
         volume: ethers.BigNumber.from(traderData.volume),
-        reward: ethers.BigNumber.from(traderData.reward),
+        totalReward: positionReward.add(degenReward),
         position: leaderboardPosition,
+        positionReward,
+        degenReward,
       };
     } else {
       // trader not found but data exists so user has no rewards
@@ -139,14 +155,14 @@ export default function Rewards(props) {
   const eth = getTokenInfo(infoTokens, ethers.constants.AddressZero);
   const ethPrice = eth?.maxPrimaryPrice;
 
-  if (ethPrice && userWeekData?.reward) {
-    userWeekData.rewardAmountUsd = userWeekData.reward?.mul(ethPrice);
+  if (ethPrice && userWeekData?.totalReward) {
+    userWeekData.rewardAmountUsd = userWeekData.totalReward?.mul(ethPrice).div(expandDecimals(1, ETH_DECIMALS));
   }
 
   let unclaimedRewardsUsd, totalRewardAmountUsd;
   if (ethPrice && userData) {
-    unclaimedRewardsUsd = userData.totalRewards.mul(ethPrice);
-    totalRewardAmountUsd = userData.totalRewards.mul(ethPrice);
+    unclaimedRewardsUsd = userData.totalRewards.mul(ethPrice).div(expandDecimals(1, ETH_DECIMALS));
+    totalRewardAmountUsd = userData.totalRewards.mul(ethPrice).div(expandDecimals(1, ETH_DECIMALS));
   }
 
   let rewardsMessage = "";
@@ -229,6 +245,7 @@ export default function Rewards(props) {
         />
         <Leaderboard
           weekData={weekData}
+          middleRow={middleRow.current}
           userWeekData={userWeekData}
           userAccount={account}
           ensName={ensName}

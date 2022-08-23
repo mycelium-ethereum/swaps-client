@@ -29,6 +29,7 @@ import {
   TopFiftyRow,
   TopFiftyRowCell,
 } from "./Rewards.styles";
+import TooltipComponent from "../../components/Tooltip/Tooltip";
 
 const ARBISCAN_URL = "https://arbiscan.io/address/";
 const headings = ["Rank", "User", "Volume", "Reward", ""];
@@ -57,10 +58,9 @@ function TopFiftyIndicatorRow() {
     </TopFiftyRow>
   );
 }
-function TableRow({ ensName, totalTraders, position, account, userAccount, volume, reward, trackAction, rewardAmountUsd }) {
+function TableRow({ ensName, position, account, userAccount, volume, totalReward, positionReward, degenReward, trackAction, rewardAmountUsd }) {
   return (
     <>
-      {position === Math.ceil(totalTraders / 2) + 1 ? <TopFiftyIndicatorRow /> : null}
       <tr
         className={cx({
           "highlight-current": account === userAccount,
@@ -84,8 +84,17 @@ function TableRow({ ensName, totalTraders, position, account, userAccount, volum
         </UserCell>
         <VolumeCell>${formatAmount(volume, USD_DECIMALS, 2, true)}</VolumeCell>
         <RewardCell>
-          {formatAmount(reward, ETH_DECIMALS, 4, true)} ETH{" "}
-          {rewardAmountUsd && `($${formatAmount(rewardAmountUsd, ETH_DECIMALS + USD_DECIMALS, 2, true)})`}
+          <TooltipComponent
+              handle={`${formatAmount(totalReward, ETH_DECIMALS, 4, true)} ETH`}
+              renderContent={() => (
+                <>
+                  Top 50%: {formatAmount(positionReward, ETH_DECIMALS, 6, true)} ETH
+                  <br />
+                  Degen rewards: {formatAmount(degenReward, ETH_DECIMALS, 6, true)} ETH
+                </>
+              )}
+          />
+          {rewardAmountUsd && `($${formatAmount(rewardAmountUsd, USD_DECIMALS, 2, true)})`}
         </RewardCell>
         <ClaimCell
           className={cx({
@@ -111,7 +120,7 @@ function TableRow({ ensName, totalTraders, position, account, userAccount, volum
 }
 
 export default function Leaderboard(props) {
-  const { weekData, userWeekData, userAccount, ensName, currentView, selectedWeek, connectWallet, trackAction } = props;
+  const { weekData, middleRow, userWeekData, userAccount, ensName, currentView, selectedWeek, connectWallet, trackAction } = props;
 
   return (
     <LeaderboardContainer hidden={currentView === "Personal"}>
@@ -125,7 +134,9 @@ export default function Leaderboard(props) {
               account={userAccount}
               ensName={ensName}
               volume={userWeekData.volume}
-              reward={userWeekData.reward}
+              totalReward={userWeekData.positionReward}
+              positionReward={userWeekData.totalReward}
+              degenReward={userWeekData.degenReward}
               rewardAmountUsd={userWeekData.rewardAmountUsd}
               trackAction={trackAction}
             />
@@ -172,18 +183,25 @@ export default function Leaderboard(props) {
         <ScrollContainer>
           {weekData?.traders?.length > 1 ? (
             <RewardsTableWrapper>
-              {weekData?.traders?.map(({ user_address, volume, reward, rewardAmountUsd }, index) => (
-                <TableRow
-                  key={user_address}
-                  totalTraders={weekData.traders.length}
-                  position={index + 1}
-                  account={user_address}
-                  volume={volume}
-                  reward={reward}
-                  rewardAmountUsd={rewardAmountUsd}
-                  trackAction={trackAction}
-                />
-              ))}
+              {weekData?.traders?.map(({ user_address, volume, totalReward, positionReward, degenReward, rewardAmountUsd }, index) => {
+                return (
+                  <>
+                    {index === middleRow ? <TopFiftyIndicatorRow /> : null}
+                    <TableRow
+                      key={user_address}
+                      totalTraders={weekData.traders.length}
+                      position={index + 1}
+                      account={user_address}
+                      volume={volume}
+                      totalReward={totalReward}
+                      positionReward={positionReward}
+                      degenReward={degenReward}
+                      rewardAmountUsd={rewardAmountUsd}
+                      trackAction={trackAction}
+                    />
+                  </>
+                )
+              })}
             </RewardsTableWrapper>
           ) : (!weekData?.traders || weekData?.traders?.length === 0) && selectedWeek ? (
             <FullWidthText>

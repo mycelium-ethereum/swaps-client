@@ -52,14 +52,14 @@ export default function TraderRewards(props) {
             <div className="label">Total Rewards</div>
             <div>
               {formatAmount(userData?.totalRewards, ETH_DECIMALS, 4, true)} ETH($
-              {formatAmount(totalRewardAmountUsd, ETH_DECIMALS + USD_DECIMALS, 2, true)})
+              {formatAmount(totalRewardAmountUsd, USD_DECIMALS, 2, true)})
             </div>
           </div>
           <div className="App-card-row">
             <div className="label">Unclaimed Rewards</div>
             <div>
               {formatAmount(userData?.unclaimedRewards, ETH_DECIMALS, 4, true)} ETH($
-              {formatAmount(unclaimedRewardsUsd, ETH_DECIMALS + USD_DECIMALS, 2, true)})
+              {formatAmount(unclaimedRewardsUsd, USD_DECIMALS, 2, true)})
             </div>
           </div>
         </Styles.AccountBannerRewards>
@@ -96,7 +96,7 @@ export default function TraderRewards(props) {
         </Styles.RewardsDataBoxes>
         {active && !latestWeek && <Styles.RewardsButton className="App-cta large"> Claim ETH </Styles.RewardsButton>}
         {!active && (
-          <Styles.RewardsButton className="App-cta large" onClick={() => connectWallet()}>
+          <Styles.RewardsButton className="App-cta large" disabled={!userWeekData?.reward} onClick={() => connectWallet()}>
             Connect Wallet
           </Styles.RewardsButton>
         )}
