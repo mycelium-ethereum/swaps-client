@@ -208,14 +208,11 @@ export default function Rewards(props) {
   }, [currentRewardWeek, pageTracked, trackPageWithTraits, analytics]);
 
   const handleClaim = () => {
-    // TODO handle claim
+    helperToast.error("Claiming rewards is currently disabled");
     trackAction("Button clicked", {
       buttonName: "Claim rewards",
     });
 
-    if (selectedWeek === 'latest') {
-      helperToast.error("Rewards week has not ended");
-    }
   }
 
   const isLatestWeek = selectedWeek === "latest";
