@@ -403,7 +403,6 @@ export const UserDetails = styled.div`
 export const VolumeCell = styled(TableCell)``;
 
 export const RewardCell = styled(TableCell)`
-  // text-decoration: underline;
 `;
 
 export const ClaimCell = styled(TableCell)`
