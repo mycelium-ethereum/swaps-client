@@ -116,7 +116,7 @@ export default function Rewards(props) {
       middleRow.current = null;
       return undefined;
     }
-    currentRewardWeek.traders = currentRewardWeek.traders?.sort((a, b) => b.volume - a.volume).map((trader, index) => {
+    const traders = currentRewardWeek.traders?.sort((a, b) => b.volume - a.volume).map((trader, index) => {
       const positionReward = ethers.BigNumber.from(trader.reward);
       const degenReward = ethers.BigNumber.from(trader.degen_reward);
       if (middleRow.current === null && positionReward.eq(0)) {
@@ -129,7 +129,10 @@ export default function Rewards(props) {
         degenReward,
       })
     }); // Sort traders by highest to lowest in volume
-    return currentRewardWeek
+    return {
+      ...currentRewardWeek,
+      traders
+    } 
   }, [currentRewardWeek]);
 
   // Get volume, position and reward from user week data
