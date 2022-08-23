@@ -302,8 +302,10 @@ export const WalletIcon = styled.img`
 `;
 
 export const TableContainer = styled.div`
-  overflow-y: hidden;
-  overflow-x: scroll;
+  @media (max-width: 1000px) {
+    overflow-y: hidden;
+    overflow-x: scroll;
+  }
 `;
 
 export const CodesTable = styled.table`
