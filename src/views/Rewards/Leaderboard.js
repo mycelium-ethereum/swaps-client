@@ -72,7 +72,8 @@ function TableRow({
   userRow,
   rewardAmountUsd,
   latestWeek,
-  isClaiming
+  isClaiming,
+  hasClaimed
 }) {
   return (
     <>
@@ -120,7 +121,7 @@ function TableRow({
             "highlight-current": userRow,
           })}
         >
-          {userRow && !totalReward.eq(0) && !latestWeek && (
+          {userRow && !totalReward.eq(0) && !latestWeek && !hasClaimed && (
             <ClaimButton
               disabled={isClaiming}
               onClick={handleClaim}
@@ -147,7 +148,8 @@ export default function Leaderboard(props) {
     trackAction,
     handleClaim,
     latestWeek,
-    isClaiming
+    isClaiming,
+    hasClaimed
   } = props;
 
   return (
@@ -170,6 +172,7 @@ export default function Leaderboard(props) {
               handleClaim={handleClaim}
               latestWeek={latestWeek}
               isClaiming={isClaiming}
+              hasClaimed={hasClaimed}
             />
           </RewardsTableWrapper>
         ) : userAccount ? (
@@ -234,6 +237,7 @@ export default function Leaderboard(props) {
                       userRow={isUserRow}
                       latestWeek={latestWeek}
                       isClaiming={isClaiming}
+                      hasClaimed={hasClaimed}
                     />
                   </>
                 )

@@ -23,7 +23,8 @@ export default function TraderRewards(props) {
     nextRewards,
     latestWeek,
     handleClaim,
-    isClaiming
+    isClaiming,
+    hasClaimed
   } = props;
 
   const timeTillRewards = formatTimeTill(nextRewards / 1000);
@@ -88,14 +89,14 @@ export default function TraderRewards(props) {
             <Styles.LargeText> {`$${formatAmount(userWeekData?.volume, USD_DECIMALS, 2, true)}`}</Styles.LargeText>
           </Styles.RewardsDataBox>
           <Styles.RewardsDataBox className="claimable">
-            <Styles.RewardsDataBoxTitle>Claimable Rewards </Styles.RewardsDataBoxTitle>
+            <Styles.RewardsDataBoxTitle>{hasClaimed ? 'Claimed Rewards' : 'Claimable Rewards'}</Styles.RewardsDataBoxTitle>
             <div>
               <Styles.LargeText>{`${formatAmount(userWeekData?.totalReward, ETH_DECIMALS, 4, true)} ETH`}</Styles.LargeText>
-              <span> {` ($${formatAmount(userWeekData?.rewardAmountUsd, ETH_DECIMALS + USD_DECIMALS, 2, true)})`}</span>
+              <span> {` ($${formatAmount(userWeekData?.rewardAmountUsd, USD_DECIMALS, 2, true)})`}</span>
             </div>
           </Styles.RewardsDataBox>
         </Styles.RewardsDataBoxes>
-        {active && !latestWeek && <Styles.RewardsButton className="App-cta large" disabled={!userWeekData?.totalReward || userWeekData.totalReward.eq(0) || isClaiming} onClick={handleClaim}> Claim ETH </Styles.RewardsButton>}
+        {active && !latestWeek && !hasClaimed && <Styles.RewardsButton className="App-cta large" disabled={!userWeekData?.totalReward || userWeekData.totalReward.eq(0) || isClaiming} onClick={handleClaim}> Claim ETH </Styles.RewardsButton>}
         {!active && (
           <Styles.RewardsButton className="App-cta large" onClick={() => connectWallet()}>
             Connect Wallet

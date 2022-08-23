@@ -14,7 +14,7 @@ import { LeaderboardSwitch } from "./ViewSwitch";
 import SEO from "../../components/Common/SEO";
 import { getContract } from "../../Addresses";
 
-import FeeDistributor from "../../abis/FeeDistributorReader.json";
+import FeeDistributor from "../../abis/FeeDistributor.json";
 import FeeDistributorReader from "../../abis/FeeDistributorReader.json";
 
 const PersonalHeader = () => (
@@ -224,8 +224,7 @@ export default function Rewards(props) {
 
   const handleClaim = () => {
     setIsClaiming(true);
-    // TODO remove
-    helperToast.error("Claiming rewards is currently disabled");
+    // helperToast.error("Claiming rewards is currently disabled");
     trackAction("Button clicked", {
       buttonName: "Claim rewards",
     });
@@ -264,6 +263,7 @@ export default function Rewards(props) {
   }
 
   const isLatestWeek = selectedWeek === "latest";
+  const hasClaimedWeek = selectedWeek !== 'latest' && hasClaimed[selectedWeek]
 
   return (
     <>
@@ -304,6 +304,7 @@ export default function Rewards(props) {
           latestWeek={isLatestWeek}
           handleClaim={handleClaim}
           isClaiming={isClaiming}
+          hasClaimed={hasClaimedWeek}
         />
         <Leaderboard
           weekData={weekData}
@@ -318,6 +319,7 @@ export default function Rewards(props) {
           handleClaim={handleClaim}
           latestWeek={isLatestWeek}
           isClaiming={isClaiming}
+          hasClaimed={hasClaimedWeek}
         />
       </Styles.StyledRewardsPage>
     </>
