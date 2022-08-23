@@ -140,7 +140,7 @@ export default function Rewards(props) {
     if (!currentRewardWeek) {
       return undefined;
     }
-    const leaderboardPosition = currentRewardWeek.traders?.findIndex((trader) => trader.user_address === account);
+    const leaderboardPosition = currentRewardWeek.traders?.findIndex((trader) => trader.user_address.toLowerCase() === account.toLowerCase());
     let traderData
     if (leaderboardPosition && leaderboardPosition >= 0) {
       traderData = currentRewardWeek.traders[leaderboardPosition];
