@@ -18,10 +18,9 @@ function ConsentModal({ hasConsented, setConsented }) {
   };
 
   useEffect(() => {
+    const isBraveBrowser = navigator?.brave;
     const timer = setTimeout(() => {
-      if (hasConsented === false) {
-        setVisible(true);
-      }
+      if (hasConsented === false && !isBraveBrowser) setVisible(true);
     }, 4000);
     return () => clearTimeout(timer);
   }, [hasConsented]);
