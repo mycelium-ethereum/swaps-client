@@ -4,7 +4,6 @@ import * as Styles from "./Rewards.styles";
 import Davatar from '@davatar/react';
 import { EmptyAvatar } from './Rewards.styles'
 import WeekDropdown from "./WeekDropdown";
-import {Link} from "react-router-dom";
 
 export default function TraderRewards(props) {
   const {
@@ -22,7 +21,8 @@ export default function TraderRewards(props) {
     currentView,
     trackAction,
     nextRewards,
-    latestWeek
+    latestWeek,
+    handleClaim
   } = props;
 
   const timeTillRewards = formatTimeTill(nextRewards / 1000);
@@ -89,12 +89,12 @@ export default function TraderRewards(props) {
           <Styles.RewardsDataBox className="claimable">
             <Styles.RewardsDataBoxTitle>Claimable Rewards </Styles.RewardsDataBoxTitle>
             <div>
-              <Styles.LargeText>{`${formatAmount(userWeekData?.reward, ETH_DECIMALS, 4, true)} ETH`}</Styles.LargeText>
+              <Styles.LargeText>{`${formatAmount(userWeekData?.totalReward, ETH_DECIMALS, 4, true)} ETH`}</Styles.LargeText>
               <span> {` ($${formatAmount(userWeekData?.rewardAmountUsd, ETH_DECIMALS + USD_DECIMALS, 2, true)})`}</span>
             </div>
           </Styles.RewardsDataBox>
         </Styles.RewardsDataBoxes>
-        {active && !latestWeek && <Styles.RewardsButton className="App-cta large"> Claim ETH </Styles.RewardsButton>}
+        {active && !latestWeek && <Styles.RewardsButton className="App-cta large" onClick={handleClaim}> Claim ETH </Styles.RewardsButton>}
         {!active && (
           <Styles.RewardsButton className="App-cta large" disabled={!userWeekData?.reward} onClick={() => connectWallet()}>
             Connect Wallet

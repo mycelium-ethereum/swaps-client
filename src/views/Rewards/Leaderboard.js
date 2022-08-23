@@ -58,12 +58,12 @@ function TopFiftyIndicatorRow() {
     </TopFiftyRow>
   );
 }
-function TableRow({ ensName, position, account, userAccount, volume, totalReward, positionReward, degenReward, trackAction, rewardAmountUsd }) {
+function TableRow({ ensName, position, account, volume, totalReward, positionReward, degenReward, handleClaim, userRow, rewardAmountUsd }) {
   return (
     <>
       <tr
         className={cx({
-          "highlight-current": account === userAccount,
+          "highlight-current": userRow,
         })}
       >
         <RankCell>{position}</RankCell>
@@ -98,21 +98,16 @@ function TableRow({ ensName, position, account, userAccount, volume, totalReward
         </RewardCell>
         <ClaimCell
           className={cx({
-            "highlight-current": account === userAccount,
+            "highlight-current": userRow,
           })}
         >
-          {account === userAccount ? (
+          {userRow && !totalReward.eq(0) && (
             <ClaimButton
-              onClick={() => {
-                // TODO: Add claim reward function
-                trackAction("Button clicked", {
-                  buttonName: "Claim rewards",
-                });
-              }}
+              onClick={handleClaim}
             >
               Claim ETH
             </ClaimButton>
-          ) : null}
+          )}
         </ClaimCell>
       </tr>
     </>
@@ -120,7 +115,7 @@ function TableRow({ ensName, position, account, userAccount, volume, totalReward
 }
 
 export default function Leaderboard(props) {
-  const { weekData, middleRow, userWeekData, userAccount, ensName, currentView, selectedWeek, connectWallet, trackAction } = props;
+  const { weekData, middleRow, userWeekData, userAccount, ensName, currentView, selectedWeek, connectWallet, trackAction, handleClaim } = props;
 
   return (
     <LeaderboardContainer hidden={currentView === "Personal"}>
@@ -138,7 +133,8 @@ export default function Leaderboard(props) {
               positionReward={userWeekData.totalReward}
               degenReward={userWeekData.degenReward}
               rewardAmountUsd={userWeekData.rewardAmountUsd}
-              trackAction={trackAction}
+              userRow={true}
+              handleClaim={handleClaim}
             />
           </RewardsTableWrapper>
         ) : userAccount ? (
@@ -184,6 +180,7 @@ export default function Leaderboard(props) {
           {weekData?.traders?.length > 1 ? (
             <RewardsTableWrapper>
               {weekData?.traders?.map(({ user_address, volume, totalReward, positionReward, degenReward, rewardAmountUsd }, index) => {
+                const isUserRow = user_address === userAccount;
                 return (
                   <>
                     {index === middleRow ? <TopFiftyIndicatorRow /> : null}
@@ -191,13 +188,15 @@ export default function Leaderboard(props) {
                       key={user_address}
                       totalTraders={weekData.traders.length}
                       position={index + 1}
+                      ensName={isUserRow ? ensName : undefined}
                       account={user_address}
                       volume={volume}
                       totalReward={totalReward}
                       positionReward={positionReward}
                       degenReward={degenReward}
                       rewardAmountUsd={rewardAmountUsd}
-                      trackAction={trackAction}
+                      handleClaim={handleClaim}
+                      userRow={isUserRow}
                     />
                   </>
                 )

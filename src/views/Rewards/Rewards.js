@@ -128,8 +128,11 @@ export default function Rewards(props) {
     if (!currentRewardWeek) {
       return undefined;
     }
-    const traderData = currentRewardWeek.traders?.find((trader) => trader.user_address === account);
     const leaderboardPosition = currentRewardWeek.traders?.findIndex((trader) => trader.user_address === account);
+    let traderData
+    if (leaderboardPosition && leaderboardPosition >= 0) {
+      traderData = currentRewardWeek.traders[leaderboardPosition];
+    }
     // trader's data found
     if (traderData) {
       traderData.position = leaderboardPosition;
@@ -205,6 +208,13 @@ export default function Rewards(props) {
     }
   }, [currentRewardWeek, pageTracked, trackPageWithTraits, analytics]);
 
+  const handleClaim = () => {
+    // TODO handle claim
+    trackAction("Button clicked", {
+      buttonName: "Claim rewards",
+    });
+  }
+
   return (
     <>
       <SEO
@@ -242,6 +252,7 @@ export default function Rewards(props) {
           trackAction={trackAction}
           nextRewards={nextRewards}
           latestWeek={selectedWeek === "latest"}
+          handleClaim={handleClaim}
         />
         <Leaderboard
           weekData={weekData}
@@ -253,6 +264,7 @@ export default function Rewards(props) {
           selectedWeek={selectedWeek}
           connectWallet={connectWallet}
           trackAction={trackAction}
+          handleClaim={handleClaim}
         />
       </Styles.StyledRewardsPage>
     </>
