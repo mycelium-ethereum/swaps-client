@@ -1,23 +1,22 @@
 import React from "react";
-import { ETH_DECIMALS, formatAmount, USD_DECIMALS, formatTimeTill } from "../../Helpers";
+import { ETH_DECIMALS, formatAmount, USD_DECIMALS } from "../../Helpers";
 import * as Styles from "./Referrals.styles";
 import WeekDropdown from "./WeekDropdown";
 
 export default function TraderRebateStats(props) {
   const {
     active,
-    ReferralMessage,
+    referralMessage,
     allWeeksReferralData,
     setSelectedWeek,
     connectWallet,
     userWeekData,
     currentView,
     trackAction,
-    nextReferral,
+    nextRewards,
     latestWeek,
+    timeTillRewards,
   } = props;
-
-  const timeTillReferral = formatTimeTill(nextReferral / 1000);
 
   return (
     <Styles.ReferralData className="App-card" hidden={currentView === "Commissions"}>
@@ -27,13 +26,13 @@ export default function TraderRebateStats(props) {
           <WeekDropdown
             allWeeksReferralData={allWeeksReferralData}
             setSelectedWeek={setSelectedWeek}
-            ReferralMessage={ReferralMessage}
+            referralMessage={referralMessage}
             trackAction={trackAction}
           />
         ) : null}
-        {nextReferral && (
+        {nextRewards && (
           <Styles.ReferralWeekNextReferral>
-            Next Rewards in <Styles.ReferralWeekCountdown>{timeTillReferral}</Styles.ReferralWeekCountdown>
+            Next Rewards in <Styles.ReferralWeekCountdown>{timeTillRewards}</Styles.ReferralWeekCountdown>
           </Styles.ReferralWeekNextReferral>
         )}
       </Styles.ReferralWeekSelect>
@@ -52,7 +51,7 @@ export default function TraderRebateStats(props) {
       </Styles.ReferralDataBoxes>
       {active && latestWeek && (
         <Styles.ReferralButton disabled className="App-cta large">
-          Week ends in {timeTillReferral}
+          Week ends in {timeTillRewards}
         </Styles.ReferralButton>
       )}
       {active && !latestWeek && (

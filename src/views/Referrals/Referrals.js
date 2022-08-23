@@ -2,7 +2,7 @@ import React, { useState, useMemo, useCallback, useEffect } from "react";
 
 import useSWR from "swr";
 
-import { getTracerServerUrl, getPageTitle, getTokenInfo, useChainId, useENS } from "../../Helpers";
+import { getTracerServerUrl, getPageTitle, getTokenInfo, useChainId, useENS, formatTimeTill } from "../../Helpers";
 import { useWeb3React } from "@web3-react/core";
 import { useInfoTokens } from "../../Api";
 import { ethers } from "ethers";
@@ -43,7 +43,7 @@ export default function Referral(props) {
   }, [currentView]);
 
   // const [pageTracked, setPageTracked] = useState(false);
-  const [nextReferral, setNextReferral] = useState(undefined);
+  const [nextRewards, setNextReferral] = useState(undefined);
 
   const { infoTokens } = useInfoTokens(library, chainId, active, undefined, undefined);
 
@@ -143,8 +143,10 @@ export default function Referral(props) {
     }
   }
 
+  const timeTillRewards = useMemo(() => formatTimeTill(nextRewards / 1000), [nextRewards]);
+
   useEffect(() => {
-    if (!!currentReferralWeek && nextReferral === undefined) {
+    if (!!currentReferralWeek && nextRewards === undefined) {
       // this will load latest first and set next Referral
       setNextReferral(currentReferralWeek.end);
     }
@@ -199,10 +201,23 @@ export default function Referral(props) {
             userWeekData={userWeekData}
             currentView={currentView}
             trackAction={trackAction}
-            nextReferral={nextReferral}
+            nextRewards={nextRewards}
+            latestWeek={selectedWeek === "latest"}
+            timeTillRewards={timeTillRewards}
+          />
+          <ReferralCodesTable
+            active={active}
+            currentView={currentView}
+            trackAction={trackAction}
+            allWeeksReferralData={allWeeksReferralData}
+            setSelectedWeek={setSelectedWeek}
+            referralMessage={referralMessage}
+            nextRewards={nextRewards}
+            timeTillRewards={timeTillRewards}
+            connectWallet={connectWallet}
+            userWeekData={userWeekData}
             latestWeek={selectedWeek === "latest"}
           />
-          <ReferralCodesTable active={active} currentView={currentView} trackAction={trackAction} />
         </Styles.PersonalReferralContainer>
       </Styles.StyledReferralPage>
     </>
