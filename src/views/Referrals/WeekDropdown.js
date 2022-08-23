@@ -5,10 +5,10 @@ import { FaChevronDown } from "react-icons/fa";
 import cx from "classnames";
 
 export default function WeekDropdown(props) {
-  const { allWeeksRewardsData, setSelectedWeek, rewardsMessage, trackAction } = props;
+  const { allWeeksReferralData, setSelectedWeek, referralMessage, trackAction } = props;
 
   return (
-    <Styles.RewardsWeekSelectMenu>
+    <Styles.ReferralWeekSelectMenu>
       <Menu>
         {({ open }) => (
           <>
@@ -20,17 +20,17 @@ export default function WeekDropdown(props) {
                 onClick={() =>
                   trackAction &&
                   trackAction("Button clicked", {
-                    buttonName: "Rewards week dropdown",
+                    buttonName: "Referral week dropdown",
                   })
                 }
               >
-                {rewardsMessage}
+                {referralMessage}
                 <FaChevronDown />
               </Styles.WeekSelectButton>
             </Menu.Button>
             <div className="hide-overflow">
               <Menu.Items as="div" className="menu-items">
-                {allWeeksRewardsData
+                {allWeeksReferralData
                   .sort((a, b) => b.week - a.week)
                   .map((rewardWeek, index) => (
                     <Menu.Item>
@@ -44,7 +44,7 @@ export default function WeekDropdown(props) {
                           setSelectedWeek(selectedWeek);
                           trackAction &&
                             trackAction("Button clicked", {
-                              buttonName: "Select rewards week",
+                              buttonName: "Select referral week",
                               weekNo: selectedWeek,
                             });
                         }}
@@ -58,6 +58,6 @@ export default function WeekDropdown(props) {
           </>
         )}
       </Menu>
-    </Styles.RewardsWeekSelectMenu>
+    </Styles.ReferralWeekSelectMenu>
   );
 }

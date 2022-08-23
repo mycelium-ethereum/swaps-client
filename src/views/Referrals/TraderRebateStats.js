@@ -6,61 +6,63 @@ import WeekDropdown from "./WeekDropdown";
 export default function TraderRebateStats(props) {
   const {
     active,
-    rewardsMessage,
-    allWeeksRewardsData,
+    ReferralMessage,
+    allWeeksReferralData,
     setSelectedWeek,
     connectWallet,
     userWeekData,
     currentView,
     trackAction,
-    nextRewards,
+    nextReferral,
     latestWeek,
   } = props;
 
-  const timeTillRewards = formatTimeTill(nextRewards / 1000);
+  const timeTillReferral = formatTimeTill(nextReferral / 1000);
 
   return (
-    <Styles.RewardsData className="App-card" hidden={currentView === "Commissions"}>
-      <Styles.AppCardTitle>Rewards data</Styles.AppCardTitle>
-      <Styles.RewardsWeekSelect>
-        {!!allWeeksRewardsData ? (
+    <Styles.ReferralData className="App-card" hidden={currentView === "Commissions"}>
+      <Styles.AppCardTitle>Weekly data</Styles.AppCardTitle>
+      <Styles.ReferralWeekSelect>
+        {!!allWeeksReferralData ? (
           <WeekDropdown
-            allWeeksRewardsData={allWeeksRewardsData}
+            allWeeksReferralData={allWeeksReferralData}
             setSelectedWeek={setSelectedWeek}
-            rewardsMessage={rewardsMessage}
+            ReferralMessage={ReferralMessage}
             trackAction={trackAction}
           />
         ) : null}
-        {nextRewards && (
-          <Styles.RewardsWeekNextRewards>
-            Next rewards in <Styles.RewardsWeekCountdown>{timeTillRewards}</Styles.RewardsWeekCountdown>
-          </Styles.RewardsWeekNextRewards>
+        {nextReferral && (
+          <Styles.ReferralWeekNextReferral>
+            Next Rewards in <Styles.ReferralWeekCountdown>{timeTillReferral}</Styles.ReferralWeekCountdown>
+          </Styles.ReferralWeekNextReferral>
         )}
-      </Styles.RewardsWeekSelect>
-      <Styles.RewardsDataBoxes>
-        <Styles.RewardsDataBox>
-          <Styles.RewardsDataBoxTitle>Volume Traded </Styles.RewardsDataBoxTitle>
+      </Styles.ReferralWeekSelect>
+      <Styles.ReferralDataBoxes>
+        <Styles.ReferralDataBox>
+          <Styles.ReferralDataBoxTitle>Volume Traded</Styles.ReferralDataBoxTitle>
           <Styles.LargeText> {`$${formatAmount(userWeekData?.volume, USD_DECIMALS, 2, true)}`}</Styles.LargeText>
-        </Styles.RewardsDataBox>
-        <Styles.RewardsDataBox className="claimable">
-          <Styles.RewardsDataBoxTitle>Claimable Rebates</Styles.RewardsDataBoxTitle>
+        </Styles.ReferralDataBox>
+        <Styles.ReferralDataBox className="claimable">
+          <Styles.ReferralDataBoxTitle>Claimable Rebates</Styles.ReferralDataBoxTitle>
           <div>
             <Styles.LargeText>{`${formatAmount(userWeekData?.reward, ETH_DECIMALS, 4, true)} ETH`}</Styles.LargeText>
             <span> {` ($${formatAmount(userWeekData?.rewardAmountUsd, ETH_DECIMALS + USD_DECIMALS, 2, true)})`}</span>
           </div>
-        </Styles.RewardsDataBox>
-      </Styles.RewardsDataBoxes>
+        </Styles.ReferralDataBox>
+      </Styles.ReferralDataBoxes>
       {active && latestWeek && (
-        <Styles.RewardsButton disabled className="App-cta large">
-          Week ends in {timeTillRewards}
-        </Styles.RewardsButton>
+        <Styles.ReferralButton disabled className="App-cta large">
+          Week ends in {timeTillReferral}
+        </Styles.ReferralButton>
       )}
-      {active && !latestWeek && <Styles.RewardsButton className="App-cta large"> Claim Rebates </Styles.RewardsButton>}
+      {active && !latestWeek && (
+        <Styles.ReferralButton className="App-cta large"> Claim Rebates </Styles.ReferralButton>
+      )}
       {!active && (
-        <Styles.RewardsButton className="App-cta large" onClick={() => connectWallet()}>
+        <Styles.ReferralButton className="App-cta large" onClick={() => connectWallet()}>
           Connect Wallet
-        </Styles.RewardsButton>
+        </Styles.ReferralButton>
       )}
-    </Styles.RewardsData>
+    </Styles.ReferralData>
   );
 }

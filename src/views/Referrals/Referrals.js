@@ -12,6 +12,7 @@ import { ReferralsSwitch } from "./ViewSwitch";
 import SEO from "../../components/Common/SEO";
 import TraderRebateStats from "./TraderRebateStats";
 import AccountBanner from "./AccountBanner";
+import ReferralCodesTable from "./ReferralCodesTable";
 
 const RebatesHeader = () => (
   <div className="Page-title-section mt-0">
@@ -23,11 +24,11 @@ const RebatesHeader = () => (
 const CommissionsHeader = () => (
   <div className="Page-title-section mt-0">
     <div className="Page-title">Referral Commissions</div>
-    <div className="Page-description">Claim referral commissions here..</div>
+    <div className="Page-description">Claim referral commissions here.</div>
   </div>
 );
 
-export default function Rewards(props) {
+export default function Referral(props) {
   const { connectWallet, trackPageWithTraits, trackAction, analytics } = props;
   const [currentView, setCurrentView] = useState("Rebates");
 
@@ -41,13 +42,13 @@ export default function Rewards(props) {
     setCurrentView(currentView === "Commissions" ? "Rebates" : "Commissions");
   }, [currentView]);
 
-  const [pageTracked, setPageTracked] = useState(false);
-  const [nextRewards, setNextRewards] = useState(undefined);
+  // const [pageTracked, setPageTracked] = useState(false);
+  const [nextReferral, setNextReferral] = useState(undefined);
 
   const { infoTokens } = useInfoTokens(library, chainId, active, undefined, undefined);
 
   // Fetch all week data from server
-  const { data: allWeeksRewardsData, error: failedFetchingRewards } = useSWR(
+  const { data: allWeeksReferralData, error: failedFetchingReferral } = useSWR(
     [getTracerServerUrl(chainId, "/rewards")],
     {
       fetcher: (...args) => fetch(...args).then((res) => res.json()),
@@ -55,7 +56,7 @@ export default function Rewards(props) {
   );
 
   // Fetch only the latest week's data from server
-  const { data: currentRewardWeek, error: failedFetchingWeekRewards } = useSWR(
+  const { data: currentReferralWeek, error: failedFetchingWeekReferral } = useSWR(
     [getTracerServerUrl(chainId, "/rewards"), selectedWeek],
     {
       fetcher: (url, week) => fetch(`${url}&week=${week}`).then((res) => res.json()),
@@ -65,7 +66,7 @@ export default function Rewards(props) {
   // Get the data for the current user
   const userData = useMemo(
     () =>
-      allWeeksRewardsData?.reduce(
+      allWeeksReferralData?.reduce(
         (totals, week) => {
           const trader = week.traders?.find((trader) => trader.user_address === account);
           if (!trader) {
@@ -73,117 +74,101 @@ export default function Rewards(props) {
           }
           return {
             totalTradingVolume: totals.totalTradingVolume.add(trader.volume),
-            totalRewards: totals.totalRewards.add(trader.reward),
+            totalReferral: totals.totalReferral.add(trader.referral),
             // TODO calc what has been claimed
-            unclaimedRewards: totals.unclaimedRewards.add(trader.reward),
+            unclaimedReferral: totals.unclaimedReferral.add(trader.referral),
           };
         },
         {
           totalTradingVolume: ethers.BigNumber.from(0),
-          totalRewards: ethers.BigNumber.from(0),
-          unclaimedRewards: ethers.BigNumber.from(0),
+          totalReferral: ethers.BigNumber.from(0),
+          unclaimedReferral: ethers.BigNumber.from(0),
         }
       ),
-    [allWeeksRewardsData, account]
+    [allWeeksReferralData, account]
   );
 
-  // Extract week data from full API response
-  const weekData = useMemo(() => {
-    if (!currentRewardWeek) {
-      return undefined;
-    }
-    if (!!currentRewardWeek?.message) {
-      return undefined;
-    }
-    const allWeeksRewardsData = currentRewardWeek;
-    if (!allWeeksRewardsData) {
-      return undefined;
-    }
-    allWeeksRewardsData.traders?.sort((a, b) => b.volume - a.volume); // Sort traders by highest to lowest in volume
-    return allWeeksRewardsData;
-  }, [currentRewardWeek]);
-
-  // Get volume, position and reward from user week data
+  // Get volume, position and referral from user week data
   const userWeekData = useMemo(() => {
-    if (!currentRewardWeek) {
+    if (!currentReferralWeek) {
       return undefined;
     }
-    const traderData = currentRewardWeek.traders?.find((trader) => trader.user_address === account);
-    const leaderboardPosition = currentRewardWeek.traders?.findIndex((trader) => trader.user_address === account);
+    const traderData = currentReferralWeek.traders?.find((trader) => trader.user_address === account);
+    const leaderboardPosition = currentReferralWeek.traders?.findIndex((trader) => trader.user_address === account);
     // trader's data found
     if (traderData) {
       traderData.position = leaderboardPosition;
       return {
         volume: ethers.BigNumber.from(traderData.volume),
-        reward: ethers.BigNumber.from(traderData.reward),
+        referral: ethers.BigNumber.from(traderData.referral),
         position: leaderboardPosition,
       };
     } else {
-      // trader not found but data exists so user has no rewards
+      // trader not found but data exists so user has no Referral
       return {
         volume: ethers.BigNumber.from(0),
-        reward: ethers.BigNumber.from(0),
-        rewardAmountUsd: ethers.BigNumber.from(0),
+        referral: ethers.BigNumber.from(0),
+        referralAmountUsd: ethers.BigNumber.from(0),
       };
     }
-  }, [account, currentRewardWeek]);
+  }, [account, currentReferralWeek]);
 
   const eth = getTokenInfo(infoTokens, ethers.constants.AddressZero);
   const ethPrice = eth?.maxPrimaryPrice;
 
-  if (ethPrice && userWeekData?.reward) {
-    userWeekData.rewardAmountUsd = userWeekData.reward?.mul(ethPrice);
+  if (ethPrice && userWeekData?.referral) {
+    userWeekData.referralAmountUsd = userWeekData.referral?.mul(ethPrice);
   }
 
-  let unclaimedRewardsUsd, totalRewardAmountUsd;
+  let unclaimedReferralUsd, totalReferralAmountUsd;
   if (ethPrice && userData) {
-    unclaimedRewardsUsd = userData.totalRewards.mul(ethPrice);
-    totalRewardAmountUsd = userData.totalRewards.mul(ethPrice);
+    unclaimedReferralUsd = userData.totalReferral.mul(ethPrice);
+    totalReferralAmountUsd = userData.totalReferral.mul(ethPrice);
   }
 
-  let rewardsMessage = "";
-  if (!currentRewardWeek) {
-    rewardsMessage = "Fetching rewards";
-  } else if (!!failedFetchingWeekRewards) {
-    rewardsMessage = "Failed fetching current week rewards";
-  } else if (!!failedFetchingRewards) {
-    rewardsMessage = "Failed fetching rewards";
+  let referralMessage = "";
+  if (!currentReferralWeek) {
+    referralMessage = "Fetching Referral";
+  } else if (!!failedFetchingWeekReferral) {
+    referralMessage = "Failed fetching current week Referral";
+  } else if (!!failedFetchingReferral) {
+    referralMessage = "Failed fetching Referral";
   } else {
-    if (allWeeksRewardsData?.length === 0) {
-      rewardsMessage = "No rewards for network";
+    if (allWeeksReferralData?.length === 0) {
+      referralMessage = "No Referral for network";
     } else if (selectedWeek === "latest") {
-      rewardsMessage = `Week ${Number.parseInt(currentRewardWeek.week) + 1}`;
+      referralMessage = `Week ${Number.parseInt(currentReferralWeek.week) + 1}`;
     } else {
-      rewardsMessage = `Week ${selectedWeek + 1}`;
+      referralMessage = `Week ${selectedWeek + 1}`;
     }
   }
 
   useEffect(() => {
-    if (!!currentRewardWeek && nextRewards === undefined) {
-      // this will load latest first and set next rewards
-      setNextRewards(currentRewardWeek.end);
+    if (!!currentReferralWeek && nextReferral === undefined) {
+      // this will load latest first and set next Referral
+      setNextReferral(currentReferralWeek.end);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentRewardWeek]);
+  }, [currentReferralWeek]);
 
   // // Segment Analytics Page tracking
   // useEffect(() => {
-  //   if (!pageTracked && currentRewardWeek && analytics) {
+  //   if (!pageTracked && currentReferralWeek && analytics) {
   //     const traits = {
-  //       week: currentRewardWeek.key,
+  //       week: currentReferralWeek.key,
   //     };
   //     trackPageWithTraits(traits);
   //     setPageTracked(true); // Prevent Page function being called twice
   //   }
-  // }, [currentRewardWeek, pageTracked, trackPageWithTraits, analytics]);
+  // }, [currentReferralWeek, pageTracked, trackPageWithTraits, analytics]);
 
   return (
     <>
       <SEO
-        title={getPageTitle("Rewards")}
+        title={getPageTitle("Referral")}
         description="Claim fees earned via being in the top 50% of traders on Mycelium Perpetual Swaps."
       />
-      <Styles.StyledRewardsPage className="default-container page-layout">
+      <Styles.StyledReferralPage className="default-container page-layout">
         {
           {
             Rebates: <RebatesHeader />,
@@ -196,29 +181,30 @@ export default function Rewards(props) {
           setSelectedWeek={setSelectedWeek}
           trackAction={trackAction}
         />
-        <Styles.PersonalRewardsContainer>
+        <Styles.PersonalReferralContainer>
           <AccountBanner
             active={active}
             account={account}
             ensName={ensName}
             userData={userData}
-            totalRewardAmountUsd={totalRewardAmountUsd}
-            unclaimedRewardsUsd={unclaimedRewardsUsd}
+            totalReferralAmountUsd={totalReferralAmountUsd}
+            unclaimedReferralUsd={unclaimedReferralUsd}
           />
           <TraderRebateStats
             active={active}
-            rewardsMessage={rewardsMessage}
-            allWeeksRewardsData={allWeeksRewardsData}
+            referralMessage={referralMessage}
+            allWeeksReferralData={allWeeksReferralData}
             setSelectedWeek={setSelectedWeek}
             connectWallet={connectWallet}
             userWeekData={userWeekData}
             currentView={currentView}
             trackAction={trackAction}
-            nextRewards={nextRewards}
+            nextReferral={nextReferral}
             latestWeek={selectedWeek === "latest"}
           />
-        </Styles.PersonalRewardsContainer>
-      </Styles.StyledRewardsPage>
+          <ReferralCodesTable active={active} currentView={currentView} trackAction={trackAction} />
+        </Styles.PersonalReferralContainer>
+      </Styles.StyledReferralPage>
     </>
   );
 }

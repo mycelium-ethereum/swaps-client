@@ -4,7 +4,7 @@ import * as Styles from "./Referrals.styles";
 import { ETH_DECIMALS, formatAmount, shortenAddress, USD_DECIMALS } from "../../Helpers";
 
 export default function AccountBanner(props) {
-  const { active, account, ensName, userData, totalRewardAmountUsd, unclaimedRewardsUsd } = props;
+  const { active, account, ensName, userData, totalRewardAmountUsd, unclaimedReferralUsd } = props;
 
   return (
     <Styles.AccountBanner className="App-card">
@@ -21,26 +21,27 @@ export default function AccountBanner(props) {
           <Styles.AccountBannerShortenedAddress> Wallet not connected </Styles.AccountBannerShortenedAddress>
         </Styles.AccountBannerAddresses>
       )}
-      <Styles.AccountBannerRewards>
+      <Styles.AccountBannerReferral>
         <div className="App-card-row">
-          <div className="label">Total Volume Traded</div>
+          <div className="label">Total Volume Referred</div>
           <div> ${formatAmount(userData?.totalTradingVolume, USD_DECIMALS, 2, true)}</div>
         </div>
         <div className="App-card-row">
-          <div className="label">Total Rewards</div>
+          <div className="label">Total Trading Fee Rebates</div>
           <div>
-            {formatAmount(userData?.totalRewards, ETH_DECIMALS, 4, true)} ETH($
+            {formatAmount(userData?.totalReferral, ETH_DECIMALS, 4, true)} ETH($
             {formatAmount(totalRewardAmountUsd, ETH_DECIMALS + USD_DECIMALS, 2, true)})
           </div>
         </div>
         <div className="App-card-row">
-          <div className="label">Unclaimed Rewards</div>
-          <div>
-            {formatAmount(userData?.unclaimedRewards, ETH_DECIMALS, 4, true)} ETH($
-            {formatAmount(unclaimedRewardsUsd, ETH_DECIMALS + USD_DECIMALS, 2, true)})
-          </div>
+          <div className="label">Active Code</div>
+          <div>.........................................</div>
         </div>
-      </Styles.AccountBannerRewards>
+        <div className="App-card-row">
+          <div className="label">Tier Level</div>
+          <div>Tier 2 (5% Rebate)</div>
+        </div>
+      </Styles.AccountBannerReferral>
     </Styles.AccountBanner>
   );
 }

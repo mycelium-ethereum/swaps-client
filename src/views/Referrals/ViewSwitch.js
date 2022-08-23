@@ -12,7 +12,7 @@ export function ReferralsSwitch(props) {
           switchView();
           trackAction &&
             trackAction("Button clicked", {
-              buttonName: "Rewards panel",
+              buttonName: "Referral panel",
               view: currentView === "Commissions" ? "Rebates" : "Commissions",
             });
         }}

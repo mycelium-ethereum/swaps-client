@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import Modal from "../../components/Modal/Modal";
 
 export const AccountBannerAddresses = styled.div`
   width: calc(60% - 1rem);
@@ -15,7 +16,7 @@ export const AccountBannerShortenedAddress = styled.div`
   color: var(--text-secondary);
 `;
 
-export const AccountBannerRewards = styled.div`
+export const AccountBannerReferral = styled.div`
   width: 40%;
   margin-top: auto;
 
@@ -44,13 +45,13 @@ export const AccountBanner = styled.div`
     ${AccountBannerAddresses} {
       width: 100%;
     }
-    ${AccountBannerRewards} {
+    ${AccountBannerReferral} {
       width: 100%;
     }
   }
 `;
 
-export const PersonalRewardsContainer = styled.div`
+export const PersonalReferralContainer = styled.div`
   width: 100%;
 `;
 
@@ -61,7 +62,7 @@ export const AppCardTitle = styled.div`
   margin-top: 10px;
 `;
 
-export const RewardsDataBoxes = styled.div`
+export const ReferralDataBoxes = styled.div`
   display: flex;
   gap: 1rem;
   margin-top: 1.5rem;
@@ -69,11 +70,11 @@ export const RewardsDataBoxes = styled.div`
   flex-wrap: wrap;
 `;
 
-export const RewardsDataBoxTitle = styled.div`
+export const ReferralDataBoxTitle = styled.div`
   line-height: 150%;
 `;
 
-export const RewardsDataBox = styled.div`
+export const ReferralDataBox = styled.div`
   width: calc(50% - 0.5rem);
   border-radius: 4px;
   display: flex;
@@ -90,7 +91,7 @@ export const RewardsDataBox = styled.div`
     background: linear-gradient(180deg, rgba(20, 45, 29, 0.5) 0%, rgba(20, 45, 29, 0) 100%);
     border: 1px solid rgba(79, 196, 35, 0.3);
 
-    ${RewardsDataBoxTitle} {
+    ${ReferralDataBoxTitle} {
       color: #4fe021;
     }
   }
@@ -100,14 +101,14 @@ export const LargeText = styled.span`
   font-size: 24px;
 `;
 
-export const RewardsWeekSelect = styled.div`
+export const ReferralWeekSelect = styled.div`
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
   margin-top: 0.5rem;
   margin-bottom: 1.5rem;
 `;
-export const RewardsWeekSelectMenu = styled.div`
+export const ReferralWeekSelectMenu = styled.div`
   position: relative;
 
   .menu-items {
@@ -117,12 +118,12 @@ export const RewardsWeekSelectMenu = styled.div`
   }
 `;
 
-export const RewardsWeekNextRewards = styled.span`
+export const ReferralWeekNextReferral = styled.span`
   margin-top: auto;
   padding-top: 0.5rem;
 `;
 
-export const RewardsWeekCountdown = styled.span`
+export const ReferralWeekCountdown = styled.span`
   background: var(--background-secondary);
   border: 1px solid #2b2f51;
   padding: 4px 16px;
@@ -156,7 +157,7 @@ export const WeekSelectButton = styled.button`
   }
 `;
 
-export const RewardsButton = styled.button`
+export const ReferralButton = styled.button`
   display: flex;
   margin: 1.5rem auto 0 auto;
   justify-content: center;
@@ -165,20 +166,20 @@ export const RewardsButton = styled.button`
   font-size: 16px;
 `;
 
-export const RewardsData = styled.div`
+export const ReferralData = styled.div`
   margin-top: 1rem;
 
   @media (max-width: 600px) {
-    ${RewardsDataBox} {
+    ${ReferralDataBox} {
       width: 100%;
     }
   }
 `;
 
-export const StyledRewardsPage = styled.div`
+export const StyledReferralPage = styled.div`
   align-items: center;
   padding-top: 3rem;
-  ${RewardsData}, ${AccountBanner}, .Page-title-section {
+  ${ReferralData}, ${AccountBanner}, .Page-title-section {
     width: 100%;
   }
 
@@ -202,7 +203,6 @@ export const ViewSwitch = styled.div`
   border: 1px solid var(--cell-stroke);
   width: 392px;
   height: 56px;
-  pointer-events: none;
 `;
 
 export const ViewOption = styled.button`
@@ -236,215 +236,6 @@ export const SwitchBackdrop = styled.span`
   }
 `;
 
-export const Title = styled.div`
-  margin-bottom: 8px;
-  font-size: 16px;
-  line-height: 150%;
-  color: white;
-`;
-
-export const LeaderboardTitle = styled(Title)`
-  margin-top: 16px;
-`;
-
-export const LeaderboardContainer = styled.div`
-  width: 100%;
-`;
-
-export const PersonalRewardsTableContainer = styled.div`
-  position: relative;
-`;
-
-export const RewardsTableContainer = styled.div`
-  position: relative;
-  margin-bottom: 74px;
-`;
-
-export const ScrollContainer = styled.div`
-  position: relative;
-  overflow-x: hidden;
-  overflow-y: auto;
-  max-height: 491px;
-`;
-
-export const RewardsTable = styled.table`
-  position: relative;
-  z-index: 1;
-  width: 100%;
-  border-radius: 4px;
-  border: 0;
-  border-collapse: separate;
-  border-spacing: 0 1px;
-
-  tbody tr {
-    position: relative;
-    &:after {
-      content: "";
-      position: absolute;
-      top: 0;
-      left: 50%;
-      transform: translateX(-50%);
-      height: 1px;
-      width: calc(100% - 32px);
-      border-bottom: 1px solid var(--cell-stroke);
-    }
-  }
-  tbody tr:last-child {
-    border-bottom: 0;
-  }
-  tbody tr.highlight-current {
-    background: linear-gradient(180deg, rgba(5, 67, 1, 0.2) 0%, rgba(5, 67, 1, 0) 65.01%);
-  }
-`;
-
-export const RewardsTableBorder = styled.div`
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: calc(100% + 2px);
-  height: calc(100% + 2px);
-  background-image: linear-gradient(111.31deg, var(--cell-stroke) 70%, rgba(0, 48, 0, 0) 99.29%);
-  border-radius: 4px;
-  z-index: 0;
-  &:before {
-    content: "";
-    position: absolute;
-    top: 1px;
-    left: 1px;
-    width: calc(100% - 2px);
-    height: calc(100% - 2px);
-    background-color: var(--background-primary);
-    border-radius: 4px;
-  }
-`;
-
-export const RewardsTableHeader = styled.thead`
-  font-size: 12px;
-  line-height: 150%;
-  color: var(--text-secondary);
-`;
-
-export const RewardsTableHeading = styled.th`
-  position: sticky;
-  top: 0px;
-  z-index: 1;
-  padding: 16px;
-  line-height: 150%;
-  text-align: left;
-  background-color: var(--background-primary);
-
-  &:first-of-type {
-    padding: 16px 32px;
-    text-align: center;
-    border-top-left-radius: 4px;
-  }
-  &:last-of-type {
-    min-width: 60px; // Provide some spacing to right side of table when Claim button not present
-    padding: 16px 32px 16px 0;
-    border-top-right-radius: 4px;
-  }
-`;
-
-const TableCell = styled.td`
-  font-size: 16px;
-  line-height: 150%;
-  color: white;
-  padding: 16px;
-`;
-
-export const TopFiftyRow = styled.tr`
-  &:after {
-    display: none;
-  }
-  & + tr {
-    &:after {
-      display: none;
-    }
-  }
-`;
-
-export const TopFiftyRowCell = styled(TableCell)`
-  font-weight: bold;
-  text-align: center;
-  height: 40px;
-  background: linear-gradient(180deg, #098200 0%, rgba(9, 130, 0, 0) 100%);
-`;
-
-export const RankCell = styled(TableCell)`
-  text-align: center;
-  font-weight: 700;
-`;
-
-export const UserCell = styled(TableCell)`
-  text-align: left;
-  padding: 16px;
-  font-size: 16px;
-  > div:first-child {
-    display: flex;
-    align-items: center;
-  }
-`;
-
-export const UserDetails = styled.div`
-  margin-left: 8px;
-  a {
-    text-decoration: none;
-  }
-  span {
-    display: block;
-  }
-  span:nth-child(2) {
-    font-size: 12px;
-    line-height: 18px;
-    color: var(--text-secondary);
-  }
-`;
-
-export const VolumeCell = styled(TableCell)``;
-
-export const RewardCell = styled(TableCell)`
-  text-decoration: underline;
-`;
-
-export const ClaimCell = styled(TableCell)`
-  padding: 16px;
-  font-size: 16px;
-  span:nth-child(1) {
-    font-size: 16px;
-    color: white;
-  }
-`;
-
-export const ClaimButton = styled.button`
-  cursor: pointer;
-  display: block;
-  white-space: nowrap;
-  padding: 0.4rem 0.7rem;
-  border-radius: 3px;
-  color: white;
-  text-decoration: none;
-  border: none;
-  font-size: 1rem;
-  background-color: var(--action-active);
-  transition: background-color 0.3s ease;
-  &:hover {
-    background-color: var(--action-hover);
-  }
-`;
-
-export const FullWidthText = styled.div`
-  position: relative;
-  z-index: 1;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 24px;
-  width: 100%;
-  font-size: 16px;
-  color: white;
-`;
-
 export const EmptyAvatar = styled.span`
   width: 32px;
   height: 32px;
@@ -452,8 +243,22 @@ export const EmptyAvatar = styled.span`
   background-color: white;
 `;
 
-export const GradientPlaceholder = styled.div`
-  background-image: linear-gradient(111.31deg, var(--cell-stroke) 70%, rgba(0, 48, 0, 0) 99.29%);
+export const Title = styled.div`
+  margin-bottom: 8px;
+  font-size: 16px;
+  line-height: 150%;
+  color: white;
+`;
+
+export const PersonalReferralTableContainer = styled.div`
+  position: relative;
+`;
+
+export const ScrollContainer = styled.div`
+  position: relative;
+  overflow-x: hidden;
+  overflow-y: auto;
+  max-height: 491px;
 `;
 
 export const ConnectWalletOverlay = styled.div`
@@ -494,4 +299,82 @@ export const WalletIcon = styled.img`
   width: 22px;
   height: 19px;
   margin-left: 10px;
+`;
+
+export const CodesTable = styled.table`
+  width: 100%;
+`;
+
+export const TableHeading = styled.th`
+  text-align: center;
+  font-weight: 400;
+  color: var(--text-secondary);
+  padding-bottom: 8px;
+`;
+
+export const TableCell = styled.td`
+  text-align: center;
+  font-weight: 700;
+  padding-bottom: 8px;
+`;
+
+export const CreateButton = styled.button`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 125px;
+  height: 30px;
+  border-radius: 4px;
+  border: 1px solid var(--cell-stroke);
+  font-size: 14px;
+  font-weight: 700;
+  color: white;
+  background-color: transparent;
+  transition: background-color 0.3s ease;
+
+  &:hover {
+    background-color: var(--cell-highlight);
+  }
+`;
+
+export const TitleContainer = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+`;
+
+export const CodeModal = styled(Modal)`
+  padding: 0 16px;
+  .Modal-content {
+    border: 1px solid var(--cell-highlight);
+    border-radius: 8px;
+    max-width: 424px;
+    width: 100%;
+  }
+  .Modal-content .divider {
+    display: none;
+  }
+`;
+
+export const CodeInput = styled.input`
+  width: 100%;
+  height: 56px;
+  border-radius: 4px;
+  border: 1px solid var(--cell-stroke);
+  font-size: 16px;
+  line-height: 150%;
+  padding: 16px;
+  &::placeholder {
+    color: var(--text-secondary);
+  }
+  margin-bottom: 16px;
+`;
+
+export const CodeButton = styled.button`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 44px;
 `;
