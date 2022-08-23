@@ -148,7 +148,9 @@ export default function Rewards(props) {
       // trader not found but data exists so user has no rewards
       return {
         volume: ethers.BigNumber.from(0),
+        totalReward: ethers.BigNumber.from(0),
         reward: ethers.BigNumber.from(0),
+        degenReward: ethers.BigNumber.from(0),
         rewardAmountUsd: ethers.BigNumber.from(0),
       };
     }
