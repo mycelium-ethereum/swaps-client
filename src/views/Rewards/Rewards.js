@@ -61,7 +61,7 @@ export default function Rewards(props) {
   );
 
   const { data: hasClaimed } = useSWR(
-    [`Rewards:claimed:${active}`, chainId, feeDistributorReader, "getUserClaimed", feeDistributor, account, 2],
+    [`Rewards:claimed:${active}`, chainId, feeDistributorReader, "getUserClaimed", feeDistributor, account, allWeeksRewardsData?.length ?? 1],
     {
       fetcher: fetcher(library, FeeDistributorReader),
     }
@@ -149,7 +149,7 @@ export default function Rewards(props) {
       return {
         volume: ethers.BigNumber.from(0),
         totalReward: ethers.BigNumber.from(0),
-        reward: ethers.BigNumber.from(0),
+        positionReward: ethers.BigNumber.from(0),
         degenReward: ethers.BigNumber.from(0),
         rewardAmountUsd: ethers.BigNumber.from(0),
       };

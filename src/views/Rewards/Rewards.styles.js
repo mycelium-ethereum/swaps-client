@@ -151,7 +151,7 @@ export const WeekSelectButton = styled.button`
   }
   &.App-cta-selected,
   &.App-cta:hover {
-    background-color: #161a2d !important;
+    background-color: var(--cell-hover)!important;
     border: 1px solid var(--cell-highlight);
   }
 `;
