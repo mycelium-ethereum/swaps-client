@@ -85,6 +85,7 @@ export const RewardsDataBox = styled.div`
   font-size: 16px;
 
   background: var(--background-secondary);
+  border: 1px solid var(--cell-stroke);
 
   &.claimable {
     background: linear-gradient(180deg, rgba(20, 45, 29, 0.5) 0%, rgba(20, 45, 29, 0) 100%);
@@ -437,6 +438,10 @@ export const ClaimCell = styled(TableCell)`
   span:nth-child(1) {
     font-size: 16px;
     color: white;
+  }
+
+  span.claimed {
+    color: var(--text-secondary);
   }
 `;
 

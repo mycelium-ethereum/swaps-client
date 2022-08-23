@@ -129,6 +129,9 @@ function TableRow({
               {isClaiming ? 'Claiming ETH' : 'Claim ETH'}
             </ClaimButton>
           )}
+          {userRow && !totalReward.eq(0) && hasClaimed && 
+            <span className="claimed">WETH Claimed</span>
+          }
         </ClaimCell>
       </tr>
     </>

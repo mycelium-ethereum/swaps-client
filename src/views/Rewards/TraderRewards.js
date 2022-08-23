@@ -4,6 +4,7 @@ import * as Styles from "./Rewards.styles";
 import Davatar from '@davatar/react';
 import { EmptyAvatar } from './Rewards.styles'
 import WeekDropdown from "./WeekDropdown";
+import cx from "classnames";
 
 export default function TraderRewards(props) {
   const {
@@ -88,7 +89,7 @@ export default function TraderRewards(props) {
             <Styles.RewardsDataBoxTitle>Volume Traded </Styles.RewardsDataBoxTitle>
             <Styles.LargeText> {`$${formatAmount(userWeekData?.volume, USD_DECIMALS, 2, true)}`}</Styles.LargeText>
           </Styles.RewardsDataBox>
-          <Styles.RewardsDataBox className="claimable">
+          <Styles.RewardsDataBox className={cx({ claimable: !hasClaimed })}>
             <Styles.RewardsDataBoxTitle>{hasClaimed ? 'Claimed Rewards' : 'Claimable Rewards'}</Styles.RewardsDataBoxTitle>
             <div>
               <Styles.LargeText>{`${formatAmount(userWeekData?.totalReward, ETH_DECIMALS, 4, true)} ETH`}</Styles.LargeText>
@@ -111,7 +112,7 @@ export default function TraderRewards(props) {
       </Styles.RewardsData>
       {hasClaimed && <Styles.ClaimedRewards>
         <span />
-        <span>Rewards have been claimed</span>
+        <span>WETH has been claimed</span>
         <span />
       </Styles.ClaimedRewards>}
     </Styles.PersonalRewardsContainer>
