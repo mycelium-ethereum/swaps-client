@@ -87,13 +87,14 @@ export default function Rewards(props) {
             return totals;
           }
           let unclaimedRewards = totals.unclaimedRewards;
+          const userReward = ethers.BigNumber.from(trader.reward).add(trader.degen_reward);
           if (hasClaimed && hasClaimed[week]) {
-            unclaimedRewards.add(trader.reward);
+            unclaimedRewards = unclaimedRewards.add(userReward);
           }
           return {
             totalTradingVolume: totals.totalTradingVolume.add(trader.volume),
-            totalRewards: totals.totalRewards.add(trader.reward),
-            unclaimedRewards: unclaimedRewards
+            totalRewards: totals.totalRewards.add(userReward),
+            unclaimedRewards
           };
         },
         {

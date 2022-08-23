@@ -97,7 +97,7 @@ function TableRow({
               <span>{ensName}</span>
             </UserDetails>
             {!!degenReward && !degenReward.eq(0) && <TooltipComponent
-              handle={<img src={degenScore}/>}
+              handle={<img src={degenScore} alt="degen_score_logo"/>}
               renderContent={() => 'Rewards boosted by DegenScore'}
             />}
           </div>
