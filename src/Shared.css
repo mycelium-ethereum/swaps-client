@@ -81,6 +81,9 @@ body,
   /* Same as secondary but unsure what it should be so keeping seperate */
   --text-hover: #8b968c;
   --text-navigation: #fff;
+
+  --danger: #191203;
+  --danger-active: #ff5621;
 }
 
 a {

@@ -302,21 +302,27 @@ export const WalletIcon = styled.img`
 `;
 
 export const CodesTable = styled.table`
+  margin: 0 auto;
   width: 100%;
+  max-width: 850px;
 `;
 
-export const TableHeading = styled.th`
-  text-align: center;
+export const TableHeading = styled.th(
+  (props) => `
   font-weight: 400;
   color: var(--text-secondary);
-  padding-bottom: 8px;
-`;
+  text-align: ${props.leftAlign ? "left" : "right"};
+  padding: 0 32px 8px;
+  `
+);
 
-export const TableCell = styled.td`
-  text-align: center;
+export const TableCell = styled.td(
+  (props) => `
   font-weight: 700;
-  padding-bottom: 8px;
-`;
+  text-align: ${props.leftAlign ? "left" : "right"};
+  padding: 0 32px 8px;
+  `
+);
 
 export const CreateButton = styled.button`
   display: flex;
@@ -369,6 +375,17 @@ export const CodeInput = styled.input`
     color: var(--text-secondary);
   }
   margin-bottom: 16px;
+  & + .error-text {
+    content: "";
+  }
+
+  &:invalid + .error-text {
+    content: "The referral code can’t be more than 20 characters.";
+  }
+  &:invalid + .error-text + button {
+    background: var(--danger);
+    color: var(--danger-active);
+  }
 `;
 
 export const CodeButton = styled.button`
@@ -377,4 +394,16 @@ export const CodeButton = styled.button`
   align-items: center;
   width: 100%;
   height: 44px;
+`;
+
+export const CopyButton = styled.button`
+  background-color: transparent;
+  border: 0;
+  width: 14px;
+  height: 14px;
+  margin-left: 22px;
+  > img {
+    width: 14px;
+    height: 14px;
+  }
 `;

@@ -3019,3 +3019,23 @@ export function getAnalyticsEventStage(stage) {
       return "Approve";
   }
 }
+
+export function copyToClipboard(item) {
+  navigator.clipboard.writeText(item);
+}
+
+export function copyReferralCode(item) {
+  // Open native share dialog
+  if (navigator.share) {
+    navigator
+      .share({
+        title: "Share Referral Link",
+        url: item,
+      })
+      .then(() => {})
+      .catch(console.error);
+  } else {
+    // fallback - copy URL to clipboard
+    copyToClipboard();
+  }
+}

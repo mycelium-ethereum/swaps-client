@@ -1,12 +1,26 @@
 import React, { useState } from "react";
 import ReferralCodeModal from "./ReferralCodeModal";
 import * as Styles from "./Referrals.styles";
+import CopyIcon from "../../img/copy.svg";
+import { copyReferralCode } from "../../Helpers";
 
 export function TableRow(props) {
   const { code, totalVolume, tradersReferred, totalRebates } = props;
+
+  // TODO: get referral code from URL on page load
+  const createReferralLink = () => {
+    const link = `${window.location.origin}/?ref=${code}`;
+    copyReferralCode(link);
+  };
+
   return (
     <tr>
-      <Styles.TableCell>{code}</Styles.TableCell>
+      <Styles.TableCell leftAlign>
+        {code}
+        <Styles.CopyButton onClick={createReferralLink}>
+          <img src={CopyIcon} alt="Copy" />{" "}
+        </Styles.CopyButton>
+      </Styles.TableCell>
       <Styles.TableCell>{totalVolume.toFixed(2)}</Styles.TableCell>
       <Styles.TableCell>{tradersReferred}</Styles.TableCell>
       <Styles.TableCell>{totalRebates.toFixed(4)}</Styles.TableCell>
@@ -48,7 +62,7 @@ export default function ReferralCodesTable(props) {
         <Styles.CodesTable>
           <thead>
             <tr>
-              <Styles.TableHeading>Referral Code</Styles.TableHeading>
+              <Styles.TableHeading leftAlign>Referral Code</Styles.TableHeading>
               <Styles.TableHeading>Total Volume</Styles.TableHeading>
               <Styles.TableHeading>Traders Referred</Styles.TableHeading>
               <Styles.TableHeading>Total Rebates</Styles.TableHeading>
