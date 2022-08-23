@@ -301,10 +301,16 @@ export const WalletIcon = styled.img`
   margin-left: 10px;
 `;
 
+export const TableContainer = styled.div`
+  overflow-y: hidden;
+  overflow-x: scroll;
+`;
+
 export const CodesTable = styled.table`
   margin: 0 auto;
   width: 100%;
   max-width: 850px;
+  min-width: 750px;
 `;
 
 export const TableHeading = styled.th(

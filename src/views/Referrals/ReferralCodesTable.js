@@ -59,21 +59,23 @@ export default function ReferralCodesTable(props) {
           <Styles.AppCardTitle>Referral codes</Styles.AppCardTitle>
           <Styles.CreateButton onClick={openCodeModal}>&#43;&nbsp;Create</Styles.CreateButton>
         </Styles.TitleContainer>
-        <Styles.CodesTable>
-          <thead>
-            <tr>
-              <Styles.TableHeading leftAlign>Referral Code</Styles.TableHeading>
-              <Styles.TableHeading>Total Volume</Styles.TableHeading>
-              <Styles.TableHeading>Traders Referred</Styles.TableHeading>
-              <Styles.TableHeading>Total Rebates</Styles.TableHeading>
-            </tr>
-          </thead>
-          <tbody>
-            {dummyData.map((row) => (
-              <TableRow key={row.code} {...row} />
-            ))}
-          </tbody>
-        </Styles.CodesTable>
+        <Styles.TableContainer>
+          <Styles.CodesTable>
+            <thead>
+              <tr>
+                <Styles.TableHeading leftAlign>Referral Code</Styles.TableHeading>
+                <Styles.TableHeading>Total Volume</Styles.TableHeading>
+                <Styles.TableHeading>Traders Referred</Styles.TableHeading>
+                <Styles.TableHeading>Total Rebates</Styles.TableHeading>
+              </tr>
+            </thead>
+            <tbody>
+              {dummyData.map((row) => (
+                <TableRow key={row.code} {...row} />
+              ))}
+            </tbody>
+          </Styles.CodesTable>
+        </Styles.TableContainer>
       </Styles.ReferralData>
     </>
   );
