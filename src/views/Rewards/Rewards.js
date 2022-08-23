@@ -2,7 +2,7 @@ import React, { useState, useMemo, useEffect, useRef } from "react";
 
 import useSWR from "swr";
 
-import { getTracerServerUrl, getPageTitle, getTokenInfo, useChainId, useENS, fetcher, expandDecimals, ETH_DECIMALS, helperToast } from "../../Helpers";
+import { getTracerServerUrl, getPageTitle, getTokenInfo, useChainId, useENS, fetcher, expandDecimals, ETH_DECIMALS, helperToast, useLocalStorageSerializeKey } from "../../Helpers";
 import { useWeb3React } from "@web3-react/core";
 import { callContract, useInfoTokens } from "../../Api";
 import { ethers } from "ethers";
@@ -33,13 +33,21 @@ const LeaderboardHeader = () => (
 
 export default function Rewards(props) {
   const { connectWallet, trackPageWithTraits, trackAction, analytics, setPendingTxns } = props;
-  const [currentView, setCurrentView] = useState("Personal");
 
   const { chainId } = useChainId();
   const { active, account, library } = useWeb3React();
   const { ensName } = useENS(account);
 
-  const [selectedWeek, setSelectedWeek] = useState("latest");
+  const [selectedWeek, setSelectedWeek] = useLocalStorageSerializeKey(
+    [chainId, "Rewards-selected-week"],
+    "latest"
+  );
+
+  const [currentView, setCurrentView] = useLocalStorageSerializeKey(
+    [chainId, "Rewards-current-view"],
+    "Personal"
+  );
+
   const [pageTracked, setPageTracked] = useState(false);
   const [nextRewards, setNextRewards] = useState(undefined);
   const [isClaiming, setIsClaiming] = useState(false);
