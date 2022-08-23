@@ -202,7 +202,6 @@ export const ViewSwitch = styled.div`
   border: 1px solid var(--cell-stroke);
   width: 392px;
   height: 56px;
-  // pointer-events: none;
 `;
 
 export const ViewOption = styled.button`
