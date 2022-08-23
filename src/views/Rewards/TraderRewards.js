@@ -94,9 +94,9 @@ export default function TraderRewards(props) {
             </div>
           </Styles.RewardsDataBox>
         </Styles.RewardsDataBoxes>
-        {active && !latestWeek && <Styles.RewardsButton className="App-cta large" onClick={handleClaim}> Claim ETH </Styles.RewardsButton>}
+        {active && !latestWeek && <Styles.RewardsButton className="App-cta large" disabled={!userWeekData?.totalReward || userWeekData.eq(0)} onClick={handleClaim}> Claim ETH </Styles.RewardsButton>}
         {!active && (
-          <Styles.RewardsButton className="App-cta large" disabled={!userWeekData?.reward} onClick={() => connectWallet()}>
+          <Styles.RewardsButton className="App-cta large" onClick={() => connectWallet()}>
             Connect Wallet
           </Styles.RewardsButton>
         )}

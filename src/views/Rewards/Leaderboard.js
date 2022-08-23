@@ -58,7 +58,7 @@ function TopFiftyIndicatorRow() {
     </TopFiftyRow>
   );
 }
-function TableRow({ ensName, position, account, volume, totalReward, positionReward, degenReward, handleClaim, userRow, rewardAmountUsd }) {
+function TableRow({ ensName, position, account, volume, totalReward, positionReward, degenReward, handleClaim, userRow, rewardAmountUsd, latestWeek }) {
   return (
     <>
       <tr
@@ -101,7 +101,7 @@ function TableRow({ ensName, position, account, volume, totalReward, positionRew
             "highlight-current": userRow,
           })}
         >
-          {userRow && !totalReward.eq(0) && (
+          {userRow && !totalReward.eq(0) && !latestWeek && (
             <ClaimButton
               onClick={handleClaim}
             >
@@ -115,7 +115,7 @@ function TableRow({ ensName, position, account, volume, totalReward, positionRew
 }
 
 export default function Leaderboard(props) {
-  const { weekData, middleRow, userWeekData, userAccount, ensName, currentView, selectedWeek, connectWallet, trackAction, handleClaim } = props;
+  const { weekData, middleRow, userWeekData, userAccount, ensName, currentView, selectedWeek, connectWallet, trackAction, handleClaim, latestWeek } = props;
 
   return (
     <LeaderboardContainer hidden={currentView === "Personal"}>
@@ -135,6 +135,7 @@ export default function Leaderboard(props) {
               rewardAmountUsd={userWeekData.rewardAmountUsd}
               userRow={true}
               handleClaim={handleClaim}
+              latestWeek={latestWeek}
             />
           </RewardsTableWrapper>
         ) : userAccount ? (
@@ -197,6 +198,7 @@ export default function Leaderboard(props) {
                       rewardAmountUsd={rewardAmountUsd}
                       handleClaim={handleClaim}
                       userRow={isUserRow}
+                      latestWeek={latestWeek}
                     />
                   </>
                 )

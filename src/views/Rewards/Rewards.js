@@ -218,6 +218,8 @@ export default function Rewards(props) {
     }
   }
 
+  const isLatestWeek = selectedWeek === "latest";
+
   return (
     <>
       <SEO
@@ -254,7 +256,7 @@ export default function Rewards(props) {
           currentView={currentView}
           trackAction={trackAction}
           nextRewards={nextRewards}
-          latestWeek={selectedWeek === "latest"}
+          latestWeek={isLatestWeek}
           handleClaim={handleClaim}
         />
         <Leaderboard
@@ -268,6 +270,7 @@ export default function Rewards(props) {
           connectWallet={connectWallet}
           trackAction={trackAction}
           handleClaim={handleClaim}
+          latestWeek={isLatestWeek}
         />
       </Styles.StyledRewardsPage>
     </>
