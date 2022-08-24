@@ -219,7 +219,7 @@ export default function Leaderboard(props) {
       <RewardsTableContainer>
         <RewardsTableBorder />
         <ScrollContainer>
-          {weekData?.traders?.length > 1 ? (
+          {weekData?.traders?.length > 0 ? (
             <RewardsTableWrapper>
               {weekData?.traders?.map(({ user_address, volume, totalReward, positionReward, degenReward, rewardAmountUsd }, index) => {
                 const isUserRow = user_address === userAccount;
