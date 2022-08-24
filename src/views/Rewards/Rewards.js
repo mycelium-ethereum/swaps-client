@@ -90,7 +90,7 @@ export default function Rewards(props) {
     () =>
       allWeeksRewardsData?.reduce(
         (totals, week) => {
-          const trader = week.traders?.find((trader) => trader.user_address === account);
+          const trader = week.traders?.find((trader) => trader.user_address.toLowerCase() === account.toLowerCase());
           if (!trader) {
             return totals;
           }
