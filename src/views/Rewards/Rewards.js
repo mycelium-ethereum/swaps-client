@@ -50,6 +50,7 @@ export default function Rewards(props) {
 
   const [pageTracked, setPageTracked] = useState(false);
   const [isClaiming, setIsClaiming] = useState(false);
+  const [nextRewards, setNextRewards] = useState();
 
   const { infoTokens } = useInfoTokens(library, chainId, active, undefined, undefined);
 
@@ -209,13 +210,15 @@ export default function Rewards(props) {
     setCurrentView(currentView === "Personal" ? "Leaderboard" : "Personal");
   };
 
-  const nextRewards = useRef();
   useEffect(() => {
-    if (!!currentRewardWeek && !nextRewards.current) {
-      // this will load latest first and set next rewards
-      nextRewards.current = currentRewardWeek.end;
+    if (!!allWeeksRewardsData) {
+      const ends = allWeeksRewardsData.map((week) => Number(week.end));
+      const max = Math.max(...ends);
+      if (!Number.isNaN(max)) {
+        setNextRewards(max)
+      }
     }
-  }, [currentRewardWeek]);
+  }, [allWeeksRewardsData]);
 
   // Segment Analytics Page tracking
   useEffect(() => {
@@ -313,7 +316,7 @@ export default function Rewards(props) {
           userWeekData={userWeekData}
           currentView={currentView}
           trackAction={trackAction}
-          nextRewards={nextRewards.current}
+          nextRewards={nextRewards}
           latestWeek={isLatestWeek}
           handleClaim={handleClaim}
           isClaiming={isClaiming}
