@@ -890,7 +890,7 @@ export default function StakeV2({ setPendingTxns, connectWallet, trackAction }) 
                   </StakeV2Styled.RewardsBannerText>
                 </StakeV2Styled.RewardsBannerRow>
                 <StakeV2Styled.RewardsBannerRow>
-                  <StakeV2Styled.RewardsBannerText secondary>APR</StakeV2Styled.RewardsBannerText>
+                  <StakeV2Styled.RewardsBannerText secondary>Total APR</StakeV2Styled.RewardsBannerText>
                   <StakeV2Styled.RewardsBannerText large inline>
                     <Tooltip
                       handle={`${formatKeyAmount(processedData, "mlpAprTotal", 2, 2, true)}%`}
