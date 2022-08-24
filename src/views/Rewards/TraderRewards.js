@@ -99,7 +99,7 @@ export default function TraderRewards(props) {
         </Styles.RewardsDataBoxes>
         {active && <Styles.RewardsButton
           className={'App-cta large'}
-          disabled={!userWeekData?.totalReward || userWeekData.totalReward.eq(0) || isClaiming || hasClaimed || latestWeek}
+          disabled={!userWeekData?.totalReward || userWeekData.totalReward.eq(0) || isClaiming || hasClaimed || hasClaimed === undefined || latestWeek}
           onClick={handleClaim}
         >
           Claim ETH
