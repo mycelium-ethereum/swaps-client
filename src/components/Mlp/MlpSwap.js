@@ -42,6 +42,7 @@ import {
   USDG_DECIMALS,
   ARBITRUM,
   PLACEHOLDER_ACCOUNT,
+  MM_TOKENS_PER_INTERVAL,
 } from "../../Helpers";
 
 import { callContract, useMYCPrice, useInfoTokens } from "../../Api";
@@ -197,7 +198,7 @@ export default function MlpSwap(props) {
     }
   );
 
-  const { tcrPrice } = useMYCPrice(chainId, { arbitrum: chainId === ARBITRUM ? library : undefined }, active);
+  const { mycPrice } = useMYCPrice(chainId, { arbitrum: chainId === ARBITRUM ? library : undefined }, active);
 
   const rewardTrackersForStakingInfo = [stakedMlpTrackerAddress, feeMlpTrackerAddress];
   const { data: stakingInfo } = useSWR(
@@ -295,9 +296,8 @@ export default function MlpSwap(props) {
 
   let stakedMlpTrackerAnnualRewardsUsd;
   let stakedMlpTrackerApr;
-
   if (
-    tcrPrice &&
+    mycPrice &&
     stakingData &&
     stakingData.stakedMlpTracker &&
     stakingData.stakedMlpTracker.tokensPerInterval &&
@@ -306,10 +306,16 @@ export default function MlpSwap(props) {
   ) {
     stakedMlpTrackerAnnualRewardsUsd = stakingData.stakedMlpTracker.tokensPerInterval
       .mul(SECONDS_PER_YEAR)
-      .mul(tcrPrice)
+      .mul(mycPrice)
       .div(expandDecimals(1, 18));
     stakedMlpTrackerApr = stakedMlpTrackerAnnualRewardsUsd.mul(BASIS_POINTS_DIVISOR).div(mlpSupplyUsd);
     totalApr = totalApr.add(stakedMlpTrackerApr);
+  }
+
+  let mmApr;
+  if (mlpSupplyUsd && mlpSupplyUsd.gt(0)) {
+    mmApr = MM_TOKENS_PER_INTERVAL.mul(SECONDS_PER_YEAR).mul(BASIS_POINTS_DIVISOR).div(mlpSupplyUsd);
+    totalApr = totalApr.add(mmApr);
   }
 
   useEffect(() => {
@@ -813,7 +819,7 @@ export default function MlpSwap(props) {
               </div>
             )}
             <div className="App-card-row">
-              <div className="label">APR</div>
+              <div className="label">Total APR</div>
               <div className="value">
                 <Tooltip
                   handle={`${formatAmount(totalApr, 2, 2, true)}%`}
@@ -830,6 +836,10 @@ export default function MlpSwap(props) {
                         <div className="Tooltip-row">
                           <span className="label">esMYC APR</span>
                           <span>{formatAmount(stakedMlpTrackerApr, 2, 2, false)}%</span>
+                        </div>
+                        <div className="Tooltip-row">
+                          <span className="label">Market Making APR</span>
+                          <span>{formatAmount(mmApr, 2, 2, false)}%</span>
                         </div>
                       </>
                     );
