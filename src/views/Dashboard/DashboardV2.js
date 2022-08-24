@@ -173,6 +173,11 @@ export default function DashboardV2() {
     totalMMFees = totalMMFees.div(expandDecimals(1, FEE_MULTIPLIER_BASIS_POINTS))
   }
 
+  let totalFees;
+  if (totalFeesDistributed && totalMMFees) {
+    totalFees = totalFeesDistributed.add(totalMMFees);
+  }
+
   const { mycPrice, mycPriceFromMainnet, mycPriceFromArbitrum } = useMYCPrice(
     chainId,
     { arbitrum: chainId === ARBITRUM ? library : undefined },
@@ -481,11 +486,20 @@ export default function DashboardV2() {
               <div className="App-card-content">
                 <div className="App-card-row">
                   <div className="label">Total Fees</div>
-                  <div>${formatAmount(totalFeesDistributed, USD_DECIMALS, 0, true)}</div>
-                </div>
-                <div className="App-card-row">
-                  <div className="label">Total Market Making Fees</div>
-                  <div>${formatAmount(totalMMFees, USD_DECIMALS, 0, true)}</div>
+                  <div>
+                    <TooltipComponent
+                      position="right-bottom"
+                      className="nowrap"
+                      handle={`$${formatAmount(totalFees, USD_DECIMALS, 0, true)}`}
+                      renderContent={() => (
+                        <>
+                          Distributed Fees: ${formatAmount(totalFeesDistributed, USD_DECIMALS, 0, true)}
+                          <br />
+                          Spread Capture: ${formatAmount(totalMMFees, USD_DECIMALS, 0, true)}
+                        </>
+                      )}
+                    />
+                  </div>
                 </div>
                 <div className="App-card-row">
                   <div className="label">Total Volume</div>
