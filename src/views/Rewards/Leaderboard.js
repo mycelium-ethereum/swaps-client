@@ -106,12 +106,12 @@ function TableRow({
         <VolumeCell>${formatAmount(volume, USD_DECIMALS, 2, true)}</VolumeCell>
         <RewardCell>
           <TooltipComponent
-              handle={`${formatAmount(totalReward, ETH_DECIMALS, 4, true)} ETH`}
+              handle={`${formatAmount(totalReward, ETH_DECIMALS, 4, true)} WETH`}
               renderContent={() => (
                 <>
-                  Top 50%: {formatAmount(positionReward, ETH_DECIMALS, 6, true)} ETH
+                  Top 50%: {formatAmount(positionReward, ETH_DECIMALS, 6, true)} WETH
                   <br />
-                  Degen rewards: {formatAmount(degenReward, ETH_DECIMALS, 6, true)} ETH
+                  Degen rewards: {formatAmount(degenReward, ETH_DECIMALS, 6, true)} WETH
                 </>
               )}
           />
@@ -127,7 +127,7 @@ function TableRow({
               disabled={isClaiming}
               onClick={handleClaim}
             >
-              {isClaiming ? 'Claiming ETH' : 'Claim ETH'}
+              {isClaiming ? 'Claiming WETH' : 'Claim WETH'}
             </ClaimButton>
           )}
           {userRow && !totalReward.eq(0) && hasLoaded && hasClaimed &&
