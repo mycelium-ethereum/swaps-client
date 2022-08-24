@@ -1,9 +1,16 @@
 const CONTRACTS = {
   1: {
+    UniswapMycEthPool: "0x66dD48889Df1Fc32cBa3aBfA2c453906d527eB2e",
+    
     UniswapTcrEthPool: "0x10b5c63a0a94ec3036238190bc88608a02e91e2c",
-    UniswapEthUsdcPool: "0x88e6a0c2ddd26feeb64f039a2c41296fcb3f5640",
     SushiswapTcrEthPool: "0xe55c3e83852429334a986b265d03b879a3d188ac",
+
+    UniswapEthUsdcPool: "0x88e6a0c2ddd26feeb64f039a2c41296fcb3f5640",
+    BalancerVault: "0xBA12222222228d8Ba445958a75a0704d566BF2C8",
+
     TCR: "0x9c4a4204b79dd291d6b6571c5be8bbcd0622f050",
+    MYC: "0x4b13006980aCB09645131b91D259eaA111eaF5Ba",
+
     WETH: "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2",
     USDC: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48"
   },
@@ -102,7 +109,6 @@ const CONTRACTS = {
     PositionRouter: "0xD4aF631cEBA8C4c10a85015923F820A2ee98b119",
     PositionManager: "0xaDDb01160aAD06cDD225770cF10c7a98502F3eEd",
 
-    // UniswapMycEthPool: "0x80A9ae39310abf666A87C743d6ebBD0E8C42158E",
     ReferralStorage: "0xcDA344Dac3b6fA38245BAd1FD61900b68b3C8857",
     ReferralReader: "0x9A3d3D5Df8F105cadb1F67587ab49d42146D5389",
 
@@ -144,9 +150,12 @@ const CONTRACTS = {
     PositionRouter: "0xE510571cAc76279DADf6c4b6eAcE5370F86e3dC2",
     PositionManager: "0x3892b8cF646b17709C91E653319bA5504a5FEafe",
 
-    UniswapMycEthPool: "0x80A9ae39310abf666A87C743d6ebBD0E8C42158E",
+    UniswapMycTcrPool: "0xc9f423c406e690b7f7715f9e048489caafb2266b",
+    // TODO this uniswap pool has low liquidity so cant use for pricing
+    UniswapMycEthPool: "0x6a034ac28064ffa8375e4668f4ecebdf3aafcba0",
     UniswapTcrEthPool: "0xe8bfb2918853576f0965e29bb86001ea93019003",
-    BalancerTcrEthPool: "0xBA12222222228d8Ba445958a75a0704d566BF2C8",
+
+    BalancerVault: "0xBA12222222228d8Ba445958a75a0704d566BF2C8",
 
     ReferralStorage: "0x3Cd316df040f8A76eb2b496B92b358d3b2EFB9F5",
     ReferralReader: "0xb220724b6b68a84392eC22e841eDe5519863A21F",
