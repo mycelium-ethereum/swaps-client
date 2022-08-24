@@ -44,7 +44,7 @@ import {
   PLACEHOLDER_ACCOUNT,
 } from "../../Helpers";
 
-import { callContract, useTCRPrice, useInfoTokens } from "../../Api";
+import { callContract, useMYCPrice, useInfoTokens } from "../../Api";
 
 import TokenSelector from "../Exchange/TokenSelector";
 import BuyInputSection from "../BuyInputSection/BuyInputSection";
@@ -197,7 +197,7 @@ export default function MlpSwap(props) {
     }
   );
 
-  const { tcrPrice } = useTCRPrice(chainId, { arbitrum: chainId === ARBITRUM ? library : undefined }, active);
+  const { tcrPrice } = useMYCPrice(chainId, { arbitrum: chainId === ARBITRUM ? library : undefined }, active);
 
   const rewardTrackersForStakingInfo = [stakedMlpTrackerAddress, feeMlpTrackerAddress];
   const { data: stakingInfo } = useSWR(

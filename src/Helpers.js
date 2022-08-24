@@ -540,9 +540,10 @@ export function getMarginFee(sizeDelta) {
   return sizeDelta.sub(afterFeeUsd);
 }
 
-export function getSupplyUrl(_chainId) {
+export function getSupplyUrl(route = '/totalSupply') {
   // same supply across networks
-  return "https://stats.tracer.finance/supply";
+  // return "https://stats.mycelium.xyz/total_supply";
+  return `https://dev.api.tracer.finance/myc${route}`;
 }
 
 const BASE_TRACER_URL = process.env.REACT_APP_TRACER_API ?? "https://api.tracer.finance";
