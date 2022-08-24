@@ -8,6 +8,7 @@ export default function AccountBanner(props) {
   const { active, account, ensName, userData, totalRewardAmountUsd, unclaimedReferralUsd } = props;
 
   const DUMMY_CODE = "helloworld13";
+
   return (
     <Styles.AccountBanner className="App-card">
       {active && (
@@ -25,7 +26,7 @@ export default function AccountBanner(props) {
       )}
       <Styles.AccountBannerReferral>
         <div className="App-card-row">
-          <div className="label">Total Volume Referred</div>
+          <div className="label">Total Volume Traded</div>
           <div> ${formatAmount(userData?.totalTradingVolume, USD_DECIMALS, 2, true)}</div>
         </div>
         <div className="App-card-row">
@@ -46,7 +47,7 @@ export default function AccountBanner(props) {
         </div>
         <div className="App-card-row">
           <div className="label">Tier Level</div>
-          <div>Tier 2 (5% Rebate)</div>
+          <div>Tier 2 (5% Commission)</div>
         </div>
       </Styles.AccountBannerReferral>
     </Styles.AccountBanner>

@@ -12,14 +12,16 @@ export function TableRow(props) {
   return (
     <tr>
       <Styles.TableCell leftAlign>
-        {code}
-        <Styles.CopyButton onClick={() => copyReferralCode(code)}>
-          <img src={CopyIcon} alt="Copy" />{" "}
-        </Styles.CopyButton>
+        <div>
+          {code}
+          <Styles.CopyButton onClick={() => copyReferralCode(code)}>
+            <img src={CopyIcon} alt="Copy" />{" "}
+          </Styles.CopyButton>
+        </div>
       </Styles.TableCell>
-      <Styles.TableCell>{totalVolume.toFixed(2)}</Styles.TableCell>
+      <Styles.TableCell>${totalVolume.toFixed(2)}</Styles.TableCell>
       <Styles.TableCell>{tradersReferred}</Styles.TableCell>
-      <Styles.TableCell>{totalRebates.toFixed(4)}</Styles.TableCell>
+      <Styles.TableCell>{totalRebates.toFixed(4)} ETH</Styles.TableCell>
       <Styles.TableCell>
         <Checkbox isChecked={true} handleClick={() => {}} />
       </Styles.TableCell>
@@ -112,7 +114,7 @@ export default function ReferralCodesTable(props) {
             <Styles.LargeText> {`$${formatAmount(userWeekData?.volume, USD_DECIMALS, 2, true)}`}</Styles.LargeText>
           </Styles.ReferralDataBox>
           <Styles.ReferralDataBox className="claimable">
-            <Styles.ReferralDataBoxTitle>Claimable Rebates</Styles.ReferralDataBoxTitle>
+            <Styles.ReferralDataBoxTitle>Claimable Commissions</Styles.ReferralDataBoxTitle>
             <div>
               <Styles.LargeText>{`${formatAmount(userWeekData?.reward, ETH_DECIMALS, 4, true)} ETH`}</Styles.LargeText>
               <span> {` ($${formatAmount(userWeekData?.rewardAmountUsd, ETH_DECIMALS + USD_DECIMALS, 2, true)})`}</span>

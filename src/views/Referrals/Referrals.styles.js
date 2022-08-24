@@ -334,6 +334,11 @@ export const TableCell = styled.td(
   font-weight: 700;
   text-align: ${props.leftAlign ? "left" : "right"};
   padding: 0 32px 8px;
+  > div {
+    display: flex;
+    align-items: center;
+    whitespace: no-wrap;
+  }
   `
 );
 
@@ -368,12 +373,21 @@ export const CodeModal = styled(Modal)`
   .Modal-content {
     border: 1px solid var(--cell-highlight);
     border-radius: 8px;
-    max-width: 424px;
+    max-width: 435px;
     width: 100%;
   }
   .Modal-content .divider {
     display: none;
   }
+`;
+
+export const ErrorText = styled.span`
+  display: block;
+  color: var(--danger-active);
+  overflow: hidden;
+  height: 0px;
+  opacity: 0;
+  transition: height 0.3s ease, opacity 0.3s ease;
 `;
 
 export const CodeInput = styled.input`
@@ -384,20 +398,21 @@ export const CodeInput = styled.input`
   font-size: 16px;
   line-height: 150%;
   padding: 16px;
+  margin-bottom: 16px;
+
   &::placeholder {
     color: var(--text-secondary);
   }
-  margin-bottom: 16px;
-  & + .error-text {
-    content: "";
+
+  &:invalid + ${ErrorText} {
+    height: 36px;
+    opacity: 1;
   }
 
-  &:invalid + .error-text {
-    content: "Invalid code.";
-  }
-  &:invalid + .error-text + button {
+  &:invalid + ${ErrorText} + button {
     background: var(--danger);
-    color: var(--danger-active);
+    color: var(--danger-active) !important;
+    pointer-events: none;
   }
 `;
 
