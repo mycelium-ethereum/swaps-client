@@ -54,14 +54,14 @@ export default function TraderRewards(props) {
           <div className="App-card-row">
             <div className="label">Total Rewards</div>
             <div>
-              {formatAmount(userData?.totalRewards, ETH_DECIMALS, 4, true)} ETH($
+              {formatAmount(userData?.totalRewards, ETH_DECIMALS, 4, true)} WETH($
               {formatAmount(totalRewardAmountUsd, USD_DECIMALS, 2, true)})
             </div>
           </div>
           <div className="App-card-row">
             <div className="label">Unclaimed Rewards</div>
             <div>
-              {formatAmount(userData?.unclaimedRewards, ETH_DECIMALS, 4, true)} ETH($
+              {formatAmount(userData?.unclaimedRewards, ETH_DECIMALS, 4, true)} WETH($
               {formatAmount(unclaimedRewardsUsd, USD_DECIMALS, 2, true)})
             </div>
           </div>
@@ -92,17 +92,17 @@ export default function TraderRewards(props) {
           <Styles.RewardsDataBox className={cx({ claimable: !hasClaimed })}>
             <Styles.RewardsDataBoxTitle>{hasClaimed ? 'Claimed Rewards' : 'Claimable Rewards'}</Styles.RewardsDataBoxTitle>
             <div>
-              <Styles.LargeText>{`${formatAmount(userWeekData?.totalReward, ETH_DECIMALS, 4, true)} ETH`}</Styles.LargeText>
+              <Styles.LargeText>{`${formatAmount(userWeekData?.totalReward, ETH_DECIMALS, 4, true)} WETH`}</Styles.LargeText>
               <span> {` ($${formatAmount(userWeekData?.rewardAmountUsd, USD_DECIMALS, 2, true)})`}</span>
             </div>
           </Styles.RewardsDataBox>
         </Styles.RewardsDataBoxes>
         {active && <Styles.RewardsButton
           className={'App-cta large'}
-          disabled={!userWeekData?.totalReward || userWeekData.totalReward.eq(0) || isClaiming || hasClaimed || latestWeek}
+          disabled={!userWeekData?.totalReward || userWeekData.totalReward.eq(0) || isClaiming || hasClaimed || hasClaimed === undefined || latestWeek}
           onClick={handleClaim}
         >
-          Claim ETH
+          Claim WETH
         </Styles.RewardsButton>}
         {!active && (
           <Styles.RewardsButton className="App-cta large" onClick={() => connectWallet()}>
