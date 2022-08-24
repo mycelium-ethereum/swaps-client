@@ -29,6 +29,9 @@ import {
   TopFiftyRow,
   TopFiftyRowCell,
 } from "./Rewards.styles";
+import TooltipComponent from "../../components/Tooltip/Tooltip";
+
+import degenScore from '../../img/ic_degen.svg';
 
 const ARBISCAN_URL = "https://arbiscan.io/address/";
 const headings = ["Rank", "User", "Volume", "Reward", ""];
@@ -57,13 +60,27 @@ function TopFiftyIndicatorRow() {
     </TopFiftyRow>
   );
 }
-function TableRow({ ensName, totalTraders, position, account, userAccount, volume, reward, trackAction, rewardAmountUsd }) {
+function TableRow({
+  ensName,
+  position,
+  account,
+  volume,
+  totalReward,
+  positionReward,
+  degenReward,
+  handleClaim,
+  userRow,
+  rewardAmountUsd,
+  latestWeek,
+  isClaiming,
+  hasClaimed
+}) {
+  const hasLoaded = hasClaimed !== undefined;
   return (
     <>
-      {position === Math.ceil(totalTraders / 2) + 1 ? <TopFiftyIndicatorRow /> : null}
       <tr
         className={cx({
-          "highlight-current": account === userAccount,
+          "highlight-current": userRow,
         })}
       >
         <RankCell>{position}</RankCell>
@@ -80,30 +97,42 @@ function TableRow({ ensName, totalTraders, position, account, userAccount, volum
               </a>
               <span>{ensName}</span>
             </UserDetails>
+            {!!degenReward && !degenReward.eq(0) && <TooltipComponent
+              handle={<img src={degenScore} alt="degen_score_logo"/>}
+              renderContent={() => 'Rewards boosted by DegenScore'}
+            />}
           </div>
         </UserCell>
         <VolumeCell>${formatAmount(volume, USD_DECIMALS, 2, true)}</VolumeCell>
         <RewardCell>
-          {formatAmount(reward, ETH_DECIMALS, 4, true)} ETH{" "}
-          {rewardAmountUsd && `($${formatAmount(rewardAmountUsd, ETH_DECIMALS + USD_DECIMALS, 2, true)})`}
+          <TooltipComponent
+              handle={`${formatAmount(totalReward, ETH_DECIMALS, 4, true)} ETH`}
+              renderContent={() => (
+                <>
+                  Top 50%: {formatAmount(positionReward, ETH_DECIMALS, 6, true)} ETH
+                  <br />
+                  Degen rewards: {formatAmount(degenReward, ETH_DECIMALS, 6, true)} ETH
+                </>
+              )}
+          />
+          {rewardAmountUsd && `($${formatAmount(rewardAmountUsd, USD_DECIMALS, 2, true)})`}
         </RewardCell>
         <ClaimCell
           className={cx({
-            "highlight-current": account === userAccount,
+            "highlight-current": userRow,
           })}
         >
-          {account === userAccount ? (
+          {userRow && !totalReward.eq(0) && !latestWeek && hasLoaded && !hasClaimed && (
             <ClaimButton
-              onClick={() => {
-                // TODO: Add claim reward function
-                trackAction("Button clicked", {
-                  buttonName: "Claim rewards",
-                });
-              }}
+              disabled={isClaiming}
+              onClick={handleClaim}
             >
-              Claim ETH
+              {isClaiming ? 'Claiming ETH' : 'Claim ETH'}
             </ClaimButton>
-          ) : null}
+          )}
+          {userRow && !totalReward.eq(0) && hasLoaded && hasClaimed &&
+            <span className="claimed">WETH Claimed</span>
+          }
         </ClaimCell>
       </tr>
     </>
@@ -111,7 +140,21 @@ function TableRow({ ensName, totalTraders, position, account, userAccount, volum
 }
 
 export default function Leaderboard(props) {
-  const { weekData, userWeekData, userAccount, ensName, currentView, selectedWeek, connectWallet, trackAction } = props;
+  const {
+    weekData,
+    middleRow,
+    userWeekData,
+    userAccount,
+    ensName,
+    currentView,
+    selectedWeek,
+    connectWallet,
+    trackAction,
+    handleClaim,
+    latestWeek,
+    isClaiming,
+    hasClaimed
+  } = props;
 
   return (
     <LeaderboardContainer hidden={currentView === "Personal"}>
@@ -125,9 +168,15 @@ export default function Leaderboard(props) {
               account={userAccount}
               ensName={ensName}
               volume={userWeekData.volume}
-              reward={userWeekData.reward}
+              totalReward={userWeekData.positionReward}
+              positionReward={userWeekData.totalReward}
+              degenReward={userWeekData.degenReward}
               rewardAmountUsd={userWeekData.rewardAmountUsd}
-              trackAction={trackAction}
+              userRow={true}
+              handleClaim={handleClaim}
+              latestWeek={latestWeek}
+              isClaiming={isClaiming}
+              hasClaimed={hasClaimed}
             />
           </RewardsTableWrapper>
         ) : userAccount ? (
@@ -170,20 +219,33 @@ export default function Leaderboard(props) {
       <RewardsTableContainer>
         <RewardsTableBorder />
         <ScrollContainer>
-          {weekData?.traders?.length > 1 ? (
+          {weekData?.traders?.length > 0 ? (
             <RewardsTableWrapper>
-              {weekData?.traders?.map(({ user_address, volume, reward, rewardAmountUsd }, index) => (
-                <TableRow
-                  key={user_address}
-                  totalTraders={weekData.traders.length}
-                  position={index + 1}
-                  account={user_address}
-                  volume={volume}
-                  reward={reward}
-                  rewardAmountUsd={rewardAmountUsd}
-                  trackAction={trackAction}
-                />
-              ))}
+              {weekData?.traders?.map(({ user_address, volume, totalReward, positionReward, degenReward, rewardAmountUsd }, index) => {
+                const isUserRow = user_address === userAccount;
+                return (
+                  <>
+                    {index === middleRow ? <TopFiftyIndicatorRow /> : null}
+                    <TableRow
+                      key={user_address}
+                      totalTraders={weekData.traders.length}
+                      position={index + 1}
+                      ensName={isUserRow ? ensName : undefined}
+                      account={user_address}
+                      volume={volume}
+                      totalReward={totalReward}
+                      positionReward={positionReward}
+                      degenReward={degenReward}
+                      rewardAmountUsd={rewardAmountUsd}
+                      handleClaim={handleClaim}
+                      userRow={isUserRow}
+                      latestWeek={latestWeek}
+                      isClaiming={isClaiming}
+                      hasClaimed={hasClaimed}
+                    />
+                  </>
+                )
+              })}
             </RewardsTableWrapper>
           ) : (!weekData?.traders || weekData?.traders?.length === 0) && selectedWeek ? (
             <FullWidthText>

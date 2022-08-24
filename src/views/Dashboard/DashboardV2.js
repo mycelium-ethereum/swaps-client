@@ -31,8 +31,11 @@ import {
   getPageTitle,
   ARBITRUM_TESTNET,
   getTracerServerUrl,
+  MM_FEE_MULTIPLIER,
+  MM_SWAPS_FEE_MULTIPLIER,
+  FEE_MULTIPLIER_BASIS_POINTS,
 } from "../../Helpers";
-import { useTotalMYCInLiquidity, useMYCPrice, useTotalMYCSupply, useInfoTokens, useFees } from "../../Api";
+import { useTotalMYCInLiquidity, useMYCPrice, useTotalMYCSupply, useInfoTokens, useFees, useVolume } from "../../Api";
 
 import { getContract } from "../../Addresses";
 
@@ -157,6 +160,22 @@ export default function DashboardV2() {
       .add(allFees.burn)
       .add(allFees.marginAndLiquidation)
       .add(allFees.swap);
+  }
+
+  let totalMMFees;
+  const allVolume = useVolume(chainId);
+  if (allVolume) {
+    totalMMFees = (MM_FEE_MULTIPLIER.mul(allVolume.mint))
+      .add(MM_FEE_MULTIPLIER.mul(allVolume.burn))
+      .add(MM_FEE_MULTIPLIER.mul(allVolume.margin))
+      .add(MM_FEE_MULTIPLIER.mul(allVolume.liquidation))
+      .add(MM_SWAPS_FEE_MULTIPLIER.mul(allVolume.swap));
+    totalMMFees = totalMMFees.div(expandDecimals(1, FEE_MULTIPLIER_BASIS_POINTS))
+  }
+
+  let totalFees;
+  if (totalFeesDistributed && totalMMFees) {
+    totalFees = totalFeesDistributed.add(totalMMFees);
   }
 
   const { mycPrice, mycPriceFromMainnet, mycPriceFromArbitrum } = useMYCPrice(
@@ -467,7 +486,20 @@ export default function DashboardV2() {
               <div className="App-card-content">
                 <div className="App-card-row">
                   <div className="label">Total Fees</div>
-                  <div>${formatAmount(totalFeesDistributed, USD_DECIMALS, 0, true)}</div>
+                  <div>
+                    <TooltipComponent
+                      position="right-bottom"
+                      className="nowrap"
+                      handle={`$${formatAmount(totalFees, USD_DECIMALS, 0, true)}`}
+                      renderContent={() => (
+                        <>
+                          Distributed Fees: ${formatAmount(totalFeesDistributed, USD_DECIMALS, 0, true)}
+                          <br />
+                          Spread Capture: ${formatAmount(totalMMFees, USD_DECIMALS, 0, true)}
+                        </>
+                      )}
+                    />
+                  </div>
                 </div>
                 <div className="App-card-row">
                   <div className="label">Total Volume</div>

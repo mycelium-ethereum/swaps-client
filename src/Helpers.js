@@ -147,6 +147,12 @@ export const TRIGGER_PREFIX_BELOW = "<";
 
 export const MIN_PROFIT_BIPS = 0;
 
+// USD tokens per interval given by kurtis
+export const MM_TOKENS_PER_INTERVAL = ethers.utils.parseUnits('0.09485569636', USD_DECIMALS);
+export const FEE_MULTIPLIER_BASIS_POINTS = 4;
+export const MM_FEE_MULTIPLIER = ethers.utils.parseUnits('0.0006', FEE_MULTIPLIER_BASIS_POINTS);
+export const MM_SWAPS_FEE_MULTIPLIER = ethers.utils.parseUnits('0.0012', FEE_MULTIPLIER_BASIS_POINTS);
+
 export const MLP_POOL_COLORS = {
   ETH: "#6062a6",
   BTC: "#F7931A",
@@ -2790,7 +2796,9 @@ export function getProcessedData(
     data.mlpSupplyUsd && data.mlpSupplyUsd.gt(0)
       ? data.feeMlpTrackerAnnualRewardsUsd.mul(BASIS_POINTS_DIVISOR).div(data.mlpSupplyUsd)
       : bigNumberify(0);
-  data.mlpAprTotal = data.mlpAprForNativeToken.add(data.mlpAprForEsMyc);
+
+  data.mmApr = MM_TOKENS_PER_INTERVAL.mul(SECONDS_PER_YEAR).mul(BASIS_POINTS_DIVISOR).div(data.mlpSupplyUsd);
+  data.mlpAprTotal = data.mlpAprForNativeToken.add(data.mlpAprForEsMyc).add(data.mmApr);
 
   data.totalMlpRewardsUsd = data.stakedMlpTrackerRewardsUsd.add(data.feeMlpTrackerRewardsUsd);
 

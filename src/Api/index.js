@@ -74,6 +74,26 @@ export function useFees(chainId) {
   return res ? res.data.feeStat : null;
 }
 
+export function useVolume(chainId) {
+  const query = gql(`{
+    volumeStat(id: "total") {
+      margin
+      liquidation
+      swap
+      mint
+      burn
+    }
+  }`);
+
+  const [res, setRes] = useState();
+
+  useEffect(() => {
+    getMycGraphClient(chainId).query({ query }).then(setRes).catch(console.warn);
+  }, [setRes, query, chainId]);
+
+  return res ? res.data.volumeStat: null;
+}
+
 export function useAllOrdersStats(chainId) {
   const query = gql(`{
     orderStat(id: "total") {
