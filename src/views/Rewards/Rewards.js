@@ -90,13 +90,13 @@ export default function Rewards(props) {
     () =>
       allWeeksRewardsData?.reduce(
         (totals, week) => {
-          const trader = week.traders?.find((trader) => trader.user_address.toLowerCase() === account.toLowerCase());
+          const trader = week.traders?.find((trader) => trader.user_address.toLowerCase() === account?.toLowerCase());
           if (!trader) {
             return totals;
           }
           let unclaimedRewards = totals.unclaimedRewards;
           const userReward = ethers.BigNumber.from(trader.reward).add(trader.degen_reward);
-          if (hasClaimed && hasClaimed[week]) {
+          if (hasClaimed && hasClaimed[week.week]) {
             unclaimedRewards = unclaimedRewards.add(userReward);
           }
           return {
