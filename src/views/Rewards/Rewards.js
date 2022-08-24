@@ -49,7 +49,6 @@ export default function Rewards(props) {
   );
 
   const [pageTracked, setPageTracked] = useState(false);
-  const [nextRewards, setNextRewards] = useState(undefined);
   const [isClaiming, setIsClaiming] = useState(false);
 
   const { infoTokens } = useInfoTokens(library, chainId, active, undefined, undefined);
@@ -210,12 +209,12 @@ export default function Rewards(props) {
     setCurrentView(currentView === "Personal" ? "Leaderboard" : "Personal");
   };
 
+  const nextRewards = useRef();
   useEffect(() => {
-    if (!!currentRewardWeek && nextRewards === undefined) {
+    if (!!currentRewardWeek && !nextRewards.current) {
       // this will load latest first and set next rewards
-      setNextRewards(currentRewardWeek.end);
+      nextRewards.current = currentRewardWeek.end;
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentRewardWeek]);
 
   // Segment Analytics Page tracking
@@ -314,7 +313,7 @@ export default function Rewards(props) {
           userWeekData={userWeekData}
           currentView={currentView}
           trackAction={trackAction}
-          nextRewards={nextRewards}
+          nextRewards={nextRewards.current}
           latestWeek={isLatestWeek}
           handleClaim={handleClaim}
           isClaiming={isClaiming}
