@@ -76,21 +76,19 @@ export default function TraderRebateStats(props) {
           )}
         </>
       ) : (
-        <>
+        <Styles.InputCodeText>
+          <Styles.AppCardTitle>Enter Referral Code</Styles.AppCardTitle>
+          <p>Add a referral code below to receive fee discounts.</p>
           {!active ? (
             <Styles.ReferralButton className="App-cta large" onClick={() => connectWallet()}>
               Connect Wallet
             </Styles.ReferralButton>
           ) : (
-            <Styles.InputCodeText>
-              <Styles.AppCardTitle>Enter Referral Code</Styles.AppCardTitle>
-              <p>Add a referral code below to receive fee discounts.</p>
-              <Styles.ReferralButton className="App-cta large" onClick={() => setIsEnterCodeModalVisible(true)}>
-                Enter Code
-              </Styles.ReferralButton>
-            </Styles.InputCodeText>
+            <Styles.ReferralButton className="App-cta large" onClick={() => setIsEnterCodeModalVisible(true)}>
+              Enter Code
+            </Styles.ReferralButton>
           )}
-        </>
+        </Styles.InputCodeText>
       )}
     </Styles.ReferralData>
   );

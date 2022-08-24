@@ -96,9 +96,15 @@ export default function ReferralCodesTable(props) {
           <Styles.InputCodeText>
             <Styles.AppCardTitle>Generate Referral Code</Styles.AppCardTitle>
             <p>No referral codes found. Click the button below to create one now and start earning trading rebates.</p>
-            <Styles.ReferralButton className="App-cta large" onClick={() => setIsCreateCodeModalVisible(true)}>
-              Create Code
-            </Styles.ReferralButton>
+            {!active ? (
+              <Styles.ReferralButton className="App-cta large" onClick={() => connectWallet()}>
+                Connect Wallet
+              </Styles.ReferralButton>
+            ) : (
+              <Styles.ReferralButton className="App-cta large" onClick={() => setIsCreateCodeModalVisible(true)}>
+                Create Code
+              </Styles.ReferralButton>
+            )}
           </Styles.InputCodeText>
         )}
       </Styles.ReferralData>
