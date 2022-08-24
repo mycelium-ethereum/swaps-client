@@ -32,6 +32,7 @@ import {
 import TooltipComponent from "../../components/Tooltip/Tooltip";
 
 import degenScore from '../../img/ic_degen.svg';
+import {has} from "lodash";
 
 const ARBISCAN_URL = "https://arbiscan.io/address/";
 const headings = ["Rank", "User", "Volume", "Reward", ""];
@@ -75,6 +76,8 @@ function TableRow({
   isClaiming,
   hasClaimed
 }) {
+  const showClaim = hasClaimed !== undefined && !hasClaimed
+  const hideClaim = hasClaimed !== undefined && hasClaimed
   return (
     <>
       <tr
@@ -121,7 +124,7 @@ function TableRow({
             "highlight-current": userRow,
           })}
         >
-          {userRow && !totalReward.eq(0) && !latestWeek && !hasClaimed && (
+          {userRow && !totalReward.eq(0) && !latestWeek && showClaim && (
             <ClaimButton
               disabled={isClaiming}
               onClick={handleClaim}
@@ -129,7 +132,7 @@ function TableRow({
               {isClaiming ? 'Claiming ETH' : 'Claim ETH'}
             </ClaimButton>
           )}
-          {userRow && !totalReward.eq(0) && hasClaimed && 
+          {userRow && !totalReward.eq(0) && hideClaim && 
             <span className="claimed">WETH Claimed</span>
           }
         </ClaimCell>

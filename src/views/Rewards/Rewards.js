@@ -276,7 +276,10 @@ export default function Rewards(props) {
   }
 
   const isLatestWeek = selectedWeek === "latest";
-  const hasClaimedWeek = selectedWeek !== 'latest' && hasClaimed && hasClaimed[selectedWeek]
+  let hasClaimedWeek
+  if (selectedWeek !== 'latest' && hasClaimed) {
+    hasClaimedWeek = hasClaimed[selectedWeek]
+  }
 
   return (
     <>
