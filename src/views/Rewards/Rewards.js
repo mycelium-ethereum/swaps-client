@@ -115,21 +115,19 @@ export default function Rewards(props) {
   );
 
   // Extract week data from full API response
-  let middleRow = useRef(null);
+  const [middleRow, setMiddleRow] = useState();
   const weekData = useMemo(() => {
     if (!currentRewardWeek || !!currentRewardWeek?.message) {
-      middleRow.current = null;
+      setMiddleRow(undefined);
       return undefined;
     }
-    if (!currentRewardWeek) {
-      middleRow.current = null;
-      return undefined;
-    }
+    let hasSetMiddle = false;
     const traders = currentRewardWeek.traders?.sort((a, b) => b.volume - a.volume).map((trader, index) => {
       const positionReward = ethers.BigNumber.from(trader.reward);
       const degenReward = ethers.BigNumber.from(trader.degen_reward);
-      if (middleRow.current === null && positionReward.eq(0)) {
-        middleRow.current = index;
+      if (!hasSetMiddle && positionReward.eq(0)) {
+        hasSetMiddle = true;
+        setMiddleRow(index);
       }
       return ({
         ...trader,
@@ -324,7 +322,7 @@ export default function Rewards(props) {
         />
         <Leaderboard
           weekData={weekData}
-          middleRow={middleRow.current}
+          middleRow={middleRow}
           userWeekData={userWeekData}
           userAccount={account}
           ensName={ensName}
