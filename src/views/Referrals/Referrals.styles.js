@@ -62,6 +62,12 @@ export const AppCardTitle = styled.div`
   margin-top: 10px;
 `;
 
+export const InputCodeText = styled.div`
+  margin: 0 auto;
+  max-width: 460px;
+  text-align: center;
+`;
+
 export const ReferralDataBoxes = styled.div`
   display: flex;
   gap: 1rem;

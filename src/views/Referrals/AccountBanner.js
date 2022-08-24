@@ -5,7 +5,7 @@ import { ETH_DECIMALS, formatAmount, shortenAddress, USD_DECIMALS, copyReferralC
 import CopyIcon from "../../img/copy.svg";
 
 export default function AccountBanner(props) {
-  const { active, account, ensName, userData, totalRewardAmountUsd, unclaimedReferralUsd } = props;
+  const { active, account, ensName, userData, totalRewardAmountUsd, unclaimedReferralUsd, hasCreatedCode } = props;
 
   const DUMMY_CODE = "helloworld13";
 
@@ -25,30 +25,34 @@ export default function AccountBanner(props) {
         </Styles.AccountBannerAddresses>
       )}
       <Styles.AccountBannerReferral>
-        <div className="App-card-row">
-          <div className="label">Total Volume Traded</div>
-          <div> ${formatAmount(userData?.totalTradingVolume, USD_DECIMALS, 2, true)}</div>
-        </div>
-        <div className="App-card-row">
-          <div className="label">Total Trading Fee Rebates</div>
-          <div>
-            {formatAmount(userData?.totalReferral, ETH_DECIMALS, 4, true)} ETH($
-            {formatAmount(totalRewardAmountUsd, ETH_DECIMALS + USD_DECIMALS, 2, true)})
-          </div>
-        </div>
-        <div className="App-card-row">
-          <div className="label">Active Code</div>
-          <Styles.FlexContainer>
-            {DUMMY_CODE}
-            <Styles.CopyButton onClick={() => copyReferralCode(DUMMY_CODE)}>
-              <img src={CopyIcon} alt="Copy" />{" "}
-            </Styles.CopyButton>
-          </Styles.FlexContainer>
-        </div>
-        <div className="App-card-row">
-          <div className="label">Tier Level</div>
-          <div>Tier 2 (5% Commission)</div>
-        </div>
+        {hasCreatedCode && (
+          <>
+            <div className="App-card-row">
+              <div className="label">Total Volume Traded</div>
+              <div> ${formatAmount(userData?.totalTradingVolume, USD_DECIMALS, 2, true)}</div>
+            </div>
+            <div className="App-card-row">
+              <div className="label">Total Trading Fee Rebates</div>
+              <div>
+                {formatAmount(userData?.totalReferral, ETH_DECIMALS, 4, true)} ETH($
+                {formatAmount(totalRewardAmountUsd, ETH_DECIMALS + USD_DECIMALS, 2, true)})
+              </div>
+            </div>
+            <div className="App-card-row">
+              <div className="label">Active Code</div>
+              <Styles.FlexContainer>
+                {DUMMY_CODE}
+                <Styles.CopyButton onClick={() => copyReferralCode(DUMMY_CODE)}>
+                  <img src={CopyIcon} alt="Copy" />{" "}
+                </Styles.CopyButton>
+              </Styles.FlexContainer>
+            </div>
+            <div className="App-card-row">
+              <div className="label">Tier Level</div>
+              <div>Tier 2 (5% Commission)</div>
+            </div>
+          </>
+        )}
       </Styles.AccountBannerReferral>
     </Styles.AccountBanner>
   );

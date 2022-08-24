@@ -1,13 +1,12 @@
 import React from "react";
 import * as Styles from "./Referrals.styles";
 
-export default function ReferralCodeModal(props) {
-  const { isCodeModalVisible, setIsCodeModalVisible } = props;
+export default function CreateCodeModal(props) {
+  const { isCreateCodeModalVisible, setIsCreateCodeModalVisible } = props;
   return (
     <Styles.CodeModal
-      // className="Connect-wallet-modal"
-      isVisible={isCodeModalVisible}
-      setIsVisible={setIsCodeModalVisible}
+      isVisible={isCreateCodeModalVisible}
+      setIsVisible={setIsCreateCodeModalVisible}
       label="Create Referral Code"
     >
       <Styles.CodeInput type="text" placeholder="Enter a code" maxLength="20" pattern="^[a-zA-Z0-9_]*$" />

@@ -8,6 +8,8 @@ import { useInfoTokens } from "../../Api";
 import { ethers } from "ethers";
 import * as Styles from "./Referrals.styles";
 import { ReferralsSwitch } from "./ViewSwitch";
+import CreateCodeModal from "./CreateCodeModal";
+import EnterCodeModal from "./EnterCodeModal";
 
 import SEO from "../../components/Common/SEO";
 import TraderRebateStats from "./TraderRebateStats";
@@ -31,6 +33,11 @@ const CommissionsHeader = () => (
 export default function Referral(props) {
   const { connectWallet, trackPageWithTraits, trackAction, analytics } = props;
   const [currentView, setCurrentView] = useState("Rebates");
+  const [isEnterCodeModalVisible, setIsEnterCodeModalVisible] = useState(false);
+  const [isCreateCodeModalVisible, setIsCreateCodeModalVisible] = useState(false);
+
+  const [hasActivatedReferral, setHasActivatedReferral] = useState(false);
+  const [hasCreatedCode, setHasCreatedCode] = useState(false);
 
   const { chainId } = useChainId();
   const { active, account, library } = useWeb3React();
@@ -170,6 +177,14 @@ export default function Referral(props) {
         title={getPageTitle("Referral")}
         description="Claim fees earned via being in the top 50% of traders on Mycelium Perpetual Swaps."
       />
+      <EnterCodeModal
+        isEnterCodeModalVisible={isEnterCodeModalVisible}
+        setIsEnterCodeModalVisible={setIsEnterCodeModalVisible}
+      />
+      <CreateCodeModal
+        isCreateCodeModalVisible={isCreateCodeModalVisible}
+        setIsCreateCodeModalVisible={setIsCreateCodeModalVisible}
+      />
       <Styles.StyledReferralPage className="default-container page-layout">
         {
           {
@@ -191,6 +206,7 @@ export default function Referral(props) {
             userData={userData}
             totalReferralAmountUsd={totalReferralAmountUsd}
             unclaimedReferralUsd={unclaimedReferralUsd}
+            hasCreatedCode={hasCreatedCode}
           />
           <TraderRebateStats
             active={active}
@@ -204,6 +220,8 @@ export default function Referral(props) {
             nextRewards={nextRewards}
             latestWeek={selectedWeek === "latest"}
             timeTillRewards={timeTillRewards}
+            hasActivatedReferral={hasActivatedReferral}
+            setIsEnterCodeModalVisible={setIsEnterCodeModalVisible}
           />
           <ReferralCodesTable
             active={active}
@@ -217,6 +235,8 @@ export default function Referral(props) {
             connectWallet={connectWallet}
             userWeekData={userWeekData}
             latestWeek={selectedWeek === "latest"}
+            setIsCreateCodeModalVisible={setIsCreateCodeModalVisible}
+            hasCreatedCode={hasCreatedCode}
           />
         </Styles.PersonalReferralContainer>
       </Styles.StyledReferralPage>

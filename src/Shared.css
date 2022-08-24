@@ -238,7 +238,7 @@ a.plain {
 }
 
 .default-btn:hover {
-  background: #4f60fc;
+  background: var(--cell-stroke);
 }
 
 /* .default-btn:focus {

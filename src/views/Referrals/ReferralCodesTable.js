@@ -1,5 +1,4 @@
-import React, { useState } from "react";
-import ReferralCodeModal from "./ReferralCodeModal";
+import React from "react";
 import * as Styles from "./Referrals.styles";
 import CopyIcon from "../../img/copy.svg";
 import { copyReferralCode, formatAmount, USD_DECIMALS, ETH_DECIMALS } from "../../Helpers";
@@ -42,8 +41,9 @@ export default function ReferralCodesTable(props) {
     connectWallet,
     userWeekData,
     latestWeek,
+    setIsCreateCodeModalVisible,
+    hasCreatedCode,
   } = props;
-  const [isCodeModalVisible, setIsCodeModalVisible] = useState(false);
 
   const dummyData = [
     {
@@ -61,80 +61,101 @@ export default function ReferralCodesTable(props) {
   ];
 
   const openCodeModal = () => {
-    setIsCodeModalVisible(true);
+    setIsCreateCodeModalVisible(true);
   };
 
   return (
     <div hidden={currentView === "Rebates"}>
-      <ReferralCodeModal isCodeModalVisible={isCodeModalVisible} setIsCodeModalVisible={setIsCodeModalVisible} />
       <Styles.ReferralData className="App-card">
-        <Styles.TitleContainer>
-          <Styles.AppCardTitle>Referral codes</Styles.AppCardTitle>
-          <Styles.CreateButton onClick={openCodeModal}>&#43;&nbsp;Create</Styles.CreateButton>
-        </Styles.TitleContainer>
-        <Styles.TableContainer>
-          <Styles.CodesTable>
-            <thead>
-              <tr>
-                <Styles.TableHeading leftAlign>Referral Code</Styles.TableHeading>
-                <Styles.TableHeading>Total Volume</Styles.TableHeading>
-                <Styles.TableHeading>Traders Referred</Styles.TableHeading>
-                <Styles.TableHeading>Total Rebates</Styles.TableHeading>
-                <Styles.TableHeading>Active</Styles.TableHeading>
-              </tr>
-            </thead>
-            <tbody>
-              {dummyData.map((row) => (
-                <TableRow key={row.code} {...row} />
-              ))}
-            </tbody>
-          </Styles.CodesTable>
-        </Styles.TableContainer>
+        {hasCreatedCode ? (
+          <>
+            <Styles.TitleContainer>
+              <Styles.AppCardTitle>Referral codes</Styles.AppCardTitle>
+              <Styles.CreateButton onClick={openCodeModal}>&#43;&nbsp;Create</Styles.CreateButton>
+            </Styles.TitleContainer>
+            <Styles.TableContainer>
+              <Styles.CodesTable>
+                <thead>
+                  <tr>
+                    <Styles.TableHeading leftAlign>Referral Code</Styles.TableHeading>
+                    <Styles.TableHeading>Total Volume</Styles.TableHeading>
+                    <Styles.TableHeading>Traders Referred</Styles.TableHeading>
+                    <Styles.TableHeading>Total Rebates</Styles.TableHeading>
+                    <Styles.TableHeading>Active</Styles.TableHeading>
+                  </tr>
+                </thead>
+                <tbody>
+                  {dummyData.map((row) => (
+                    <TableRow key={row.code} {...row} />
+                  ))}
+                </tbody>
+              </Styles.CodesTable>
+            </Styles.TableContainer>
+          </>
+        ) : (
+          <Styles.InputCodeText>
+            <Styles.AppCardTitle>Generate Referral Code</Styles.AppCardTitle>
+            <p>No referral codes found. Click the button below to create one now and start earning trading rebates.</p>
+            <Styles.ReferralButton className="App-cta large" onClick={() => setIsCreateCodeModalVisible(true)}>
+              Create Code
+            </Styles.ReferralButton>
+          </Styles.InputCodeText>
+        )}
       </Styles.ReferralData>
-      <Styles.ReferralData className="App-card">
-        <Styles.AppCardTitle>Weekly data</Styles.AppCardTitle>
-        <Styles.ReferralWeekSelect>
-          {!!allWeeksReferralData ? (
-            <WeekDropdown
-              allWeeksReferralData={allWeeksReferralData}
-              setSelectedWeek={setSelectedWeek}
-              referralMessage={referralMessage}
-              trackAction={trackAction}
-            />
-          ) : null}
-          {nextRewards && timeTillRewards && (
-            <Styles.ReferralWeekNextReferral>
-              Next Rewards in <Styles.ReferralWeekCountdown>{timeTillRewards}</Styles.ReferralWeekCountdown>
-            </Styles.ReferralWeekNextReferral>
+      {hasCreatedCode && (
+        <Styles.ReferralData className="App-card">
+          <Styles.AppCardTitle>Weekly data</Styles.AppCardTitle>
+          <Styles.ReferralWeekSelect>
+            {!!allWeeksReferralData ? (
+              <WeekDropdown
+                allWeeksReferralData={allWeeksReferralData}
+                setSelectedWeek={setSelectedWeek}
+                referralMessage={referralMessage}
+                trackAction={trackAction}
+              />
+            ) : null}
+            {nextRewards && timeTillRewards && (
+              <Styles.ReferralWeekNextReferral>
+                Next Rewards in <Styles.ReferralWeekCountdown>{timeTillRewards}</Styles.ReferralWeekCountdown>
+              </Styles.ReferralWeekNextReferral>
+            )}
+          </Styles.ReferralWeekSelect>
+          <Styles.ReferralDataBoxes>
+            <Styles.ReferralDataBox>
+              <Styles.ReferralDataBoxTitle>Volume Traded</Styles.ReferralDataBoxTitle>
+              <Styles.LargeText> {`$${formatAmount(userWeekData?.volume, USD_DECIMALS, 2, true)}`}</Styles.LargeText>
+            </Styles.ReferralDataBox>
+            <Styles.ReferralDataBox className="claimable">
+              <Styles.ReferralDataBoxTitle>Claimable Commissions</Styles.ReferralDataBoxTitle>
+              <div>
+                <Styles.LargeText>{`${formatAmount(
+                  userWeekData?.reward,
+                  ETH_DECIMALS,
+                  4,
+                  true
+                )} ETH`}</Styles.LargeText>
+                <span>
+                  {" "}
+                  {` ($${formatAmount(userWeekData?.rewardAmountUsd, ETH_DECIMALS + USD_DECIMALS, 2, true)})`}
+                </span>
+              </div>
+            </Styles.ReferralDataBox>
+          </Styles.ReferralDataBoxes>
+          {active && latestWeek && (
+            <Styles.ReferralButton disabled className="App-cta large">
+              Week ends in {timeTillRewards}
+            </Styles.ReferralButton>
           )}
-        </Styles.ReferralWeekSelect>
-        <Styles.ReferralDataBoxes>
-          <Styles.ReferralDataBox>
-            <Styles.ReferralDataBoxTitle>Volume Traded</Styles.ReferralDataBoxTitle>
-            <Styles.LargeText> {`$${formatAmount(userWeekData?.volume, USD_DECIMALS, 2, true)}`}</Styles.LargeText>
-          </Styles.ReferralDataBox>
-          <Styles.ReferralDataBox className="claimable">
-            <Styles.ReferralDataBoxTitle>Claimable Commissions</Styles.ReferralDataBoxTitle>
-            <div>
-              <Styles.LargeText>{`${formatAmount(userWeekData?.reward, ETH_DECIMALS, 4, true)} ETH`}</Styles.LargeText>
-              <span> {` ($${formatAmount(userWeekData?.rewardAmountUsd, ETH_DECIMALS + USD_DECIMALS, 2, true)})`}</span>
-            </div>
-          </Styles.ReferralDataBox>
-        </Styles.ReferralDataBoxes>
-        {active && latestWeek && (
-          <Styles.ReferralButton disabled className="App-cta large">
-            Week ends in {timeTillRewards}
-          </Styles.ReferralButton>
-        )}
-        {active && !latestWeek && (
-          <Styles.ReferralButton className="App-cta large"> Claim Rebates </Styles.ReferralButton>
-        )}
-        {!active && (
-          <Styles.ReferralButton className="App-cta large" onClick={() => connectWallet()}>
-            Connect Wallet
-          </Styles.ReferralButton>
-        )}
-      </Styles.ReferralData>
+          {active && !latestWeek && (
+            <Styles.ReferralButton className="App-cta large"> Claim Rebates </Styles.ReferralButton>
+          )}
+          {!active && (
+            <Styles.ReferralButton className="App-cta large" onClick={() => connectWallet()}>
+              Connect Wallet
+            </Styles.ReferralButton>
+          )}
+        </Styles.ReferralData>
+      )}
     </div>
   );
 }
