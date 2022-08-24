@@ -3,14 +3,12 @@ import { gql } from "@apollo/client";
 import { useState, useEffect } from "react";
 
 import { ARBITRUM, AVALANCHE, MAX_REFERRAL_CODE_LENGTH, bigNumberify } from "../Helpers";
-import { arbitrumReferralsGraphClient, avalancheReferralsGraphClient } from "./common";
+import { arbitrumReferralsGraphClient } from "./common";
 const ACTIVE_CHAINS = [ARBITRUM, AVALANCHE];
 
 function getGraphClient(chainId) {
   if (chainId === ARBITRUM) {
     return arbitrumReferralsGraphClient;
-  } else if (chainId === AVALANCHE) {
-    return avalancheReferralsGraphClient;
   }
   throw new Error(`Unsupported chain ${chainId}`);
 }

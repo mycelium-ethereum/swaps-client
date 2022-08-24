@@ -39,7 +39,7 @@ import {
 } from "../Helpers";
 import { getTokens, getTokenBySymbol, getWhitelistedTokens } from "../data/Tokens";
 
-import { nissohGraphClient, arbitrumGraphClient, avalancheGraphClient, arbitrumTestnetGraphClient } from "./common";
+import { nissohGraphClient, arbitrumGraphClient, arbitrumTestnetGraphClient } from "./common";
 export * from "./prices";
 
 const { AddressZero } = ethers.constants;
@@ -49,9 +49,7 @@ function getMycGraphClient(chainId) {
     return arbitrumGraphClient;
   } else if (chainId === ARBITRUM_TESTNET) {
     return arbitrumTestnetGraphClient;
-  } else if (chainId === AVALANCHE) {
-    return avalancheGraphClient;
-  }
+  } 
   throw new Error(`Unsupported chain ${chainId}`);
 }
 
