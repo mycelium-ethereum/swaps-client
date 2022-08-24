@@ -71,7 +71,7 @@ export default function Rewards(props) {
   );
 
   const { data: hasClaimed } = useSWR(
-    [`Rewards:claimed:${active}`, chainId, feeDistributorReader, "getUserClaimed", feeDistributor, account, allWeeksRewardsData?.length ?? 1],
+    [`Rewards:claimed:${active}`, chainId, feeDistributorReader, "getUserClaimed", feeDistributor, account ?? ethers.constants.AddressZero, allWeeksRewardsData?.length ?? 1],
     {
       fetcher: fetcher(library, FeeDistributorReader),
     }
@@ -79,7 +79,7 @@ export default function Rewards(props) {
 
   // Fetch user proof
   const { data: userProof } = useSWR(
-    [getTracerServerUrl(chainId, "/userRewardProof"), selectedWeek, account],
+    [getTracerServerUrl(chainId, "/userRewardProof"), selectedWeek, account ?? ethers.constants.AddressZero],
     {
       fetcher: (url, week, account) => fetch(`${url}&week=${week}&userAddress=${account}`).then((res) => res.json()),
     }
