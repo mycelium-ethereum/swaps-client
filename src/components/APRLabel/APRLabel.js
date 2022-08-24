@@ -124,7 +124,7 @@ export default function APRLabel({ chainId, label }) {
     }
   );
 
-  const { tcrPrice } = useMYCPrice(chainId, {}, active);
+  const { mycPrice } = useMYCPrice(chainId, {}, active);
 
   const mycSupplyUrl = getSupplyUrl();
   const { data: mycSupply_ } = useSWR([mycSupplyUrl], {
@@ -152,7 +152,7 @@ export default function APRLabel({ chainId, label }) {
     aum,
     nativeTokenPrice,
     stakedMycSupply,
-    tcrPrice,
+    mycPrice,
     mycSupply
   );
 
