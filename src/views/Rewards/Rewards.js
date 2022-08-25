@@ -147,20 +147,19 @@ export default function Rewards(props) {
     if (!currentRewardWeek) {
       return undefined;
     }
-    const leaderboardPosition = currentRewardWeek.traders?.findIndex((trader) => trader.user_address.toLowerCase() === account?.toLowerCase());
+    const leaderBoardIndex = currentRewardWeek.traders?.findIndex((trader) => trader.user_address.toLowerCase() === account?.toLowerCase());
     let traderData
-    if (leaderboardPosition && leaderboardPosition >= 0) {
-      traderData = currentRewardWeek.traders[leaderboardPosition];
+    if (leaderBoardIndex && leaderBoardIndex >= 0) {
+      traderData = currentRewardWeek.traders[leaderBoardIndex];
     }
     // trader's data found
     if (traderData) {
-      traderData.position = leaderboardPosition;
       const positionReward = ethers.BigNumber.from(traderData.reward);
       const degenReward = ethers.BigNumber.from(traderData.degen_reward);
       return {
         volume: ethers.BigNumber.from(traderData.volume),
         totalReward: positionReward.add(degenReward),
-        position: leaderboardPosition,
+        position: leaderBoardIndex + 1,
         positionReward,
         degenReward,
       };

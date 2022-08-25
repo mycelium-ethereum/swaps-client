@@ -168,8 +168,8 @@ export default function Leaderboard(props) {
               account={userAccount}
               ensName={ensName}
               volume={userWeekData.volume}
-              totalReward={userWeekData.positionReward}
-              positionReward={userWeekData.totalReward}
+              totalReward={userWeekData.totalReward}
+              positionReward={userWeekData.positionReward}
               degenReward={userWeekData.degenReward}
               rewardAmountUsd={userWeekData.rewardAmountUsd}
               userRow={true}
