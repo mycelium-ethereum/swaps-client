@@ -2,9 +2,9 @@ import { ethers } from "ethers";
 import { gql } from "@apollo/client";
 import { useState, useEffect } from "react";
 
-import { ARBITRUM, AVALANCHE, MAX_REFERRAL_CODE_LENGTH, bigNumberify } from "../Helpers";
+import { ARBITRUM, MAX_REFERRAL_CODE_LENGTH, bigNumberify } from "../Helpers";
 import { arbitrumReferralsGraphClient } from "./common";
-const ACTIVE_CHAINS = [ARBITRUM, AVALANCHE];
+const ACTIVE_CHAINS = [ARBITRUM];
 
 function getGraphClient(chainId) {
   if (chainId === ARBITRUM) {
@@ -73,16 +73,16 @@ export function useUserCodesOnAllChain(account) {
       referralCodes (
       first: 1000,
       where: {
-        owner: "__ACCOUNT__"
+        owner: "${(account || "").toLowerCase()}"
       }) {
       code
       }
-    }`.replaceAll("__ACCOUNT__", (account || "").toLowerCase())
+    }`
   );
 
   useEffect(() => {
     async function main() {
-      const [arbitrumCodes, avalancheCodes] = await Promise.all(
+      const [arbitrumCodes] = await Promise.all(
         ACTIVE_CHAINS.map((chainId) =>
           getGraphClient(chainId)
             .query({ query })
@@ -91,21 +91,14 @@ export function useUserCodesOnAllChain(account) {
             })
         )
       );
-      const [codeOwnersOnAvax, codeOwnersOnArbitrum] = await Promise.all([
-        getCodeOwnersData(AVALANCHE, account, arbitrumCodes),
-        getCodeOwnersData(ARBITRUM, account, avalancheCodes),
-      ]);
-
+      const codeOwnersOnArbitrum = await getCodeOwnersData(ARBITRUM, account, arbitrumCodes);
       setData({
-        [ARBITRUM]: codeOwnersOnAvax.reduce((acc, cv) => {
-          acc[cv.code] = cv;
-          return acc;
-        }, {}),
-        [AVALANCHE]: codeOwnersOnArbitrum.reduce((acc, cv) => {
+        [ARBITRUM]: codeOwnersOnArbitrum.reduce((acc, cv) => {
           acc[cv.code] = cv;
           return acc;
         }, {}),
       });
+
     }
 
     main();
@@ -183,7 +176,7 @@ export function useReferralsData(chainId, account) {
         code
       }
       referralTotalStats: referralStat(
-        id: "total:0:__ACCOUNT__"
+        id: "total:0:"
       ) {
         volume,
         discountUsd

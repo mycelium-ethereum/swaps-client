@@ -273,7 +273,7 @@ a.plain {
 }
 
 .default-btn:disabled {
-  background: #2d2e3f 0% 0% no-repeat padding-box;
+  background: var(--action-inactive) 0% 0% no-repeat padding-box;
   color: #ffffff61;
 }
 

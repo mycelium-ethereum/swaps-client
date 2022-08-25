@@ -322,7 +322,9 @@ export const TableContainer = styled.div`
 export const CodesTable = styled.table`
   margin: 0 auto;
   width: 100%;
-  max-width: 850px;
+  td:first-child, th:first-child {
+    padding-left: 0;
+  }
   min-width: 750px;
 `;
 

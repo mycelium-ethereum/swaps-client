@@ -928,6 +928,7 @@ function FullApp() {
                 trackPageWithTraits={trackPageWithTraits}
                 trackAction={trackAction}
                 analytics={analytics}
+                setPendingTxns={setPendingTxns}
               />
             </Route>
             {/*

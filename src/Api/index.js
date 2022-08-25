@@ -40,6 +40,7 @@ import {
 import { getTokens, getTokenBySymbol, getWhitelistedTokens } from "../data/Tokens";
 
 import { nissohGraphClient, arbitrumGraphClient, arbitrumTestnetGraphClient } from "./common";
+import {encodeReferralCode} from "./referrals";
 export * from "./prices";
 
 const { AddressZero } = ethers.constants;
@@ -898,6 +899,23 @@ export async function getReferralCodeOwner(chainId, referralCode) {
   const contract = new ethers.Contract(referralStorageAddress, ReferralStorage.abi, provider);
   const codeOwner = await contract.codeOwners(referralCode);
   return codeOwner;
+}
+export async function getReferralCodeTakenStatus(account, referralCode, chainId) {
+  const referralCodeBytes32 = encodeReferralCode(referralCode);
+  const ownerArbitrum = await getReferralCodeOwner(ARBITRUM, referralCodeBytes32);
+
+  const taken =
+    !isAddressZero(ownerArbitrum) && (ownerArbitrum !== account || (ownerArbitrum === account && chainId === ARBITRUM));
+
+  const referralCodeTakenInfo = {
+    taken,
+    ownerArbitrum,
+  };
+
+  if (taken) {
+    return { status: "taken", info: referralCodeTakenInfo };
+  }
+  return { status: "none", info: referralCodeTakenInfo };
 }
 
 export async function createSwapOrder(

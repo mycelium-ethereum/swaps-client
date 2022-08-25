@@ -141,6 +141,18 @@ export const REFERRAL_CODE_KEY = "MYC-referralCode";
 export const REFERRAL_CODE_QUERY_PARAMS = "ref";
 export const REFERRALS_SELECTED_TAB_KEY = "Referrals-selected-tab";
 export const MAX_REFERRAL_CODE_LENGTH = 20;
+export const REFERRAL_CODE_REGEX = /^\w+$/; // only number, string and underscore is allowed
+export const TIER_REBATE_INFO = {
+  0: 5,
+  1: 10,
+  2: 15,
+};
+
+export const TIER_DISCOUNT_INFO = {
+  0: 5,
+  1: 10,
+  2: 10,
+};
 
 export const TRIGGER_PREFIX_ABOVE = ">";
 export const TRIGGER_PREFIX_BELOW = "<";
@@ -3025,23 +3037,30 @@ export function copyToClipboard(item) {
   navigator.clipboard.writeText(item);
 }
 
+/* REFERRAL CODE HELPERS */
 export function copyReferralCode(code) {
-  const referralLink = createReferralLink(code);
-  // Open native share dialog
-  if (navigator.share) {
-    navigator
-      .share({
-        title: "Share Referral Link",
-        url: referralLink,
-      })
-      .then(() => {})
-      .catch(console.error);
-  } else {
-    // fallback - copy URL to clipboard
-    copyToClipboard();
-  }
+  copyToClipboard(`https://mycelium.xyz?${REFERRAL_CODE_QUERY_PARAMS}=${code}`);
+  helperToast.success("Referral link copied to your clipboard");
 }
 
-export const createReferralLink = (code) => {
-  return `${window.location.origin}/?ref=${code}`;
-};
+export function getCodeError(value) {
+  const trimmedValue = value.trim();
+  if (!trimmedValue) return "";
+
+  if (trimmedValue.length > MAX_REFERRAL_CODE_LENGTH) {
+    return `The referral code can't be more than ${MAX_REFERRAL_CODE_LENGTH} characters.`;
+  }
+
+  if (!REFERRAL_CODE_REGEX.test(trimmedValue)) {
+    return "Only letters, numbers and underscores are allowed.";
+  }
+  return "";
+}
+
+export function getTierIdDisplay(tierId) {
+  if (!tierId) {
+    return "";
+  }
+  return Number(tierId) + 1;
+}
+

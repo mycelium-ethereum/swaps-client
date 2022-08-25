@@ -1,48 +1,38 @@
 import React from "react";
 import * as Styles from "./Referrals.styles";
 import CopyIcon from "../../img/copy.svg";
-import { copyReferralCode, formatAmount, USD_DECIMALS, ETH_DECIMALS } from "../../Helpers";
+import { copyReferralCode, formatAmount, USD_DECIMALS, ETH_DECIMALS, shortenAddress, getExplorerUrl, formatDate } from "../../Helpers";
 import WeekDropdown from "./WeekDropdown";
 import Checkbox from "../../components/Common/Checkbox";
+import {getNativeToken, getToken} from "../../data/Tokens";
+import Card from "../../components/Common/Card";
+import Tooltip from "../../components/Tooltip/Tooltip";
+import {isRecentReferralCodeNotExpired} from "./Referrals";
+import {formatUnits} from "@ethersproject/units";
 
-export function TableRow(props) {
-  const { code, totalVolume, tradersReferred, totalRebates } = props;
-
+function EmptyMessage({ message = "", tooltipText }) {
   return (
-    <tr>
-      <Styles.TableCell leftAlign>
-        <div>
-          {code}
-          <Styles.CopyButton onClick={() => copyReferralCode(code)}>
-            <img src={CopyIcon} alt="Copy" />{" "}
-          </Styles.CopyButton>
-        </div>
-      </Styles.TableCell>
-      <Styles.TableCell>${totalVolume.toFixed(2)}</Styles.TableCell>
-      <Styles.TableCell>{tradersReferred}</Styles.TableCell>
-      <Styles.TableCell>{totalRebates.toFixed(4)} ETH</Styles.TableCell>
-      <Styles.TableCell>
-        <Checkbox isChecked={true} handleClick={() => {}} />
-      </Styles.TableCell>
-    </tr>
+    <div className="empty-message">
+      {tooltipText ? (
+        <Tooltip handle={<p>{message}</p>} position="center-bottom" renderContent={() => tooltipText} />
+      ) : (
+        <p>{message}</p>
+      )}
+    </div>
   );
 }
 
 export default function ReferralCodesTable(props) {
   const {
     active,
+    chainId,
     currentView,
-    trackAction,
-    allWeeksReferralData,
-    setSelectedWeek,
-    referralMessage,
-    nextRewards,
-    timeTillRewards,
     connectWallet,
-    userWeekData,
     latestWeek,
     setIsCreateCodeModalVisible,
     hasCreatedCode,
+    referralsData,
+    recentlyAddedCodes
   } = props;
 
   const dummyData = [
@@ -64,6 +54,19 @@ export default function ReferralCodesTable(props) {
     setIsCreateCodeModalVisible(true);
   };
 
+  let cumulativeStats, referrerTotalStats, rebateDistributions, referrerTierInfo;
+  if (referralsData) {
+    ({ cumulativeStats, referrerTotalStats, rebateDistributions, referrerTierInfo } = referralsData);
+  }
+
+  const finalReferrerTotalStats = recentlyAddedCodes.filter(isRecentReferralCodeNotExpired).reduce((acc, cv) => {
+    const addedCodes = referrerTotalStats?.map((c) => c.referralCode.trim());
+    if (!!addedCodes && !addedCodes.includes(cv.referralCode)) {
+      acc = acc.concat(cv);
+    }
+    return acc;
+  }, referrerTotalStats);
+
   return (
     <div hidden={currentView === "Rebates"}>
       <Styles.ReferralData className="App-card">
@@ -80,14 +83,29 @@ export default function ReferralCodesTable(props) {
                     <Styles.TableHeading leftAlign>Referral Code</Styles.TableHeading>
                     <Styles.TableHeading>Total Volume</Styles.TableHeading>
                     <Styles.TableHeading>Traders Referred</Styles.TableHeading>
+                    <Styles.TableHeading>Referred Trades</Styles.TableHeading>
                     <Styles.TableHeading>Total Rebates</Styles.TableHeading>
-                    <Styles.TableHeading>Active</Styles.TableHeading>
                   </tr>
                 </thead>
                 <tbody>
-                  {dummyData.map((row) => (
-                    <TableRow key={row.code} {...row} />
-                  ))}
+                  {finalReferrerTotalStats?.map((stat) => {
+                    console.log(stat)
+                    return (
+                      <tr key={stat.referralCode}>
+                        <Styles.TableCell leftAlign>
+                          <div>
+                            {stat.referralCode}
+                            <Styles.CopyButton onClick={() => copyReferralCode(stat.referralCode)}>
+                              <img src={CopyIcon} alt="Copy" />{" "}
+                            </Styles.CopyButton>
+                          </div>
+                        </Styles.TableCell>
+                        <Styles.TableCell>${formatAmount(stat.volume, USD_DECIMALS, 2, true, '0.00')}</Styles.TableCell>
+                        <Styles.TableCell>{stat.registeredReferralsCount}</Styles.TableCell>
+                        <Styles.TableCell>{stat.trades}</Styles.TableCell>
+                        <Styles.TableCell>${formatAmount(stat.totalRebateUsd, USD_DECIMALS, 2, true, "0.00")}</Styles.TableCell>
+                      </tr>
+                    )})}
                 </tbody>
               </Styles.CodesTable>
             </Styles.TableContainer>
@@ -108,60 +126,6 @@ export default function ReferralCodesTable(props) {
           </Styles.InputCodeText>
         )}
       </Styles.ReferralData>
-      {hasCreatedCode && (
-        <Styles.ReferralData className="App-card">
-          <Styles.AppCardTitle>Weekly data</Styles.AppCardTitle>
-          <Styles.ReferralWeekSelect>
-            {!!allWeeksReferralData ? (
-              <WeekDropdown
-                allWeeksReferralData={allWeeksReferralData}
-                setSelectedWeek={setSelectedWeek}
-                referralMessage={referralMessage}
-                trackAction={trackAction}
-              />
-            ) : null}
-            {nextRewards && timeTillRewards && (
-              <Styles.ReferralWeekNextReferral>
-                Next Rewards in <Styles.ReferralWeekCountdown>{timeTillRewards}</Styles.ReferralWeekCountdown>
-              </Styles.ReferralWeekNextReferral>
-            )}
-          </Styles.ReferralWeekSelect>
-          <Styles.ReferralDataBoxes>
-            <Styles.ReferralDataBox>
-              <Styles.ReferralDataBoxTitle>Volume Traded</Styles.ReferralDataBoxTitle>
-              <Styles.LargeText> {`$${formatAmount(userWeekData?.volume, USD_DECIMALS, 2, true)}`}</Styles.LargeText>
-            </Styles.ReferralDataBox>
-            <Styles.ReferralDataBox className="claimable">
-              <Styles.ReferralDataBoxTitle>Claimable Commissions</Styles.ReferralDataBoxTitle>
-              <div>
-                <Styles.LargeText>{`${formatAmount(
-                  userWeekData?.reward,
-                  ETH_DECIMALS,
-                  4,
-                  true
-                )} ETH`}</Styles.LargeText>
-                <span>
-                  {" "}
-                  {` ($${formatAmount(userWeekData?.rewardAmountUsd, ETH_DECIMALS + USD_DECIMALS, 2, true)})`}
-                </span>
-              </div>
-            </Styles.ReferralDataBox>
-          </Styles.ReferralDataBoxes>
-          {active && latestWeek && (
-            <Styles.ReferralButton disabled className="App-cta large">
-              Week ends in {timeTillRewards}
-            </Styles.ReferralButton>
-          )}
-          {active && !latestWeek && (
-            <Styles.ReferralButton className="App-cta large"> Claim Rebates </Styles.ReferralButton>
-          )}
-          {!active && (
-            <Styles.ReferralButton className="App-cta large" onClick={() => connectWallet()}>
-              Connect Wallet
-            </Styles.ReferralButton>
-          )}
-        </Styles.ReferralData>
-      )}
     </div>
   );
 }

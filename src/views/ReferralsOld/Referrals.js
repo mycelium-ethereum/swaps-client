@@ -97,13 +97,6 @@ async function getReferralCodeTakenStatus(account, referralCode, chainId) {
   return { status: "none", info: referralCodeTakenInfo };
 }
 
-function getTierIdDisplay(tierId) {
-  if (!tierId) {
-    return "";
-  }
-  return Number(tierId) + 1;
-}
-
 const tierRebateInfo = {
   0: 5,
   1: 10,
