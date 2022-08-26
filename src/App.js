@@ -920,6 +920,7 @@ function FullApp() {
                 trackPageWithTraits={trackPageWithTraits}
                 trackAction={trackAction}
                 analytics={analytics}
+                setPendingTxns={setPendingTxns}
               />
             </Route>
             <Route exact path="/referrals">
@@ -971,6 +972,7 @@ function FullApp() {
       </div>
 
       <ToastContainer
+        limit={3}
         transition={Zoom}
         position="bottom-right"
         autoClose={7000}

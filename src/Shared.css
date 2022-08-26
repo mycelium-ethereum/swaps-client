@@ -72,6 +72,8 @@ body,
   --cell-hover: #03100e;
   --cell-stroke: #003000;
   --cell-highlight: #098200;
+  --cell-unavailable: rgba(49, 87, 136, 0.05);
+  --cell-unavailable-stroke: rgba(49, 87, 136, 0.2);
 
   --tooltip-fill: #03100e;
   --tooltip-shadow: 0px 0px 7px rgba(39, 62, 89, 0.53);

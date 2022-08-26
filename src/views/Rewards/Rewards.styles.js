@@ -52,21 +52,6 @@ export const AccountBanner = styled.div`
 
 export const PersonalRewardsContainer = styled.div`
   width: 100%;
-
-  /* Remove to enable Rewards */
-  position: relative;
-  cursor: not-allowed;
-  * {
-    pointer-events: none;
-    opacity: 0.5;
-  }
-  &:before {
-    content: "Rewards coming soon";
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-  }
 `;
 
 export const AppCardTitle = styled.div`
@@ -100,6 +85,7 @@ export const RewardsDataBox = styled.div`
   font-size: 16px;
 
   background: var(--background-secondary);
+  border: 1px solid var(--cell-stroke);
 
   &.claimable {
     background: linear-gradient(180deg, rgba(20, 45, 29, 0.5) 0%, rgba(20, 45, 29, 0) 100%);
@@ -166,7 +152,7 @@ export const WeekSelectButton = styled.button`
   }
   &.App-cta-selected,
   &.App-cta:hover {
-    background-color: #161a2d !important;
+    background-color: var(--cell-hover)!important;
     border: 1px solid var(--cell-highlight);
   }
 `;
@@ -178,7 +164,33 @@ export const RewardsButton = styled.button`
   min-width: 200px;
 
   font-size: 16px;
+
+  &:disabled,
+  &[disabled]{
+    background: var(--cell-unavailable);
+    border: 1px solid var(--cell-unavailable-stroke);
+    color: rgba(49, 87, 136, 0.2);
+  }
 `;
+
+export const ClaimedRewards = styled.div`
+  display: flex;
+  position: relative;
+  width: 100%;
+  margin-top: 1.5rem;
+  text-align: center;
+  font-size: 16px;
+  color: var(--text-secondary);
+
+  & * {
+    width: 100%;
+    margin: auto;
+  }
+  & span:first-child, & span:last-child {
+    height: 1px;
+    background: var(--cell-stroke);
+  }
+`
 
 export const RewardsData = styled.div`
   margin-top: 1rem;
@@ -207,10 +219,6 @@ export const ViewSwitchContainer = styled.div`
   justify-content: space-between;
   margin: 16px 0 24px;
   width: 100%;
-
-  /* Remove to enable Rewards */
-  opacity: 0.3;
-  cursor: not-allowed;
 `;
 
 export const ViewSwitch = styled.div`
@@ -221,7 +229,6 @@ export const ViewSwitch = styled.div`
   border: 1px solid var(--cell-stroke);
   width: 392px;
   height: 56px;
-  pointer-events: none;
 `;
 
 export const ViewOption = styled.button`
@@ -423,7 +430,6 @@ export const UserDetails = styled.div`
 export const VolumeCell = styled(TableCell)``;
 
 export const RewardCell = styled(TableCell)`
-  text-decoration: underline;
 `;
 
 export const ClaimCell = styled(TableCell)`
@@ -432,6 +438,10 @@ export const ClaimCell = styled(TableCell)`
   span:nth-child(1) {
     font-size: 16px;
     color: white;
+  }
+
+  span.claimed {
+    color: var(--text-secondary);
   }
 `;
 

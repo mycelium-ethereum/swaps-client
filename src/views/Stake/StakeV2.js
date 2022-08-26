@@ -879,7 +879,18 @@ export default function StakeV2({ setPendingTxns, connectWallet, trackAction }) 
                   </div>
                 </StakeV2Styled.RewardsBannerRow>
                 <StakeV2Styled.RewardsBannerRow>
-                  <StakeV2Styled.RewardsBannerText secondary>APR</StakeV2Styled.RewardsBannerText>
+                  <StakeV2Styled.RewardsBannerText secondary>Market Making APR</StakeV2Styled.RewardsBannerText>
+                  <StakeV2Styled.RewardsBannerText large inline>
+                    <Tooltip
+                      handle={`${formatKeyAmount(processedData, "mmApr", 2, 2, true)}%`}
+                      position="right-bottom"
+                      renderContent={() => "Market Making APR is sourced from the spread of the traded markets and is realised by MLP holders through the appreciation of the MLP token."
+                      }
+                    />
+                  </StakeV2Styled.RewardsBannerText>
+                </StakeV2Styled.RewardsBannerRow>
+                <StakeV2Styled.RewardsBannerRow>
+                  <StakeV2Styled.RewardsBannerText secondary>Total APR</StakeV2Styled.RewardsBannerText>
                   <StakeV2Styled.RewardsBannerText large inline>
                     <Tooltip
                       handle={`${formatKeyAmount(processedData, "mlpAprTotal", 2, 2, true)}%`}
@@ -896,6 +907,10 @@ export default function StakeV2({ setPendingTxns, connectWallet, trackAction }) 
                             <div className="Tooltip-row">
                               <span className="label">esMYC APR</span>
                               <span>{formatKeyAmount(processedData, "mlpAprForEsMyc", 2, 2, true)}%</span>
+                            </div>
+                            <div className="Tooltip-row">
+                              <span className="label">Market Making APR</span>
+                              <span>{formatKeyAmount(processedData, "mmApr", 2, 2, true)}%</span>
                             </div>
                           </>
                         );
