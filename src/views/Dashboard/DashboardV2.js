@@ -149,7 +149,7 @@ export default function DashboardV2() {
   const currentWeeksMMFees = useMarketMakingFeesSince(chainId, feeHistory[0]?.to)
   let totalCurrentFees;
   if (currentFeesUsd && currentWeeksMMFees) {
-    totalCurrentFees = currentWeeksMMFees.add(currentWeeksMMFees);
+    totalCurrentFees = currentFeesUsd.add(currentWeeksMMFees);
   }
   // this is a buffer for when the manually update fees, it gives them an hour window to update
   // const shouldIncludeCurrrentFees = feeHistory.length && parseInt(Date.now() / 1000) - feeHistory[0].to > 60 * 60;

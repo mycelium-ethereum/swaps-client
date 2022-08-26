@@ -43,7 +43,7 @@ import {
 import { getTokens, getTokenBySymbol, getWhitelistedTokens } from "../data/Tokens";
 
 import { nissohGraphClient, arbitrumGraphClient, avalancheGraphClient, arbitrumTestnetGraphClient } from "./common";
-import {SECONDS_PER_WEEK} from "../data/Fees";
+import { SECONDS_PER_WEEK } from "../data/Fees";
 export * from "./prices";
 
 const { AddressZero } = ethers.constants;
