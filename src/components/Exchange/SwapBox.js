@@ -85,7 +85,7 @@ import WETH from "../../abis/WETH.json";
 import longImg from "../../img/long.svg";
 import shortImg from "../../img/short.svg";
 import swapImg from "../../img/swap.svg";
-import {useUserReferralCode} from "../../Api/referrals";
+import { useUserReferralCode } from "../../Api/referrals";
 
 const SWAP_ICONS = {
   [LONG]: longImg,
