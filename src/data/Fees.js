@@ -1,4 +1,4 @@
-const SECONDS_PER_WEEK = 60 * 60 * 24 * 7;
+export const SECONDS_PER_WEEK = 60 * 60 * 24 * 7;
 
 const FEES = {
   421611: [],

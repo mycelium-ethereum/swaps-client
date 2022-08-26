@@ -35,11 +35,15 @@ import {
   isAddressZero,
   helperToast,
   getSupplyUrl,
-  getTracerServerUrl
+  getTracerServerUrl,
+  MM_FEE_MULTIPLIER,
+  MM_SWAPS_FEE_MULTIPLIER,
+  FEE_MULTIPLIER_BASIS_POINTS
 } from "../Helpers";
 import { getTokens, getTokenBySymbol, getWhitelistedTokens } from "../data/Tokens";
 
 import { nissohGraphClient, arbitrumGraphClient, avalancheGraphClient, arbitrumTestnetGraphClient } from "./common";
+import {SECONDS_PER_WEEK} from "../data/Fees";
 export * from "./prices";
 
 const { AddressZero } = ethers.constants;
@@ -72,6 +76,44 @@ export function useFees(chainId) {
   }, [setRes, query, chainId]);
 
   return res ? res.data.feeStat : null;
+}
+
+export function useMarketMakingFeesSince(chainId, from) {
+  const [res, setRes] = useState();
+
+  const to = from + SECONDS_PER_WEEK;
+  const query = gql(`{
+    hourlyVolumes (where: { id_gt: ${from}, id_lt: ${to}}) {
+      swap
+      liquidation
+      mint
+      burn
+      margin
+    }
+  }`);
+
+  useEffect(() => {
+    if (!from) {
+      return
+    }
+    getMycGraphClient(chainId).query({ query }).then((res) => {
+      console.log(res);
+      if (res.data.hourlyVolumes) {
+        let mmFees = res.data.hourlyVolumes.reduce((sum, stat) => (
+            sum
+              .add(MM_FEE_MULTIPLIER.mul(stat.mint))
+              .add(MM_FEE_MULTIPLIER.mul(stat.burn))
+              .add(MM_FEE_MULTIPLIER.mul(stat.margin))
+              .add(MM_FEE_MULTIPLIER.mul(stat.liquidation))
+              .add(MM_SWAPS_FEE_MULTIPLIER.mul(stat.swap))
+          ), bigNumberify(0)
+        );
+        setRes(mmFees.div(expandDecimals(1, FEE_MULTIPLIER_BASIS_POINTS)))
+      }
+    }).catch(console.warn);
+  }, [setRes, query, chainId, from]);
+
+  return res
 }
 
 export function useVolume(chainId) {

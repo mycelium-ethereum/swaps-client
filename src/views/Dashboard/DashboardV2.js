@@ -35,7 +35,7 @@ import {
   MM_SWAPS_FEE_MULTIPLIER,
   FEE_MULTIPLIER_BASIS_POINTS,
 } from "../../Helpers";
-import { useTotalMYCInLiquidity, useMYCPrice, useTotalMYCSupply, useInfoTokens, useFees, useVolume } from "../../Api";
+import { useTotalMYCInLiquidity, useMYCPrice, useTotalMYCSupply, useInfoTokens, useFees, useVolume, useMarketMakingFeesSince } from "../../Api";
 
 import { getContract } from "../../Addresses";
 
@@ -146,6 +146,12 @@ export default function DashboardV2() {
   const allFees = useFees(chainId);
 
   const feeHistory = getFeeHistory(chainId);
+  const currentWeeksMMFees = useMarketMakingFeesSince(chainId, feeHistory[0]?.to)
+  console.log(currentWeeksMMFees)
+  let totalCurrentFees;
+  if (currentFeesUsd && currentWeeksMMFees) {
+    totalCurrentFees = currentWeeksMMFees.add(currentWeeksMMFees);
+  }
   // this is a buffer for when the manually update fees, it gives them an hour window to update
   // const shouldIncludeCurrrentFees = feeHistory.length && parseInt(Date.now() / 1000) - feeHistory[0].to > 60 * 60;
   // let totalFeesDistributed = shouldIncludeCurrrentFees
@@ -475,7 +481,20 @@ export default function DashboardV2() {
                 {feeHistory.length ? (
                   <div className="App-card-row">
                     <div className="label">Fees since {formatDate(feeHistory[0].to)}</div>
-                    <div>${formatAmount(currentFeesUsd, USD_DECIMALS, 2, true)}</div>
+                    <div>
+                      <TooltipComponent
+                        position="right-bottom"
+                        className="nowrap"
+                        handle={`$${formatAmount(totalCurrentFees, USD_DECIMALS, 2, true)}`}
+                        renderContent={() => (
+                          <>
+                            Distributed Fees: ${formatAmount(currentFeesUsd, USD_DECIMALS, 2, true)}
+                            <br />
+                            Spread Capture: ${formatAmount(currentWeeksMMFees, USD_DECIMALS, 2, true)}
+                          </>
+                        )}
+                      />
+                    </div>
                   </div>
                 ) : null}
               </div>
