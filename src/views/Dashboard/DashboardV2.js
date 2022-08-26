@@ -147,7 +147,6 @@ export default function DashboardV2() {
 
   const feeHistory = getFeeHistory(chainId);
   const currentWeeksMMFees = useMarketMakingFeesSince(chainId, feeHistory[0]?.to)
-  console.log(currentWeeksMMFees)
   let totalCurrentFees;
   if (currentFeesUsd && currentWeeksMMFees) {
     totalCurrentFees = currentWeeksMMFees.add(currentWeeksMMFees);

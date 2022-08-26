@@ -97,7 +97,6 @@ export function useMarketMakingFeesSince(chainId, from) {
       return
     }
     getMycGraphClient(chainId).query({ query }).then((res) => {
-      console.log(res);
       if (res.data.hourlyVolumes) {
         let mmFees = res.data.hourlyVolumes.reduce((sum, stat) => (
             sum
