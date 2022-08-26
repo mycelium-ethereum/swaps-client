@@ -10,7 +10,7 @@ export default function TraderRebateStats(props) {
     setIsEnterCodeModalVisible,
     setIsEditCodeModalVisible,
     referralCodeInString,
-    traderTier,
+    tradersTier,
     hidden
   } = props;
 
@@ -19,13 +19,13 @@ export default function TraderRebateStats(props) {
       {referralCodeInString ? (
         <Styles.InputCodeText>
           <Styles.AppCardTitle>Active code: {referralCodeInString}</Styles.AppCardTitle>
-          {traderTier && (
+          {tradersTier && (
             <div className="tier">
               <Tooltip
-                handle={`Tier ${getTierIdDisplay(traderTier)} (${TIER_DISCOUNT_INFO[traderTier]}% discount)`}
+                handle={`Tier ${getTierIdDisplay(tradersTier)} (${TIER_DISCOUNT_INFO[tradersTier]}% discount)`}
                 position="right-bottom"
                 renderContent={() =>
-                  `You will receive a ${TIER_DISCOUNT_INFO[traderTier]}% discount on your opening and closing fees, this discount will be airdropped to your account every Wednesday`
+                  `You will receive a ${TIER_DISCOUNT_INFO[tradersTier]}% discount on your opening and closing fees, this discount will be airdropped to your account every Wednesday`
                 }
               />
             </div>

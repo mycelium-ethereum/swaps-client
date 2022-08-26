@@ -12,9 +12,9 @@ export default function AccountBanner(props) {
     ensName,
     currentView,
     // rebates
-    traderTier,
-    traderRebates,
-    traderVolume,
+    tradersTier,
+    tradersRebates,
+    tradersVolume,
     referralCodeInString,
     // commissions
     referrerTier,
@@ -31,13 +31,13 @@ export default function AccountBanner(props) {
           <div className="App-card-row">
             <div className="label">Total Volume Traded</div>
             <div>
-              ${formatAmount(traderVolume, USD_DECIMALS, 2, true, '0.00')}
+              ${formatAmount(tradersVolume, USD_DECIMALS, 2, true, '0.00')}
             </div>
           </div>
           <div className="App-card-row">
             <div className="label">Total Trading Fee Rebates</div>
             <div>
-              ${formatAmount(traderRebates, USD_DECIMALS, 2, true, '0.00')}
+              ${formatAmount(tradersRebates, USD_DECIMALS, 2, true, '0.00')}
             </div>
           </div>
           {referralCodeInString &&
@@ -53,13 +53,13 @@ export default function AccountBanner(props) {
           }
           <div className="App-card-row">
             <div className="label">Tier Level</div>
-            {traderTier && (
+            {tradersTier && (
               <div className="tier">
                 <Tooltip
-                  handle={`Tier ${getTierIdDisplay(traderTier)} (${TIER_DISCOUNT_INFO[traderTier]}% discount)`}
+                  handle={`Tier ${getTierIdDisplay(tradersTier)} (${TIER_DISCOUNT_INFO[tradersTier]}% discount)`}
                   position="right-bottom"
                   renderContent={() =>
-                    `You will receive a ${TIER_DISCOUNT_INFO[traderTier]}% discount on your opening and closing fees, this discount will be airdropped to your account every Wednesday`
+                    `You will receive a ${TIER_DISCOUNT_INFO[tradersTier]}% discount on your opening and closing fees, this discount will be airdropped to your account every Wednesday`
                   }
                 />
               </div>

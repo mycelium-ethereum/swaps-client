@@ -12,7 +12,6 @@ import Router from "../abis/Router.json";
 import UniPool from "../abis/UniPool.json";
 import Token from "../abis/Token.json";
 import VaultReader from "../abis/VaultReader.json";
-import ReferralStorage from "../abis/ReferralStorage.json";
 
 import { getContract } from "../Addresses";
 import { getConstant } from "../Constants";

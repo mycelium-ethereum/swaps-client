@@ -38,7 +38,6 @@ export default function ReferralCodesTable(props) {
                 </thead>
                 <tbody>
                   {finalReferrerTotalStats?.map((stat) => {
-                    console.log(stat)
                     return (
                       <tr key={stat.referralCode}>
                         <Styles.TableCell leftAlign>

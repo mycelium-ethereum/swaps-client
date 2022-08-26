@@ -47,7 +47,7 @@ export default function Referral(props) {
   const [recentlyAddedCodes, setRecentlyAddedCodes] = useLocalStorageSerializeKey([chainId, "REFERRAL", account], []);
   const { userReferralCode } = useUserReferralCode(library, chainId, account);
   const { codeOwner } = useCodeOwner(library, chainId, account, userReferralCode);
-  const { referrerTier: traderTier } = useReferrerTier(library, chainId, codeOwner);
+  const { referrerTier: tradersTier } = useReferrerTier(library, chainId, codeOwner);
   const userReferralCodeInLocalStorage = window.localStorage.getItem(REFERRAL_CODE_KEY);
 
   const { connectWallet, trackAction } = props;
@@ -71,9 +71,9 @@ export default function Referral(props) {
   }
 
 
-  let cumulativeStats, referrerTotalStats, referrerTierInfo /*, rebateDistributions */;
+  let cumulativeStats, referrerTotalStats, referrerTierInfo, referralTotalStats /*, rebateDistributions */;
   if (referralsData) {
-    ({ cumulativeStats, referrerTotalStats, referrerTierInfo /*, rebateDistributions */} = referralsData);
+    ({ cumulativeStats, referrerTotalStats, referrerTierInfo, referralTotalStats /*, rebateDistributions */} = referralsData);
   }
 
   const finalReferrerTotalStats = recentlyAddedCodes.filter(isRecentReferralCodeNotExpired).reduce((acc, cv) => {
@@ -91,9 +91,8 @@ export default function Referral(props) {
   }
   let referrerVolume = cumulativeStats?.volume;
 
-
-  let traderRebates = referrerTotalStats?.discountUsd;
-  let tradersVolume = referrerTotalStats?.volume;
+  let tradersVolume = referralTotalStats?.volume;
+  let tradersRebates = referralTotalStats?.discountUsd;
 
   let hasCreatedCode = referralsData && referralsData?.codes?.length > 0;
 
@@ -165,8 +164,8 @@ export default function Referral(props) {
             ensName={ensName}
             currentView={currentView}
             // Rebates
-            traderTier={traderTier}
-            traderRebates={traderRebates}
+            tradersTier={tradersTier}
+            tradersRebates={tradersRebates}
             tradersVolume={tradersVolume}
             referralCodeInString={referralCodeInString}
             // Commissions
@@ -182,7 +181,7 @@ export default function Referral(props) {
             referralCodeInString={referralCodeInString}
             setIsEnterCodeModalVisible={setIsEnterCodeModalVisible}
             setIsEditCodeModalVisible={setIsEditCodeModalVisible}
-            traderTier={traderTier}
+            tradersTier={tradersTier}
           />
           <ReferralCodesTable
             chainId={chainId}
