@@ -3,12 +3,12 @@ import React, { useState } from "react";
 import { getPageTitle, useChainId, useENS, REFERRALS_SELECTED_TAB_KEY, isHashZero, useLocalStorageSerializeKey, REFERRAL_CODE_KEY, bigNumberify } from "../../Helpers";
 import { useWeb3React } from "@web3-react/core";
 import * as Styles from "./Referrals.styles";
-import { ReferralsSwitch } from "./ViewSwitch";
 import CreateCodeModal from "./CreateCodeModal";
 import EnterCodeModal from "./EnterCodeModal";
 import EditCodeModal from "./EditCodeModal";
 
 import SEO from "../../components/Common/SEO";
+import ViewSwitch from "../../components/ViewSwitch/ViewSwitch";
 import TraderRebateStats from "./TraderRebateStats";
 import AccountBanner from "./AccountBanner";
 import ReferralCodesTable from "./ReferralCodesTable";
@@ -59,7 +59,13 @@ export default function Referral(props) {
 
   const switchView = () => {
     setCurrentView(currentView === COMMISSIONS ? REBATES : COMMISSIONS);
+    trackAction &&
+      trackAction("Button clicked", {
+        buttonName: "Referral panel",
+        view: currentView === "Commissions" ? "Rebates" : "Commissions",
+      });
   }
+
 
   let referralCodeInString;
   if (userReferralCode && !isHashZero(userReferralCode)) {
@@ -152,10 +158,10 @@ export default function Referral(props) {
             [COMMISSIONS]: <CommissionsHeader />,
           }[currentView]
         }
-        <ReferralsSwitch
+        <ViewSwitch 
           switchView={switchView}
           currentView={currentView}
-          trackAction={trackAction}
+          views={[REBATES, COMMISSIONS]}
         />
         <Styles.PersonalReferralContainer>
           <AccountBanner

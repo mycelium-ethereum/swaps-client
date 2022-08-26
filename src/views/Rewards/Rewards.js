@@ -9,13 +9,14 @@ import { ethers } from "ethers";
 import TraderRewards from "./TraderRewards";
 import Leaderboard from "./Leaderboard";
 import * as Styles from "./Rewards.styles";
-import { LeaderboardSwitch } from "./ViewSwitch";
 
 import SEO from "../../components/Common/SEO";
 import { getContract } from "../../Addresses";
 
 import FeeDistributor from "../../abis/FeeDistributor.json";
 import FeeDistributorReader from "../../abis/FeeDistributorReader.json";
+import ViewSwitch from "../../components/ViewSwitch/ViewSwitch";
+import WeekDropdown from "./WeekDropdown";
 
 const PersonalHeader = () => (
   <div className="Page-title-section mt-0">
@@ -207,6 +208,11 @@ export default function Rewards(props) {
 
   const switchView = () => {
     setCurrentView(currentView === "Personal" ? "Leaderboard" : "Personal");
+    trackAction &&
+      trackAction("Button clicked", {
+        buttonName: "Rewards panel",
+        view: currentView === "Leaderboard" ? "Rewards" : "Leaderboard",
+      });
   };
 
   useEffect(() => {
@@ -293,14 +299,20 @@ export default function Rewards(props) {
             Leaderboard: <LeaderboardHeader />,
           }[currentView]
         }
-        <LeaderboardSwitch
+
+        <ViewSwitch
           switchView={switchView}
           currentView={currentView}
-          rewardsMessage={rewardsMessage}
-          allWeeksRewardsData={allWeeksRewardsData}
-          setSelectedWeek={setSelectedWeek}
-          trackAction={trackAction}
-        />
+          views={['Personal', 'Leaderboard']}
+        >
+          {currentView === "Leaderboard" && !!allWeeksRewardsData ? (
+            <WeekDropdown
+              allWeeksRewardsData={allWeeksRewardsData}
+              setSelectedWeek={setSelectedWeek}
+              rewardsMessage={rewardsMessage}
+            />
+          ) : null}
+        </ViewSwitch>
         <TraderRewards
           active={active}
           account={account}
