@@ -250,7 +250,7 @@ a.plain {
 } */
 
 .default-btn:active {
-  background: #5f6ffd;
+  background: var(--cell-highlight);
   border: none;
   padding-left: 16px;
   padding-right: 16px;

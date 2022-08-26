@@ -1,76 +1,25 @@
 import React from "react";
 import * as Styles from "./Referrals.styles";
 import CopyIcon from "../../img/copy.svg";
-import { copyReferralCode, formatAmount, USD_DECIMALS, ETH_DECIMALS, shortenAddress, getExplorerUrl, formatDate } from "../../Helpers";
-import WeekDropdown from "./WeekDropdown";
-import Checkbox from "../../components/Common/Checkbox";
-import {getNativeToken, getToken} from "../../data/Tokens";
-import Card from "../../components/Common/Card";
-import Tooltip from "../../components/Tooltip/Tooltip";
-import {isRecentReferralCodeNotExpired} from "./Referrals";
-import {formatUnits} from "@ethersproject/units";
-
-function EmptyMessage({ message = "", tooltipText }) {
-  return (
-    <div className="empty-message">
-      {tooltipText ? (
-        <Tooltip handle={<p>{message}</p>} position="center-bottom" renderContent={() => tooltipText} />
-      ) : (
-        <p>{message}</p>
-      )}
-    </div>
-  );
-}
+import { copyReferralCode, formatAmount, USD_DECIMALS } from "../../Helpers";
 
 export default function ReferralCodesTable(props) {
   const {
     active,
-    chainId,
-    currentView,
+    hidden,
     connectWallet,
-    latestWeek,
     setIsCreateCodeModalVisible,
-    hasCreatedCode,
-    referralsData,
-    recentlyAddedCodes
+    finalReferrerTotalStats,
   } = props;
-
-  const dummyData = [
-    {
-      code: "helloworld13",
-      totalVolume: 772.75,
-      tradersReferred: 2,
-      totalRebates: 0.0386,
-    },
-    {
-      code: "ww",
-      totalVolume: 0,
-      tradersReferred: 0,
-      totalRebates: 0,
-    },
-  ];
 
   const openCodeModal = () => {
     setIsCreateCodeModalVisible(true);
   };
 
-  let cumulativeStats, referrerTotalStats, rebateDistributions, referrerTierInfo;
-  if (referralsData) {
-    ({ cumulativeStats, referrerTotalStats, rebateDistributions, referrerTierInfo } = referralsData);
-  }
-
-  const finalReferrerTotalStats = recentlyAddedCodes.filter(isRecentReferralCodeNotExpired).reduce((acc, cv) => {
-    const addedCodes = referrerTotalStats?.map((c) => c.referralCode.trim());
-    if (!!addedCodes && !addedCodes.includes(cv.referralCode)) {
-      acc = acc.concat(cv);
-    }
-    return acc;
-  }, referrerTotalStats);
-
   return (
-    <div hidden={currentView === "Rebates"}>
-      <Styles.ReferralData className="App-card">
-        {hasCreatedCode ? (
+    <div hidden={hidden}>
+      {!!finalReferrerTotalStats && <Styles.ReferralData className="App-card">
+        {finalReferrerTotalStats?.length ? (
           <>
             <Styles.TitleContainer>
               <Styles.AppCardTitle>Referral codes</Styles.AppCardTitle>
@@ -126,6 +75,7 @@ export default function ReferralCodesTable(props) {
           </Styles.InputCodeText>
         )}
       </Styles.ReferralData>
+      }
     </div>
   );
 }

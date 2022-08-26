@@ -437,7 +437,6 @@ export const CopyButton = styled.button`
   border: 0;
   width: 14px;
   height: 14px;
-  margin-left: 15px;
   > img {
     width: 14px;
     height: 14px;

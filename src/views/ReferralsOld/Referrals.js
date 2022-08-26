@@ -25,6 +25,7 @@ import {
   AVALANCHE,
   useDebounce,
   isAddressZero,
+  getTierIdDisplay,
 } from "../../Helpers";
 import { decodeReferralCode, encodeReferralCode, useReferralsData } from "../../Api/referrals";
 

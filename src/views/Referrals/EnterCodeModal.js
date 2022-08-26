@@ -1,7 +1,6 @@
-import React, {useRef, useState} from "react";
-import {setTraderReferralCodeByUser} from "../../Api";
-import {encodeReferralCode} from "../../Api/referrals";
-import {getCodeError, useDebounce} from "../../Helpers";
+import React, { useState } from "react";
+import { setTraderReferralCodeByUser, encodeReferralCode } from "../../Api/referrals";
+import { getCodeError } from "../../Helpers";
 import * as Styles from "./Referrals.styles";
 
 export default function EnterCodeModal(props) {
@@ -12,18 +11,24 @@ export default function EnterCodeModal(props) {
     isEnterCodeModalVisible,
     setIsEnterCodeModalVisible,
     setPendingTxns,
-    pendingTxns
+    pendingTxns,
   } = props;
  
   const [referralCode, setReferralCode] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState("");
+  
+  const close = () => {
+    if (!isSubmitting) {
+      setIsEnterCodeModalVisible(false)
+    }
+  }
 
   async function handleSetTraderReferralCode(event) {
     event.preventDefault();
     setIsSubmitting(true);
     const referralCodeHex = encodeReferralCode(referralCode);
-    return setTraderReferralCodeByUser(chainId, referralCodeHex, {
+    const receipt = await setTraderReferralCodeByUser(chainId, referralCodeHex, {
       library,
       account,
       successMsg: `Referral code added!`,
@@ -31,18 +36,16 @@ export default function EnterCodeModal(props) {
       setPendingTxns,
       pendingTxns,
     })
-      .then((res) => {
-      })
-      .finally(() => {
-        setIsSubmitting(false);
-        setIsEnterCodeModalVisible(false);
-      });
+    receipt.wait().finally(() => {
+      setIsSubmitting(false);
+      setIsEnterCodeModalVisible(false);
+    });
   }
 
   return (
     <Styles.CodeModal
       isVisible={isEnterCodeModalVisible}
-      setIsVisible={setIsEnterCodeModalVisible}
+      setIsVisible={close}
       label="Enter Referral Code"
     >
       <Styles.CodeInput

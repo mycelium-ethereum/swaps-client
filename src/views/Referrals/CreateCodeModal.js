@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { bigNumberify, getCodeError, helperToast, useDebounce } from "../../Helpers";
-import { getReferralCodeTakenStatus } from '../../Api';
+import { encodeReferralCode, getReferralCodeTakenStatus, registerReferralCode } from '../../Api/referrals';
 import * as Styles from "./Referrals.styles";
-import Checkbox from "../../components/Checkbox/Checkbox";
 
 const getSampleReferrarStat = (code) => {
   return {
@@ -21,21 +20,32 @@ export default function CreateCodeModal(props) {
   const {
     account,
     chainId,
+    library,
     active,
     isCreateCodeModalVisible,
     setIsCreateCodeModalVisible,
-    handleCreateReferralCode,
     recentlyAddedCodes,
     setRecentlyAddedCodes,
-    connectWallet
+    connectWallet,
+    pendingTxns,
+    setPendingTxns
   } = props;
 
   const [referralCode, setReferralCode] = useState("");
-  const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const [referralCodeCheckStatus, setReferralCodeCheckStatus] = useState("ok");
   const debouncedReferralCode = useDebounce(referralCode, 300);
+
+  const close = () => {
+    if (!isSubmitting) {
+      setReferralCode("");
+      setIsSubmitting(false);
+      setError("");
+      setIsCreateCodeModalVisible(false);
+    }
+  };
 
   useEffect(() => {
     let cancelled = false;
@@ -83,7 +93,7 @@ export default function CreateCodeModal(props) {
       return buttonError;
     }
 
-    if (isProcessing) {
+    if (isSubmitting) {
       return `Creating...`;
     }
 
@@ -93,7 +103,7 @@ export default function CreateCodeModal(props) {
     if (buttonError) {
       return false;
     }
-    if (error || isProcessing) {
+    if (error || isSubmitting) {
       return false;
     }
     return true;
@@ -101,17 +111,24 @@ export default function CreateCodeModal(props) {
 
   async function handleSubmit(event) {
     event.preventDefault();
-    setIsProcessing(true);
+    setIsSubmitting(true);
     const { status: takenStatus } = await getReferralCodeTakenStatus(account, referralCode, chainId);
     if (takenStatus === "taken") {
       setError(`Referral code is taken.`);
-      setIsProcessing(false);
+      setIsSubmitting(false);
     }
 
     if (takenStatus === "none") {
-      setIsProcessing(true);
+      setIsSubmitting(true);
       try {
-        const tx = await handleCreateReferralCode(referralCode);
+        const referralCodeHex = encodeReferralCode(referralCode);
+        const tx = await registerReferralCode(chainId, referralCodeHex, {
+          library,
+          sentMsg: "Referral code submitted!",
+          failMsg: "Referral code creation failed.",
+          pendingTxns,
+          setPendingTxns
+        });
         const receipt = await tx.wait();
         if (receipt.status === 1) {
           recentlyAddedCodes.push(getSampleReferrarStat(referralCode));
@@ -122,14 +139,14 @@ export default function CreateCodeModal(props) {
       } catch (err) {
         console.error(err);
       } finally {
-        setIsProcessing(false);
+        setIsSubmitting(false);
       }
     }
   }
   return (
     <Styles.CodeModal
       isVisible={isCreateCodeModalVisible}
-      setIsVisible={setIsCreateCodeModalVisible}
+      setIsVisible={close}
       label="Create Referral Code"
     >
       <>
@@ -142,7 +159,7 @@ export default function CreateCodeModal(props) {
               placeholder="Enter a code"
               maxLength="20"
               pattern="^[a-zA-Z0-9_]*$"
-              disabled={isProcessing}
+              disabled={isSubmitting}
               value={referralCode}
               onChange={({ target }) => {
                 let { value } = target;

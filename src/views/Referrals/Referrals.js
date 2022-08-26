@@ -1,22 +1,19 @@
-import React, { useState, useMemo, useCallback, useEffect } from "react";
+import React, { useState } from "react";
 
-import useSWR from "swr";
-
-import { getTracerServerUrl, getPageTitle, getTokenInfo, useChainId, useENS, formatTimeTill, REFERRALS_SELECTED_TAB_KEY, isHashZero, useLocalStorageSerializeKey, REFERRAL_CODE_KEY, bigNumberify } from "../../Helpers";
+import { getPageTitle, useChainId, useENS, REFERRALS_SELECTED_TAB_KEY, isHashZero, useLocalStorageSerializeKey, REFERRAL_CODE_KEY, bigNumberify } from "../../Helpers";
 import { useWeb3React } from "@web3-react/core";
-import { registerReferralCode, useCodeOwner, useInfoTokens, useReferrerTier, useUserReferralCode } from "../../Api";
 import * as Styles from "./Referrals.styles";
 import { ReferralsSwitch } from "./ViewSwitch";
 import CreateCodeModal from "./CreateCodeModal";
 import EnterCodeModal from "./EnterCodeModal";
+import EditCodeModal from "./EditCodeModal";
 
 import SEO from "../../components/Common/SEO";
 import TraderRebateStats from "./TraderRebateStats";
 import AccountBanner from "./AccountBanner";
 import ReferralCodesTable from "./ReferralCodesTable";
 import { useLocalStorage } from "react-use";
-import { decodeReferralCode, encodeReferralCode, useReferralsData } from "../../Api/referrals";
-import Loader from "../../components/Common/Loader";
+import { decodeReferralCode, useReferralsData, useReferrerTier, useUserReferralCode, useCodeOwner } from "../../Api/referrals";
 
 const REFERRAL_DATA_MAX_TIME = 60000 * 5; // 5 minutes
 export function isRecentReferralCodeNotExpired(referralCodeInfo) {
@@ -39,29 +36,30 @@ const CommissionsHeader = () => (
   </div>
 );
 
+export const COMMISSIONS = "Commissions";
+export const REBATES = "Rebates";
+
 export default function Referral(props) {
   const { active, account, library, chainId: chainIdWithoutLocalStorage, pendingTxns, setPendingTxns } = useWeb3React();
   const { chainId } = useChainId();
   const { ensName } = useENS(account);
-  const { data: referralsData, loading } = useReferralsData(chainIdWithoutLocalStorage, account);
+  const { data: referralsData } = useReferralsData(chainIdWithoutLocalStorage, account);
   const [recentlyAddedCodes, setRecentlyAddedCodes] = useLocalStorageSerializeKey([chainId, "REFERRAL", account], []);
   const { userReferralCode } = useUserReferralCode(library, chainId, account);
   const { codeOwner } = useCodeOwner(library, chainId, account, userReferralCode);
   const { referrerTier: traderTier } = useReferrerTier(library, chainId, codeOwner);
   const userReferralCodeInLocalStorage = window.localStorage.getItem(REFERRAL_CODE_KEY);
 
-  const { connectWallet, trackPageWithTraits, trackAction, analytics } = props;
-  const [currentView, setCurrentView] = useLocalStorage(REFERRALS_SELECTED_TAB_KEY, "Rebates");
+  const { connectWallet, trackAction } = props;
+  const [currentView, setCurrentView] = useLocalStorage(REFERRALS_SELECTED_TAB_KEY, REBATES);
   const [isEnterCodeModalVisible, setIsEnterCodeModalVisible] = useState(false);
   const [isCreateCodeModalVisible, setIsCreateCodeModalVisible] = useState(false);
 
-  const [hasActivatedReferral, setHasActivatedReferral] = useState(false);
+  const [isEditCodeModalVisible, setIsEditCodeModalVisible] = useState(false);
 
-  const [selectedWeek, setSelectedWeek] = useState("latest");
-
-  const switchView = useCallback(() => {
-    setCurrentView(currentView === "Commissions" ? "Rebates" : "Commissions");
-  }, [currentView]);
+  const switchView = () => {
+    setCurrentView(currentView === COMMISSIONS ? REBATES : COMMISSIONS);
+  }
 
   let referralCodeInString;
   if (userReferralCode && !isHashZero(userReferralCode)) {
@@ -72,20 +70,10 @@ export default function Referral(props) {
     referralCodeInString = decodeReferralCode(userReferralCodeInLocalStorage);
   }
 
-  function handleCreateReferralCode(code) {
-    const referralCodeHex = encodeReferralCode(code);
-    return registerReferralCode(chainId, referralCodeHex, {
-      library,
-      sentMsg: "Referral code submitted!",
-      failMsg: "Referral code creation failed.",
-      pendingTxns,
-    });
-  }
 
-
-  let cumulativeStats, referrerTotalStats, rebateDistributions, referrerTierInfo
+  let cumulativeStats, referrerTotalStats, referrerTierInfo /*, rebateDistributions */;
   if (referralsData) {
-    ({ cumulativeStats, referrerTotalStats, rebateDistributions, referrerTierInfo } = referralsData);
+    ({ cumulativeStats, referrerTotalStats, referrerTierInfo /*, rebateDistributions */} = referralsData);
   }
 
   const finalReferrerTotalStats = recentlyAddedCodes.filter(isRecentReferralCodeNotExpired).reduce((acc, cv) => {
@@ -135,27 +123,39 @@ export default function Referral(props) {
         isEnterCodeModalVisible={isEnterCodeModalVisible}
         setIsEnterCodeModalVisible={setIsEnterCodeModalVisible}
       />
+      <EditCodeModal
+        active={active}
+        chainId={chainId}
+        library={library}
+        connectWallet={connectWallet}
+        isEditCodeModalVisible={isEditCodeModalVisible}
+        setIsEditCodeModalVisible={setIsEditCodeModalVisible}
+        referralCodeInString={referralCodeInString}
+        pendingTxns={pendingTxns}
+        setPendingTxns={setPendingTxns}
+      />
       <CreateCodeModal
         active={active}
         chainId={chainId}
+        library={library}
         connectWallet={connectWallet}
         isCreateCodeModalVisible={isCreateCodeModalVisible}
         setIsCreateCodeModalVisible={setIsCreateCodeModalVisible}
-        handleCreateReferralCode={handleCreateReferralCode}
         recentlyAddedCodes={recentlyAddedCodes}
         setRecentlyAddedCodes={setRecentlyAddedCodes}
+        pendingTxns={pendingTxns}
+        setPendingTxns={setPendingTxns}
       />
       <Styles.StyledReferralPage className="default-container page-layout">
         {
           {
-            Rebates: <RebatesHeader />,
-            Commissions: <CommissionsHeader />,
+            [REBATES]: <RebatesHeader />,
+            [COMMISSIONS]: <CommissionsHeader />,
           }[currentView]
         }
         <ReferralsSwitch
           switchView={switchView}
           currentView={currentView}
-          setSelectedWeek={setSelectedWeek}
           trackAction={trackAction}
         />
         <Styles.PersonalReferralContainer>
@@ -176,25 +176,23 @@ export default function Referral(props) {
           />
           <TraderRebateStats
             active={active}
-            setSelectedWeek={setSelectedWeek}
             connectWallet={connectWallet}
-            currentView={currentView}
+            hidden={currentView === COMMISSIONS}
             trackAction={trackAction}
-            hasActivatedReferral={hasActivatedReferral}
+            referralCodeInString={referralCodeInString}
             setIsEnterCodeModalVisible={setIsEnterCodeModalVisible}
+            setIsEditCodeModalVisible={setIsEditCodeModalVisible}
+            traderTier={traderTier}
           />
           <ReferralCodesTable
             chainId={chainId}
             active={active}
             connectWallet={connectWallet}
-            currentView={currentView}
+            hidden={currentView === REBATES}
             trackAction={trackAction}
-            setSelectedWeek={setSelectedWeek}
             setIsCreateCodeModalVisible={setIsCreateCodeModalVisible}
             hasCreatedCode={hasCreatedCode}
-            handleCreateReferralCode={handleCreateReferralCode}
-            referralsData={referralsData}
-            recentlyAddedCodes={recentlyAddedCodes}
+            finalReferrerTotalStats={finalReferrerTotalStats}
           />
         </Styles.PersonalReferralContainer>
       </Styles.StyledReferralPage>

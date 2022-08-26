@@ -1,7 +1,7 @@
 import React from "react";
 import Davatar from "@davatar/react";
 import * as Styles from "./Referrals.styles";
-import { ETH_DECIMALS, formatAmount, shortenAddress, USD_DECIMALS, copyReferralCode, getTierIdDisplay, TIER_DISCOUNT_INFO } from "../../Helpers";
+import { formatAmount, shortenAddress, USD_DECIMALS, copyReferralCode, getTierIdDisplay, TIER_DISCOUNT_INFO } from "../../Helpers";
 import CopyIcon from "../../img/copy.svg";
 import Tooltip from "../../components/Tooltip/Tooltip";
 
@@ -21,8 +21,6 @@ export default function AccountBanner(props) {
     referrerRebates,
     referrerVolume
   } = props;
-
-  const DUMMY_CODE = "helloworld13";
 
   const getInfo = () => {
     if (!active) {
@@ -47,10 +45,7 @@ export default function AccountBanner(props) {
               <div className="label">Active Code</div>
               <Styles.FlexContainer>
                 <span>{referralCodeInString}</span>
-                {
-                  /*<BiEditAlt onClick={open} />*/
-                }
-                <Styles.CopyButton onClick={() => copyReferralCode(DUMMY_CODE)}>
+                <Styles.CopyButton onClick={() => copyReferralCode(referralCodeInString)}>
                   <img src={CopyIcon} alt="Copy" />{" "}
                 </Styles.CopyButton>
               </Styles.FlexContainer>
