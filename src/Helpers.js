@@ -1582,7 +1582,11 @@ export function useENS(address) {
       if (address) {
         const provider = new ethers.providers.JsonRpcProvider("https://rpc.ankr.com/eth");
         const name = await provider.lookupAddress(address.toLowerCase());
-        if (name) setENSName(name);
+        if (name) {
+          setENSName(name)
+        } else {
+          setENSName()
+        };
       }
     }
     resolveENS();
@@ -3047,7 +3051,7 @@ export function copyToClipboard(item) {
 
 /* REFERRAL CODE HELPERS */
 export function copyReferralCode(code) {
-  copyToClipboard(`https://mycelium.xyz?${REFERRAL_CODE_QUERY_PARAMS}=${code}`);
+  copyToClipboard(`https://swaps.mycelium.xyz?${REFERRAL_CODE_QUERY_PARAMS}=${code}`);
   helperToast.success("Referral link copied to your clipboard");
 }
 
