@@ -104,7 +104,7 @@ export default function AccountBanner(props) {
     <Styles.AccountBanner className="App-card">
       {active && (
         <Styles.AccountBannerAddresses>
-          {account ? <Davatar size={40} address={account} /> : <Styles.EmptyAvatar />}
+          <Davatar size={40} address={account} />
           <Styles.AppCardTitle>{ensName || shortenAddress(account, 13)}</Styles.AppCardTitle>
           <Styles.AccountBannerShortenedAddress> Wallet address </Styles.AccountBannerShortenedAddress>
         </Styles.AccountBannerAddresses>
@@ -115,9 +115,6 @@ export default function AccountBanner(props) {
           <Styles.AccountBannerShortenedAddress> Wallet not connected </Styles.AccountBannerShortenedAddress>
         </Styles.AccountBannerAddresses>
       )}
-      {
-
-      }
       <Styles.AccountBannerReferral>
         {getInfo()}
       </Styles.AccountBannerReferral>
