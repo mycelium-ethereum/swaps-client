@@ -829,8 +829,13 @@ function useMYCPriceFromMainnet(active) {
 
 function useMYCPriceFromArbitrum(library, active) {
   // liquidity is too low for uniswap on arbitrum can use tcr for now
+<<<<<<< HEAD
   // const poolAddress = getContract(ARBITRUM, "UniswapTcrEthPool");
   const poolAddress = getContract(ARBITRUM, "UniswapMycEthPool");
+=======
+  const poolAddress = getContract(ARBITRUM, "UniswapTcrEthPool");
+  // const poolAddress = getContract(ARBITRUM, "UniswapMycEthPool");
+>>>>>>> 08ddb26799d2439ac67047b706a41cd6d8326d77
   const { data: uniPoolSlot0, mutate: updateUniPoolSlot0 } = useSWR(
     [`StakeV2:uniPoolSlot0:${active}`, ARBITRUM, poolAddress, "slot0"],
     {
