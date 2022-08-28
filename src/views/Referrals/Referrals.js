@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 
-import { getPageTitle, useChainId, useENS, REFERRALS_SELECTED_TAB_KEY, isHashZero, useLocalStorageSerializeKey, REFERRAL_CODE_KEY, bigNumberify } from "../../Helpers";
+import { ETH_DECIMALS, expandDecimals, fetcher, getPageTitle, useChainId, useENS, REFERRALS_SELECTED_TAB_KEY, isHashZero, useLocalStorageSerializeKey, REFERRAL_CODE_KEY, bigNumberify, getTracerServerUrl, formatTimeTill, getTokenInfo } from "../../Helpers";
 import { useWeb3React } from "@web3-react/core";
 import * as Styles from "./Referrals.styles";
 import CreateCodeModal from "./CreateCodeModal";
@@ -10,10 +10,16 @@ import EditCodeModal from "./EditCodeModal";
 import SEO from "../../components/Common/SEO";
 import ViewSwitch from "../../components/ViewSwitch/ViewSwitch";
 import TraderRebateStats from "./TraderRebateStats";
+import ReferralRewards from "./ReferralRewards";
 import AccountBanner from "./AccountBanner";
 import ReferralCodesTable from "./ReferralCodesTable";
 import { useLocalStorage } from "react-use";
 import { decodeReferralCode, useReferralsData, useReferrerTier, useUserReferralCode, useCodeOwner } from "../../Api/referrals";
+import useSWR from "swr";
+import { ethers } from "ethers";
+
+import FeeDistributorReader from "../../abis/FeeDistributorReader.json";
+import { getContract } from "../../Addresses";
 
 const REFERRAL_DATA_MAX_TIME = 60000 * 5; // 5 minutes
 export function isRecentReferralCodeNotExpired(referralCodeInfo) {
@@ -40,6 +46,7 @@ export const COMMISSIONS = "Commissions";
 export const REBATES = "Rebates";
 
 export default function Referral(props) {
+  const { connectWallet, trackAction, infoTokens } = props;
   const { active, account, library, chainId: chainIdWithoutLocalStorage, pendingTxns, setPendingTxns } = useWeb3React();
   const { chainId } = useChainId();
   const { ensName } = useENS(account);
@@ -50,10 +57,11 @@ export default function Referral(props) {
   const { referrerTier: tradersTier } = useReferrerTier(library, chainId, codeOwner);
   const userReferralCodeInLocalStorage = window.localStorage.getItem(REFERRAL_CODE_KEY);
 
-  const { connectWallet, trackAction } = props;
   const [currentView, setCurrentView] = useLocalStorage(REFERRALS_SELECTED_TAB_KEY, REBATES);
   const [isEnterCodeModalVisible, setIsEnterCodeModalVisible] = useState(false);
   const [isCreateCodeModalVisible, setIsCreateCodeModalVisible] = useState(false);
+  const [selectedWeek, setSelectedWeek] = useState("latest");
+  const [nextRewards, setNextRewards] = useState();
 
   const [isEditCodeModalVisible, setIsEditCodeModalVisible] = useState(false);
 
@@ -64,6 +72,83 @@ export default function Referral(props) {
         buttonName: "Referral panel",
         view: currentView === "Commissions" ? "Rebates" : "Commissions",
       });
+  }
+
+  function handleClaim () {
+    // TODO handle claim
+  }
+
+  const feeDistributor = getContract(chainId, "FeeDistributor");
+  const feeDistributorReader = getContract(chainId, "FeeDistributorReader");
+
+  // Fetch all week data from server
+  const { data: allWeeksRewardsData, error: failedFetchingRewards } = useSWR([getTracerServerUrl(chainId, "/rewards")], {
+    fetcher: (...args) => fetch(...args).then((res) => res.json()),
+  });
+
+  // Fetch only the latest week's data from server
+  const { data: currentRewardWeek, error: failedFetchingWeekRewards } = useSWR(
+    [getTracerServerUrl(chainId, "/rewards"), selectedWeek],
+    {
+      fetcher: (url, week) => fetch(`${url}&week=${week}`).then((res) => res.json()),
+    }
+  );
+
+  const { data: hasClaimed } = useSWR(
+    [`Rewards:claimed:${active}`, chainId, feeDistributorReader, "getUserClaimed", feeDistributor, account ?? ethers.constants.AddressZero, allWeeksRewardsData?.length ?? 1],
+    {
+      fetcher: fetcher(library, FeeDistributorReader),
+    }
+  );
+
+  useEffect(() => {
+    if (!!allWeeksRewardsData) {
+      const ends = allWeeksRewardsData.map((week) => Number(week.end));
+      const max = Math.max(...ends);
+      if (!Number.isNaN(max)) {
+        setNextRewards(max)
+      }
+    }
+  }, [allWeeksRewardsData]);
+
+  // Get volume, position and reward from user week data
+  const userWeekData = useMemo(() => {
+    if (!currentRewardWeek) {
+      return undefined;
+    }
+    const leaderBoardIndex = currentRewardWeek.traders?.findIndex((trader) => trader.user_address.toLowerCase() === account?.toLowerCase());
+    let traderData
+    if (leaderBoardIndex && leaderBoardIndex >= 0) {
+      traderData = currentRewardWeek.traders[leaderBoardIndex];
+    }
+    // trader's data found
+    if (traderData) {
+      const positionReward = ethers.BigNumber.from(traderData.reward);
+      const degenReward = ethers.BigNumber.from(traderData.degen_reward);
+      return {
+        volume: ethers.BigNumber.from(traderData.volume),
+        totalReward: positionReward.add(degenReward),
+        position: leaderBoardIndex + 1,
+        positionReward,
+        degenReward,
+      };
+    } else {
+      // trader not found but data exists so user has no rewards
+      return {
+        volume: ethers.BigNumber.from(0),
+        totalReward: ethers.BigNumber.from(0),
+        positionReward: ethers.BigNumber.from(0),
+        degenReward: ethers.BigNumber.from(0),
+        rewardAmountUsd: ethers.BigNumber.from(0),
+      };
+    }
+  }, [account, currentRewardWeek]);
+
+  const eth = getTokenInfo(infoTokens, ethers.constants.AddressZero);
+  const ethPrice = eth?.maxPrimaryPrice;
+
+  if (ethPrice && userWeekData?.totalReward) {
+    userWeekData.rewardAmountUsd = userWeekData.totalReward?.mul(ethPrice).div(expandDecimals(1, ETH_DECIMALS));
   }
 
 
@@ -112,6 +197,34 @@ export default function Referral(props) {
   //     setPageTracked(true); // Prevent Page function being called twice
   //   }
   // }, [currentReferralWeek, pageTracked, trackPageWithTraits, analytics]);
+
+  let rewardsMessage = "";
+  if (!currentRewardWeek) {
+    rewardsMessage = "Fetching rewards";
+  } else if (!!failedFetchingWeekRewards) {
+    rewardsMessage = "Failed fetching current week rewards";
+  } else if (!!failedFetchingRewards) {
+    rewardsMessage = "Failed fetching rewards";
+  } else {
+    if (currentRewardWeek?.length === 0) {
+      rewardsMessage = "No rewards";
+    } else if (selectedWeek === "latest") {
+      rewardsMessage = `Week ${Number.parseInt(currentRewardWeek.week) + 1}`;
+    } else {
+      rewardsMessage = `Week ${selectedWeek + 1}`;
+    }
+  }
+
+  let timeTillRewards;
+  if (nextRewards) {
+    timeTillRewards = formatTimeTill(nextRewards / 1000);
+  }
+
+  const isLatestWeek = selectedWeek === "latest";
+  let hasClaimedWeek
+  if (selectedWeek !== 'latest' && hasClaimed) {
+    hasClaimedWeek = hasClaimed[selectedWeek]
+  }
   
   return (
     <>
@@ -179,26 +292,43 @@ export default function Referral(props) {
             referrerRebates={referrerRebates}
             referrerVolume={referrerVolume}
           />
-          <TraderRebateStats
-            active={active}
-            connectWallet={connectWallet}
-            hidden={currentView === COMMISSIONS}
-            trackAction={trackAction}
-            referralCodeInString={referralCodeInString}
-            setIsEnterCodeModalVisible={setIsEnterCodeModalVisible}
-            setIsEditCodeModalVisible={setIsEditCodeModalVisible}
-            tradersTier={tradersTier}
-          />
-          <ReferralCodesTable
-            chainId={chainId}
-            active={active}
-            connectWallet={connectWallet}
-            hidden={currentView === REBATES}
-            trackAction={trackAction}
-            setIsCreateCodeModalVisible={setIsCreateCodeModalVisible}
-            hasCreatedCode={hasCreatedCode}
-            finalReferrerTotalStats={finalReferrerTotalStats}
-          />
+          {currentView === REBATES && 
+            <TraderRebateStats
+              active={active}
+              connectWallet={connectWallet}
+              trackAction={trackAction}
+              referralCodeInString={referralCodeInString}
+              setIsEnterCodeModalVisible={setIsEnterCodeModalVisible}
+              setIsEditCodeModalVisible={setIsEditCodeModalVisible}
+              tradersTier={tradersTier}
+            />
+          }
+          {currentView === COMMISSIONS &&
+            <ReferralCodesTable
+              chainId={chainId}
+              active={active}
+              connectWallet={connectWallet}
+              trackAction={trackAction}
+              setIsCreateCodeModalVisible={setIsCreateCodeModalVisible}
+              hasCreatedCode={hasCreatedCode}
+              finalReferrerTotalStats={finalReferrerTotalStats}
+            />
+          }
+          {userWeekData &&
+            <ReferralRewards
+              active={active}
+              connectWallet={connectWallet}
+              trackAction={trackAction}
+              userWeekData={userWeekData}
+              allWeeksRewardsData={allWeeksRewardsData}
+              latestWeek={isLatestWeek}
+              timeTillRewards={timeTillRewards}
+              rewardsMessage={rewardsMessage}
+              setSelectedWeek={setSelectedWeek}
+              hasClaimed={hasClaimedWeek}
+              handleClaim={handleClaim}
+            />
+          }
         </Styles.PersonalReferralContainer>
       </Styles.StyledReferralPage>
     </>

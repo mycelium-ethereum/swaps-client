@@ -3,8 +3,8 @@ import { ETH_DECIMALS, formatAmount, shortenAddress, USD_DECIMALS, formatTimeTil
 import * as Styles from "./Rewards.styles";
 import Davatar from '@davatar/react';
 import { EmptyAvatar } from './Rewards.styles'
-import WeekDropdown from "./WeekDropdown";
 import cx from "classnames";
+import RewardsWeekSelect from "../../components/RewardsWeekSelect/RewardsWeekSelect";
 
 export default function TraderRewards(props) {
   const {
@@ -28,7 +28,10 @@ export default function TraderRewards(props) {
     hasClaimed
   } = props;
 
-  const timeTillRewards = formatTimeTill(nextRewards / 1000);
+  let timeTillRewards;
+  if (nextRewards) {
+    timeTillRewards = formatTimeTill(nextRewards / 1000);
+  }
 
   return (
     <Styles.PersonalRewardsContainer hidden={currentView === "Leaderboard"}>
@@ -69,21 +72,13 @@ export default function TraderRewards(props) {
       </Styles.AccountBanner>
       <Styles.RewardsData className="App-card">
         <Styles.AppCardTitle>Rewards data</Styles.AppCardTitle>
-        <Styles.RewardsWeekSelect>
-          {!!allWeeksRewardsData && (
-            <WeekDropdown
-              allWeeksRewardsData={allWeeksRewardsData}
-              setSelectedWeek={setSelectedWeek}
-              rewardsMessage={rewardsMessage}
-              trackAction={trackAction}
-            />
-          )}
-          {nextRewards && (
-            <Styles.RewardsWeekNextRewards>
-              Next rewards in <Styles.RewardsWeekCountdown>{timeTillRewards}</Styles.RewardsWeekCountdown>
-            </Styles.RewardsWeekNextRewards>
-          )}
-        </Styles.RewardsWeekSelect>
+        <RewardsWeekSelect
+            allWeeksRewardsData={allWeeksRewardsData}
+            setSelectedWeek={setSelectedWeek}
+            rewardsMessage={rewardsMessage}
+            trackAction={trackAction}
+            timeTillRewards={timeTillRewards}
+        />
         <Styles.RewardsDataBoxes>
           <Styles.RewardsDataBox>
             <Styles.RewardsDataBoxTitle>Volume Traded </Styles.RewardsDataBoxTitle>

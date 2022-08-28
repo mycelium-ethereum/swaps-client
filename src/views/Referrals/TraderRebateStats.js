@@ -11,11 +11,10 @@ export default function TraderRebateStats(props) {
     setIsEditCodeModalVisible,
     referralCodeInString,
     tradersTier,
-    hidden
   } = props;
 
   return (
-    <Styles.ReferralData className="App-card" hidden={hidden}>
+    <Styles.ReferralData className="App-card">
       {referralCodeInString ? (
         <Styles.InputCodeText>
           <Styles.AppCardTitle>Active code: {referralCodeInString}</Styles.AppCardTitle>

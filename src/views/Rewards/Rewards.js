@@ -4,7 +4,7 @@ import useSWR from "swr";
 
 import { getTracerServerUrl, getPageTitle, getTokenInfo, useChainId, useENS, fetcher, expandDecimals, ETH_DECIMALS, helperToast, useLocalStorageSerializeKey } from "../../Helpers";
 import { useWeb3React } from "@web3-react/core";
-import { callContract, useInfoTokens } from "../../Api";
+import { callContract } from "../../Api";
 import { ethers } from "ethers";
 import TraderRewards from "./TraderRewards";
 import Leaderboard from "./Leaderboard";
@@ -16,7 +16,7 @@ import { getContract } from "../../Addresses";
 import FeeDistributor from "../../abis/FeeDistributor.json";
 import FeeDistributorReader from "../../abis/FeeDistributorReader.json";
 import ViewSwitch from "../../components/ViewSwitch/ViewSwitch";
-import WeekDropdown from "./WeekDropdown";
+import { WeekDropdown  }from "../../components/RewardsWeekSelect/RewardsWeekSelect";
 
 const PersonalHeader = () => (
   <div className="Page-title-section mt-0">
@@ -33,7 +33,7 @@ const LeaderboardHeader = () => (
 );
 
 export default function Rewards(props) {
-  const { connectWallet, trackPageWithTraits, trackAction, analytics, setPendingTxns } = props;
+  const { connectWallet, trackPageWithTraits, trackAction, analytics, setPendingTxns, infoTokens } = props;
 
   const { chainId } = useChainId();
   const { active, account, library } = useWeb3React();
@@ -52,8 +52,6 @@ export default function Rewards(props) {
   const [pageTracked, setPageTracked] = useState(false);
   const [isClaiming, setIsClaiming] = useState(false);
   const [nextRewards, setNextRewards] = useState();
-
-  const { infoTokens } = useInfoTokens(library, chainId, active, undefined, undefined);
 
   const feeDistributor = getContract(chainId, "FeeDistributor");
   const feeDistributorReader = getContract(chainId, "FeeDistributorReader");

@@ -6,7 +6,6 @@ import { copyReferralCode, formatAmount, USD_DECIMALS } from "../../Helpers";
 export default function ReferralCodesTable(props) {
   const {
     active,
-    hidden,
     connectWallet,
     setIsCreateCodeModalVisible,
     finalReferrerTotalStats,
@@ -17,7 +16,7 @@ export default function ReferralCodesTable(props) {
   };
 
   return (
-    <div hidden={hidden}>
+    <div>
       {!!finalReferrerTotalStats && <Styles.ReferralData className="App-card">
         {finalReferrerTotalStats?.length ? (
           <>

@@ -920,6 +920,7 @@ function FullApp() {
                 trackPageWithTraits={trackPageWithTraits}
                 trackAction={trackAction}
                 analytics={analytics}
+                infoTokens={infoTokens}
                 setPendingTxns={setPendingTxns}
               />
             </Route>
@@ -929,6 +930,7 @@ function FullApp() {
                 trackPageWithTraits={trackPageWithTraits}
                 trackAction={trackAction}
                 analytics={analytics}
+                infoTokens={infoTokens}
                 pendingTxns={pendingTxns}
                 setPendingTxns={setPendingTxns}
               />

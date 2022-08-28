@@ -1,10 +1,37 @@
 import React from "react";
 import { Menu } from "@headlessui/react";
-import * as Styles from "./Rewards.styles";
+import * as Styles from "./RewardsWeekSelect.styles";
 import { FaChevronDown } from "react-icons/fa";
 import cx from "classnames";
 
-export default function WeekDropdown(props) {
+export default function RewardsWeekSelect({
+  timeTillRewards,
+  allWeeksRewardsData,
+  setSelectedWeek,
+  trackAction,
+  rewardsMessage
+}) {
+
+  return (
+      <Styles.RewardsWeekSelect>
+        {!!allWeeksRewardsData && (
+          <WeekDropdown
+            allWeeksRewardsData={allWeeksRewardsData}
+            setSelectedWeek={setSelectedWeek}
+            rewardsMessage={rewardsMessage}
+            trackAction={trackAction}
+          />
+        )}
+        {timeTillRewards && (
+          <Styles.RewardsWeekNextRewards>
+            Next rewards in <Styles.RewardsWeekCountdown>{timeTillRewards}</Styles.RewardsWeekCountdown>
+          </Styles.RewardsWeekNextRewards>
+        )}
+      </Styles.RewardsWeekSelect>
+  )
+}
+
+export function WeekDropdown(props) {
   const { allWeeksRewardsData, setSelectedWeek, rewardsMessage, trackAction } = props;
 
   return (
