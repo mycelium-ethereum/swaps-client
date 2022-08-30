@@ -20,7 +20,7 @@ export default function Rewards (props) {
     handleClaim,
     timeTillRewards,
     rewardsMessage,
-    setSelectedRound
+    setSelectedRound,
   } = props;
 
   return (

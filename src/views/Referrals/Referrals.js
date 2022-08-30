@@ -116,18 +116,19 @@ export default function Referral(props) {
     if (!currentRewardRound) {
       return undefined;
     }
-    const leaderBoardIndex = currentRewardRound.traders?.findIndex((trader) => trader.user_address.toLowerCase() === account?.toLowerCase());
+    const leaderBoardIndex = currentRewardRound.rewards?.findIndex((trader) => trader.user_address.toLowerCase() === account?.toLowerCase());
     let traderData
-    if (leaderBoardIndex && leaderBoardIndex >= 0) {
-      traderData = currentRewardRound.traders[leaderBoardIndex];
+    if (leaderBoardIndex !== undefined && leaderBoardIndex >= 0) {
+      traderData = currentRewardRound.rewards[leaderBoardIndex];
     }
+
     // trader's data found
     if (traderData) {
       const commissions = ethers.BigNumber.from(traderData.commissions);
       const rebates = ethers.BigNumber.from(traderData.rebates);
 
       return {
-        volume: ethers.BigNumber.from(traderData.volume),
+        volume: ethers.BigNumber.from(traderData.commissions_volume),
         totalReward: commissions.add(rebates),
         commissions,
         rebates,
@@ -177,8 +178,8 @@ export default function Referral(props) {
 
   const referrerTier = referrerTierInfo?.tierId;
   let referrerRebates = bigNumberify(0);
-  if (cumulativeStats && cumulativeStats.rebates && cumulativeStats.discountUsd) {
-    referrerRebates = cumulativeStats.rebates.sub(cumulativeStats.discountUsd);
+  if (cumulativeStats && cumulativeStats.totalRebateUsd && cumulativeStats.discountUsd) {
+    referrerRebates = cumulativeStats.totalRebateUsd.sub(cumulativeStats.discountUsd);
   }
   let referrerVolume = cumulativeStats?.volume;
 
@@ -225,7 +226,7 @@ export default function Referral(props) {
   if (selectedRound !== 'latest' && hasClaimed) {
     hasClaimedRound = hasClaimed[selectedRound]
   }
-  
+
   return (
     <>
       <SEO

@@ -32,11 +32,12 @@ export default function ReferralCodesTable(props) {
                     <Styles.TableHeading>Total Volume</Styles.TableHeading>
                     <Styles.TableHeading>Traders Referred</Styles.TableHeading>
                     <Styles.TableHeading>Referred Trades</Styles.TableHeading>
-                    <Styles.TableHeading>Total Rebates</Styles.TableHeading>
+                    <Styles.TableHeading>Total Commission</Styles.TableHeading>
                   </tr>
                 </thead>
                 <tbody>
                   {finalReferrerTotalStats?.map((stat) => {
+                    const commission = stat.totalRebateUsd.sub(stat.discountUsd);
                     return (
                       <tr key={stat.referralCode}>
                         <Styles.TableCell leftAlign>
@@ -50,7 +51,7 @@ export default function ReferralCodesTable(props) {
                         <Styles.TableCell>${formatAmount(stat.volume, USD_DECIMALS, 2, true, '0.00')}</Styles.TableCell>
                         <Styles.TableCell>{stat.registeredReferralsCount}</Styles.TableCell>
                         <Styles.TableCell>{stat.trades}</Styles.TableCell>
-                        <Styles.TableCell>${formatAmount(stat.totalRebateUsd, USD_DECIMALS, 2, true, "0.00")}</Styles.TableCell>
+                        <Styles.TableCell>${formatAmount(commission, USD_DECIMALS, 3, true, "0.00")}</Styles.TableCell>
                       </tr>
                     )})}
                 </tbody>
