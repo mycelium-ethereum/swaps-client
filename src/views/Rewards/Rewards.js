@@ -95,7 +95,7 @@ export default function Rewards(props) {
           }
           let unclaimedRewards = totals.unclaimedRewards;
           const userReward = ethers.BigNumber.from(trader.reward).add(trader.degen_reward);
-          if (hasClaimed && hasClaimed[round.round]) {
+          if (hasClaimed && !hasClaimed[round.round]) {
             unclaimedRewards = unclaimedRewards.add(userReward);
           }
           return {
@@ -183,7 +183,7 @@ export default function Rewards(props) {
 
   let unclaimedRewardsUsd, totalRewardAmountUsd;
   if (ethPrice && userData) {
-    unclaimedRewardsUsd = userData.totalRewards.mul(ethPrice).div(expandDecimals(1, ETH_DECIMALS));
+    unclaimedRewardsUsd = userData.unclaimedRewards.mul(ethPrice).div(expandDecimals(1, ETH_DECIMALS));
     totalRewardAmountUsd = userData.totalRewards.mul(ethPrice).div(expandDecimals(1, ETH_DECIMALS));
   }
 
