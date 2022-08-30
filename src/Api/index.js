@@ -83,7 +83,7 @@ export function useMarketMakingFeesSince(chainId, from) {
 
   const to = from + SECONDS_PER_WEEK;
   const query = gql(`{
-    hourlyVolumes (where: { id_gt: ${from}, id_lt: ${to}}) {
+    hourlyVolumes (first: 1000, where: { id_gte: ${from}, id_lt: ${to}}) {
       swap
       liquidation
       mint
