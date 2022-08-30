@@ -45,11 +45,11 @@ const navLinks = [
     path: "/rewards",
     icon: FaAward,
   },
-  {
-    name: "Referrals",
-    path: "/referrals",
-    icon: FaSync,
-  },
+  // {
+    // name: "Referrals",
+    // path: "/referrals",
+    // icon: FaSync,
+  // },
   {
     name: "Docs",
     path: "https://swaps.docs.mycelium.xyz/perpetual-swaps/mycelium-perpetual-swaps",

@@ -230,11 +230,13 @@ function AppHeaderLinks({ small, openSettings, clickCloseIcon, trackAction }) {
           Rewards
         </NavLink>
       </div>
+      {/*
       <div className="App-header-link-container">
         <NavLink exact activeClassName="active" to="/referrals">
           Referrals
         </NavLink>
       </div>
+      */}
       <div className="App-header-link-container">
         <a
           href="https://swaps.docs.mycelium.xyz/perpetual-swaps/mycelium-perpetual-swaps"
