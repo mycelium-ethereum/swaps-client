@@ -141,6 +141,18 @@ export const REFERRAL_CODE_KEY = "MYC-referralCode";
 export const REFERRAL_CODE_QUERY_PARAMS = "ref";
 export const REFERRALS_SELECTED_TAB_KEY = "Referrals-selected-tab";
 export const MAX_REFERRAL_CODE_LENGTH = 20;
+export const REFERRAL_CODE_REGEX = /^\w+$/; // only number, string and underscore is allowed
+export const TIER_REBATE_INFO = {
+  0: 5,
+  1: 10,
+  2: 15,
+};
+
+export const TIER_DISCOUNT_INFO = {
+  0: 5,
+  1: 10,
+  2: 10,
+};
 
 export const TRIGGER_PREFIX_ABOVE = ">";
 export const TRIGGER_PREFIX_BELOW = "<";
@@ -552,7 +564,7 @@ export function getSupplyUrl(route = '/totalSupply') {
   return `https://dev.api.tracer.finance/myc${route}`;
 }
 
-const BASE_TRACER_URL = process.env.REACT_APP_TRACER_API ?? "https://api.tracer.finance";
+const BASE_TRACER_URL = process.env.REACT_APP_TRACER_API ?? "https://dev.api.tracer.finance";
 
 export function getTracerServerUrl(chainId, path) {
   if (!chainId) {
@@ -1570,7 +1582,11 @@ export function useENS(address) {
       if (address) {
         const provider = new ethers.providers.JsonRpcProvider("https://rpc.ankr.com/eth");
         const name = await provider.lookupAddress(address.toLowerCase());
-        if (name) setENSName(name);
+        if (name) {
+          setENSName(name)
+        } else {
+          setENSName()
+        };
       }
     }
     resolveENS();
@@ -3028,3 +3044,35 @@ export function getAnalyticsEventStage(stage) {
       return "Approve";
   }
 }
+
+export function copyToClipboard(item) {
+  navigator.clipboard.writeText(item);
+}
+
+/* REFERRAL CODE HELPERS */
+export function copyReferralCode(code) {
+  copyToClipboard(`https://swaps.mycelium.xyz?${REFERRAL_CODE_QUERY_PARAMS}=${code}`);
+  helperToast.success("Referral link copied to your clipboard");
+}
+
+export function getCodeError(value) {
+  const trimmedValue = value.trim();
+  if (!trimmedValue) return "";
+
+  if (trimmedValue.length > MAX_REFERRAL_CODE_LENGTH) {
+    return `The referral code can't be more than ${MAX_REFERRAL_CODE_LENGTH} characters.`;
+  }
+
+  if (!REFERRAL_CODE_REGEX.test(trimmedValue)) {
+    return "Only letters, numbers and underscores are allowed.";
+  }
+  return "";
+}
+
+export function getTierIdDisplay(tierId) {
+  if (!tierId) {
+    return "";
+  }
+  return Number(tierId) + 1;
+}
+

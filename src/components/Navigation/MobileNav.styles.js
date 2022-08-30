@@ -21,7 +21,7 @@ export const ScrollContainer = styled.div`
   justify-content: space-between;
   overflow: hidden;
   height: 100vh;
-  @media (max-height: 750px) {
+  @media (max-height: 810px) {
     overflow-y: auto;
     overflow-x: hidden;
   }

@@ -67,6 +67,7 @@ import PositionsOverview from "./views/PositionsOverview/PositionsOverview";
 import BuyMlp from "./views/BuyMlp/BuyMlp";
 import SellMlp from "./views/SellMlp/SellMlp";
 import Rewards from "./views/Rewards/Rewards";
+import Referrals from "./views/Referrals/Referrals";
 // import NftWallet from "./views/NftWallet/NftWallet";
 // import BeginAccountTransfer from "./views/BeginAccountTransfer/BeginAccountTransfer";
 // import CompleteAccountTransfer from "./views/CompleteAccountTransfer/CompleteAccountTransfer";
@@ -229,6 +230,13 @@ function AppHeaderLinks({ small, openSettings, clickCloseIcon, trackAction }) {
           Rewards
         </NavLink>
       </div>
+      {/*
+      <div className="App-header-link-container">
+        <NavLink exact activeClassName="active" to="/referrals">
+          Referrals
+        </NavLink>
+      </div>
+      */}
       <div className="App-header-link-container">
         <a
           href="https://swaps.docs.mycelium.xyz/perpetual-swaps/mycelium-perpetual-swaps"
@@ -914,6 +922,18 @@ function FullApp() {
                 trackPageWithTraits={trackPageWithTraits}
                 trackAction={trackAction}
                 analytics={analytics}
+                infoTokens={infoTokens}
+                setPendingTxns={setPendingTxns}
+              />
+            </Route>
+            <Route exact path="/referrals">
+              <Referrals
+                connectWallet={connectWallet}
+                trackPageWithTraits={trackPageWithTraits}
+                trackAction={trackAction}
+                analytics={analytics}
+                infoTokens={infoTokens}
+                pendingTxns={pendingTxns}
                 setPendingTxns={setPendingTxns}
               />
             </Route>

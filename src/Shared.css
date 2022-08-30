@@ -83,6 +83,9 @@ body,
   /* Same as secondary but unsure what it should be so keeping seperate */
   --text-hover: #8b968c;
   --text-navigation: #fff;
+
+  --danger: #191203;
+  --danger-active: #ff5621;
 }
 
 a {
@@ -237,7 +240,7 @@ a.plain {
 }
 
 .default-btn:hover {
-  background: #4f60fc;
+  background: var(--cell-stroke);
 }
 
 /* .default-btn:focus {
@@ -249,7 +252,7 @@ a.plain {
 } */
 
 .default-btn:active {
-  background: #5f6ffd;
+  background: var(--cell-highlight);
   border: none;
   padding-left: 16px;
   padding-right: 16px;
@@ -272,7 +275,7 @@ a.plain {
 }
 
 .default-btn:disabled {
-  background: #2d2e3f 0% 0% no-repeat padding-box;
+  background: var(--action-inactive) 0% 0% no-repeat padding-box;
   color: #ffffff61;
 }
 

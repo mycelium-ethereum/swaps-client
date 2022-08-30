@@ -12,7 +12,6 @@ import Router from "../abis/Router.json";
 import UniPool from "../abis/UniPool.json";
 import Token from "../abis/Token.json";
 import VaultReader from "../abis/VaultReader.json";
-import ReferralStorage from "../abis/ReferralStorage.json";
 
 import { getContract } from "../Addresses";
 import { getConstant } from "../Constants";
@@ -32,7 +31,6 @@ import {
   parseValue,
   expandDecimals,
   getInfoTokens,
-  isAddressZero,
   helperToast,
   getSupplyUrl,
   getTracerServerUrl,
@@ -42,7 +40,7 @@ import {
 } from "../Helpers";
 import { getTokens, getTokenBySymbol, getWhitelistedTokens } from "../data/Tokens";
 
-import { nissohGraphClient, arbitrumGraphClient, avalancheGraphClient, arbitrumTestnetGraphClient } from "./common";
+import { nissohGraphClient, arbitrumGraphClient, arbitrumTestnetGraphClient } from "./common";
 import { SECONDS_PER_WEEK } from "../data/Fees";
 export * from "./prices";
 
@@ -53,9 +51,7 @@ function getMycGraphClient(chainId) {
     return arbitrumGraphClient;
   } else if (chainId === ARBITRUM_TESTNET) {
     return arbitrumTestnetGraphClient;
-  } else if (chainId === AVALANCHE) {
-    return avalancheGraphClient;
-  }
+  } 
   throw new Error(`Unsupported chain ${chainId}`);
 }
 
@@ -773,46 +769,6 @@ export function useTotalMYCInLiquidity() {
   };
 }
 
-export function useUserReferralCode(library, chainId, account) {
-  const referralStorageAddress = getContract(chainId, "ReferralStorage");
-  const { data: userReferralCode, mutate: mutateUserReferralCode } = useSWR(
-    account && [`ReferralStorage:traderReferralCodes`, chainId, referralStorageAddress, "traderReferralCodes", account],
-    {
-      fetcher: fetcher(library, ReferralStorage),
-    }
-  );
-  return {
-    userReferralCode,
-    mutateUserReferralCode,
-  };
-}
-export function useReferrerTier(library, chainId, account) {
-  const referralStorageAddress = getContract(chainId, "ReferralStorage");
-  const { data: referrerTier, mutate: mutateReferrerTier } = useSWR(
-    account && [`ReferralStorage:referrerTiers`, chainId, referralStorageAddress, "referrerTiers", account],
-    {
-      fetcher: fetcher(library, ReferralStorage),
-    }
-  );
-  return {
-    referrerTier,
-    mutateReferrerTier,
-  };
-}
-export function useCodeOwner(library, chainId, account, code) {
-  const referralStorageAddress = getContract(chainId, "ReferralStorage");
-  const { data: codeOwner, mutate: mutateCodeOwner } = useSWR(
-    account && code && [`ReferralStorage:codeOwners`, chainId, referralStorageAddress, "codeOwners", code],
-    {
-      fetcher: fetcher(library, ReferralStorage),
-    }
-  );
-  return {
-    codeOwner,
-    mutateCodeOwner,
-  };
-}
-
 function useMYCPriceFromMainnet(active) {
   const poolAddress = getContract(ETHEREUM, "UniswapMycEthPool");
   const { data: mycEthUniPoolSlot0, mutate: updateTcrEthUniPoolSlot0 } = useSWR(
@@ -937,32 +893,6 @@ export async function approvePlugin(
   });
 }
 
-export async function registerReferralCode(chainId, referralCode, { library, ...props }) {
-  const referralStorageAddress = getContract(chainId, "ReferralStorage");
-  const contract = new ethers.Contract(referralStorageAddress, ReferralStorage.abi, library.getSigner());
-  return callContract(chainId, contract, "registerCode", [referralCode], { ...props });
-}
-export async function setTraderReferralCodeByUser(chainId, referralCode, { library, ...props }) {
-  const referralStorageAddress = getContract(chainId, "ReferralStorage");
-  const contract = new ethers.Contract(referralStorageAddress, ReferralStorage.abi, library.getSigner());
-  const codeOwner = await contract.codeOwners(referralCode);
-  if (isAddressZero(codeOwner)) {
-    helperToast.error("Referral code does not exist");
-    return new Promise((resolve, reject) => {
-      reject();
-    });
-  }
-  return callContract(chainId, contract, "setTraderReferralCodeByUser", [referralCode], {
-    ...props,
-  });
-}
-export async function getReferralCodeOwner(chainId, referralCode) {
-  const referralStorageAddress = getContract(chainId, "ReferralStorage");
-  const provider = getProvider(null, chainId);
-  const contract = new ethers.Contract(referralStorageAddress, ReferralStorage.abi, provider);
-  const codeOwner = await contract.codeOwners(referralCode);
-  return codeOwner;
-}
 
 export async function createSwapOrder(
   chainId,

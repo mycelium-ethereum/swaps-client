@@ -71,7 +71,7 @@ function TableRow({
   handleClaim,
   userRow,
   rewardAmountUsd,
-  latestWeek,
+  latestRound,
   isClaiming,
   hasClaimed
 }) {
@@ -122,7 +122,7 @@ function TableRow({
             "highlight-current": userRow,
           })}
         >
-          {userRow && !totalReward.eq(0) && !latestWeek && hasLoaded && !hasClaimed && (
+          {userRow && !totalReward.eq(0) && !latestRound && hasLoaded && !hasClaimed && (
             <ClaimButton
               disabled={isClaiming}
               onClick={handleClaim}
@@ -141,17 +141,17 @@ function TableRow({
 
 export default function Leaderboard(props) {
   const {
-    weekData,
+    roundData,
     middleRow,
-    userWeekData,
+    userRoundData,
     userAccount,
     ensName,
     currentView,
-    selectedWeek,
+    selectedRound,
     connectWallet,
     trackAction,
     handleClaim,
-    latestWeek,
+    latestRound,
     isClaiming,
     hasClaimed
   } = props;
@@ -161,20 +161,20 @@ export default function Leaderboard(props) {
       <Title>Your rewards</Title>
       <PersonalRewardsTableContainer>
         <RewardsTableBorder />
-        {userAccount && userWeekData && userWeekData.position ? (
+        {userAccount && userRoundData && userRoundData.position ? (
           <RewardsTableWrapper>
             <TableRow
-              position={userWeekData.position}
+              position={userRoundData.position}
               account={userAccount}
               ensName={ensName}
-              volume={userWeekData.volume}
-              totalReward={userWeekData.totalReward}
-              positionReward={userWeekData.positionReward}
-              degenReward={userWeekData.degenReward}
-              rewardAmountUsd={userWeekData.rewardAmountUsd}
+              volume={userRoundData.volume}
+              totalReward={userRoundData.totalReward}
+              positionReward={userRoundData.positionReward}
+              degenReward={userRoundData.degenReward}
+              rewardAmountUsd={userRoundData.rewardAmountUsd}
               userRow={true}
               handleClaim={handleClaim}
-              latestWeek={latestWeek}
+              latestRound={latestRound}
               isClaiming={isClaiming}
               hasClaimed={hasClaimed}
             />
@@ -219,16 +219,16 @@ export default function Leaderboard(props) {
       <RewardsTableContainer>
         <RewardsTableBorder />
         <ScrollContainer>
-          {weekData?.traders?.length > 0 ? (
+          {roundData?.rewards?.length > 0 ? (
             <RewardsTableWrapper>
-              {weekData?.traders?.map(({ user_address, volume, totalReward, positionReward, degenReward, rewardAmountUsd }, index) => {
+              {roundData?.rewards?.map(({ user_address, volume, totalReward, positionReward, degenReward, rewardAmountUsd }, index) => {
                 const isUserRow = user_address === userAccount;
                 return (
                   <>
                     {index === middleRow ? <TopFiftyIndicatorRow /> : null}
                     <TableRow
                       key={user_address}
-                      totalTraders={weekData.traders.length}
+                      totalTraders={roundData.rewards.length}
                       position={index + 1}
                       ensName={isUserRow ? ensName : undefined}
                       account={user_address}
@@ -239,7 +239,7 @@ export default function Leaderboard(props) {
                       rewardAmountUsd={rewardAmountUsd}
                       handleClaim={handleClaim}
                       userRow={isUserRow}
-                      latestWeek={latestWeek}
+                      latestRound={latestRound}
                       isClaiming={isClaiming}
                       hasClaimed={hasClaimed}
                     />
@@ -247,13 +247,13 @@ export default function Leaderboard(props) {
                 )
               })}
             </RewardsTableWrapper>
-          ) : (!weekData?.traders || weekData?.traders?.length === 0) && selectedWeek ? (
+          ) : (!roundData?.rewards || roundData?.rewards?.length === 0) && selectedRound ? (
             <FullWidthText>
-              <p>No data available for Week {selectedWeek}</p>
+              <p>No data available for Round {selectedRound}</p>
             </FullWidthText>
           ) : (
             <FullWidthText>
-              <p>Loading week data...</p>
+              <p>Loading round data...</p>
             </FullWidthText>
           )}
         </ScrollContainer>

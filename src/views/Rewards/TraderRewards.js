@@ -3,8 +3,8 @@ import { ETH_DECIMALS, formatAmount, shortenAddress, USD_DECIMALS, formatTimeTil
 import * as Styles from "./Rewards.styles";
 import Davatar from '@davatar/react';
 import { EmptyAvatar } from './Rewards.styles'
-import WeekDropdown from "./WeekDropdown";
 import cx from "classnames";
+import RewardsRoundSelect from "../../components/RewardsRoundSelect/RewardsRoundSelect";
 
 export default function TraderRewards(props) {
   const {
@@ -15,20 +15,23 @@ export default function TraderRewards(props) {
     totalRewardAmountUsd,
     unclaimedRewardsUsd,
     rewardsMessage,
-    allWeeksRewardsData,
-    setSelectedWeek,
+    allRoundsRewardsData,
+    setSelectedRound,
     connectWallet,
-    userWeekData,
+    userRoundData,
     currentView,
     trackAction,
     nextRewards,
-    latestWeek,
+    latestRound,
     handleClaim,
     isClaiming,
     hasClaimed
   } = props;
 
-  const timeTillRewards = formatTimeTill(nextRewards / 1000);
+  let timeTillRewards;
+  if (nextRewards) {
+    timeTillRewards = formatTimeTill(nextRewards / 1000);
+  }
 
   return (
     <Styles.PersonalRewardsContainer hidden={currentView === "Leaderboard"}>
@@ -69,37 +72,29 @@ export default function TraderRewards(props) {
       </Styles.AccountBanner>
       <Styles.RewardsData className="App-card">
         <Styles.AppCardTitle>Rewards data</Styles.AppCardTitle>
-        <Styles.RewardsWeekSelect>
-          {!!allWeeksRewardsData && (
-            <WeekDropdown
-              allWeeksRewardsData={allWeeksRewardsData}
-              setSelectedWeek={setSelectedWeek}
-              rewardsMessage={rewardsMessage}
-              trackAction={trackAction}
-            />
-          )}
-          {nextRewards && (
-            <Styles.RewardsWeekNextRewards>
-              Next rewards in <Styles.RewardsWeekCountdown>{timeTillRewards}</Styles.RewardsWeekCountdown>
-            </Styles.RewardsWeekNextRewards>
-          )}
-        </Styles.RewardsWeekSelect>
+        <RewardsRoundSelect
+            allRoundsRewardsData={allRoundsRewardsData}
+            setSelectedRound={setSelectedRound}
+            rewardsMessage={rewardsMessage}
+            trackAction={trackAction}
+            timeTillRewards={timeTillRewards}
+        />
         <Styles.RewardsDataBoxes>
           <Styles.RewardsDataBox>
             <Styles.RewardsDataBoxTitle>Volume Traded </Styles.RewardsDataBoxTitle>
-            <Styles.LargeText> {`$${formatAmount(userWeekData?.volume, USD_DECIMALS, 2, true)}`}</Styles.LargeText>
+            <Styles.LargeText> {`$${formatAmount(userRoundData?.volume, USD_DECIMALS, 2, true)}`}</Styles.LargeText>
           </Styles.RewardsDataBox>
           <Styles.RewardsDataBox className={cx({ claimable: !hasClaimed })}>
             <Styles.RewardsDataBoxTitle>{hasClaimed ? 'Claimed Rewards' : 'Claimable Rewards'}</Styles.RewardsDataBoxTitle>
             <div>
-              <Styles.LargeText>{`${formatAmount(userWeekData?.totalReward, ETH_DECIMALS, 4, true)} WETH`}</Styles.LargeText>
-              <span> {` ($${formatAmount(userWeekData?.rewardAmountUsd, USD_DECIMALS, 2, true)})`}</span>
+              <Styles.LargeText>{`${formatAmount(userRoundData?.totalReward, ETH_DECIMALS, 4, true)} WETH`}</Styles.LargeText>
+              <span> {` ($${formatAmount(userRoundData?.rewardAmountUsd, USD_DECIMALS, 2, true)})`}</span>
             </div>
           </Styles.RewardsDataBox>
         </Styles.RewardsDataBoxes>
         {active && <Styles.RewardsButton
           className={'App-cta large'}
-          disabled={!userWeekData?.totalReward || userWeekData.totalReward.eq(0) || isClaiming || hasClaimed || hasClaimed === undefined || latestWeek}
+          disabled={!userRoundData?.totalReward || userRoundData.totalReward.eq(0) || isClaiming || hasClaimed || hasClaimed === undefined || latestRound}
           onClick={handleClaim}
         >
           Claim WETH

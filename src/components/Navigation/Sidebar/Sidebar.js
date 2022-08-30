@@ -1,6 +1,16 @@
 import { SideMenu, Logo, NavMenu, MenuItem, SocialLinksMenu, PullTab, LegalMenu } from "./Sidebar.styles";
 import { NavLink } from "react-router-dom";
-import { FaChartLine, FaArrowUp, FaShoppingCart, FaAward, FaBook, FaCoins, FaFile, FaLayerGroup } from "react-icons/fa";
+import {
+  FaChartLine,
+  FaArrowUp,
+  FaShoppingCart,
+  FaAward,
+  FaBook,
+  FaCoins,
+  FaFile,
+  FaLayerGroup,
+  FaSync,
+} from "react-icons/fa";
 
 import logoImg from "../../../img/logo_MYC.svg";
 import gitbookIcon from "../../../img/gitbook.svg";
@@ -35,6 +45,11 @@ const navLinks = [
     path: "/rewards",
     icon: FaAward,
   },
+  // {
+    // name: "Referrals",
+    // path: "/referrals",
+    // icon: FaSync,
+  // },
   {
     name: "Docs",
     path: "https://swaps.docs.mycelium.xyz/perpetual-swaps/mycelium-perpetual-swaps",
