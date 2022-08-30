@@ -59,25 +59,24 @@ export function RoundDropdown(props) {
               <Menu.Items as="div" className="menu-items">
                 {allRoundsRewardsData
                   .sort((a, b) => b.round - a.round)
-                  .sort((a, b) => b.week - a.week)
                   .map((rewardRound, index) => (
                     <Menu.Item>
                       <div
                         className="menu-item large"
                         onClick={() => {
-                          let selectedRound = parseFloat(rewardRound?.round ?? rewardRound.week);
+                          let selectedRound = parseFloat(rewardRound?.round);
                           if (index === 0) {
                             selectedRound = "latest"
                           }
                           setSelectedRound(selectedRound);
                           trackAction &&
                             trackAction("Button clicked", {
-                              buttonName: "Select rewards week",
+                              buttonName: "Select rewards round",
                               weekNo: selectedRound,
                             });
                         }}
                       >
-                        Round {parseFloat(rewardRound?.round ?? rewardRound.week) + 1}
+                        Round {parseFloat(rewardRound?.round) + 1}
                       </div>
                     </Menu.Item>
                   ))}

@@ -21,7 +21,7 @@ import { RoundDropdown }from "../../components/RewardsRoundSelect/RewardsRoundSe
 const PersonalHeader = () => (
   <div className="Page-title-section mt-0">
     <div className="Page-title">Trader Rewards</div>
-    <div className="Page-description">Be in the top 50 % of traders to earn weekly rewards.</div>
+    <div className="Page-description">Be in the top 50 % of traders to earn roundly rewards.</div>
   </div>
 );
 
@@ -39,8 +39,8 @@ export default function Rewards(props) {
   const { active, account, library } = useWeb3React();
   const { ensName } = useENS(account);
 
-  const [selectedWeek, setSelectedWeek] = useLocalStorageSerializeKey(
-    [chainId, "Rewards-selected-week"],
+  const [selectedRound, setSelectedRound] = useLocalStorageSerializeKey(
+    [chainId, "Rewards-selected-round"],
     "latest"
   );
 
@@ -56,21 +56,21 @@ export default function Rewards(props) {
   const feeDistributor = getContract(chainId, "FeeDistributor");
   const feeDistributorReader = getContract(chainId, "FeeDistributorReader");
 
-  // Fetch all week data from server
-  const { data: allWeeksRewardsData, error: failedFetchingRewards } = useSWR([getTracerServerUrl(chainId, "/rewards")], {
+  // Fetch all round data from server
+  const { data: allRoundsRewardsData, error: failedFetchingRewards } = useSWR([getTracerServerUrl(chainId, "/tradingRewards")], {
     fetcher: (...args) => fetch(...args).then((res) => res.json()),
   });
 
-  // Fetch only the latest week's data from server
-  const { data: currentRewardWeek, error: failedFetchingWeekRewards } = useSWR(
-    [getTracerServerUrl(chainId, "/rewards"), selectedWeek],
+  // Fetch only the latest round's data from server
+  const { data: currentRewardRound, error: failedFetchingRoundRewards } = useSWR(
+    [getTracerServerUrl(chainId, "/tradingRewards"), selectedRound],
     {
-      fetcher: (url, week) => fetch(`${url}&week=${week}`).then((res) => res.json()),
+      fetcher: (url, round) => fetch(`${url}&round=${round}`).then((res) => res.json()),
     }
   );
 
   const { data: hasClaimed } = useSWR(
-    [`Rewards:claimed:${active}`, chainId, feeDistributorReader, "getUserClaimed", feeDistributor, account ?? ethers.constants.AddressZero, allWeeksRewardsData?.length ?? 1],
+    [`Rewards:claimed:${active}`, chainId, feeDistributorReader, "getUserClaimed", feeDistributor, account ?? ethers.constants.AddressZero, allRoundsRewardsData?.length ?? 1],
     {
       fetcher: fetcher(library, FeeDistributorReader),
     }
@@ -78,24 +78,24 @@ export default function Rewards(props) {
 
   // Fetch user proof
   const { data: userProof } = useSWR(
-    [getTracerServerUrl(chainId, "/userRewardProof"), selectedWeek, account ?? ethers.constants.AddressZero],
+    [getTracerServerUrl(chainId, "/userRewardProof"), selectedRound, account ?? ethers.constants.AddressZero],
     {
-      fetcher: (url, week, account) => fetch(`${url}&week=${week}&userAddress=${account}`).then((res) => res.json()),
+      fetcher: (url, round, account) => fetch(`${url}&round=${round}&userAddress=${account}`).then((res) => res.json()),
     }
   );
 
   // Get the data for the current user
   const userData = useMemo(
     () =>
-      allWeeksRewardsData?.reduce(
-        (totals, week) => {
-          const trader = week.traders?.find((trader) => trader.user_address.toLowerCase() === account?.toLowerCase());
+      allRoundsRewardsData?.reduce(
+        (totals, round) => {
+          const trader = round.rewards?.find((trader) => trader.user_address.toLowerCase() === account?.toLowerCase());
           if (!trader) {
             return totals;
           }
           let unclaimedRewards = totals.unclaimedRewards;
           const userReward = ethers.BigNumber.from(trader.reward).add(trader.degen_reward);
-          if (hasClaimed && hasClaimed[week.week]) {
+          if (hasClaimed && hasClaimed[round.round]) {
             unclaimedRewards = unclaimedRewards.add(userReward);
           }
           return {
@@ -110,18 +110,18 @@ export default function Rewards(props) {
           unclaimedRewards: ethers.BigNumber.from(0),
         }
       ),
-    [allWeeksRewardsData, hasClaimed, account]
+    [allRoundsRewardsData, hasClaimed, account]
   );
 
-  // Extract week data from full API response
+  // Extract round data from full API response
   const [middleRow, setMiddleRow] = useState();
-  const weekData = useMemo(() => {
-    if (!currentRewardWeek || !!currentRewardWeek?.message) {
+  const roundData = useMemo(() => {
+    if (!currentRewardRound || !!currentRewardRound?.message) {
       setMiddleRow(undefined);
       return undefined;
     }
     let hasSetMiddle = false;
-    const traders = currentRewardWeek.traders?.sort((a, b) => b.volume - a.volume).map((trader, index) => {
+    const rewards = currentRewardRound.rewards?.sort((a, b) => b.volume - a.volume).map((trader, index) => {
       const positionReward = ethers.BigNumber.from(trader.reward);
       const degenReward = ethers.BigNumber.from(trader.degen_reward);
       if (!hasSetMiddle && positionReward.eq(0)) {
@@ -136,20 +136,20 @@ export default function Rewards(props) {
       })
     }); // Sort traders by highest to lowest in volume
     return {
-      ...currentRewardWeek,
-      traders
+      ...currentRewardRound,
+      rewards
     } 
-  }, [currentRewardWeek]);
+  }, [currentRewardRound]);
 
-  // Get volume, position and reward from user week data
-  const userWeekData = useMemo(() => {
-    if (!currentRewardWeek) {
+  // Get volume, position and reward from user round data
+  const userRoundData = useMemo(() => {
+    if (!currentRewardRound) {
       return undefined;
     }
-    const leaderBoardIndex = currentRewardWeek.traders?.findIndex((trader) => trader.user_address.toLowerCase() === account?.toLowerCase());
+    const leaderBoardIndex = currentRewardRound.rewards?.findIndex((trader) => trader.user_address.toLowerCase() === account?.toLowerCase());
     let traderData
     if (leaderBoardIndex && leaderBoardIndex >= 0) {
-      traderData = currentRewardWeek.traders[leaderBoardIndex];
+      traderData = currentRewardRound.rewards[leaderBoardIndex];
     }
     // trader's data found
     if (traderData) {
@@ -172,13 +172,13 @@ export default function Rewards(props) {
         rewardAmountUsd: ethers.BigNumber.from(0),
       };
     }
-  }, [account, currentRewardWeek]);
+  }, [account, currentRewardRound]);
 
   const eth = getTokenInfo(infoTokens, ethers.constants.AddressZero);
   const ethPrice = eth?.maxPrimaryPrice;
 
-  if (ethPrice && userWeekData?.totalReward) {
-    userWeekData.rewardAmountUsd = userWeekData.totalReward?.mul(ethPrice).div(expandDecimals(1, ETH_DECIMALS));
+  if (ethPrice && userRoundData?.totalReward) {
+    userRoundData.rewardAmountUsd = userRoundData.totalReward?.mul(ethPrice).div(expandDecimals(1, ETH_DECIMALS));
   }
 
   let unclaimedRewardsUsd, totalRewardAmountUsd;
@@ -188,19 +188,19 @@ export default function Rewards(props) {
   }
 
   let rewardsMessage = "";
-  if (!currentRewardWeek) {
+  if (!currentRewardRound) {
     rewardsMessage = "Fetching rewards";
-  } else if (!!failedFetchingWeekRewards) {
-    rewardsMessage = "Failed fetching current week rewards";
+  } else if (!!failedFetchingRoundRewards) {
+    rewardsMessage = "Failed fetching current round rewards";
   } else if (!!failedFetchingRewards) {
     rewardsMessage = "Failed fetching rewards";
   } else {
-    if (currentRewardWeek?.length === 0) {
+    if (currentRewardRound?.length === 0) {
       rewardsMessage = "No rewards";
-    } else if (selectedWeek === "latest") {
-      rewardsMessage = `Week ${Number.parseInt(currentRewardWeek.week) + 1}`;
+    } else if (selectedRound === "latest") {
+      rewardsMessage = `Round ${Number.parseInt(currentRewardRound.round) + 1}`;
     } else {
-      rewardsMessage = `Week ${selectedWeek + 1}`;
+      rewardsMessage = `Round ${selectedRound + 1}`;
     }
   }
 
@@ -214,25 +214,25 @@ export default function Rewards(props) {
   };
 
   useEffect(() => {
-    if (!!allWeeksRewardsData) {
-      const ends = allWeeksRewardsData.map((week) => Number(week.end));
+    if (!!allRoundsRewardsData) {
+      const ends = allRoundsRewardsData.map((round) => Number(round.end));
       const max = Math.max(...ends);
       if (!Number.isNaN(max)) {
         setNextRewards(max)
       }
     }
-  }, [allWeeksRewardsData]);
+  }, [allRoundsRewardsData]);
 
   // Segment Analytics Page tracking
   useEffect(() => {
-    if (!pageTracked && currentRewardWeek && analytics) {
+    if (!pageTracked && currentRewardRound && analytics) {
       const traits = {
-        week: currentRewardWeek.key,
+        round: currentRewardRound.key,
       };
       trackPageWithTraits(traits);
       setPageTracked(true); // Prevent Page function being called twice
     }
-  }, [currentRewardWeek, pageTracked, trackPageWithTraits, analytics]);
+  }, [currentRewardRound, pageTracked, trackPageWithTraits, analytics]);
 
   const handleClaim = () => {
     setIsClaiming(true);
@@ -240,8 +240,8 @@ export default function Rewards(props) {
     trackAction("Button clicked", {
       buttonName: "Claim rewards",
     });
-    if (selectedWeek === 'latest') {
-      helperToast.error("Cannot claim rewards before week has ended");
+    if (selectedRound === 'latest') {
+      helperToast.error("Cannot claim rewards before round has ended");
       return;
     }
     if (!userProof) {
@@ -249,7 +249,7 @@ export default function Rewards(props) {
       return;
     }
     if (userProof.amount === '0') {
-      helperToast.error(`No rewards for week: ${selectedWeek}`);
+      helperToast.error(`No rewards for round: ${selectedRound}`);
       return;
     }
     if (!!userProof?.message) {
@@ -264,7 +264,7 @@ export default function Rewards(props) {
       [
         userProof.merkleProof, // proof
         userProof.amount, // amount
-        selectedWeek // week
+        selectedRound // round
       ],
       {
         sentMsg: "Claim submitted!",
@@ -278,10 +278,10 @@ export default function Rewards(props) {
       });
   }
 
-  const isLatestWeek = selectedWeek === "latest";
-  let hasClaimedWeek
-  if (selectedWeek !== 'latest' && hasClaimed) {
-    hasClaimedWeek = hasClaimed[selectedWeek]
+  const isLatestRound = selectedRound === "latest";
+  let hasClaimedRound
+  if (selectedRound !== 'latest' && hasClaimed) {
+    hasClaimedRound = hasClaimed[selectedRound]
   }
 
   return (
@@ -303,10 +303,10 @@ export default function Rewards(props) {
           currentView={currentView}
           views={['Personal', 'Leaderboard']}
         >
-          {currentView === "Leaderboard" && !!allWeeksRewardsData ? (
+          {currentView === "Leaderboard" && !!allRoundsRewardsData ? (
             <RoundDropdown
-              allRoundsRewardsData={allWeeksRewardsData}
-              setSelectedRound={setSelectedWeek}
+              allRoundsRewardsData={allRoundsRewardsData}
+              setSelectedRound={setSelectedRound}
               rewardsMessage={rewardsMessage}
             />
           ) : null}
@@ -319,32 +319,32 @@ export default function Rewards(props) {
           totalRewardAmountUsd={totalRewardAmountUsd}
           unclaimedRewardsUsd={unclaimedRewardsUsd}
           rewardsMessage={rewardsMessage}
-          allWeeksRewardsData={allWeeksRewardsData}
-          setSelectedWeek={setSelectedWeek}
+          allRoundsRewardsData={allRoundsRewardsData}
+          setSelectedRound={setSelectedRound}
           connectWallet={connectWallet}
-          userWeekData={userWeekData}
+          userRoundData={userRoundData}
           currentView={currentView}
           trackAction={trackAction}
           nextRewards={nextRewards}
-          latestWeek={isLatestWeek}
+          latestRound={isLatestRound}
           handleClaim={handleClaim}
           isClaiming={isClaiming}
-          hasClaimed={hasClaimedWeek}
+          hasClaimed={hasClaimedRound}
         />
         <Leaderboard
-          weekData={weekData}
+          roundData={roundData}
           middleRow={middleRow}
-          userWeekData={userWeekData}
+          userRoundData={userRoundData}
           userAccount={account}
           ensName={ensName}
           currentView={currentView}
-          selectedWeek={selectedWeek}
+          selectedRound={selectedRound}
           connectWallet={connectWallet}
           trackAction={trackAction}
           handleClaim={handleClaim}
-          latestWeek={isLatestWeek}
+          latestRound={isLatestRound}
           isClaiming={isClaiming}
-          hasClaimed={hasClaimedWeek}
+          hasClaimed={hasClaimedRound}
         />
       </Styles.StyledRewardsPage>
     </>

@@ -133,15 +133,6 @@ export default function Referral(props) {
         commissions,
         rebates,
       };
-    } else {
-      // trader not found but data exists so user has no rewards
-      return {
-        volume: ethers.BigNumber.from(0),
-        totalReward: ethers.BigNumber.from(0),
-        totalRewardUsd: ethers.BigNumber.from(0),
-        rebates: ethers.BigNumber.from(0),
-        commissions: ethers.BigNumber.from(0),
-      };
     }
   }, [account, currentRewardRound]);
 
