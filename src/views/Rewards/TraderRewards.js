@@ -4,7 +4,7 @@ import * as Styles from "./Rewards.styles";
 import Davatar from '@davatar/react';
 import { EmptyAvatar } from './Rewards.styles'
 import cx from "classnames";
-import RewardsWeekSelect from "../../components/RewardsWeekSelect/RewardsWeekSelect";
+import RewardsRoundSelect from "../../components/RewardsRoundSelect/RewardsRoundSelect";
 
 export default function TraderRewards(props) {
   const {
@@ -72,9 +72,9 @@ export default function TraderRewards(props) {
       </Styles.AccountBanner>
       <Styles.RewardsData className="App-card">
         <Styles.AppCardTitle>Rewards data</Styles.AppCardTitle>
-        <RewardsWeekSelect
-            allWeeksRewardsData={allWeeksRewardsData}
-            setSelectedWeek={setSelectedWeek}
+        <RewardsRoundSelect
+            allRoundsRewardsData={allWeeksRewardsData}
+            setSelectedRound={setSelectedWeek}
             rewardsMessage={rewardsMessage}
             trackAction={trackAction}
             timeTillRewards={timeTillRewards}

@@ -2,7 +2,7 @@ import React from "react";
 import { ETH_DECIMALS, formatAmount, USD_DECIMALS } from "../../Helpers";
 import * as Styles from "./Referrals.styles";
 import cx from "classnames";
-import RewardsWeekSelect from "../../components/RewardsWeekSelect/RewardsWeekSelect";
+import RewardsRoundSelect from "../../components/RewardsRoundSelect/RewardsRoundSelect";
 
 // import Davatar from '@davatar/react';
 // import { EmptyAvatar } from './Rewards.styles'
@@ -13,22 +13,22 @@ export default function Rewards (props) {
     connectWallet,
     trackAction,
     hasClaimed,
-    userWeekData,
-    allWeeksRewardsData,
-    latestWeek,
+    userRoundData,
+    allRoundsRewardsData,
+    latestRound,
     isClaiming,
     handleClaim,
     timeTillRewards,
     rewardsMessage,
-    setSelectedWeek
+    setSelectedRound
   } = props;
 
   return (
       <Styles.ReferralData className="App-card">
         <Styles.AppCardTitle>Rewards data</Styles.AppCardTitle>
-        <RewardsWeekSelect
-          allWeeksRewardsData={allWeeksRewardsData}
-          setSelectedWeek={setSelectedWeek}
+        <RewardsRoundSelect
+          allRoundsRewardsData={allRoundsRewardsData}
+          setSelectedRound={setSelectedRound}
           rewardsMessage={rewardsMessage}
           trackAction={trackAction}
           timeTillRewards={timeTillRewards}
@@ -37,24 +37,24 @@ export default function Rewards (props) {
           <Styles.ReferralDataBox>
             <Styles.ReferralDataBoxTitle>Volume Traded </Styles.ReferralDataBoxTitle>
             <Styles.LargeText>
-              {`$${formatAmount(userWeekData?.volume, USD_DECIMALS, 2, true)}`}
+              {`$${formatAmount(userRoundData?.volume, USD_DECIMALS, 2, true)}`}
             </Styles.LargeText>
           </Styles.ReferralDataBox>
           <Styles.ReferralDataBox className={cx({ claimable: !hasClaimed })}>
             <Styles.ReferralDataBoxTitle>{hasClaimed ? 'Claimed Rewards' : 'Claimable Rewards'}</Styles.ReferralDataBoxTitle>
             <div>
               <Styles.LargeText>
-                {`${formatAmount(userWeekData?.totalReward, ETH_DECIMALS, 4, true)} WETH`}
+                {`${formatAmount(userRoundData?.totalReward, ETH_DECIMALS, 4, true)} WETH`}
               </Styles.LargeText>
               <span>
-                {` ($${formatAmount(userWeekData?.rewardAmountUsd, USD_DECIMALS, 2, true)})`}
+                {` ($${formatAmount(userRoundData?.totalRewardUsd, USD_DECIMALS, 2, true)})`}
               </span>
             </div>
           </Styles.ReferralDataBox>
         </Styles.ReferralDataBoxes>
         {active && <Styles.ReferralButton
           className={'App-cta large'}
-          disabled={!userWeekData?.totalReward || userWeekData.totalReward.eq(0) || isClaiming || hasClaimed || hasClaimed === undefined || latestWeek}
+          disabled={!userRoundData?.totalReward || userRoundData.totalReward.eq(0) || isClaiming || hasClaimed || hasClaimed === undefined || latestRound}
           onClick={handleClaim}
         >
           Claim WETH

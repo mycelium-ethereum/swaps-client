@@ -16,7 +16,7 @@ import { getContract } from "../../Addresses";
 import FeeDistributor from "../../abis/FeeDistributor.json";
 import FeeDistributorReader from "../../abis/FeeDistributorReader.json";
 import ViewSwitch from "../../components/ViewSwitch/ViewSwitch";
-import { WeekDropdown  }from "../../components/RewardsWeekSelect/RewardsWeekSelect";
+import { RoundDropdown }from "../../components/RewardsRoundSelect/RewardsRoundSelect";
 
 const PersonalHeader = () => (
   <div className="Page-title-section mt-0">
@@ -28,7 +28,7 @@ const PersonalHeader = () => (
 const LeaderboardHeader = () => (
   <div className="Page-title-section mt-0">
     <div className="Page-title">Rewards Leaderboard</div>
-    <div className="Page-description">Weekly user rankings by volume.</div>
+    <div className="Page-description">User rankings by volume.</div>
   </div>
 );
 
@@ -304,9 +304,9 @@ export default function Rewards(props) {
           views={['Personal', 'Leaderboard']}
         >
           {currentView === "Leaderboard" && !!allWeeksRewardsData ? (
-            <WeekDropdown
-              allWeeksRewardsData={allWeeksRewardsData}
-              setSelectedWeek={setSelectedWeek}
+            <RoundDropdown
+              allRoundsRewardsData={allWeeksRewardsData}
+              setSelectedRound={setSelectedWeek}
               rewardsMessage={rewardsMessage}
             />
           ) : null}

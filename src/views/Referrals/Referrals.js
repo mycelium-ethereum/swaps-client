@@ -60,7 +60,7 @@ export default function Referral(props) {
   const [currentView, setCurrentView] = useLocalStorage(REFERRALS_SELECTED_TAB_KEY, REBATES);
   const [isEnterCodeModalVisible, setIsEnterCodeModalVisible] = useState(false);
   const [isCreateCodeModalVisible, setIsCreateCodeModalVisible] = useState(false);
-  const [selectedWeek, setSelectedWeek] = useState("latest");
+  const [selectedRound, setSelectedRound] = useState("latest");
   const [nextRewards, setNextRewards] = useState();
 
   const [isEditCodeModalVisible, setIsEditCodeModalVisible] = useState(false);
@@ -82,73 +82,73 @@ export default function Referral(props) {
   const feeDistributorReader = getContract(chainId, "FeeDistributorReader");
 
   // Fetch all week data from server
-  const { data: allWeeksRewardsData, error: failedFetchingRewards } = useSWR([getTracerServerUrl(chainId, "/rewards")], {
+  const { data: allRoundsRewardsData, error: failedFetchingRewards } = useSWR([getTracerServerUrl(chainId, "/referralRewards")], {
     fetcher: (...args) => fetch(...args).then((res) => res.json()),
   });
 
   // Fetch only the latest week's data from server
-  const { data: currentRewardWeek, error: failedFetchingWeekRewards } = useSWR(
-    [getTracerServerUrl(chainId, "/rewards"), selectedWeek],
+  const { data: currentRewardRound, error: failedFetchingRoundRewards } = useSWR(
+    [getTracerServerUrl(chainId, "/referralRewards"), selectedRound],
     {
-      fetcher: (url, week) => fetch(`${url}&week=${week}`).then((res) => res.json()),
+      fetcher: (url, week) => fetch(`${url}&round=${week}`).then((res) => res.json()),
     }
   );
 
   const { data: hasClaimed } = useSWR(
-    [`Rewards:claimed:${active}`, chainId, feeDistributorReader, "getUserClaimed", feeDistributor, account ?? ethers.constants.AddressZero, allWeeksRewardsData?.length ?? 1],
+    [`Rewards:claimed:${active}`, chainId, feeDistributorReader, "getUserClaimed", feeDistributor, account ?? ethers.constants.AddressZero, allRoundsRewardsData?.length ?? 1],
     {
       fetcher: fetcher(library, FeeDistributorReader),
     }
   );
 
   useEffect(() => {
-    if (!!allWeeksRewardsData) {
-      const ends = allWeeksRewardsData.map((week) => Number(week.end));
+    if (!!allRoundsRewardsData) {
+      const ends = allRoundsRewardsData.map((week) => Number(week.end));
       const max = Math.max(...ends);
       if (!Number.isNaN(max)) {
         setNextRewards(max)
       }
     }
-  }, [allWeeksRewardsData]);
+  }, [allRoundsRewardsData]);
 
   // Get volume, position and reward from user week data
-  const userWeekData = useMemo(() => {
-    if (!currentRewardWeek) {
+  const userRoundData = useMemo(() => {
+    if (!currentRewardRound) {
       return undefined;
     }
-    const leaderBoardIndex = currentRewardWeek.traders?.findIndex((trader) => trader.user_address.toLowerCase() === account?.toLowerCase());
+    const leaderBoardIndex = currentRewardRound.traders?.findIndex((trader) => trader.user_address.toLowerCase() === account?.toLowerCase());
     let traderData
     if (leaderBoardIndex && leaderBoardIndex >= 0) {
-      traderData = currentRewardWeek.traders[leaderBoardIndex];
+      traderData = currentRewardRound.traders[leaderBoardIndex];
     }
     // trader's data found
     if (traderData) {
-      const positionReward = ethers.BigNumber.from(traderData.reward);
-      const degenReward = ethers.BigNumber.from(traderData.degen_reward);
+      const commissions = ethers.BigNumber.from(traderData.commissions);
+      const rebates = ethers.BigNumber.from(traderData.rebates);
+
       return {
         volume: ethers.BigNumber.from(traderData.volume),
-        totalReward: positionReward.add(degenReward),
-        position: leaderBoardIndex + 1,
-        positionReward,
-        degenReward,
+        totalReward: commissions.add(rebates),
+        commissions,
+        rebates,
       };
     } else {
       // trader not found but data exists so user has no rewards
       return {
         volume: ethers.BigNumber.from(0),
         totalReward: ethers.BigNumber.from(0),
-        positionReward: ethers.BigNumber.from(0),
-        degenReward: ethers.BigNumber.from(0),
-        rewardAmountUsd: ethers.BigNumber.from(0),
+        totalRewardUsd: ethers.BigNumber.from(0),
+        rebates: ethers.BigNumber.from(0),
+        commissions: ethers.BigNumber.from(0),
       };
     }
-  }, [account, currentRewardWeek]);
+  }, [account, currentRewardRound]);
 
   const eth = getTokenInfo(infoTokens, ethers.constants.AddressZero);
   const ethPrice = eth?.maxPrimaryPrice;
 
-  if (ethPrice && userWeekData?.totalReward) {
-    userWeekData.rewardAmountUsd = userWeekData.totalReward?.mul(ethPrice).div(expandDecimals(1, ETH_DECIMALS));
+  if (ethPrice && userRoundData?.totalReward) {
+    userRoundData.totalRewardUsd = userRoundData.totalReward?.mul(ethPrice).div(expandDecimals(1, ETH_DECIMALS));
   }
 
 
@@ -189,29 +189,29 @@ export default function Referral(props) {
 
   // // Segment Analytics Page tracking
   // useEffect(() => {
-  //   if (!pageTracked && currentReferralWeek && analytics) {
+  //   if (!pageTracked && currentReferralRound && analytics) {
   //     const traits = {
-  //       week: currentReferralWeek.key,
+  //       week: currentReferralRound.key,
   //     };
   //     trackPageWithTraits(traits);
   //     setPageTracked(true); // Prevent Page function being called twice
   //   }
-  // }, [currentReferralWeek, pageTracked, trackPageWithTraits, analytics]);
+  // }, [currentReferralRound, pageTracked, trackPageWithTraits, analytics]);
 
   let rewardsMessage = "";
-  if (!currentRewardWeek) {
+  if (!currentRewardRound) {
     rewardsMessage = "Fetching rewards";
-  } else if (!!failedFetchingWeekRewards) {
+  } else if (!!failedFetchingRoundRewards) {
     rewardsMessage = "Failed fetching current week rewards";
   } else if (!!failedFetchingRewards) {
     rewardsMessage = "Failed fetching rewards";
   } else {
-    if (currentRewardWeek?.length === 0) {
+    if (currentRewardRound?.length === 0) {
       rewardsMessage = "No rewards";
-    } else if (selectedWeek === "latest") {
-      rewardsMessage = `Week ${Number.parseInt(currentRewardWeek.week) + 1}`;
+    } else if (selectedRound === "latest") {
+      rewardsMessage = `Round ${Number.parseInt(currentRewardRound.round) + 1}`;
     } else {
-      rewardsMessage = `Week ${selectedWeek + 1}`;
+      rewardsMessage = `Round ${selectedRound + 1}`;
     }
   }
 
@@ -220,10 +220,10 @@ export default function Referral(props) {
     timeTillRewards = formatTimeTill(nextRewards / 1000);
   }
 
-  const isLatestWeek = selectedWeek === "latest";
-  let hasClaimedWeek
-  if (selectedWeek !== 'latest' && hasClaimed) {
-    hasClaimedWeek = hasClaimed[selectedWeek]
+  const isLatestRound = selectedRound === "latest";
+  let hasClaimedRound
+  if (selectedRound !== 'latest' && hasClaimed) {
+    hasClaimedRound = hasClaimed[selectedRound]
   }
   
   return (
@@ -314,18 +314,18 @@ export default function Referral(props) {
               finalReferrerTotalStats={finalReferrerTotalStats}
             />
           }
-          {userWeekData &&
+          {userRoundData &&
             <ReferralRewards
               active={active}
               connectWallet={connectWallet}
               trackAction={trackAction}
-              userWeekData={userWeekData}
-              allWeeksRewardsData={allWeeksRewardsData}
-              latestWeek={isLatestWeek}
+              userRoundData={userRoundData}
+              allRoundsRewardsData={allRoundsRewardsData}
+              latestRound={isLatestRound}
               timeTillRewards={timeTillRewards}
               rewardsMessage={rewardsMessage}
-              setSelectedWeek={setSelectedWeek}
-              hasClaimed={hasClaimedWeek}
+              setSelectedRound={setSelectedRound}
+              hasClaimed={hasClaimedRound}
               handleClaim={handleClaim}
             />
           }

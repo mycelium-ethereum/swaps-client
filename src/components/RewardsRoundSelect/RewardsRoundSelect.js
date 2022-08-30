@@ -1,82 +1,83 @@
 import React from "react";
 import { Menu } from "@headlessui/react";
-import * as Styles from "./RewardsWeekSelect.styles";
+import * as Styles from "./RewardsRoundSelect.styles";
 import { FaChevronDown } from "react-icons/fa";
 import cx from "classnames";
 
-export default function RewardsWeekSelect({
+export default function RewardsRoundSelect({
   timeTillRewards,
-  allWeeksRewardsData,
-  setSelectedWeek,
+  allRoundsRewardsData,
+  setSelectedRound,
   trackAction,
   rewardsMessage
 }) {
 
   return (
-      <Styles.RewardsWeekSelect>
-        {!!allWeeksRewardsData && (
-          <WeekDropdown
-            allWeeksRewardsData={allWeeksRewardsData}
-            setSelectedWeek={setSelectedWeek}
+      <Styles.RewardsRoundSelect>
+        {!!allRoundsRewardsData && (
+          <RoundDropdown
+            allRoundsRewardsData={allRoundsRewardsData}
+            setSelectedRound={setSelectedRound}
             rewardsMessage={rewardsMessage}
             trackAction={trackAction}
           />
         )}
         {timeTillRewards && (
-          <Styles.RewardsWeekNextRewards>
-            Next rewards in <Styles.RewardsWeekCountdown>{timeTillRewards}</Styles.RewardsWeekCountdown>
-          </Styles.RewardsWeekNextRewards>
+          <Styles.RewardsRoundNextRewards>
+            Next rewards in <Styles.RewardsRoundCountdown>{timeTillRewards}</Styles.RewardsRoundCountdown>
+          </Styles.RewardsRoundNextRewards>
         )}
-      </Styles.RewardsWeekSelect>
+      </Styles.RewardsRoundSelect>
   )
 }
 
-export function WeekDropdown(props) {
-  const { allWeeksRewardsData, setSelectedWeek, rewardsMessage, trackAction } = props;
+export function RoundDropdown(props) {
+  const { allRoundsRewardsData, setSelectedRound, rewardsMessage, trackAction } = props;
 
   return (
-    <Styles.RewardsWeekSelectMenu>
+    <Styles.RewardsRoundSelectMenu>
       <Menu>
         {({ open }) => (
           <>
             <Menu.Button as="div">
-              <Styles.WeekSelectButton
+              <Styles.RoundSelectButton
                 className={cx("App-cta transparent", {
                   "App-cta-selected": open,
                 })}
                 onClick={() =>
                   trackAction &&
                   trackAction("Button clicked", {
-                    buttonName: "Rewards week dropdown",
+                    buttonName: "Rewards round dropdown",
                   })
                 }
               >
                 {rewardsMessage}
                 <FaChevronDown />
-              </Styles.WeekSelectButton>
+              </Styles.RoundSelectButton>
             </Menu.Button>
             <div className="hide-overflow">
               <Menu.Items as="div" className="menu-items">
-                {allWeeksRewardsData
+                {allRoundsRewardsData
+                  .sort((a, b) => b.round - a.round)
                   .sort((a, b) => b.week - a.week)
-                  .map((rewardWeek, index) => (
+                  .map((rewardRound, index) => (
                     <Menu.Item>
                       <div
                         className="menu-item large"
                         onClick={() => {
-                          let selectedWeek = parseFloat(rewardWeek.week);
+                          let selectedRound = parseFloat(rewardRound?.round ?? rewardRound.week);
                           if (index === 0) {
-                            selectedWeek = "latest"
+                            selectedRound = "latest"
                           }
-                          setSelectedWeek(selectedWeek);
+                          setSelectedRound(selectedRound);
                           trackAction &&
                             trackAction("Button clicked", {
                               buttonName: "Select rewards week",
-                              weekNo: selectedWeek,
+                              weekNo: selectedRound,
                             });
                         }}
                       >
-                        Week {parseFloat(rewardWeek.week) + 1}
+                        Round {parseFloat(rewardRound?.round ?? rewardRound.week) + 1}
                       </div>
                     </Menu.Item>
                   ))}
@@ -85,6 +86,6 @@ export function WeekDropdown(props) {
           </>
         )}
       </Menu>
-    </Styles.RewardsWeekSelectMenu>
+    </Styles.RewardsRoundSelectMenu>
   );
 }
