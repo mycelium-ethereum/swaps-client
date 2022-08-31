@@ -555,11 +555,20 @@ function FeeDistributionUpdateModal(props) {
       <Modal isVisible={isVisible} setIsVisible={setIsVisible} label="Fee Distribution Update">
         <div className="Fee-update-modal-content">
           <div>
-            To reduce the administration time of our developers, we are moving to a 2 week reward cycle. This means that
-            instead of a week’s fees being distributed in the following week, now a fortnight’s fees will be distributed
-            in the following fortnight. In order to transition to this structure, there will be no ETH rewards
-            distributed this week to MLP stakers. We will boost the Total APR to a targeted 50% through esMYC rewards to
-            compensate for any inconveniences.
+            <p>
+              As of this week, Mycelium Swaps will be moving to distribute MLP rewards every two weeks instead of
+              weekly. As a user, there will be no significant change in your experience, you will still receive the same
+              amount of rewards and be able to claim them continuously, whenever you like. However to support this
+              migration, you will see no ETH rewards on the UI this week as they will be released next week as part of
+              the first two week cycle. Please note that you are still receiving ETH rewards for providing liquidity
+              this week, you will just not be able to claim these rewards until next week. This is the only time this
+              will happen.
+            </p>
+            <p>
+              Next Wednesday, ETH rewards will start flowing again to cover the previous two weeks of fees. To
+              compensate for the delayed access to your rewards for this single week, we will be boosting the esMYC
+              rewards to a target APR of 50%. These boosted rewards will be reduced next week.
+            </p>
           </div>
           <div className="Exchange-swap-button-container">
             <button className="App-cta Exchange-swap-button" onClick={onClickPrimary}>
@@ -750,7 +759,8 @@ export default function StakeV2({ setPendingTxns, connectWallet, trackAction }) 
 
   useEffect(() => {
     window.scrollTo(0, 0);
-    const hasSeenFeePopup = window.localStorage.getItem("feeDistributionUpdateSeen");
+    const hasSeenFeePopup = false;
+    // const hasSeenFeePopup = window.localStorage.getItem("feeDistributionUpdateSeen");
     if (!hasSeenFeePopup) {
       setIsFeeUpdateModalVisible(true);
       window.localStorage.setItem("feeDistributionUpdateSeen", "true");
