@@ -543,12 +543,51 @@ function VesterWithdrawModal(props) {
   );
 }
 
+function FeeDistributionUpdateModal(props) {
+  const { isVisible, setIsVisible } = props;
+
+  const onClickPrimary = () => {
+    setIsVisible(false);
+  };
+
+  return (
+    <div className="StakeModal Fee-update-modal">
+      <Modal isVisible={isVisible} setIsVisible={setIsVisible} label="Fee Distribution Update">
+        <div className="Fee-update-modal-content">
+          <div>
+            <p>
+              As of this week, Mycelium Swaps will be moving to distribute MLP rewards every two weeks instead of
+              weekly. As a user, there will be no significant change in your experience, you will still receive the same
+              amount of rewards and be able to claim them continuously, whenever you like. However to support this
+              migration, you will see no ETH rewards on the UI this week as they will be released next week as part of
+              the first two week cycle. Please note that you are still receiving ETH rewards for providing liquidity
+              this week, you will just not be able to claim these rewards until next week. This is the only time this
+              will happen.
+            </p>
+            <p>
+              Next Wednesday, ETH rewards will start flowing again to cover the previous two weeks of fees. To
+              compensate for the delayed access to your rewards for this single week, we will be boosting the esMYC
+              rewards to a target APR of 50%. These boosted rewards will be reduced next week.
+            </p>
+          </div>
+          <div className="Exchange-swap-button-container">
+            <button className="App-cta Exchange-swap-button" onClick={onClickPrimary}>
+              Confirm
+            </button>
+          </div>
+        </div>
+      </Modal>
+    </div>
+  );
+}
+
 export default function StakeV2({ setPendingTxns, connectWallet, trackAction }) {
   const { active, library, account } = useWeb3React();
   const { chainId } = useChainId();
 
   const chainName = getChainName(chainId);
 
+  const [isFeeUpdateModalVisible, setIsFeeUpdateModalVisible] = useState(false);
   const [isVesterDepositModalVisible, setIsVesterDepositModalVisible] = useState(false);
   const [vesterDepositTitle, setVesterDepositTitle] = useState("");
   const [vesterDepositStakeTokenLabel, setVesterDepositStakeTokenLabel] = useState("");
@@ -720,6 +759,11 @@ export default function StakeV2({ setPendingTxns, connectWallet, trackAction }) 
 
   useEffect(() => {
     window.scrollTo(0, 0);
+    const hasSeenFeePopup = window.localStorage.getItem("feeDistributionUpdateSeen");
+    if (!hasSeenFeePopup) {
+      setIsFeeUpdateModalVisible(true);
+      window.localStorage.setItem("feeDistributionUpdateSeen", "true");
+    }
   }, []);
 
   let earnMsg;
@@ -771,6 +815,7 @@ export default function StakeV2({ setPendingTxns, connectWallet, trackAction }) 
 
   return (
     <div className="StakeV2 Page page-layout default-container">
+      <FeeDistributionUpdateModal isVisible={isFeeUpdateModalVisible} setIsVisible={setIsFeeUpdateModalVisible} />
       <VesterDepositModal
         isVisible={isVesterDepositModalVisible}
         setIsVisible={setIsVesterDepositModalVisible}
@@ -884,7 +929,8 @@ export default function StakeV2({ setPendingTxns, connectWallet, trackAction }) 
                     <Tooltip
                       handle={`${formatKeyAmount(processedData, "mmApr", 2, 2, true)}%`}
                       position="right-bottom"
-                      renderContent={() => "Market Making APR is sourced from the spread of the traded markets and is realised by MLP holders through the appreciation of the MLP token."
+                      renderContent={() =>
+                        "Market Making APR is sourced from the spread of the traded markets and is realised by MLP holders through the appreciation of the MLP token."
                       }
                     />
                   </StakeV2Styled.RewardsBannerText>

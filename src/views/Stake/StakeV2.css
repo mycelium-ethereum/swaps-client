@@ -11,6 +11,14 @@
   margin-bottom: 1rem;
 }
 
+.StakeModal .Fee-update-modal-content {
+  width: 600px;
+}
+
+.StakeModal .Fee-update-modal-content .Exchange-swap-button-container {
+  margin-top: 16px;
+}
+
 .VesterDepositModal-info-rows {
   margin-bottom: 0.5rem;
 }
@@ -96,5 +104,13 @@
 
   .StakeV2-total-rewards-card {
     grid-row: 4;
+  }
+
+  .StakeModal.Fee-update-modal .Modal-content {
+    width: calc(100% - 32px);
+    max-width: 600px;
+  }
+  .StakeModal .Fee-update-modal-content {
+    width: auto;
   }
 }
