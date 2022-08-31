@@ -880,7 +880,7 @@ function FullApp() {
                 ARBITRUM NITRO UPGRADE IN PROGRESS 
               </BannerTitle>
               <BannerContent>
-                The Arbitrum Network is expected to have 2-4 hours of downtime as it makes it's upgrade to Nitro. Trading will be paused during this period to prevent loss of funds.
+                The Arbitrum Network is expected to have 2-4 hours of downtime as it makes it's upgrade to Nitro. Trades may not go through during this period.
               </BannerContent>
             </Banner>
           </div>
