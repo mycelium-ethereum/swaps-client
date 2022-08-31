@@ -543,12 +543,31 @@ function VesterWithdrawModal(props) {
   );
 }
 
+function FeeDistributionUpdateModal(props) {
+  const { isVisible, setIsVisible } = props;
+
+  return (
+    <div className="StakeModal Fee-update-modal">
+      <Modal isVisible={isVisible} setIsVisible={setIsVisible} label="Fee Distribution Update">
+        <div className="Fee-update-modal-content">
+          To reduce the administration time of our developers, we are moving to a 2 week reward cycle. This means that
+          instead of a week’s fees being distributed in the following week, now a fortnight’s fees will be distributed
+          in the following fortnight. In order to transition to this structure, there will be no ETH rewards distributed
+          this week to MLP stakers. We will boost the Total APR to a targeted 50% through esMYC rewards to compensate
+          for any inconveniences.
+        </div>
+      </Modal>
+    </div>
+  );
+}
+
 export default function StakeV2({ setPendingTxns, connectWallet, trackAction }) {
   const { active, library, account } = useWeb3React();
   const { chainId } = useChainId();
 
   const chainName = getChainName(chainId);
 
+  const [isFeeUpdateModalVisible, setIsFeeUpdateModalVisible] = useState(false);
   const [isVesterDepositModalVisible, setIsVesterDepositModalVisible] = useState(false);
   const [vesterDepositTitle, setVesterDepositTitle] = useState("");
   const [vesterDepositStakeTokenLabel, setVesterDepositStakeTokenLabel] = useState("");
@@ -720,6 +739,12 @@ export default function StakeV2({ setPendingTxns, connectWallet, trackAction }) 
 
   useEffect(() => {
     window.scrollTo(0, 0);
+    const hasSeenFeePopup = false;
+    // const hasSeenFeePopup = window.localStorage.getItem("feeDistributionUpdateSeen");
+    if (!hasSeenFeePopup) {
+      setIsFeeUpdateModalVisible(true);
+      window.localStorage.setItem("feeDistributionUpdateSeen", "true");
+    }
   }, []);
 
   let earnMsg;
@@ -771,6 +796,7 @@ export default function StakeV2({ setPendingTxns, connectWallet, trackAction }) 
 
   return (
     <div className="StakeV2 Page page-layout default-container">
+      <FeeDistributionUpdateModal isVisible={isFeeUpdateModalVisible} setIsVisible={setIsFeeUpdateModalVisible} />
       <VesterDepositModal
         isVisible={isVesterDepositModalVisible}
         setIsVisible={setIsVesterDepositModalVisible}
@@ -884,7 +910,8 @@ export default function StakeV2({ setPendingTxns, connectWallet, trackAction }) 
                     <Tooltip
                       handle={`${formatKeyAmount(processedData, "mmApr", 2, 2, true)}%`}
                       position="right-bottom"
-                      renderContent={() => "Market Making APR is sourced from the spread of the traded markets and is realised by MLP holders through the appreciation of the MLP token."
+                      renderContent={() =>
+                        "Market Making APR is sourced from the spread of the traded markets and is realised by MLP holders through the appreciation of the MLP token."
                       }
                     />
                   </StakeV2Styled.RewardsBannerText>
