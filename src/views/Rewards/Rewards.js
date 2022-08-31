@@ -78,7 +78,7 @@ export default function Rewards(props) {
 
   // Fetch user proof
   const { data: userProof } = useSWR(
-    [getTracerServerUrl(chainId, "/userRewardProof"), selectedRound, account ?? ethers.constants.AddressZero],
+    [getTracerServerUrl(chainId, "/tradingRewardProof"), selectedRound, account ?? ethers.constants.AddressZero],
     {
       fetcher: (url, round, account) => fetch(`${url}&round=${round}&userAddress=${account}`).then((res) => res.json()),
     }
