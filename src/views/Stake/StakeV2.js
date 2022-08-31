@@ -759,8 +759,7 @@ export default function StakeV2({ setPendingTxns, connectWallet, trackAction }) 
 
   useEffect(() => {
     window.scrollTo(0, 0);
-    const hasSeenFeePopup = false;
-    // const hasSeenFeePopup = window.localStorage.getItem("feeDistributionUpdateSeen");
+    const hasSeenFeePopup = window.localStorage.getItem("feeDistributionUpdateSeen");
     if (!hasSeenFeePopup) {
       setIsFeeUpdateModalVisible(true);
       window.localStorage.setItem("feeDistributionUpdateSeen", "true");
