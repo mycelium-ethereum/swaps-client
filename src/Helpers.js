@@ -564,7 +564,7 @@ export function getSupplyUrl(route = '/totalSupply') {
   return `https://dev.api.tracer.finance/myc${route}`;
 }
 
-const BASE_TRACER_URL = process.env.REACT_APP_TRACER_API ?? "https://dev.api.tracer.finance";
+const BASE_TRACER_URL = process.env.REACT_APP_TRACER_API ?? "https://api.tracer.finance";
 
 export function getTracerServerUrl(chainId, path) {
   if (!chainId) {
