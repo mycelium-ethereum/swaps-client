@@ -118,6 +118,7 @@ import PageNotFound from "./views/PageNotFound/PageNotFound";
 import useSWR from "swr";
 import LinkDropdown from "./components/Navigation/LinkDropdown/LinkDropdown";
 import Sidebar from "./components/Navigation/Sidebar/Sidebar";
+import { Banner, BannerContent, BannerTitle } from "./components/Banner/Banner";
 
 if ("ethereum" in window) {
   window.ethereum.autoRefreshOnNetworkChange = false;
@@ -872,6 +873,16 @@ function FullApp() {
               showNetworkSelectorModal={showNetworkSelectorModal}
               disconnectAccountAndCloseSettings={disconnectAccountAndCloseSettings}
             />
+          </div>
+          <div className="default-container">
+            <Banner>
+              <BannerTitle>
+                ARBITRUM NITRO UPGRADE IN PROGRESS 
+              </BannerTitle>
+              <BannerContent>
+                The Arbitrum Network is expected to have 2-4 hours of downtime as it makes it's upgrade to Nitro. Trades may not go through during this period.
+              </BannerContent>
+            </Banner>
           </div>
           <Switch>
             <Route exact path="/">
