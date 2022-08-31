@@ -428,6 +428,11 @@ export default function MlpSwap(props) {
   };
 
   const getError = () => {
+    const gasTokenInfo = getTokenInfo(infoTokens, ethers.constants.AddressZero);
+    if (gasTokenInfo.balance?.eq(0)){
+      return ["Not enough ETH for gas"];
+    }
+
     if (!isBuying && inCooldownWindow) {
       return [`Redemption time not yet reached`];
     }

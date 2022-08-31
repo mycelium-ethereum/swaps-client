@@ -357,11 +357,15 @@ function VesterDepositModal(props) {
     balance,
     vestedAmount,
     maxVestableAmount,
-    library,
     vesterAddress,
     setPendingTxns,
   } = props;
   const [isDepositing, setIsDepositing] = useState(false);
+  const { library, account } = useWeb3React();
+
+  const { data: ethBalance } = useSWR([library, "getBalance", account, "latest"], {
+    fetcher: (library, method, ...params) => library[method](...params),
+  });
 
   let amount = parseValue(value, 18);
 
@@ -371,6 +375,10 @@ function VesterDepositModal(props) {
   }
 
   const getError = () => {
+    if (ethBalance?.eq(0)){
+      return ["Not enough ETH for gas"];
+    }
+
     if (!amount || amount.eq(0)) {
       return "Enter an amount";
     }
@@ -720,6 +728,10 @@ export default function StakeV2({ setPendingTxns, connectWallet, trackAction }) 
     }
   );
 
+  const { data: ethBalance } = useSWR([library, "getBalance", account, "latest"], {
+    fetcher: (library, method, ...params) => library[method](...params),
+  });
+
   const { mycPrice } = useMYCPrice(chainId, { arbitrum: chainId === ARBITRUM ? library : undefined }, active);
 
   const { total: mycSupply } = useTotalMYCSupply();
@@ -776,8 +788,27 @@ export default function StakeV2({ setPendingTxns, connectWallet, trackAction }) 
     );
   }
 
+  const showMlpCompoundModal = () => {
+    if (ethBalance?.eq(0)) {
+      helperToast.error("You don't have any ETH to pay for gas");
+    } else {
+      setIsCompoundModalVisible(true);
+    }
+  }
+
+  const showMlpClaimModal = () => {
+    if (ethBalance?.eq(0)) {
+      helperToast.error("You don't have any ETH to pay for gas");
+    } else {
+      setIsClaimModalVisible(true);
+    }
+  }
+
   const showMycVesterDepositModal = () => {
-    if (!vestingData) {
+    if (ethBalance?.eq(0)) {
+      helperToast.error("You don't have any ETH to pay for gas");
+      return;
+    } else if (!vestingData) {
       helperToast.error("Loading vesting data, please wait.");
       return;
     }
@@ -803,7 +834,10 @@ export default function StakeV2({ setPendingTxns, connectWallet, trackAction }) 
   };
 
   const showMycVesterWithdrawModal = () => {
-    if (!vestingData || !vestingData.mlpVesterVestedAmount || vestingData.mlpVesterVestedAmount.eq(0)) {
+    if (ethBalance?.eq(0)) {
+      helperToast.error("You don't have any ETH to pay for gas");
+      return
+    } else if (!vestingData || !vestingData.mlpVesterVestedAmount || vestingData.mlpVesterVestedAmount.eq(0)) {
       helperToast.error("You have not deposited any tokens for vesting.");
       return;
     }
@@ -832,7 +866,6 @@ export default function StakeV2({ setPendingTxns, connectWallet, trackAction }) 
         maxReserveAmount={vesterDepositMaxReserveAmount}
         value={vesterDepositValue}
         setValue={setVesterDepositValue}
-        library={library}
         vesterAddress={vesterDepositAddress}
         setPendingTxns={setPendingTxns}
       />
@@ -1010,13 +1043,13 @@ export default function StakeV2({ setPendingTxns, connectWallet, trackAction }) 
                   {active && (
                     <button
                       className="App-button-option App-card-option"
-                      onClick={() => setIsCompoundModalVisible(true)}
+                      onClick={() => showMlpCompoundModal()}
                     >
                       Compound
                     </button>
                   )}
                   {active && (
-                    <button className="App-button-option App-card-option" onClick={() => setIsClaimModalVisible(true)}>
+                    <button className="App-button-option App-card-option" onClick={() => showMlpClaimModal()}>
                       Claim
                     </button>
                   )}
