@@ -51,6 +51,8 @@ export const LeverageInput = ({ value, onChange, max, min, step }) => {
           onKeyDown={(e) => {
             if (e.key === "Enter") {
               handleInputChange(e);
+            } else if (['e', 'E', '+', '-'].includes(e.key)) {
+              e.preventDefault();
             }
           }}
           step={step}
