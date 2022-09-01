@@ -96,6 +96,6 @@ const InputBox = styled.label`
         border-radius: 4px;
         font-size: 1rem;
         text-align: right;
-        width: 80px;
+        width: 60px;
     }
 `
