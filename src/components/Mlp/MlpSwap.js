@@ -119,6 +119,10 @@ export default function MlpSwap(props) {
     `${swapLabel}-swap-token-address`,
     AddressZero
   );
+  // Clear cache of deprecated token address
+  if (swapTokenAddress === "0x6467A2ad44C49dB9788d60e82B3adE35CcA5c5C4") {
+    setSwapTokenAddress(AddressZero);
+  }
   const [isApproving, setIsApproving] = useState(false);
   const [isWaitingForApproval, setIsWaitingForApproval] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);

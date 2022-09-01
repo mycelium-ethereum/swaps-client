@@ -222,7 +222,7 @@ export const ICONLINKS = {
       arbitrum: "https://testnet.arbiscan.io/address/0x9e062eee2c0Ab96e1E1c8cE38bF14bA3fa0a35F6",
     },
     CTM: {
-      arbitrum: "https://testnet.arbiscan.io/address/0xaC6101824E8BCdc7Fb399e62aFDf2b3b720DeFEf",
+      arbitrum: "https://testnet.arbiscan.io/address/0xac8d4844133fa049a06ce306ade49bf6fbd9c56b",
     },
     USDT: {
       coingecko: "https://www.coingecko.com/en/coins/tether",
