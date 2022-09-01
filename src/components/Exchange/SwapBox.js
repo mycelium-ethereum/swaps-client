@@ -798,7 +798,7 @@ export default function SwapBox(props) {
 
   const getLeverageError = useCallback(() => {
     const gasTokenInfo = getTokenInfo(infoTokens, ethers.constants.AddressZero);
-    if (gasTokenInfo.balance.eq(0)){
+    if (gasTokenInfo.balance?.eq(0)){
       return ["Not enough ETH for gas"];
     }
     if (hasOutdatedUi) {
