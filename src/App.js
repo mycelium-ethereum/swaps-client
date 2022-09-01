@@ -297,6 +297,11 @@ function AppHeaderUser({
             Trade
           </NavLink>
         </div> */}
+        <div className="App-header-user-link Trade-btn">
+          <NavLink exact activeClassName="active" className="default-btn trade-link" to="/">
+            Trade
+          </NavLink>
+        </div>
         {showSelector && (
           <NetworkSelector
             options={networkOptions}
@@ -339,7 +344,7 @@ function AppHeaderUser({
 
   return (
     <div className="App-header-user">
-      <div className="App-header-user-link">
+      <div className="App-header-user-link Trade-btn">
         <NavLink exact activeClassName="active" className="default-btn trade-link" to="/">
           Trade
         </NavLink>
@@ -827,6 +832,7 @@ function FullApp() {
                         });
                     }}
                   >
+                    <img src={logoSmallImg} className="small" alt="Mycelium Swaps Logo" />
                     <img src={logoImg} alt="Mycelium Swaps Logo" />
                   </Link>
                 </div>
@@ -845,10 +851,13 @@ function FullApp() {
                       trackAction={trackAction}
                     />
                   </div>
+                  <div className="App-header-user-link Trade-btn-mobile">
+                    <NavLink exact activeClassName="active" className="default-btn trade-link" to="/">
+                      Trade
+                    </NavLink>
+                  </div>
                   {/* Hamburger menu */}
                   <button className="App-header-menu-icon-block" onClick={() => setIsDrawerVisible(!isDrawerVisible)}>
-                    {/* {!isDrawerVisible && <RiMenuLine className="App-header-menu-icon" />}
-                    {isDrawerVisible && <FaTimes className="App-header-menu-icon" />} */}
                     <span />
                     <span />
                     <span />
@@ -877,7 +886,7 @@ function FullApp() {
           {/* <div className="default-container">
             <Banner>
               <BannerTitle>
-                ARBITRUM NITRO UPGRADE IN PROGRESS 
+                ARBITRUM NITRO UPGRADE IN PROGRESS
               </BannerTitle>
               <BannerContent>
                 The Arbitrum Network is expected to have 2-4 hours of downtime as it makes it's upgrade to Nitro. Trades may not go through during this period.

@@ -39,7 +39,6 @@ export const LinkMenu = styled.ul(
   padding: 0;
   border-radius: 4px;
   width: 180px;
-  height: 240px;
   border: 1px solid var(--action-active);
   background: var(--background-gradient);
   overflow: hidden;
