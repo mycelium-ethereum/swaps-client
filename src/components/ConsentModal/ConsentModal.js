@@ -1,9 +1,38 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import "./ConsentModal.css";
 import close from "../../img/close.svg";
+import inEU from "@segment/in-eu";
 
 function ConsentModal({ hasConsented, setConsented }) {
   const [visible, setVisible] = useState(false);
+
+  const isInEU = useMemo(() => inEU(), []);
+
+  const outsideEUText = (
+    <>
+      We use cookies on this site to enhance your user experience. The collection and storage of cookies on your device
+      to enhance your site experience and for analytical purposes. We want to respect your right to privacy, so you have
+      the option to select your cookie preferences. Note that changes to your preferences may impact your user
+      experience.{" "}
+      <a href="https://mycelium.xyz/privacy-policy/" rel="noopener noreferrer" target="_blank">
+        Privacy Policy
+      </a>
+      .
+    </>
+  );
+
+  const insideEUText = (
+    <>
+      We use cookies on this site to enhance your user experience. The collection and storage of cookies on your device
+      to enhance your site experience and for analytical purposes. We want to respect your right to privacy, so you have
+      the option to select your cookie preferences. Note that changes to your preferences may impact your user
+      experience.{" "}
+      <a href="https://mycelium.xyz/privacy-policy/" rel="noopener noreferrer" target="_blank">
+        Privacy Policy
+      </a>
+      .
+    </>
+  );
 
   const handleAccept = () => {
     localStorage.setItem("consentAcknowledged", "true");
@@ -19,11 +48,15 @@ function ConsentModal({ hasConsented, setConsented }) {
 
   useEffect(() => {
     const isBraveBrowser = navigator?.brave;
+    // Default opt-in for users outside the EU
+    if (!isInEU) {
+      localStorage.setItem("consentAcknowledged", "true");
+    }
     const timer = setTimeout(() => {
       if (hasConsented === false && !isBraveBrowser) setVisible(true);
     }, 4000);
     return () => clearTimeout(timer);
-  }, [hasConsented]);
+  }, [hasConsented, isInEU]);
 
   return (
     <div className={`ConsentModal ${visible ? "visible" : ""}`}>
@@ -34,22 +67,22 @@ function ConsentModal({ hasConsented, setConsented }) {
         <p>
           <b>We use cookies on this site to enhance your user experience.</b>
         </p>
-        <p>
-          By continuing to browse, you agree to the storing of cookies on your device to enhance your site experience
-          and for analytical purposes. By clicking ‘Accept’, you agree to the placement and use of cookies as described
-          in our{" "}
-          <a href="https://www.tracer.finance/privacy-policy/" rel="noopener noreferrer" target="_blank">
-            Privacy Policy
-          </a>
-          .
-        </p>
+        <p>{!isInEU ? insideEUText : outsideEUText}</p>
         <div className="ConsentModal-buttons">
-          <button className="default-btn read-more" onClick={handleAccept}>
-            Accept
-          </button>
-          <button className="default-btn read-more" onClick={handleReject}>
-            Reject
-          </button>
+          {!isInEU ? (
+            <button className="default-btn read-more" onClick={handleAccept}>
+              Dismiss
+            </button>
+          ) : (
+            <>
+              <button className="default-btn read-more" onClick={handleAccept}>
+                Accept
+              </button>
+              <button className="default-btn read-more" onClick={handleReject}>
+                Reject
+              </button>
+            </>
+          )}
         </div>
       </div>
     </div>
