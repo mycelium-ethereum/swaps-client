@@ -874,7 +874,7 @@ function FullApp() {
               disconnectAccountAndCloseSettings={disconnectAccountAndCloseSettings}
             />
           </div>
-          <div className="default-container">
+          {/* <div className="default-container">
             <Banner>
               <BannerTitle>
                 ARBITRUM NITRO UPGRADE IN PROGRESS 
@@ -883,7 +883,7 @@ function FullApp() {
                 The Arbitrum Network is expected to have 2-4 hours of downtime as it makes it's upgrade to Nitro. Trades may not go through during this period.
               </BannerContent>
             </Banner>
-          </div>
+          </div> */}
           <Switch>
             <Route exact path="/">
               <Exchange

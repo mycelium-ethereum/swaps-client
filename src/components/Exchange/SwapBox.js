@@ -704,6 +704,11 @@ export default function SwapBox(props) {
   }
 
   const getSwapError = () => {
+    const gasTokenInfo = getTokenInfo(infoTokens, ethers.constants.AddressZero);
+    if (gasTokenInfo.balance?.eq(0)){
+      return ["Not enough ETH for gas"];
+    }
+
     if (fromTokenAddress === toTokenAddress) {
       return ["Select different tokens"];
     }
@@ -789,6 +794,10 @@ export default function SwapBox(props) {
   };
 
   const getLeverageError = useCallback(() => {
+    const gasTokenInfo = getTokenInfo(infoTokens, ethers.constants.AddressZero);
+    if (gasTokenInfo.balance.eq(0)){
+      return ["Not enough ETH for gas"];
+    }
     if (hasOutdatedUi) {
       return ["Page outdated, please refresh"];
     }
