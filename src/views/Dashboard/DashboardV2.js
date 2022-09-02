@@ -444,7 +444,7 @@ export default function DashboardV2() {
             <div className="Page-description">
               {chainName} Total Stats start from {totalStatsStartDate}.<br />
               See detailed analytics{' '}
-              <a href="https://swaps-stats.mycelium.xyz" target="_blank" rel="noopener noreferrer">
+              <a href="https://analytics.mycelium.xyz" target="_blank" rel="noopener noreferrer">
                 here.
               </a>
             </div>
