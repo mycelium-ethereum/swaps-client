@@ -11,7 +11,7 @@ export const MobileNavMenu = styled.menu`
     text-decoration: none;
     padding: 0;
     width: calc(100% - 32px);
-    margin: 30px auto 48px;
+    margin: 30px auto 16px;
   }
 `;
 

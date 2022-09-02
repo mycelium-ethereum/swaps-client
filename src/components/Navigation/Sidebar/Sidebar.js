@@ -9,6 +9,7 @@ import {
   FaCoins,
   FaFile,
   FaLayerGroup,
+  FaChartBar,
   FaSync,
 } from "react-icons/fa";
 
@@ -46,15 +47,10 @@ const navLinks = [
     icon: FaAward,
   },
   // {
-    // name: "Referrals",
-    // path: "/referrals",
-    // icon: FaSync,
+  // name: "Referrals",
+  // path: "/referrals",
+  // icon: FaSync,
   // },
-  {
-    name: "Docs",
-    path: "https://swaps.docs.mycelium.xyz/perpetual-swaps/mycelium-perpetual-swaps",
-    icon: FaBook,
-  },
 ];
 
 const legalLinks = [
@@ -105,13 +101,18 @@ export default function Sidebar({ sidebarVisible, setSidebarVisible }) {
       </Logo>
       <div>
         <NavMenu>
-          {navLinks.slice(0, navLinks.length - 1).map((item) => (
+          {navLinks.map((item) => (
             <MenuItem key={item.name}>
               <NavLink activeClassName="active" exact className="App-header-link-main" to={item.path}>
                 <item.icon /> {item.name}
               </NavLink>
             </MenuItem>
           ))}
+          <MenuItem>
+            <a href="https://analytics.mycelium.xyz" target="_blank" rel="noopener noreferrer">
+              <FaChartBar /> Analytics
+            </a>
+          </MenuItem>
           <MenuItem>
             <a
               href="https://swaps.docs.mycelium.xyz/perpetual-swaps/mycelium-perpetual-swaps"

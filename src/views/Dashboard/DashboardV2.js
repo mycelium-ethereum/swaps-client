@@ -35,7 +35,15 @@ import {
   MM_SWAPS_FEE_MULTIPLIER,
   FEE_MULTIPLIER_BASIS_POINTS,
 } from "../../Helpers";
-import { useTotalMYCInLiquidity, useMYCPrice, useTotalMYCSupply, useInfoTokens, useFees, useVolume, useMarketMakingFeesSince } from "../../Api";
+import {
+  useTotalMYCInLiquidity,
+  useMYCPrice,
+  useTotalMYCSupply,
+  useInfoTokens,
+  useFees,
+  useVolume,
+  useMarketMakingFeesSince,
+} from "../../Api";
 
 import { getContract } from "../../Addresses";
 
@@ -146,7 +154,7 @@ export default function DashboardV2() {
   const allFees = useFees(chainId);
 
   const feeHistory = getFeeHistory(chainId);
-  const currentWeeksMMFees = useMarketMakingFeesSince(chainId, feeHistory[0]?.to)
+  const currentWeeksMMFees = useMarketMakingFeesSince(chainId, feeHistory[0]?.to);
   let totalCurrentFees;
   if (currentFeesUsd && currentWeeksMMFees) {
     totalCurrentFees = currentFeesUsd.add(currentWeeksMMFees);
@@ -170,12 +178,12 @@ export default function DashboardV2() {
   let totalMMFees;
   const allVolume = useVolume(chainId);
   if (allVolume) {
-    totalMMFees = (MM_FEE_MULTIPLIER.mul(allVolume.mint))
+    totalMMFees = MM_FEE_MULTIPLIER.mul(allVolume.mint)
       .add(MM_FEE_MULTIPLIER.mul(allVolume.burn))
       .add(MM_FEE_MULTIPLIER.mul(allVolume.margin))
       .add(MM_FEE_MULTIPLIER.mul(allVolume.liquidation))
       .add(MM_SWAPS_FEE_MULTIPLIER.mul(allVolume.swap));
-    totalMMFees = totalMMFees.div(expandDecimals(1, FEE_MULTIPLIER_BASIS_POINTS))
+    totalMMFees = totalMMFees.div(expandDecimals(1, FEE_MULTIPLIER_BASIS_POINTS));
   }
 
   let totalFees;
@@ -435,6 +443,10 @@ export default function DashboardV2() {
             </div>
             <div className="Page-description">
               {chainName} Total Stats start from {totalStatsStartDate}.<br />
+              See detailed analytics{' '}
+              <a href="https://analytics.mycelium.xyz" target="_blank" rel="noopener noreferrer">
+                here.
+              </a>
             </div>
           </div>
         </div>
@@ -617,9 +629,7 @@ export default function DashboardV2() {
                           className="nowrap"
                           handle={`$${formatAmount(mycMarketCap, USD_DECIMALS, 0, true)}`}
                           renderContent={() => (
-                            <>
-                              Fully Diluted: ${formatAmount(mycFullyDilutedMarketCap, USD_DECIMALS, 0, true)}
-                            </>
+                            <>Fully Diluted: ${formatAmount(mycFullyDilutedMarketCap, USD_DECIMALS, 0, true)}</>
                           )}
                         />
                       </div>
