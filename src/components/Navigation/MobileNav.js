@@ -41,8 +41,8 @@ const navLinks = [
     path: "/rewards",
   },
   // {
-    // name: "Referrals",
-    // path: "/referrals",
+  // name: "Referrals",
+  // path: "/referrals",
   // },
 ];
 
@@ -152,6 +152,11 @@ export default function AppHeaderLinks({
               </NavLink>
             </AppHeaderLinkContainer>
           ))}
+          <AppHeaderLinkContainer>
+            <a href="https://analytics.mycelium.xyz" target="_blank" rel="noopener noreferrer">
+              Analytics
+            </a>
+          </AppHeaderLinkContainer>
           <AppHeaderLinkContainer>
             <a
               href="https://swaps.docs.mycelium.xyz/perpetual-swaps/mycelium-perpetual-swaps"
