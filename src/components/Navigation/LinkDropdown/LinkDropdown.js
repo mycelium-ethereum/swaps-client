@@ -22,8 +22,8 @@ const navLinks = [
     path: "/rewards",
   },
   // {
-    // name: "Referrals",
-    // path: "/referrals",
+  // name: "Referrals",
+  // path: "/referrals",
   // },
 ];
 
@@ -64,6 +64,11 @@ export default function LinkDropdown() {
             {item.name}
           </MenuItem>
         ))}
+        <ListItem>
+          <a href="https://analytics.mycelium.xyz" target="_blank" rel="noopener noreferrer">
+            Analytics
+          </a>
+        </ListItem>
         <ListItem>
           <a
             href="https://swaps.docs.mycelium.xyz/perpetual-swaps/mycelium-perpetual-swaps"
