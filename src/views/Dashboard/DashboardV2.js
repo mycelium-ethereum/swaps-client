@@ -158,15 +158,15 @@ export default function DashboardV2() {
   const from = feeHistory[0]?.to;
   const to = from + SECONDS_PER_WEEK * 2;
   const currentMMFees = useMarketMakingFeesSince(chainId, from, to);
-  const unclaimedFees = getUnclaimedFees(whitelistedTokenAddresses, infoTokens, fees);
-  const currentFees = useFeesSince(chainId, from, to);
-  let totalCurrentFees, currentFeesUsd;
-  if (unclaimedFees && currentFees) {
-    currentFeesUsd = unclaimedFees.gt(currentFees) ? unclaimedFees : currentFees
+  const currentGraphFees = useFeesSince(chainId, from, to);
+  const currentUnclaimedFees = getUnclaimedFees(whitelistedTokenAddresses, infoTokens, fees);
+  let totalCurrentFees, currentFees;
+  if (currentUnclaimedFees && currentGraphFees) {
+    currentFees = currentUnclaimedFees.gt(currentGraphFees) ? currentUnclaimedFees : currentGraphFees;
   }
   
-  if (currentFeesUsd && currentMMFees) {
-    totalCurrentFees = currentFeesUsd.add(currentMMFees);
+  if (currentFees && currentMMFees) {
+    totalCurrentFees = currentFees.add(currentMMFees);
   }
 
   if (allFees) {
@@ -500,7 +500,7 @@ export default function DashboardV2() {
                         handle={`$${formatAmount(totalCurrentFees, USD_DECIMALS, 2, true)}`}
                         renderContent={() => (
                           <>
-                            Distributed Fees: ${formatAmount(currentFeesUsd, USD_DECIMALS, 2, true)}
+                            Distributed Fees: ${formatAmount(currentFees, USD_DECIMALS, 2, true)}
                             <br />
                             Spread Capture: ${formatAmount(currentMMFees, USD_DECIMALS, 2, true)}
                           </>
