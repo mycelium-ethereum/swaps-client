@@ -55,39 +55,6 @@ function getMycGraphClient(chainId) {
   throw new Error(`Unsupported chain ${chainId}`);
 }
 
-/**
- * Current fees for claiming in contracts
- * @param chainId string
- * @param library 
- * @param tokenAddresses string[] to read from vault should be whitelisted token addresses
- * @param vaultAddress
- * @param readerAddress
- */
-export const useUnclaimedFees = (chainId, library, active, infoTokens, tokenAddresses, vaultAddress, readerAddress) => {
-  const { data: fees } = useSWR([`Unclaimed:fees:${active}`, chainId, readerAddress, "getFees", vaultAddress], {
-    fetcher: fetcher(library, ReaderV2, [tokenAddresses]),
-  });
-
-  if (!fees || !infoTokens) {
-    return bigNumberify(0);
-  }
-
-  let currentFeesUsd = bigNumberify(0);
-  for (let i = 0; i < tokenAddresses.length; i++) {
-    const tokenAddress = tokenAddresses[i];
-    const tokenInfo = infoTokens[tokenAddress];
-    if (!tokenInfo || !tokenInfo.contractMinPrice) {
-      continue;
-    }
-
-    const feeUsd = fees[i].mul(tokenInfo.contractMinPrice).div(expandDecimals(1, tokenInfo.decimals));
-    currentFeesUsd = currentFeesUsd.add(feeUsd);
-  }
-
-  return currentFeesUsd;
-
-}
-
 export function useFees(chainId) {
   const query = gql(`{
     feeStat(id: "total") {
