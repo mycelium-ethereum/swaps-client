@@ -46,7 +46,7 @@ export default function LinkDropdown() {
   };
 
   useEffect(() => {
-    const currentPage = navLinks.filter((item) => item.path === location.pathname)[0]?.name || "Home";
+    const currentPage = navLinks.filter((item) => item.path === location.pathname)[0]?.name || "Trade";
     setCurrentItem(currentPage);
   }, [location]);
 
