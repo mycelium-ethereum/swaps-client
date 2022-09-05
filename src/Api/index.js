@@ -12,7 +12,6 @@ import Router from "../abis/Router.json";
 import UniPool from "../abis/UniPool.json";
 import Token from "../abis/Token.json";
 import VaultReader from "../abis/VaultReader.json";
-import ReaderV2 from "../abis/ReaderV2.json";
 
 import { getContract } from "../Addresses";
 import { getConstant } from "../Constants";
@@ -78,7 +77,7 @@ export function useFeesSince(chainId, from, to) {
   const [res, setRes] = useState();
 
   const query = gql(`{
-    feeStats(where: { id_gte: ${from}, id_lt: ${to}, period: "daily" }) {
+    feeStats(where: { id_gte: ${from}, id_lt: ${to}, period: daily }) {
       id
       marginAndLiquidation
       swap
