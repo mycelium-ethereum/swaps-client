@@ -16,7 +16,6 @@ function getGraphClient(chainId) {
   if (chainId === ARBITRUM) {
     return arbitrumReferralsGraphClient;
   } else if (chainId === ARBITRUM_TESTNET) {
-    // this isnt the correct client but it allows testing code creation on testnet
     return arbitrumTestnetReferralsGraphClient;
   }
   throw new Error(`Unsupported chain ${chainId}`);
