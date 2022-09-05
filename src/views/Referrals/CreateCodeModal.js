@@ -3,7 +3,7 @@ import { bigNumberify, getCodeError, helperToast, useDebounce } from "../../Help
 import { encodeReferralCode, getReferralCodeTakenStatus, registerReferralCode } from '../../Api/referrals';
 import * as Styles from "./Referrals.styles";
 
-const getSampleReferrarStat = (code) => {
+const getSampleReferrerStat = (code) => {
   return {
     discountUsd: bigNumberify(0),
     referralCode: code,
@@ -131,7 +131,7 @@ export default function CreateCodeModal(props) {
         });
         const receipt = await tx.wait();
         if (receipt.status === 1) {
-          recentlyAddedCodes.push(getSampleReferrarStat(referralCode));
+          recentlyAddedCodes.push(getSampleReferrerStat(referralCode));
           helperToast.success("Referral code created!");
           setRecentlyAddedCodes(recentlyAddedCodes);
           setReferralCode("");

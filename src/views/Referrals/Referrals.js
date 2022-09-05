@@ -124,11 +124,11 @@ export default function Referral(props) {
 
     // trader's data found
     if (traderData) {
-      const commissions = ethers.BigNumber.from(traderData.commissions);
-      const rebates = ethers.BigNumber.from(traderData.rebates);
+      const commissions = bigNumberify(traderData.commissions);
+      const rebates = bigNumberify(traderData.rebates);
 
       return {
-        volume: ethers.BigNumber.from(traderData.commissions_volume),
+        volume: bigNumberify(traderData.commissions_volume),
         totalReward: commissions.add(rebates),
         commissions,
         rebates,
@@ -160,8 +160,12 @@ export default function Referral(props) {
   }
 
   const finalReferrerTotalStats = recentlyAddedCodes.filter(isRecentReferralCodeNotExpired).reduce((acc, cv) => {
-    const addedCodes = referrerTotalStats.map((c) => c.referralCode.trim());
-    if (!addedCodes.includes(cv.referralCode)) {
+    const addedCodes = referrerTotalStats?.map((c) => c.referralCode.trim());
+    if (addedCodes && !addedCodes.includes(cv.referralCode)) {
+      // BigNumbers get converted in local storage, need to convert them back
+      cv.totalRebateUsd = bigNumberify(cv.totalRebateUsd);
+      cv.volume = bigNumberify(cv.volume);
+      cv.discountUsd = bigNumberify(cv.discountUsd);
       acc = acc.concat(cv);
     }
     return acc;
