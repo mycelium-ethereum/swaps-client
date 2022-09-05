@@ -12,6 +12,7 @@ import Router from "../abis/Router.json";
 import UniPool from "../abis/UniPool.json";
 import Token from "../abis/Token.json";
 import VaultReader from "../abis/VaultReader.json";
+import ReaderV2 from "../abis/ReaderV2.json";
 
 import { getContract } from "../Addresses";
 import { getConstant } from "../Constants";
@@ -41,7 +42,6 @@ import {
 import { getTokens, getTokenBySymbol, getWhitelistedTokens } from "../data/Tokens";
 
 import { nissohGraphClient, arbitrumGraphClient, arbitrumTestnetGraphClient } from "./common";
-import { SECONDS_PER_WEEK } from "../data/Fees";
 export * from "./prices";
 
 const { AddressZero } = ethers.constants;
@@ -53,6 +53,39 @@ function getMycGraphClient(chainId) {
     return arbitrumTestnetGraphClient;
   } 
   throw new Error(`Unsupported chain ${chainId}`);
+}
+
+/**
+ * Current fees for claiming in contracts
+ * @param chainId string
+ * @param library 
+ * @param tokenAddresses string[] to read from vault should be whitelisted token addresses
+ * @param vaultAddress
+ * @param readerAddress
+ */
+export const useUnclaimedFees = (chainId, library, active, infoTokens, tokenAddresses, vaultAddress, readerAddress) => {
+  const { data: fees } = useSWR([`Unclaimed:fees:${active}`, chainId, readerAddress, "getFees", vaultAddress], {
+    fetcher: fetcher(library, ReaderV2, [tokenAddresses]),
+  });
+
+  if (!fees || !infoTokens) {
+    return bigNumberify(0);
+  }
+
+  let currentFeesUsd = bigNumberify(0);
+  for (let i = 0; i < tokenAddresses.length; i++) {
+    const tokenAddress = tokenAddresses[i];
+    const tokenInfo = infoTokens[tokenAddress];
+    if (!tokenInfo || !tokenInfo.contractMinPrice) {
+      continue;
+    }
+
+    const feeUsd = fees[i].mul(tokenInfo.contractMinPrice).div(expandDecimals(1, tokenInfo.decimals));
+    currentFeesUsd = currentFeesUsd.add(feeUsd);
+  }
+
+  return currentFeesUsd;
+
 }
 
 export function useFees(chainId) {
@@ -74,10 +107,44 @@ export function useFees(chainId) {
   return res ? res.data.feeStat : null;
 }
 
-export function useMarketMakingFeesSince(chainId, from) {
+export function useFeesSince(chainId, from, to) {
   const [res, setRes] = useState();
 
-  const to = from + SECONDS_PER_WEEK;
+  const query = gql(`{
+    feeStats(where: { id_gte: ${from}, id_lt: ${to}, period: "daily" }) {
+      id
+      marginAndLiquidation
+      swap
+      mint
+      burn
+    },
+  }`);
+
+  useEffect(() => {
+    if (!from) {
+      return
+    }
+    getMycGraphClient(chainId).query({ query }).then((res) => {
+      if (res.data.feeStats) {
+        let fees = res.data.feeStats.reduce((sum, stat) => (
+            sum
+              .add(stat.mint)
+              .add(stat.burn)
+              .add(stat.swap)
+              .add(stat.marginAndLiquidation)
+          ), bigNumberify(0)
+        );
+        setRes(fees)
+      }
+    }).catch(console.warn);
+  }, [setRes, query, chainId, from]);
+
+  return res
+}
+
+export function useMarketMakingFeesSince(chainId, from, to) {
+  const [res, setRes] = useState();
+
   const query = gql(`{
     hourlyVolumes (first: 1000, where: { id_gte: ${from}, id_lt: ${to}}) {
       swap

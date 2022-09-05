@@ -9,7 +9,7 @@ import hexToRgba from "hex-to-rgba";
 import { ethers } from "ethers";
 
 import { getWhitelistedTokens } from "../../data/Tokens";
-import { getFeeHistory } from "../../data/Fees";
+import { getFeeHistory, SECONDS_PER_WEEK } from "../../data/Fees";
 
 import {
   fetcher,
@@ -43,6 +43,7 @@ import {
   useFees,
   useVolume,
   useMarketMakingFeesSince,
+  useFeesSince,
 } from "../../Api";
 
 import { getContract } from "../../Addresses";
@@ -64,26 +65,6 @@ import AssetDropdown from "./AssetDropdown";
 import SEO from "../../components/Common/SEO";
 
 const { AddressZero } = ethers.constants;
-
-function getCurrentFeesUsd(tokenAddresses, fees, infoTokens) {
-  if (!fees || !infoTokens) {
-    return bigNumberify(0);
-  }
-
-  let currentFeesUsd = bigNumberify(0);
-  for (let i = 0; i < tokenAddresses.length; i++) {
-    const tokenAddress = tokenAddresses[i];
-    const tokenInfo = infoTokens[tokenAddress];
-    if (!tokenInfo || !tokenInfo.contractMinPrice) {
-      continue;
-    }
-
-    const feeUsd = fees[i].mul(tokenInfo.contractMinPrice).div(expandDecimals(1, tokenInfo.decimals));
-    currentFeesUsd = currentFeesUsd.add(feeUsd);
-  }
-
-  return currentFeesUsd;
-}
 
 export default function DashboardV2() {
   const { active, library } = useWeb3React();
@@ -111,7 +92,6 @@ export default function DashboardV2() {
   }
 
   const whitelistedTokens = getWhitelistedTokens(chainId);
-  const whitelistedTokenAddresses = whitelistedTokens.map((token) => token.address);
   const tokenList = whitelistedTokens.filter((t) => !t.isWrapped);
 
   const readerAddress = getContract(chainId, "Reader");
@@ -126,10 +106,6 @@ export default function DashboardV2() {
 
   const { data: aums } = useSWR([`Dashboard:getAums:${active}`, chainId, mlpManagerAddress, "getAums"], {
     fetcher: fetcher(library, MlpManager),
-  });
-
-  const { data: fees } = useSWR([`Dashboard:fees:${active}`, chainId, readerAddress, "getFees", vaultAddress], {
-    fetcher: fetcher(library, ReaderV2, [whitelistedTokenAddresses]),
   });
 
   const { data: totalSupplies } = useSWR(
@@ -148,16 +124,19 @@ export default function DashboardV2() {
 
   const { infoTokens } = useInfoTokens(library, chainId, active, undefined, undefined);
 
-  const currentFeesUsd = getCurrentFeesUsd(whitelistedTokenAddresses, fees, infoTokens);
-
   let totalFeesDistributed;
   const allFees = useFees(chainId);
 
   const feeHistory = getFeeHistory(chainId);
-  const currentWeeksMMFees = useMarketMakingFeesSince(chainId, feeHistory[0]?.to);
+
+  const from = feeHistory[0]?.to;
+  const to = from + SECONDS_PER_WEEK * 2;
+  console.log(from, to);
+  const currentMMFees = useMarketMakingFeesSince(chainId, from, to);
+  const currentFees = useFeesSince(chainId, from, to);
   let totalCurrentFees;
-  if (currentFeesUsd && currentWeeksMMFees) {
-    totalCurrentFees = currentFeesUsd.add(currentWeeksMMFees);
+  if (currentFees && currentMMFees) {
+    totalCurrentFees = currentFees.add(currentMMFees);
   }
   // this is a buffer for when the manually update fees, it gives them an hour window to update
   // const shouldIncludeCurrrentFees = feeHistory.length && parseInt(Date.now() / 1000) - feeHistory[0].to > 60 * 60;
@@ -499,9 +478,9 @@ export default function DashboardV2() {
                         handle={`$${formatAmount(totalCurrentFees, USD_DECIMALS, 2, true)}`}
                         renderContent={() => (
                           <>
-                            Distributed Fees: ${formatAmount(currentFeesUsd, USD_DECIMALS, 2, true)}
+                            Distributed Fees: ${formatAmount(currentFees, USD_DECIMALS, 2, true)}
                             <br />
-                            Spread Capture: ${formatAmount(currentWeeksMMFees, USD_DECIMALS, 2, true)}
+                            Spread Capture: ${formatAmount(currentMMFees, USD_DECIMALS, 2, true)}
                           </>
                         )}
                       />

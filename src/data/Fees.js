@@ -6,8 +6,11 @@ const FEES = {
     {
       from: 1661299200 - SECONDS_PER_WEEK,
       to: 1661299200,
-      feeUsd: "61634",
     },
+    // {
+      // from: 1662508800 - SECONDS_PER_WEEK * 2, // 1661299200 (previous weeks to)
+      // to: 1662508800,
+    // },
   ],
 };
 
