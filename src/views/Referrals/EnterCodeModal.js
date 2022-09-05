@@ -28,7 +28,7 @@ export default function EnterCodeModal(props) {
     event.preventDefault();
     setIsSubmitting(true);
     const referralCodeHex = encodeReferralCode(referralCode);
-    const receipt = await setTraderReferralCodeByUser(chainId, referralCodeHex, {
+    const txn = await setTraderReferralCodeByUser(chainId, referralCodeHex, {
       library,
       account,
       successMsg: `Referral code added!`,
@@ -36,10 +36,11 @@ export default function EnterCodeModal(props) {
       setPendingTxns,
       pendingTxns,
     })
-    receipt.wait().finally(() => {
+    const receipt = await txn.wait();
+    if (receipt.status === 1) {
       setIsSubmitting(false);
-      setIsEnterCodeModalVisible(false);
-    });
+      close();
+    }
   }
 
   return (

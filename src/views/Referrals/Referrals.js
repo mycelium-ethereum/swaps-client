@@ -133,6 +133,13 @@ export default function Referral(props) {
         commissions,
         rebates,
       };
+    } else {
+      return {
+        volume: bigNumberify(0),
+        totalReward: bigNumberify(0),
+        commissions: bigNumberify(0),
+        rebates: bigNumberify(0),
+      };
     }
   }, [account, currentRewardRound]);
 
@@ -232,8 +239,8 @@ export default function Referral(props) {
         active={active}
         chainId={chainId}
         library={library}
-        setPendingTxns={setPendingTxns}
         pendingTxns={pendingTxns}
+        setPendingTxns={setPendingTxns}
         isEnterCodeModalVisible={isEnterCodeModalVisible}
         setIsEnterCodeModalVisible={setIsEnterCodeModalVisible}
       />
@@ -310,7 +317,7 @@ export default function Referral(props) {
               finalReferrerTotalStats={finalReferrerTotalStats}
             />
           }
-          {userRoundData &&
+          {userRoundData && /* disable for now */ true &&
             <ReferralRewards
               active={active}
               connectWallet={connectWallet}
