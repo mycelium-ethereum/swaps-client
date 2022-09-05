@@ -135,12 +135,14 @@ export default function CreateCodeModal(props) {
           helperToast.success("Referral code created!");
           setRecentlyAddedCodes(recentlyAddedCodes);
           setReferralCode("");
+          setIsSubmitting(false);
+          close();
+        } else {
+          setIsSubmitting(false);
         }
       } catch (err) {
         console.error(err);
-      } finally {
         setIsSubmitting(false);
-        close();
       }
     }
   }

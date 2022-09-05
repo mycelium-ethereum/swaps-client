@@ -27,7 +27,6 @@ export default function EditCodeModal(props) {
     if (!isSubmitting) {
       setEditReferralCode("");
       setError("");
-      setIsSubmitting(false);
       setIsEditCodeModalVisible(false);
     }
   };
@@ -35,19 +34,22 @@ export default function EditCodeModal(props) {
   const handleUpdateReferralCode = async (event) => {
     event.preventDefault();
     setIsSubmitting(true);
-    const referralCodeHex = encodeReferralCode(editReferralCode);
-    const txn = await setTraderReferralCodeByUser(chainId, referralCodeHex, {
-      library,
-      account,
-      successMsg: `Referral code updated!`,
-      failMsg: "Referral code updated failed.",
-      pendingTxns,
-      setPendingTxns,
-    })
-    const receipt = await txn.wait();
-    if (receipt.status === 1) {
+    try {
+      const referralCodeHex = encodeReferralCode(editReferralCode);
+      const txn = await setTraderReferralCodeByUser(chainId, referralCodeHex, {
+        library,
+        account,
+        successMsg: `Referral code updated!`,
+        failMsg: "Referral code updated failed.",
+        pendingTxns,
+        setPendingTxns,
+      })
+      await txn.wait();
       setIsSubmitting(false);
       close();
+    } catch (err) {
+      console.error(err);
+      setIsSubmitting(false);
     }
   }
   const getPrimaryText = () => {
