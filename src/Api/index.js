@@ -35,12 +35,13 @@ import {
   getSupplyUrl,
   getTracerServerUrl,
   MM_FEE_MULTIPLIER,
-  MM_SWAPS_FEE_MULTIPLIER,
-  FEE_MULTIPLIER_BASIS_POINTS
+  FEE_MULTIPLIER_BASIS_POINTS,
+  BASIS_POINTS_DIVISOR
 } from "../Helpers";
 import { getTokens, getTokenBySymbol, getWhitelistedTokens } from "../data/Tokens";
 
 import { nissohGraphClient, arbitrumGraphClient, arbitrumTestnetGraphClient } from "./common";
+import {SECONDS_PER_WEEK} from "../data/Fees";
 export * from "./prices";
 
 const { AddressZero } = ethers.constants;
@@ -172,6 +173,20 @@ export function useMarketMakingFeesSince(chainId, from, to, stableTokens) {
   }, [setRes, query, chainId, from]);
 
   return res
+}
+
+export const useMarketMakingApr = (chainId, mlpSupplyUsd) => {
+  const whitelistedTokens = getWhitelistedTokens(chainId);
+  const stableTokens = whitelistedTokens.filter((t) => t.isStable);
+
+  const [to] = useState(Math.floor(Date.now() / 1000));
+  const from = to - SECONDS_PER_WEEK;
+  const lastWeeksMMFees = useMarketMakingFeesSince(chainId, from, to, stableTokens)
+
+  if (lastWeeksMMFees && mlpSupplyUsd) {
+    let mmAnnualFeesUsd = lastWeeksMMFees.mul(52);
+    return mmAnnualFeesUsd.mul(BASIS_POINTS_DIVISOR).div(mlpSupplyUsd);
+  }
 }
 
 export function useVolume(chainId) {

@@ -38,7 +38,7 @@ import {
   getProcessedData,
   getPageTitle,
 } from "../../Helpers";
-import { callContract, useMYCPrice, useTotalMYCSupply } from "../../Api";
+import { callContract, useMarketMakingApr, useMYCPrice, useTotalMYCSupply } from "../../Api";
 import { getConstant } from "../../Constants";
 
 import useSWR from "swr";
@@ -746,6 +746,7 @@ export default function StakeV2({ setPendingTxns, connectWallet, trackAction }) 
   const stakingData = getStakingData(stakingInfo);
   const vestingData = getVestingData(vestingInfo);
 
+
   const processedData = getProcessedData(
     balanceData,
     supplyData,
@@ -756,8 +757,14 @@ export default function StakeV2({ setPendingTxns, connectWallet, trackAction }) 
     nativeTokenPrice,
     stakedMycSupply,
     mycPrice,
-    mycSupply
+    mycSupply,
   );
+
+  const mmApr = useMarketMakingApr(chainId, processedData.mlpSupplyUsd);
+  if (mmApr) {
+    processedData.mmApr = mmApr;
+    processedData.mlpAprTotal = processedData.mlpAprTotal.add(mmApr);
+  }
 
   let totalRewardTokens;
   if (processedData && processedData.bnMycInFeeMyc && processedData.bonusMycInFeeMyc) {

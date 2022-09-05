@@ -20,6 +20,7 @@ import OrderBook from "./abis/OrderBook.json";
 import { getWhitelistedTokens, isValidToken } from "./data/Tokens";
 import ComingSoonTooltip from "./components/Tooltip/ComingSoon";
 import { isAddress } from "ethers/lib/utils";
+import {SECONDS_PER_WEEK} from "./data/Fees";
 
 const { AddressZero } = ethers.constants;
 
@@ -2813,8 +2814,7 @@ export function getProcessedData(
       ? data.feeMlpTrackerAnnualRewardsUsd.mul(BASIS_POINTS_DIVISOR).div(data.mlpSupplyUsd)
       : bigNumberify(0);
 
-  data.mmApr = MM_TOKENS_PER_INTERVAL.mul(SECONDS_PER_YEAR).mul(BASIS_POINTS_DIVISOR).div(data.mlpSupplyUsd);
-  data.mlpAprTotal = data.mlpAprForNativeToken.add(data.mlpAprForEsMyc).add(data.mmApr);
+  data.mlpAprTotal = data.mlpAprForNativeToken.add(data.mlpAprForEsMyc);
 
   data.totalMlpRewardsUsd = data.stakedMlpTrackerRewardsUsd.add(data.feeMlpTrackerRewardsUsd);
 
