@@ -140,6 +140,7 @@ export default function CreateCodeModal(props) {
         console.error(err);
       } finally {
         setIsSubmitting(false);
+        close();
       }
     }
   }
