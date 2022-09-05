@@ -317,7 +317,7 @@ export default function Referral(props) {
               finalReferrerTotalStats={finalReferrerTotalStats}
             />
           }
-          {userRoundData && /* disable for now */ true &&
+          {userRoundData && /* disable for now */ false &&
             <ReferralRewards
               active={active}
               connectWallet={connectWallet}
