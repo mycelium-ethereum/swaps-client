@@ -5,7 +5,6 @@ import { useWeb3React } from "@web3-react/core";
 import * as Styles from "./Referrals.styles";
 import CreateCodeModal from "./CreateCodeModal";
 import EnterCodeModal from "./EnterCodeModal";
-import EditCodeModal from "./EditCodeModal";
 
 import SEO from "../../components/Common/SEO";
 import ViewSwitch from "../../components/ViewSwitch/ViewSwitch";
@@ -59,11 +58,11 @@ export default function Referral(props) {
 
   const [currentView, setCurrentView] = useLocalStorage(REFERRALS_SELECTED_TAB_KEY, REBATES);
   const [isEnterCodeModalVisible, setIsEnterCodeModalVisible] = useState(false);
+  const [isEdit, setIsEdit] = useState(false);
   const [isCreateCodeModalVisible, setIsCreateCodeModalVisible] = useState(false);
   const [selectedRound, setSelectedRound] = useState("latest");
   const [nextRewards, setNextRewards] = useState();
 
-  const [isEditCodeModalVisible, setIsEditCodeModalVisible] = useState(false);
 
   const switchView = () => {
     setCurrentView(currentView === COMMISSIONS ? REBATES : COMMISSIONS);
@@ -229,6 +228,12 @@ export default function Referral(props) {
     hasClaimedRound = hasClaimed[selectedRound]
   }
 
+
+  const handleSetIsEnterCodeModalVisible = (isEdit) => {
+    setIsEdit(isEdit);
+    setIsEnterCodeModalVisible(true);
+  }
+
   return (
     <>
       <SEO
@@ -239,18 +244,10 @@ export default function Referral(props) {
         active={active}
         chainId={chainId}
         library={library}
-        pendingTxns={pendingTxns}
-        setPendingTxns={setPendingTxns}
+        connectWallet={connectWallet}
         isEnterCodeModalVisible={isEnterCodeModalVisible}
         setIsEnterCodeModalVisible={setIsEnterCodeModalVisible}
-      />
-      <EditCodeModal
-        active={active}
-        chainId={chainId}
-        library={library}
-        connectWallet={connectWallet}
-        isEditCodeModalVisible={isEditCodeModalVisible}
-        setIsEditCodeModalVisible={setIsEditCodeModalVisible}
+        isEdit={isEdit}
         referralCodeInString={referralCodeInString}
         pendingTxns={pendingTxns}
         setPendingTxns={setPendingTxns}
@@ -301,8 +298,7 @@ export default function Referral(props) {
               connectWallet={connectWallet}
               trackAction={trackAction}
               referralCodeInString={referralCodeInString}
-              setIsEnterCodeModalVisible={setIsEnterCodeModalVisible}
-              setIsEditCodeModalVisible={setIsEditCodeModalVisible}
+              handleSetIsEnterCodeModalVisible={handleSetIsEnterCodeModalVisible}
               tradersTier={tradersTier}
             />
           }
