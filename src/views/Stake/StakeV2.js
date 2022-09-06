@@ -78,6 +78,15 @@ function CompoundModal(props) {
     [chainId, "StakeV2-compound-should-claim-esMyc"],
     true
   );
+  
+  const [shouldStakeEsMyc, setShouldStakeEsMyc] = useLocalStorageSerializeKey(
+    [chainId, "StakeV2-compound-should-stake-esMyc"],
+    true
+  );
+
+  useEffect(() => {
+    if (shouldStakeEsMyc) setShouldClaimEsMyc(true);
+  }, [shouldStakeEsMyc, setShouldClaimEsMyc]);
 
   const [shouldClaimWeth, setShouldClaimWeth] = useLocalStorageSerializeKey(
     [chainId, "StakeV2-compound-should-claim-weth"],
@@ -193,8 +202,13 @@ function CompoundModal(props) {
             </Checkbox>
           </div>
           <div>
-            <Checkbox isChecked={shouldClaimEsMyc} setIsChecked={setShouldClaimEsMyc}>
+            <Checkbox isChecked={shouldClaimEsMyc} setIsChecked={setShouldClaimEsMyc} disabled={shouldStakeEsMyc}>
               Claim esMYC Rewards
+            </Checkbox>
+          </div>
+          <div>
+            <Checkbox isChecked={shouldStakeEsMyc} setIsChecked={setShouldStakeEsMyc}>
+              Stake esMYC Rewards
             </Checkbox>
           </div>
           <div>
@@ -249,6 +263,16 @@ function ClaimModal(props) {
     [chainId, "StakeV2-claim-should-claim-esMyc"],
     true
   );
+
+  const [shouldStakeEsMyc, setShouldStakeEsMyc] = useLocalStorageSerializeKey(
+    [chainId, "StakeV2-claim-should-stake-esMyc"],
+    true
+  );
+
+  useEffect(() => {
+    if (shouldStakeEsMyc) setShouldClaimEsMyc(true);
+  }, [shouldStakeEsMyc, setShouldClaimEsMyc]);
+
 
   const [shouldClaimWeth, setShouldClaimWeth] = useLocalStorageSerializeKey(
     [chainId, "StakeV2-claim-should-claim-weth"],
@@ -320,8 +344,13 @@ function ClaimModal(props) {
             </Checkbox>
           </div>
           <div>
-            <Checkbox isChecked={shouldClaimEsMyc} setIsChecked={setShouldClaimEsMyc}>
+            <Checkbox isChecked={shouldClaimEsMyc} setIsChecked={setShouldClaimEsMyc} disabled={shouldStakeEsMyc}>
               Claim esMYC Rewards
+            </Checkbox>
+          </div>
+          <div>
+            <Checkbox isChecked={shouldStakeEsMyc} setIsChecked={setShouldStakeEsMyc}>
+              Stake esMYC Rewards
             </Checkbox>
           </div>
           <div>
