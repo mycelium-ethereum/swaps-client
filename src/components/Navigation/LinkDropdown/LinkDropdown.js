@@ -21,10 +21,10 @@ const navLinks = [
     name: "Rewards",
     path: "/rewards",
   },
-  // {
-  // name: "Referrals",
-  // path: "/referrals",
-  // },
+  {
+    name: "Referrals",
+    path: "/referrals",
+  },
 ];
 
 export default function LinkDropdown() {
