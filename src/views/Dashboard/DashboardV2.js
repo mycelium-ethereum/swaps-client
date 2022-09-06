@@ -114,6 +114,7 @@ export default function DashboardV2() {
   const whitelistedTokens = getWhitelistedTokens(chainId);
   const whitelistedTokenAddresses = whitelistedTokens.map((token) => token.address);
   const tokenList = whitelistedTokens.filter((t) => !t.isWrapped);
+  const stableTokens = whitelistedTokens.filter((t) => t.isStable);
 
   const readerAddress = getContract(chainId, "Reader");
   const vaultAddress = getContract(chainId, "Vault");
@@ -157,7 +158,7 @@ export default function DashboardV2() {
 
   const from = feeHistory[0]?.to;
   const to = from + SECONDS_PER_WEEK * 2;
-  const currentMMFees = useMarketMakingFeesSince(chainId, from, to);
+  const currentMMFees = useMarketMakingFeesSince(chainId, from, to, stableTokens);
   const currentGraphFees = useFeesSince(chainId, from, to);
   const currentUnclaimedFees = getUnclaimedFees(whitelistedTokenAddresses, infoTokens, fees);
   let totalCurrentFees, currentFees;

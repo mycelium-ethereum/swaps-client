@@ -35,8 +35,8 @@ import {
   getSupplyUrl,
   getTracerServerUrl,
   MM_FEE_MULTIPLIER,
-  MM_SWAPS_FEE_MULTIPLIER,
-  FEE_MULTIPLIER_BASIS_POINTS
+  FEE_MULTIPLIER_BASIS_POINTS,
+  MM_SWAPS_FEE_MULTIPLIER
 } from "../Helpers";
 import { getTokens, getTokenBySymbol, getWhitelistedTokens } from "../data/Tokens";
 
@@ -108,18 +108,29 @@ export function useFeesSince(chainId, from, to) {
   return res
 }
 
-export function useMarketMakingFeesSince(chainId, from, to) {
+export function useMarketMakingFeesSince(chainId, from, to, stableTokens) {
   const [res, setRes] = useState();
+
+  const stableMap = stableTokens.reduce((o, t) => ({ ...o, [t.address.toLowerCase()]: true }), {})
 
   const query = gql(`{
     hourlyVolumes (first: 1000, where: { id_gte: ${from}, id_lt: ${to}}) {
-      swap
       liquidation
       mint
       burn
       margin
-    }
-  }`);
+    },
+    tokensSwapsVolume1: hourlyVolumeByTokens (first: 1000, where: { timestamp_gte: ${from}, timestamp_lt: ${to} }) {
+      swap
+      tokenA
+      tokenB
+    },
+    tokensSwapsVolume2: hourlyVolumeByTokens (first: 1000, skip: 1000, where: { timestamp_gte: ${from}, timestamp_lt: ${to} }) {
+      swap
+      tokenA
+      tokenB
+    },
+  }`)
 
   useEffect(() => {
     if (!from) {
@@ -133,10 +144,28 @@ export function useMarketMakingFeesSince(chainId, from, to) {
               .add(MM_FEE_MULTIPLIER.mul(stat.burn))
               .add(MM_FEE_MULTIPLIER.mul(stat.margin))
               .add(MM_FEE_MULTIPLIER.mul(stat.liquidation))
-              .add(MM_SWAPS_FEE_MULTIPLIER.mul(stat.swap))
           ), bigNumberify(0)
         );
-        setRes(mmFees.div(expandDecimals(1, FEE_MULTIPLIER_BASIS_POINTS)))
+
+        const allSwapsVolume = res.data.tokensSwapsVolume1.concat(res.data.tokensSwapsVolume2);
+        let swapMMFees = allSwapsVolume.reduce((sum, stat) => {
+          const tokenAIsStable = stableMap[stat.tokenA];
+          const tokenBIsStable = stableMap[stat.tokenB];
+          if (tokenAIsStable && tokenBIsStable) {
+            return sum
+          } else if (!tokenAIsStable && !tokenBIsStable) {
+            return (
+              sum
+                .add(MM_SWAPS_FEE_MULTIPLIER.mul(stat.swap))
+            )
+          } else {
+            return (
+              sum
+                .add(MM_FEE_MULTIPLIER.mul(stat.swap))
+            )
+          }
+        }, bigNumberify(0))
+        setRes((mmFees.add(swapMMFees)).div(expandDecimals(1, FEE_MULTIPLIER_BASIS_POINTS)))
       }
     }).catch(console.warn);
   }, [setRes, query, chainId, from]);
