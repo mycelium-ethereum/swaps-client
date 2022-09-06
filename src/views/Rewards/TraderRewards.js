@@ -5,6 +5,7 @@ import Davatar from '@davatar/react';
 import { EmptyAvatar } from './Rewards.styles'
 import cx from "classnames";
 import RewardsRoundSelect from "../../components/RewardsRoundSelect/RewardsRoundSelect";
+import {RewardsButton} from "../../Shared.styles";
 
 export default function TraderRewards(props) {
   const {
@@ -92,17 +93,17 @@ export default function TraderRewards(props) {
             </div>
           </Styles.RewardsDataBox>
         </Styles.RewardsDataBoxes>
-        {active && <Styles.RewardsButton
+        {active && <RewardsButton
           className={'App-cta large'}
           disabled={!userRoundData?.totalReward || userRoundData.totalReward.eq(0) || isClaiming || hasClaimed || hasClaimed === undefined || latestRound}
           onClick={handleClaim}
         >
           Claim WETH
-        </Styles.RewardsButton>}
+        </RewardsButton>}
         {!active && (
-          <Styles.RewardsButton className="App-cta large" onClick={() => connectWallet()}>
+          <RewardsButton className="App-cta large" onClick={() => connectWallet()}>
             Connect Wallet
-          </Styles.RewardsButton>
+          </RewardsButton>
         )}
       </Styles.RewardsData>
       {hasClaimed && <Styles.ClaimedRewards>

@@ -2,8 +2,8 @@ import { ethers } from "ethers";
 import { gql } from "@apollo/client";
 import { useState, useEffect } from "react";
 
-import { ARBITRUM, MAX_REFERRAL_CODE_LENGTH, bigNumberify, isAddressZero, helperToast, getProvider, fetcher } from "../Helpers";
-import { arbitrumReferralsGraphClient } from "./common";
+import { ARBITRUM, MAX_REFERRAL_CODE_LENGTH, bigNumberify, isAddressZero, helperToast, getProvider, fetcher, ARBITRUM_TESTNET } from "../Helpers";
+import { arbitrumReferralsGraphClient, arbitrumTestnetReferralsGraphClient } from "./common";
 import { getContract } from "../Addresses";
 
 import ReferralStorage from "../abis/ReferralStorage.json";
@@ -15,6 +15,8 @@ const ACTIVE_CHAINS = [ARBITRUM];
 function getGraphClient(chainId) {
   if (chainId === ARBITRUM) {
     return arbitrumReferralsGraphClient;
+  } else if (chainId === ARBITRUM_TESTNET) {
+    return arbitrumTestnetReferralsGraphClient;
   }
   throw new Error(`Unsupported chain ${chainId}`);
 }

@@ -7,8 +7,7 @@ export default function TraderRebateStats(props) {
   const {
     active,
     connectWallet,
-    setIsEnterCodeModalVisible,
-    setIsEditCodeModalVisible,
+    handleSetIsEnterCodeModalVisible,
     referralCodeInString,
     tradersTier,
   } = props;
@@ -34,7 +33,7 @@ export default function TraderRebateStats(props) {
               Connect Wallet
             </Styles.ReferralButton>
           ) : (
-            <Styles.ReferralButton className="App-cta large" onClick={() => setIsEditCodeModalVisible(true)}>
+            <Styles.ReferralButton className="App-cta large" onClick={() => handleSetIsEnterCodeModalVisible(/* isEdit */ true)}>
               Edit Code
             </Styles.ReferralButton>
           )}
@@ -48,7 +47,7 @@ export default function TraderRebateStats(props) {
               Connect Wallet
             </Styles.ReferralButton>
           ) : (
-            <Styles.ReferralButton className="App-cta large" onClick={() => setIsEnterCodeModalVisible(true)}>
+            <Styles.ReferralButton className="App-cta large" onClick={() => handleSetIsEnterCodeModalVisible(/* isEdit */ false)}>
               Enter Code
             </Styles.ReferralButton>
           )}
