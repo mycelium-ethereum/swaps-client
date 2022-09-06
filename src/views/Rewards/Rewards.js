@@ -2,7 +2,18 @@ import React, { useState, useMemo, useEffect } from "react";
 
 import useSWR from "swr";
 
-import { getTracerServerUrl, getPageTitle, getTokenInfo, useChainId, useENS, fetcher, expandDecimals, ETH_DECIMALS, helperToast, useLocalStorageSerializeKey } from "../../Helpers";
+import {
+  getTracerServerUrl,
+  getPageTitle,
+  getTokenInfo,
+  useChainId,
+  useENS,
+  fetcher,
+  expandDecimals,
+  ETH_DECIMALS,
+  helperToast,
+  useLocalStorageSerializeKey,
+} from "../../Helpers";
 import { useWeb3React } from "@web3-react/core";
 import { callContract } from "../../Api";
 import { ethers } from "ethers";
@@ -16,12 +27,19 @@ import { getContract } from "../../Addresses";
 import FeeDistributor from "../../abis/FeeDistributor.json";
 import FeeDistributorReader from "../../abis/FeeDistributorReader.json";
 import ViewSwitch from "../../components/ViewSwitch/ViewSwitch";
-import { RoundDropdown }from "../../components/RewardsRoundSelect/RewardsRoundSelect";
+import { RoundDropdown } from "../../components/RewardsRoundSelect/RewardsRoundSelect";
 
 const PersonalHeader = () => (
   <div className="Page-title-section mt-0">
     <div className="Page-title">Trader Rewards</div>
-    <div className="Page-description">Be in the top 50 % of traders to earn roundly rewards.</div>
+    <div className="Page-description">
+      Be in the top 50% of traders to earn roundly rewards.
+      <br /> Read the Terms of Use{" "}
+      <a href="https://mycelium.xyz/rewards-terms-of-use" target="_blank" rel="noopener noreferrer">
+        here
+      </a>
+      .
+    </div>
   </div>
 );
 
@@ -39,15 +57,9 @@ export default function Rewards(props) {
   const { active, account, library } = useWeb3React();
   const { ensName } = useENS(account);
 
-  const [selectedRound, setSelectedRound] = useLocalStorageSerializeKey(
-    [chainId, "Rewards-selected-round"],
-    "latest"
-  );
+  const [selectedRound, setSelectedRound] = useLocalStorageSerializeKey([chainId, "Rewards-selected-round"], "latest");
 
-  const [currentView, setCurrentView] = useLocalStorageSerializeKey(
-    [chainId, "Rewards-current-view"],
-    "Personal"
-  );
+  const [currentView, setCurrentView] = useLocalStorageSerializeKey([chainId, "Rewards-current-view"], "Personal");
 
   const [pageTracked, setPageTracked] = useState(false);
   const [isClaiming, setIsClaiming] = useState(false);
@@ -57,9 +69,12 @@ export default function Rewards(props) {
   const feeDistributorReader = getContract(chainId, "FeeDistributorReader");
 
   // Fetch all round data from server
-  const { data: allRoundsRewardsData, error: failedFetchingRewards } = useSWR([getTracerServerUrl(chainId, "/tradingRewards")], {
-    fetcher: (...args) => fetch(...args).then((res) => res.json()),
-  });
+  const { data: allRoundsRewardsData, error: failedFetchingRewards } = useSWR(
+    [getTracerServerUrl(chainId, "/tradingRewards")],
+    {
+      fetcher: (...args) => fetch(...args).then((res) => res.json()),
+    }
+  );
 
   // Fetch only the latest round's data from server
   const { data: currentRewardRound, error: failedFetchingRoundRewards } = useSWR(
@@ -70,7 +85,15 @@ export default function Rewards(props) {
   );
 
   const { data: hasClaimed } = useSWR(
-    [`Rewards:claimed:${active}`, chainId, feeDistributorReader, "getUserClaimed", feeDistributor, account ?? ethers.constants.AddressZero, allRoundsRewardsData?.length ?? 1],
+    [
+      `Rewards:claimed:${active}`,
+      chainId,
+      feeDistributorReader,
+      "getUserClaimed",
+      feeDistributor,
+      account ?? ethers.constants.AddressZero,
+      allRoundsRewardsData?.length ?? 1,
+    ],
     {
       fetcher: fetcher(library, FeeDistributorReader),
     }
@@ -101,7 +124,7 @@ export default function Rewards(props) {
           return {
             totalTradingVolume: totals.totalTradingVolume.add(trader.volume),
             totalRewards: totals.totalRewards.add(userReward),
-            unclaimedRewards
+            unclaimedRewards,
           };
         },
         {
@@ -121,24 +144,26 @@ export default function Rewards(props) {
       return undefined;
     }
     let hasSetMiddle = false;
-    const rewards = currentRewardRound.rewards?.sort((a, b) => b.volume - a.volume).map((trader, index) => {
-      const positionReward = ethers.BigNumber.from(trader.reward);
-      const degenReward = ethers.BigNumber.from(trader.degen_reward);
-      if (!hasSetMiddle && positionReward.eq(0)) {
-        hasSetMiddle = true;
-        setMiddleRow(index);
-      }
-      return ({
-        ...trader,
-        totalReward: positionReward.add(degenReward),
-        positionReward,
-        degenReward,
-      })
-    }); // Sort traders by highest to lowest in volume
+    const rewards = currentRewardRound.rewards
+      ?.sort((a, b) => b.volume - a.volume)
+      .map((trader, index) => {
+        const positionReward = ethers.BigNumber.from(trader.reward);
+        const degenReward = ethers.BigNumber.from(trader.degen_reward);
+        if (!hasSetMiddle && positionReward.eq(0)) {
+          hasSetMiddle = true;
+          setMiddleRow(index);
+        }
+        return {
+          ...trader,
+          totalReward: positionReward.add(degenReward),
+          positionReward,
+          degenReward,
+        };
+      }); // Sort traders by highest to lowest in volume
     return {
       ...currentRewardRound,
-      rewards
-    } 
+      rewards,
+    };
   }, [currentRewardRound]);
 
   // Get volume, position and reward from user round data
@@ -146,8 +171,10 @@ export default function Rewards(props) {
     if (!currentRewardRound) {
       return undefined;
     }
-    const leaderBoardIndex = currentRewardRound.rewards?.findIndex((trader) => trader.user_address.toLowerCase() === account?.toLowerCase());
-    let traderData
+    const leaderBoardIndex = currentRewardRound.rewards?.findIndex(
+      (trader) => trader.user_address.toLowerCase() === account?.toLowerCase()
+    );
+    let traderData;
     if (leaderBoardIndex && leaderBoardIndex >= 0) {
       traderData = currentRewardRound.rewards[leaderBoardIndex];
     }
@@ -218,7 +245,7 @@ export default function Rewards(props) {
       const ends = allRoundsRewardsData.map((round) => Number(round.end));
       const max = Math.max(...ends);
       if (!Number.isNaN(max)) {
-        setNextRewards(max)
+        setNextRewards(max);
       }
     }
   }, [allRoundsRewardsData]);
@@ -240,7 +267,7 @@ export default function Rewards(props) {
     trackAction("Button clicked", {
       buttonName: "Claim rewards",
     });
-    if (selectedRound === 'latest') {
+    if (selectedRound === "latest") {
       helperToast.error("Cannot claim rewards before round has ended");
       return;
     }
@@ -248,7 +275,7 @@ export default function Rewards(props) {
       helperToast.error("Fetching merkle proof");
       return;
     }
-    if (userProof.amount === '0') {
+    if (userProof.amount === "0") {
       helperToast.error(`No rewards for round: ${selectedRound}`);
       return;
     }
@@ -264,7 +291,7 @@ export default function Rewards(props) {
       [
         userProof.merkleProof, // proof
         userProof.amount, // amount
-        selectedRound // round
+        selectedRound, // round
       ],
       {
         sentMsg: "Claim submitted!",
@@ -272,16 +299,15 @@ export default function Rewards(props) {
         successMsg: "Claim completed!",
         setPendingTxns,
       }
-    )
-      .finally(() => {
-        setIsClaiming(false);
-      });
-  }
+    ).finally(() => {
+      setIsClaiming(false);
+    });
+  };
 
   const isLatestRound = selectedRound === "latest";
-  let hasClaimedRound
-  if (selectedRound !== 'latest' && hasClaimed) {
-    hasClaimedRound = hasClaimed[selectedRound]
+  let hasClaimedRound;
+  if (selectedRound !== "latest" && hasClaimed) {
+    hasClaimedRound = hasClaimed[selectedRound];
   }
 
   return (
@@ -297,12 +323,7 @@ export default function Rewards(props) {
             Leaderboard: <LeaderboardHeader />,
           }[currentView]
         }
-
-        <ViewSwitch
-          switchView={switchView}
-          currentView={currentView}
-          views={['Personal', 'Leaderboard']}
-        >
+        <ViewSwitch switchView={switchView} currentView={currentView} views={["Personal", "Leaderboard"]}>
           {currentView === "Leaderboard" && !!allRoundsRewardsData ? (
             <RoundDropdown
               allRoundsRewardsData={allRoundsRewardsData}
