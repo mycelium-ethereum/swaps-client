@@ -33,7 +33,7 @@ const PersonalHeader = () => (
   <div className="Page-title-section mt-0">
     <div className="Page-title">Trader Rewards</div>
     <div className="Page-description">
-      Be in the top 50% of traders to earn roundly rewards.
+      Be in the top 50% of traders to earn weekly rewards.
       <br /> Read the Terms of Use{" "}
       <a href="https://mycelium.xyz/rewards-terms-of-use" target="_blank" rel="noopener noreferrer">
         here
