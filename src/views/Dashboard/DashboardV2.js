@@ -9,7 +9,7 @@ import hexToRgba from "hex-to-rgba";
 import { ethers } from "ethers";
 
 import { getWhitelistedTokens } from "../../data/Tokens";
-import { getFeeHistory } from "../../data/Fees";
+import { getFeeHistory, SECONDS_PER_WEEK } from "../../data/Fees";
 
 import {
   fetcher,
@@ -43,6 +43,7 @@ import {
   useFees,
   useVolume,
   useMarketMakingFeesSince,
+  useFeesSince,
 } from "../../Api";
 
 import { getContract } from "../../Addresses";
@@ -65,7 +66,7 @@ import SEO from "../../components/Common/SEO";
 
 const { AddressZero } = ethers.constants;
 
-function getCurrentFeesUsd(tokenAddresses, fees, infoTokens) {
+export const getUnclaimedFees = (tokenAddresses, infoTokens, fees) => {
   if (!fees || !infoTokens) {
     return bigNumberify(0);
   }
@@ -132,6 +133,7 @@ export default function DashboardV2() {
     fetcher: fetcher(library, ReaderV2, [whitelistedTokenAddresses]),
   });
 
+
   const { data: totalSupplies } = useSWR(
     [`Dashboard:totalSupplies:${active}`, chainId, readerAddress, "getTokenBalancesWithSupplies", AddressZero],
     {
@@ -148,25 +150,24 @@ export default function DashboardV2() {
 
   const { infoTokens } = useInfoTokens(library, chainId, active, undefined, undefined);
 
-  const currentFeesUsd = getCurrentFeesUsd(whitelistedTokenAddresses, fees, infoTokens);
-
   let totalFeesDistributed;
   const allFees = useFees(chainId);
 
   const feeHistory = getFeeHistory(chainId);
-  const currentWeeksMMFees = useMarketMakingFeesSince(chainId, feeHistory[0]?.to);
-  let totalCurrentFees;
-  if (currentFeesUsd && currentWeeksMMFees) {
-    totalCurrentFees = currentFeesUsd.add(currentWeeksMMFees);
+
+  const from = feeHistory[0]?.to;
+  const to = from + SECONDS_PER_WEEK * 2;
+  const currentMMFees = useMarketMakingFeesSince(chainId, from, to);
+  const currentGraphFees = useFeesSince(chainId, from, to);
+  const currentUnclaimedFees = getUnclaimedFees(whitelistedTokenAddresses, infoTokens, fees);
+  let totalCurrentFees, currentFees;
+  if (currentUnclaimedFees && currentGraphFees) {
+    currentFees = currentUnclaimedFees.gt(currentGraphFees) ? currentUnclaimedFees : currentGraphFees;
   }
-  // this is a buffer for when the manually update fees, it gives them an hour window to update
-  // const shouldIncludeCurrrentFees = feeHistory.length && parseInt(Date.now() / 1000) - feeHistory[0].to > 60 * 60;
-  // let totalFeesDistributed = shouldIncludeCurrrentFees
-  // ? parseFloat(bigNumberify(formatAmount(currentFeesUsd, USD_DECIMALS - 2, 0, false)).toNumber()) / 100
-  // : 0;
-  // for (let i = 0; i < feeHistory.length; i++) {
-  // totalFeesDistributed += parseFloat(feeHistory[i].feeUsd);
-  // }
+  
+  if (currentFees && currentMMFees) {
+    totalCurrentFees = currentFees.add(currentMMFees);
+  }
 
   if (allFees) {
     totalFeesDistributed = bigNumberify(allFees.mint)
@@ -499,9 +500,9 @@ export default function DashboardV2() {
                         handle={`$${formatAmount(totalCurrentFees, USD_DECIMALS, 2, true)}`}
                         renderContent={() => (
                           <>
-                            Distributed Fees: ${formatAmount(currentFeesUsd, USD_DECIMALS, 2, true)}
+                            Distributed Fees: ${formatAmount(currentFees, USD_DECIMALS, 2, true)}
                             <br />
-                            Spread Capture: ${formatAmount(currentWeeksMMFees, USD_DECIMALS, 2, true)}
+                            Spread Capture: ${formatAmount(currentMMFees, USD_DECIMALS, 2, true)}
                           </>
                         )}
                       />

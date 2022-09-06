@@ -41,7 +41,6 @@ import {
 import { getTokens, getTokenBySymbol, getWhitelistedTokens } from "../data/Tokens";
 
 import { nissohGraphClient, arbitrumGraphClient, arbitrumTestnetGraphClient } from "./common";
-import { SECONDS_PER_WEEK } from "../data/Fees";
 export * from "./prices";
 
 const { AddressZero } = ethers.constants;
@@ -74,10 +73,44 @@ export function useFees(chainId) {
   return res ? res.data.feeStat : null;
 }
 
-export function useMarketMakingFeesSince(chainId, from) {
+export function useFeesSince(chainId, from, to) {
   const [res, setRes] = useState();
 
-  const to = from + SECONDS_PER_WEEK;
+  const query = gql(`{
+    feeStats(where: { id_gte: ${from}, id_lt: ${to}, period: daily }) {
+      id
+      marginAndLiquidation
+      swap
+      mint
+      burn
+    },
+  }`);
+
+  useEffect(() => {
+    if (!from) {
+      return
+    }
+    getMycGraphClient(chainId).query({ query }).then((res) => {
+      if (res.data.feeStats) {
+        let fees = res.data.feeStats.reduce((sum, stat) => (
+            sum
+              .add(stat.mint)
+              .add(stat.burn)
+              .add(stat.swap)
+              .add(stat.marginAndLiquidation)
+          ), bigNumberify(0)
+        );
+        setRes(fees)
+      }
+    }).catch(console.warn);
+  }, [setRes, query, chainId, from]);
+
+  return res
+}
+
+export function useMarketMakingFeesSince(chainId, from, to) {
+  const [res, setRes] = useState();
+
   const query = gql(`{
     hourlyVolumes (first: 1000, where: { id_gte: ${from}, id_lt: ${to}}) {
       swap
