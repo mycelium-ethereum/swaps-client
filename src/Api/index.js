@@ -165,7 +165,7 @@ export function useMarketMakingFeesSince(chainId, from, to, stableTokens) {
             )
           }
         }, bigNumberify(0))
-        setRes(mmFees.add(swapMMFees).div(expandDecimals(1, FEE_MULTIPLIER_BASIS_POINTS)))
+        setRes((mmFees.add(swapMMFees)).div(expandDecimals(1, FEE_MULTIPLIER_BASIS_POINTS)))
       }
     }).catch(console.warn);
   }, [setRes, query, chainId, from]);
