@@ -3,6 +3,7 @@ import { ETH_DECIMALS, formatAmount, USD_DECIMALS } from "../../Helpers";
 import * as Styles from "./Referrals.styles";
 import cx from "classnames";
 import RewardsRoundSelect from "../../components/RewardsRoundSelect/RewardsRoundSelect";
+import { RewardsButton } from "../../Shared.styles";
 
 // import Davatar from '@davatar/react';
 // import { EmptyAvatar } from './Rewards.styles'
@@ -52,13 +53,13 @@ export default function Rewards (props) {
             </div>
           </Styles.ReferralDataBox>
         </Styles.ReferralDataBoxes>
-        {active && <Styles.ReferralButton
+        {active && <RewardsButton
           className={'App-cta large'}
           disabled={!userRoundData?.totalReward || userRoundData.totalReward.eq(0) || isClaiming || hasClaimed || hasClaimed === undefined || latestRound}
           onClick={handleClaim}
         >
           Claim WETH
-        </Styles.ReferralButton>}
+        </RewardsButton>}
         {!active && (
           <Styles.ReferralButton className="App-cta large" onClick={() => connectWallet()}>
             Connect Wallet

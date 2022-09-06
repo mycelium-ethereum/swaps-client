@@ -4,6 +4,7 @@ import * as Styles from "./Referrals.styles";
 import { formatAmount, shortenAddress, USD_DECIMALS, copyReferralCode, getTierIdDisplay, TIER_DISCOUNT_INFO } from "../../Helpers";
 import CopyIcon from "../../img/copy.svg";
 import Tooltip from "../../components/Tooltip/Tooltip";
+import {COMMISSIONS} from "./Referrals";
 
 export default function AccountBanner(props) {
   const {
@@ -59,7 +60,7 @@ export default function AccountBanner(props) {
                   handle={`Tier ${getTierIdDisplay(tradersTier)} (${TIER_DISCOUNT_INFO[tradersTier]}% discount)`}
                   position="right-bottom"
                   renderContent={() =>
-                    `You will receive a ${TIER_DISCOUNT_INFO[tradersTier]}% discount on your opening and closing fees, this discount will be airdropped to your account every Wednesday`
+                    `You will receive a ${TIER_DISCOUNT_INFO[tradersTier]}% discount on your opening and closing fees, this discount will be claimable fortnightly.`
                   }
                 />
               </div>
@@ -87,10 +88,10 @@ export default function AccountBanner(props) {
             <div className="label">Tier Level</div>
             <div className="tier">
               <Tooltip
-                handle={`Tier ${getTierIdDisplay(referrerTier)} (${TIER_DISCOUNT_INFO[referrerTier]}% discount)`}
+                handle={`Tier ${getTierIdDisplay(referrerTier)} (${TIER_DISCOUNT_INFO[referrerTier]}% commissions)`}
                 position="right-bottom"
                 renderContent={() =>
-                  `You will receive a ${TIER_DISCOUNT_INFO[referrerTier]}% discount on your opening and closing fees, this discount will be airdropped to your account every Wednesday`
+                  `You will receive a ${TIER_DISCOUNT_INFO[referrerTier]}% commission on referred opening and closing fees, this commission will be claimable fortnightly.`
                 }
               />
             </div>
