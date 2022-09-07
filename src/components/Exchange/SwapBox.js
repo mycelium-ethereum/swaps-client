@@ -1872,6 +1872,12 @@ export default function SwapBox(props) {
     }
   };
 
+  const preventStrangeNumberInputs = (e) => {
+    if (["e", "E", "+", "-"].includes(e.key)) {
+      e.preventDefault();
+    }
+  };
+
   return (
     <div className="Exchange-swap-box">
       {/* <div className="Exchange-swap-wallet-box App-box">
@@ -1922,11 +1928,7 @@ export default function SwapBox(props) {
                     className="Exchange-swap-input"
                     value={fromValue}
                     onChange={onFromValueChange}
-                    onKeyDown={e => {
-                      if (['e', 'E', '+', '-'].includes(e.key)) {
-                        e.preventDefault();
-                      }
-                    }}
+                    onKeyDown={preventStrangeNumberInputs}
                   />
                   {shouldShowMaxButton() && (
                     <div
@@ -1989,11 +1991,7 @@ export default function SwapBox(props) {
                     className="Exchange-swap-input"
                     value={toValue}
                     onChange={onToValueChange}
-                    onKeyDown={e => {
-                      if (['e', 'E', '+', '-'].includes(e.key)) {
-                        e.preventDefault();
-                      }
-                    }}
+                    onKeyDown={preventStrangeNumberInputs}
                   />
                 </div>
                 <div>
@@ -2036,11 +2034,7 @@ export default function SwapBox(props) {
                   className="Exchange-swap-input"
                   value={sellValue}
                   onChange={onSellChange}
-                  onKeyDown={e => {
-                    if (['e', 'E', '+', '-'].includes(e.key)) {
-                      e.preventDefault();
-                    }
-                  }}
+                  onKeyDown={preventStrangeNumberInputs}
                 />
                 {existingPosition && sellValue !== formatAmountFree(existingPosition.size, USD_DECIMALS, 2) && (
                   <div
@@ -2097,11 +2091,7 @@ export default function SwapBox(props) {
                   className="Exchange-swap-input small"
                   value={triggerRatioValue}
                   onChange={onTriggerRatioChange}
-                  onKeyDown={e => {
-                    if (['e', 'E', '+', '-'].includes(e.key)) {
-                      e.preventDefault();
-                    }
-                  }}
+                  onKeyDown={preventStrangeNumberInputs}
                 />
               </div>
               {(() => {
@@ -2141,11 +2131,7 @@ export default function SwapBox(props) {
                   className="Exchange-swap-input"
                   value={triggerPriceValue}
                   onChange={onTriggerPriceChange}
-                  onKeyDown={e => {
-                    if (['e', 'E', '+', '-'].includes(e.key)) {
-                      e.preventDefault();
-                    }
-                  }}
+                  onKeyDown={preventStrangeNumberInputs}
                 />
               </div>
               <div className="PositionEditor-token-symbol">USD</div>
