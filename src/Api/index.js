@@ -36,7 +36,9 @@ import {
   getTracerServerUrl,
   MM_FEE_MULTIPLIER,
   FEE_MULTIPLIER_BASIS_POINTS,
-  MM_SWAPS_FEE_MULTIPLIER
+  MM_SWAPS_FEE_MULTIPLIER,
+  formatAmount,
+  USD_DECIMALS
 } from "../Helpers";
 import { getTokens, getTokenBySymbol, getWhitelistedTokens } from "../data/Tokens";
 
@@ -171,6 +173,39 @@ export function useMarketMakingFeesSince(chainId, from, to, stableTokens) {
   }, [setRes, query, chainId, from]);
 
   return res
+}
+
+export function useUserSpreadCapture(chainId, account, mlpBalance) {
+  const [spreadCapturePerToken, setSpreadCapturePerToken] = useState();
+
+  useEffect(() => {
+    const query = gql(`{
+      cumulativeSpreadCapture(id: "total") {
+        cumulativeRewardsPerToken
+      },
+      userSpreadCapture(id: "${account?.toLowerCase() ?? ""}") {
+        id
+        lastCumulativeRewardsPerToken
+      }
+    }`);
+    getMycGraphClient(chainId).query({ query }).then((res) => {
+      console.log("res inside", res.data)
+      if (res.data.cumulativeSpreadCapture && res.data.userSpreadCapture) {
+        let cumulativeRewardsPerToken = bigNumberify(res.data.cumulativeSpreadCapture.cumulativeRewardsPerToken)
+        let lastCumulativeRewardsPerToken = bigNumberify(res.data.userSpreadCapture.lastCumulativeRewardsPerToken)
+        setSpreadCapturePerToken(cumulativeRewardsPerToken.sub(lastCumulativeRewardsPerToken));
+      }
+    }).catch(console.warn);
+  }, [chainId, account]);
+
+  let userSpreadCapture;
+  if (spreadCapturePerToken && mlpBalance) {
+    userSpreadCapture = (spreadCapturePerToken.mul(mlpBalance)).div(expandDecimals(1, 18)).div(expandDecimals(1, FEE_MULTIPLIER_BASIS_POINTS));
+    // console.log('user spread', userSpreadCapture.div(expandDecimals(1, 22)).toString())
+    console.log('usd spread capture', formatAmount(userSpreadCapture, USD_DECIMALS, 2, true));
+  }
+
+  return userSpreadCapture
 }
 
 export function useVolume(chainId) {

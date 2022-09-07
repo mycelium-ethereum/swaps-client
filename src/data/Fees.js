@@ -8,7 +8,8 @@ const FEES = {
       to: 1661299200,
     },
     // {
-      // from: 1662508800 - SECONDS_PER_WEEK * 2, // 1661299200 (previous weeks to)
+    // 
+      // from: 1662508800 - SECONDS_PER_WEEK, 
       // to: 1662508800,
     // },
   ],
