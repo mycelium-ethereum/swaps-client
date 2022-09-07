@@ -52,6 +52,7 @@ import * as StakeV2Styled from "./StakeV2Styles";
 import "./StakeV2.css";
 
 import SEO from "../../components/Common/SEO";
+import SpreadCaptureModal from "./SpreadCaptureModal";
 
 function CompoundModal(props) {
   const {
@@ -589,7 +590,7 @@ function FeeDistributionUpdateModal(props) {
   );
 }
 
-export default function StakeV2({ setPendingTxns, connectWallet, trackAction }) {
+export default function StakeV2({ setPendingTxns, connectWallet, trackAction, savedSlippageAmount, infoTokens }) {
   const { active, library, account } = useWeb3React();
   const { chainId } = useChainId();
 
@@ -616,6 +617,7 @@ export default function StakeV2({ setPendingTxns, connectWallet, trackAction }) 
 
   const [isCompoundModalVisible, setIsCompoundModalVisible] = useState(false);
   const [isClaimModalVisible, setIsClaimModalVisible] = useState(false);
+  const [isSpreadCaptureModalVisible, setIsSpreadCaptureModalVisible] = useState(false);
 
   const rewardRouterAddress = getContract(chainId, "RewardRouter");
   const rewardReaderAddress = getContract(chainId, "RewardReader");
@@ -806,6 +808,14 @@ export default function StakeV2({ setPendingTxns, connectWallet, trackAction }) 
     }
   }
 
+  const showSpreadCaptureModal = () => {
+    // if (ethBalance?.eq(0)) {
+      // helperToast.error("You don't have any ETH to pay for gas");
+    // } else {
+      setIsSpreadCaptureModalVisible(true);
+    // }
+  }
+
   const showMycVesterDepositModal = () => {
     if (ethBalance?.eq(0)) {
       helperToast.error("You don't have any ETH to pay for gas");
@@ -906,6 +916,19 @@ export default function StakeV2({ setPendingTxns, connectWallet, trackAction }) 
         library={library}
         chainId={chainId}
       />
+      <SpreadCaptureModal
+        active={active}
+        account={account}
+        setPendingTxns={setPendingTxns}
+        savedSlippageAmount={savedSlippageAmount}
+        infoTokens={infoTokens}
+        trackAction={trackAction}
+        isVisible={isSpreadCaptureModalVisible}
+        setIsVisible={setIsSpreadCaptureModalVisible}
+        library={library}
+        chainId={chainId}
+        userSpreadCapture={userSpreadCapture}
+      />
       <div className="StakeV2-content">
         <div className="StakeV2-cards">
           <div>
@@ -962,7 +985,7 @@ export default function StakeV2({ setPendingTxns, connectWallet, trackAction }) 
                   <StakeV2Styled.RewardsBannerText secondary>Market Making Rewards</StakeV2Styled.RewardsBannerText>
                   <StakeV2Styled.RewardsBannerText large inline>
                     <Tooltip
-                      handle={`$${formatAmount(userSpreadCapture, USD_DECIMALS, 2, true)}`}
+                      handle={`$${formatAmount(userSpreadCapture, USD_DECIMALS, 2, true, '0.00')}`}
                       position="right-bottom"
                       renderContent={() =>
                         "Market Making rewards are sourced from the spread of the traded markets and is realised by MLP holders through the appreciation of the MLP token."
@@ -1053,6 +1076,11 @@ export default function StakeV2({ setPendingTxns, connectWallet, trackAction }) 
                   {active && (
                     <button className="App-button-option App-card-option" onClick={() => showMlpClaimModal()}>
                       Claim
+                    </button>
+                  )}
+                  {active && (
+                    <button className="App-button-option App-card-option" onClick={() => showSpreadCaptureModal()}>
+                      Claim spread
                     </button>
                   )}
                   {!active && (

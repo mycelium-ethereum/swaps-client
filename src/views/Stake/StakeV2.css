@@ -97,6 +97,11 @@
   width: 100%;
 }
 
+.Spread-capture-swap > .TokenSelector-box-symbol {
+  margin-left: 0.5rem;
+  display: none;
+}
+
 @media (max-width: 900px) {
   .StakeV2-cards {
     grid-template-columns: 1fr;

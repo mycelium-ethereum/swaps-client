@@ -189,7 +189,6 @@ export function useUserSpreadCapture(chainId, account, mlpBalance) {
       }
     }`);
     getMycGraphClient(chainId).query({ query }).then((res) => {
-      console.log("res inside", res.data)
       if (res.data.cumulativeSpreadCapture && res.data.userSpreadCapture) {
         let cumulativeRewardsPerToken = bigNumberify(res.data.cumulativeSpreadCapture.cumulativeRewardsPerToken)
         let lastCumulativeRewardsPerToken = bigNumberify(res.data.userSpreadCapture.lastCumulativeRewardsPerToken)
@@ -201,8 +200,6 @@ export function useUserSpreadCapture(chainId, account, mlpBalance) {
   let userSpreadCapture;
   if (spreadCapturePerToken && mlpBalance) {
     userSpreadCapture = (spreadCapturePerToken.mul(mlpBalance)).div(expandDecimals(1, 18)).div(expandDecimals(1, FEE_MULTIPLIER_BASIS_POINTS));
-    // console.log('user spread', userSpreadCapture.div(expandDecimals(1, 22)).toString())
-    console.log('usd spread capture', formatAmount(userSpreadCapture, USD_DECIMALS, 2, true));
   }
 
   return userSpreadCapture
