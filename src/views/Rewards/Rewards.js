@@ -286,7 +286,7 @@ export default function Rewards(props) {
     }
     if (error) {
       setIsClaiming(true);
-      error = true;
+      return
     }
     const contract = new ethers.Contract(feeDistributor, FeeDistributor.abi, library.getSigner());
     callContract(
