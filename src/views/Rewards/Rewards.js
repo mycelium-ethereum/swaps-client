@@ -267,21 +267,26 @@ export default function Rewards(props) {
     trackAction("Button clicked", {
       buttonName: "Claim rewards",
     });
+    let error;
     if (selectedRound === "latest") {
       helperToast.error("Cannot claim rewards before round has ended");
-      return;
+      error = true;
     }
     if (!userProof) {
       helperToast.error("Fetching merkle proof");
-      return;
+      error = true;
     }
     if (userProof.amount === "0") {
       helperToast.error(`No rewards for round: ${selectedRound}`);
-      return;
+      error = true;
     }
     if (!!userProof?.message) {
       helperToast.error(`Invalid user proof`);
-      return;
+      error = true;
+    }
+    if (error) {
+      setIsClaiming(true);
+      error = true;
     }
     const contract = new ethers.Contract(feeDistributor, FeeDistributor.abi, library.getSigner());
     callContract(
