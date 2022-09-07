@@ -46,11 +46,11 @@ const navLinks = [
     path: "/rewards",
     icon: FaAward,
   },
-  // {
-  // name: "Referrals",
-  // path: "/referrals",
-  // icon: FaSync,
-  // },
+  {
+    name: "Referrals",
+    path: "/referrals",
+    icon: FaSync,
+  },
 ];
 
 const legalLinks = [

@@ -5,7 +5,6 @@ import { useWeb3React } from "@web3-react/core";
 import * as Styles from "./Referrals.styles";
 import CreateCodeModal from "./CreateCodeModal";
 import EnterCodeModal from "./EnterCodeModal";
-import EditCodeModal from "./EditCodeModal";
 
 import SEO from "../../components/Common/SEO";
 import ViewSwitch from "../../components/ViewSwitch/ViewSwitch";
@@ -59,11 +58,11 @@ export default function Referral(props) {
 
   const [currentView, setCurrentView] = useLocalStorage(REFERRALS_SELECTED_TAB_KEY, REBATES);
   const [isEnterCodeModalVisible, setIsEnterCodeModalVisible] = useState(false);
+  const [isEdit, setIsEdit] = useState(false);
   const [isCreateCodeModalVisible, setIsCreateCodeModalVisible] = useState(false);
   const [selectedRound, setSelectedRound] = useState("latest");
   const [nextRewards, setNextRewards] = useState();
 
-  const [isEditCodeModalVisible, setIsEditCodeModalVisible] = useState(false);
 
   const switchView = () => {
     setCurrentView(currentView === COMMISSIONS ? REBATES : COMMISSIONS);
@@ -124,14 +123,21 @@ export default function Referral(props) {
 
     // trader's data found
     if (traderData) {
-      const commissions = ethers.BigNumber.from(traderData.commissions);
-      const rebates = ethers.BigNumber.from(traderData.rebates);
+      const commissions = bigNumberify(traderData.commissions);
+      const rebates = bigNumberify(traderData.rebates);
 
       return {
-        volume: ethers.BigNumber.from(traderData.commissions_volume),
+        volume: bigNumberify(traderData.commissions_volume),
         totalReward: commissions.add(rebates),
         commissions,
         rebates,
+      };
+    } else {
+      return {
+        volume: bigNumberify(0),
+        totalReward: bigNumberify(0),
+        commissions: bigNumberify(0),
+        rebates: bigNumberify(0),
       };
     }
   }, [account, currentRewardRound]);
@@ -160,8 +166,12 @@ export default function Referral(props) {
   }
 
   const finalReferrerTotalStats = recentlyAddedCodes.filter(isRecentReferralCodeNotExpired).reduce((acc, cv) => {
-    const addedCodes = referrerTotalStats.map((c) => c.referralCode.trim());
-    if (!addedCodes.includes(cv.referralCode)) {
+    const addedCodes = referrerTotalStats?.map((c) => c.referralCode.trim());
+    if (addedCodes && !addedCodes.includes(cv.referralCode)) {
+      // BigNumbers get converted in local storage, need to convert them back
+      cv.totalRebateUsd = bigNumberify(cv.totalRebateUsd);
+      cv.volume = bigNumberify(cv.volume);
+      cv.discountUsd = bigNumberify(cv.discountUsd);
       acc = acc.concat(cv);
     }
     return acc;
@@ -218,6 +228,12 @@ export default function Referral(props) {
     hasClaimedRound = hasClaimed[selectedRound]
   }
 
+
+  const handleSetIsEnterCodeModalVisible = (isEdit) => {
+    setIsEdit(isEdit);
+    setIsEnterCodeModalVisible(true);
+  }
+
   return (
     <>
       <SEO
@@ -228,18 +244,10 @@ export default function Referral(props) {
         active={active}
         chainId={chainId}
         library={library}
-        setPendingTxns={setPendingTxns}
-        pendingTxns={pendingTxns}
+        connectWallet={connectWallet}
         isEnterCodeModalVisible={isEnterCodeModalVisible}
         setIsEnterCodeModalVisible={setIsEnterCodeModalVisible}
-      />
-      <EditCodeModal
-        active={active}
-        chainId={chainId}
-        library={library}
-        connectWallet={connectWallet}
-        isEditCodeModalVisible={isEditCodeModalVisible}
-        setIsEditCodeModalVisible={setIsEditCodeModalVisible}
+        isEdit={isEdit}
         referralCodeInString={referralCodeInString}
         pendingTxns={pendingTxns}
         setPendingTxns={setPendingTxns}
@@ -290,8 +298,7 @@ export default function Referral(props) {
               connectWallet={connectWallet}
               trackAction={trackAction}
               referralCodeInString={referralCodeInString}
-              setIsEnterCodeModalVisible={setIsEnterCodeModalVisible}
-              setIsEditCodeModalVisible={setIsEditCodeModalVisible}
+              handleSetIsEnterCodeModalVisible={handleSetIsEnterCodeModalVisible}
               tradersTier={tradersTier}
             />
           }
@@ -306,7 +313,7 @@ export default function Referral(props) {
               finalReferrerTotalStats={finalReferrerTotalStats}
             />
           }
-          {userRoundData &&
+          {userRoundData && /* disable for now */ false &&
             <ReferralRewards
               active={active}
               connectWallet={connectWallet}

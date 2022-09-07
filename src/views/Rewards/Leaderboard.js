@@ -9,7 +9,6 @@ import {
   LeaderboardContainer,
   Title,
   PersonalRewardsTableContainer,
-  RewardsButton,
   RewardsTableBorder,
   RewardsTable,
   RewardsTableHeader,
@@ -29,6 +28,7 @@ import {
   TopFiftyRow,
   TopFiftyRowCell,
 } from "./Rewards.styles";
+import { RewardsButton } from "../../Shared.styles";
 import TooltipComponent from "../../components/Tooltip/Tooltip";
 
 import degenScore from '../../img/ic_degen.svg';

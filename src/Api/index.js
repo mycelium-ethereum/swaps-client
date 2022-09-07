@@ -36,12 +36,13 @@ import {
   getTracerServerUrl,
   MM_FEE_MULTIPLIER,
   FEE_MULTIPLIER_BASIS_POINTS,
-  BASIS_POINTS_DIVISOR
+  BASIS_POINTS_DIVISOR,
+  MM_SWAPS_FEE_MULTIPLIER
 } from "../Helpers";
 import { getTokens, getTokenBySymbol, getWhitelistedTokens } from "../data/Tokens";
 
 import { nissohGraphClient, arbitrumGraphClient, arbitrumTestnetGraphClient } from "./common";
-import {SECONDS_PER_WEEK} from "../data/Fees";
+import { SECONDS_PER_WEEK } from "../data/Fees";
 export * from "./prices";
 
 const { AddressZero } = ethers.constants;
@@ -155,10 +156,9 @@ export function useMarketMakingFeesSince(chainId, from, to, stableTokens) {
           if (tokenAIsStable && tokenBIsStable) {
             return sum
           } else if (!tokenAIsStable && !tokenBIsStable) {
-            console.log("non stable to non stable")
             return (
               sum
-                .add((MM_FEE_MULTIPLIER.mul(2)).mul(stat.swap))
+                .add(MM_SWAPS_FEE_MULTIPLIER.mul(stat.swap))
             )
           } else {
             return (
