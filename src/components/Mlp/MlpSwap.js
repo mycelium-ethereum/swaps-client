@@ -433,7 +433,7 @@ export default function MlpSwap(props) {
 
   const getError = () => {
     const gasTokenInfo = getTokenInfo(infoTokens, ethers.constants.AddressZero);
-    if (gasTokenInfo.balance?.eq(0)){
+    if (gasTokenInfo.balance?.eq(0)) {
       return ["Not enough ETH for gas"];
     }
 
@@ -807,7 +807,7 @@ export default function MlpSwap(props) {
             </div>
           </div>
           <div className="App-card-divider"></div>
-          <div className="App-card-content">
+          <div className="App-card-content Totals-section">
             {!isBuying && (
               <div className="App-card-row">
                 <div className="label">Reserved</div>
@@ -862,6 +862,23 @@ export default function MlpSwap(props) {
                 {formatAmount(mlpSupply, MLP_DECIMALS, 4, true)} MLP ($
                 {formatAmount(mlpSupplyUsd, USD_DECIMALS, 2, true)})
               </div>
+            </div>
+            <div className="Insurance-btn-container">
+              <Tooltip
+                handle={
+                  <a
+                    href="https://core.riskharbor.com/pool/arbitrum/0xbcA81A2118982182d897845571BE950aE94C619c/4"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <button className="App-button-option App-card-option Insurance-btn">MLP Insurance</button>
+                  </a>
+                }
+                position="right-bottom"
+                renderContent={() => {
+                  return <div className="Tooltip-row">Risk Harbor Insurance for fsMLP.</div>;
+                }}
+              />
             </div>
           </div>
         </div>
