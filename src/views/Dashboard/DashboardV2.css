@@ -65,10 +65,22 @@
   display: flex;
 }
 
+.stats-wrapper .App-card.Myc {
+  flex-direction: column;
+}
+
 .stats-block {
   width: 100%;
 }
-
+.stats-container {
+  display: flex;
+}
+.Lending-btn {
+  display: block;
+}
+.Lending-btn button.App-button-option {
+  margin: 0;
+}
 .stats-piechart {
   margin: -10px;
   margin-left: 1rem;
@@ -168,9 +180,15 @@
 }
 
 @media (max-width: 660px) {
-  .stats-wrapper .App-card {
+  .stats-wrapper .App-card:not(.Myc) {
     flex-wrap: wrap;
     padding-bottom: 0;
+  }
+  .stats-container {
+    flex-wrap: wrap;
+  }
+  .Lending-btn {
+    margin: 0 auto;
   }
 
   .stats-piechart {

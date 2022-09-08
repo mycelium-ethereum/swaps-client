@@ -84,7 +84,7 @@ export const getUnclaimedFees = (tokenAddresses, infoTokens, fees) => {
   }
 
   return currentFeesUsd;
-}
+};
 
 export default function DashboardV2() {
   const { active, library } = useWeb3React();
@@ -134,7 +134,6 @@ export default function DashboardV2() {
     fetcher: fetcher(library, ReaderV2, [whitelistedTokenAddresses]),
   });
 
-
   const { data: totalSupplies } = useSWR(
     [`Dashboard:totalSupplies:${active}`, chainId, readerAddress, "getTokenBalancesWithSupplies", AddressZero],
     {
@@ -165,7 +164,7 @@ export default function DashboardV2() {
   if (currentUnclaimedFees && currentGraphFees) {
     currentFees = currentUnclaimedFees.gt(currentGraphFees) ? currentUnclaimedFees : currentGraphFees;
   }
-  
+
   if (currentFees && currentMMFees) {
     totalCurrentFees = currentFees.add(currentMMFees);
   }
@@ -445,7 +444,7 @@ export default function DashboardV2() {
             </div>
             <div className="Page-description">
               {chainName} Total Stats start from {totalStatsStartDate}.<br />
-              See detailed analytics{' '}
+              See detailed analytics{" "}
               <a href="https://analytics.mycelium.xyz" target="_blank" rel="noopener noreferrer">
                 here.
               </a>
@@ -549,62 +548,63 @@ export default function DashboardV2() {
           </div>
           <div className="DashboardV2-token-cards">
             <div className="stats-wrapper stats-wrapper--myc">
-              <div className="App-card">
-                <div className="stats-block">
-                  <div className="App-card-title">
-                    <div className="App-card-title-mark">
-                      <div className="App-card-title-mark-icon">
-                        <img src={mycToken} alt="mycToken" />
-                      </div>
-                      <div className="App-card-title-mark-info">
-                        <div className="App-card-title-mark-title">MYC</div>
-                        <div className="App-card-title-mark-subtitle">MYC</div>
-                      </div>
-                      <div>
-                        <AssetDropdown assetSymbol="MYC" />
+              <div className="App-card Myc">
+                <div className="stats-container">
+                  <div className="stats-block">
+                    <div className="App-card-title">
+                      <div className="App-card-title-mark">
+                        <div className="App-card-title-mark-icon">
+                          <img src={mycToken} alt="mycToken" />
+                        </div>
+                        <div className="App-card-title-mark-info">
+                          <div className="App-card-title-mark-title">MYC</div>
+                          <div className="App-card-title-mark-subtitle">MYC</div>
+                        </div>
+                        <div>
+                          <AssetDropdown assetSymbol="MYC" />
+                        </div>
                       </div>
                     </div>
-                  </div>
-                  <div className="App-card-divider"></div>
-                  <div className="App-card-content">
-                    <div className="App-card-row">
-                      <div className="label">Price</div>
-                      <div>
-                        {!mycPrice && "..."}
-                        {mycPrice && (
+                    <div className="App-card-divider"></div>
+                    <div className="App-card-content">
+                      <div className="App-card-row">
+                        <div className="label">Price</div>
+                        <div>
+                          {!mycPrice && "..."}
+                          {mycPrice && (
+                            <TooltipComponent
+                              position="right-bottom"
+                              className="nowrap"
+                              handle={`$${formatAmount(mycPrice, USD_DECIMALS, 3, true)}`}
+                              renderContent={() => (
+                                <>
+                                  Price on Arbitrum: ${formatAmount(mycPriceFromArbitrum, USD_DECIMALS, 4, true)}
+                                  <br />
+                                  Price on Mainnet: ${formatAmount(mycPriceFromMainnet, USD_DECIMALS, 4, true)}
+                                </>
+                              )}
+                            />
+                          )}
+                        </div>
+                      </div>
+                      <div className="App-card-row">
+                        <div className="label">Supply</div>
+                        <div>
                           <TooltipComponent
                             position="right-bottom"
                             className="nowrap"
-                            handle={`$${formatAmount(mycPrice, USD_DECIMALS, 3, true)}`}
+                            handle={`${formatAmount(circulatingMYCSupply, MYC_DECIMALS, 0, true)} MYC`}
                             renderContent={() => (
                               <>
-                                Price on Arbitrum: ${formatAmount(mycPriceFromArbitrum, USD_DECIMALS, 4, true)}
+                                Circulating: {formatAmount(circulatingMYCSupply, MYC_DECIMALS, 0, true)} MYC
                                 <br />
-                                Price on Mainnet: ${formatAmount(mycPriceFromMainnet, USD_DECIMALS, 4, true)}
+                                Total: {formatAmount(mycSupply, MYC_DECIMALS, 0, true)} MYC
                               </>
                             )}
                           />
-                        )}
+                        </div>
                       </div>
-                    </div>
-                    <div className="App-card-row">
-                      <div className="label">Supply</div>
-                      <div>
-                        <TooltipComponent
-                          position="right-bottom"
-                          className="nowrap"
-                          handle={`${formatAmount(circulatingMYCSupply, MYC_DECIMALS, 0, true)} MYC`}
-                          renderContent={() => (
-                            <>
-                              Circulating: {formatAmount(circulatingMYCSupply, MYC_DECIMALS, 0, true)} MYC
-                              <br />
-                              Total: {formatAmount(mycSupply, MYC_DECIMALS, 0, true)} MYC
-                            </>
-                          )}
-                        />
-                      </div>
-                    </div>
-                    {/*<div className="App-card-row">
+                      {/*<div className="App-card-row">
                       <div className="label">Total Staked</div>
                       <div>
                         {
@@ -623,61 +623,67 @@ export default function DashboardV2() {
                         }
                       </div>
                     </div>*/}
-                    <div className="App-card-row">
-                      <div className="label">Market Cap</div>
-                      <div>
-                        <TooltipComponent
-                          position="right-bottom"
-                          className="nowrap"
-                          handle={`$${formatAmount(mycMarketCap, USD_DECIMALS, 0, true)}`}
-                          renderContent={() => (
-                            <>Fully Diluted: ${formatAmount(mycFullyDilutedMarketCap, USD_DECIMALS, 0, true)}</>
-                          )}
-                        />
+                      <div className="App-card-row">
+                        <div className="label">Market Cap</div>
+                        <div>
+                          <TooltipComponent
+                            position="right-bottom"
+                            className="nowrap"
+                            handle={`$${formatAmount(mycMarketCap, USD_DECIMALS, 0, true)}`}
+                            renderContent={() => (
+                              <>Fully Diluted: ${formatAmount(mycFullyDilutedMarketCap, USD_DECIMALS, 0, true)}</>
+                            )}
+                          />
+                        </div>
                       </div>
                     </div>
                   </div>
+                  <div className="stats-piechart" onMouseLeave={onMYCDistributionChartLeave}>
+                    {mycDistributionData.length > 0 && (
+                      <PieChart width={210} height={210}>
+                        <Pie
+                          data={mycDistributionData}
+                          cx={100}
+                          cy={100}
+                          innerRadius={73}
+                          outerRadius={80}
+                          fill="#8884d8"
+                          dataKey="value"
+                          startAngle={90}
+                          endAngle={-270}
+                          paddingAngle={2}
+                          onMouseEnter={onMYCDistributionChartEnter}
+                          onMouseOut={onMYCDistributionChartLeave}
+                          onMouseLeave={onMYCDistributionChartLeave}
+                        >
+                          {mycDistributionData.map((entry, index) => (
+                            <Cell
+                              key={`cell-${index}`}
+                              fill={entry.color}
+                              style={{
+                                filter:
+                                  mycActiveIndex === index
+                                    ? `drop-shadow(0px 0px 6px ${hexToRgba(entry.color, 0.7)})`
+                                    : "none",
+                                cursor: "pointer",
+                              }}
+                              stroke={entry.color}
+                              strokeWidth={mycActiveIndex === index ? 1 : 1}
+                            />
+                          ))}
+                        </Pie>
+                        <text x={"50%"} y={"50%"} fill="white" textAnchor="middle" dominantBaseline="middle">
+                          Distribution
+                        </text>
+                        <Tooltip content={<CustomTooltip />} />
+                      </PieChart>
+                    )}
+                  </div>
                 </div>
-                <div className="stats-piechart" onMouseLeave={onMYCDistributionChartLeave}>
-                  {mycDistributionData.length > 0 && (
-                    <PieChart width={210} height={210}>
-                      <Pie
-                        data={mycDistributionData}
-                        cx={100}
-                        cy={100}
-                        innerRadius={73}
-                        outerRadius={80}
-                        fill="#8884d8"
-                        dataKey="value"
-                        startAngle={90}
-                        endAngle={-270}
-                        paddingAngle={2}
-                        onMouseEnter={onMYCDistributionChartEnter}
-                        onMouseOut={onMYCDistributionChartLeave}
-                        onMouseLeave={onMYCDistributionChartLeave}
-                      >
-                        {mycDistributionData.map((entry, index) => (
-                          <Cell
-                            key={`cell-${index}`}
-                            fill={entry.color}
-                            style={{
-                              filter:
-                                mycActiveIndex === index
-                                  ? `drop-shadow(0px 0px 6px ${hexToRgba(entry.color, 0.7)})`
-                                  : "none",
-                              cursor: "pointer",
-                            }}
-                            stroke={entry.color}
-                            strokeWidth={mycActiveIndex === index ? 1 : 1}
-                          />
-                        ))}
-                      </Pie>
-                      <text x={"50%"} y={"50%"} fill="white" textAnchor="middle" dominantBaseline="middle">
-                        Distribution
-                      </text>
-                      <Tooltip content={<CustomTooltip />} />
-                    </PieChart>
-                  )}
+                <div className="Lending-btn">
+                  <a href="https://lend.mycelium.xyz" target="_blank" rel="noopener noreferrer">
+                    <button className="App-button-option App-card-option">MYC Lending</button>
+                  </a>
                 </div>
               </div>
               <div className="App-card">
