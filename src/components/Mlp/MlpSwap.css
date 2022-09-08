@@ -55,12 +55,30 @@
   -webkit-overflow-scrolling: auto;
 }
 
+.MlpSwap-stats-card .App-card-content.Totals-section {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+.Insurance-btn-container {
+  height: 100%;
+  flex-grow: 1;
+  display: flex;
+  align-items: flex-end;
+}
+
+.MlpSwap-content .Insurance-btn {
+  margin: auto 0 0;
+}
+
 .MlpSwap-content .MlpSwap-stats-card,
 .MlpSwap-content .MlpSwap-box {
   width: 100%;
 }
 
 .MlpSwap-content .MlpSwap-stats-card {
+  display: flex;
+  flex-direction: column;
   max-width: 45.935rem;
   margin-right: 1rem;
 }
@@ -247,6 +265,13 @@
   .MlpSwap-content .MlpSwap-box {
     margin: 0;
     max-width: 100%;
+  }
+  .Insurance-btn-container {
+    justify-content: center;
+  }
+
+  .MlpSwap-content .Insurance-btn {
+    margin: 16px 0 0;
   }
 }
 
