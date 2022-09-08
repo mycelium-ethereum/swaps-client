@@ -874,7 +874,7 @@ export default function MlpSwap(props) {
                     <button className="App-button-option App-card-option Insurance-btn">MLP Insurance</button>
                   </a>
                 }
-                position="right-bottom"
+                position="left-top"
                 renderContent={() => {
                   return <div className="Tooltip-row">Risk Harbor Insurance for fsMLP.</div>;
                 }}
