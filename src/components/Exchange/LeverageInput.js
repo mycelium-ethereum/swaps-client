@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import styled from 'styled-components';
 import Slider, { SliderTooltip } from "rc-slider";
+import "rc-slider/assets/index.css";
 
 
 const LeverageSliderHandle = (props) => {
@@ -28,7 +29,7 @@ export const LeverageInput = ({ value, onChange, max, min, step }) => {
 
     const handleInputChange = (e) => {
         let newValue = parseFloat(e.target.value);
-        newValue = Math.round(newValue * 10) / 10;
+        newValue = Math.round(newValue * 100) / 100;
 
         if (newValue < min) {
             onChange(min);
@@ -42,25 +43,10 @@ export const LeverageInput = ({ value, onChange, max, min, step }) => {
   return (
     <div className="Exchange-leverage-box">
       <InputBox>
-        Leverage
-        <input
-          type="number"
-          value={inputValue}
-          onChange={e => setInputValue(e.target.value)}
-          onBlur={handleInputChange}
-          onKeyDown={(e) => {
-            if (e.key === "Enter") {
-              handleInputChange(e);
-            } else if (['e', 'E', '+', '-'].includes(e.key)) {
-              e.preventDefault();
-            }
-          }}
-          step={step}
-          max={max}
-          min={min}
-        />
+        Leverage Slider
+       
       </InputBox>
-      <div className="Exchange-leverage-slider App-slider">
+      <SliderRow>
         <Slider
           min={min}
           max={max}
@@ -79,7 +65,23 @@ export const LeverageInput = ({ value, onChange, max, min, step }) => {
           value={value}
           defaultValue={value}
         />
-      </div>
+         <Input
+          type="number"
+          value={inputValue}
+          onChange={e => setInputValue(e.target.value)}
+          onBlur={handleInputChange}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              handleInputChange(e);
+            } else if (['e', 'E', '+', '-'].includes(e.key)) {
+              e.preventDefault();
+            }
+          }}
+          step={step}
+          max={max}
+          min={min}
+        />
+      </SliderRow>
     </div>
   );
 };
@@ -99,3 +101,61 @@ const InputBox = styled.label`
         width: 60px;
     }
 `
+
+const SliderRow = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  .rc-slider-rail {
+    background: var(--action-inactive);
+  }
+
+  .rc-slider-track {
+    background: var(--action-inactive);
+  }
+
+  .rc-slider-dot {
+    border: none;
+    border-radius: 1px;
+    width: 2px;
+    margin-left: -1px;
+    background: var(--action-inactive);
+  }
+
+  .rc-slider-dot-active {
+    background: var(--action-active);
+  }
+
+  .rc-slider-handle {
+    background: var(--action-active);
+    border: solid 2px var(--action-active);
+  }
+
+  .rc-slider-handle:active {
+    box-shadow: 0 0 4px 6px rgba(45, 66, 252, 0.2);
+  }
+
+  .rc-slider-mark-text,
+  .rc-slider-mark-text-active {
+    color: white;
+    opacity: 0.5;
+  }
+
+  .rc-slider-mark-text:hover,
+  .rc-slider-mark-text-active:hover {
+    opacity: 1;
+  }
+`;
+
+const Input = styled.input`
+    margin-left: 16px;
+    border: 1px solid var(--action-active);
+    color: var(--action-active);
+    border-radius: 4px;
+    font-size: 16px;
+    text-align: center;
+    width: 70px;
+    height: 32px; 
+    padding: 2px 6px;
+`;

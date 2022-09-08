@@ -72,21 +72,6 @@
   grid-template-rows: auto 1fr;
 }
 
-.Exchange-leverage-slider-settings {
-  font-size: 0.9rem;
-  margin-bottom: 0.5rem;
-}
-
-.Exchange-leverage-slider-settings .Checkbox {
-  display: grid;
-  grid-template-columns: 1fr auto;
-  direction: rtl;
-}
-
-.Exchange-leverage-slider-settings .Checkbox .Checkbox-label {
-  color: var(--text-primary);
-}
-
 .Exchange-wallet-tokens {
   position: relative;
   min-height: 10rem;
@@ -135,12 +120,6 @@
 .Exchange-swap-account .Exchange-swap-address:hover,
 .Exchange-swap-account .Exchange-swap-txns-status:hover {
   opacity: 1;
-}
-
-.Exchange-leverage-slider {
-  margin-top: 1rem;
-  margin-bottom: 2.2rem;
-  padding: 0 0.5rem;
 }
 
 .Exchange-swap-leverage-options {

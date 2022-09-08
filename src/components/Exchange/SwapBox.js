@@ -2,8 +2,6 @@ import React, { useState, useEffect, useMemo, useCallback } from "react";
 
 import Tooltip from "../Tooltip/Tooltip";
 import Modal from "../Modal/Modal";
-import Slider, { SliderTooltip } from "rc-slider";
-import "rc-slider/assets/index.css";
 
 import cx from "classnames";
 import useSWR from "swr";
@@ -69,7 +67,6 @@ import { getConstant } from "../../Constants";
 import * as Api from "../../Api";
 import { getContract } from "../../Addresses";
 
-import Checkbox from "../Checkbox/Checkbox";
 import Tab from "../Tab/Tab";
 import TokenSelector from "./TokenSelector";
 import ExchangeInfoRow from "./ExchangeInfoRow";
@@ -94,21 +91,6 @@ const SWAP_ICONS = {
   [SWAP]: swapImg,
 };
 const { AddressZero } = ethers.constants;
-
-const leverageSliderHandle = (props) => {
-  const { value, dragging, index, ...restProps } = props;
-  return (
-    <SliderTooltip
-      prefixCls="rc-slider-tooltip"
-      overlay={`${parseFloat(value).toFixed(2)}x`}
-      visible={dragging}
-      placement="top"
-      key={index}
-    >
-      <Slider.Handle value={value} {...restProps} />
-    </SliderTooltip>
-  );
-};
 
 function getNextAveragePrice({ size, sizeDelta, hasProfit, delta, nextPrice, isLong }) {
   if (!size || !sizeDelta || !delta || !nextPrice) {
@@ -2141,7 +2123,7 @@ export default function SwapBox(props) {
         )}
         {(isLong || isShort) && (
           <div className="Exchange-leverage-box">
-            <LeverageInput value={leverageOption} onChange={setLeverageOption} max={30.5} min={1.1} step={0.1} />
+            <LeverageInput value={leverageOption} onChange={setLeverageOption} max={30.5} min={1.1} step={0.01} />
             {isShort && (
               <div className="Exchange-info-row">
                 <div className="Exchange-info-label">Profits In</div>
