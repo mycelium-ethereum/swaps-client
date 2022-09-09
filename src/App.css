@@ -460,7 +460,7 @@
 }
 .Eth-merge-modal .Eth-merge-modal-title h2 {
   font-size: 36px;
-  line-height: 60px;
+  line-height: 48px;
   font-weight: 600;
   margin: 0 0 16px;
 }
@@ -1608,6 +1608,19 @@ button.App-button {
   }
   .App-header-container-right {
     display: none;
+  }
+  .Eth-merge-modal .Modal-content {
+    max-width: calc(100% - 32px);
+  }
+  .Eth-merge-modal .Eth-merge-modal-title small {
+    display: block;
+    font-size: 20px;
+    line-height: 30px;
+    font-weight: 600;
+  }
+  .Eth-merge-modal .Eth-merge-modal-title h2 {
+    font-size: 30px;
+    line-height: 40px;
   }
 }
 
