@@ -2,8 +2,6 @@ import React, { useState, useEffect, useMemo, useCallback } from "react";
 
 import Tooltip from "../Tooltip/Tooltip";
 import Modal from "../Modal/Modal";
-import Slider, { SliderTooltip } from "rc-slider";
-import "rc-slider/assets/index.css";
 
 import cx from "classnames";
 import useSWR from "swr";
@@ -69,7 +67,6 @@ import { getConstant } from "../../Constants";
 import * as Api from "../../Api";
 import { getContract } from "../../Addresses";
 
-import Checkbox from "../Checkbox/Checkbox";
 import Tab from "../Tab/Tab";
 import TokenSelector from "./TokenSelector";
 import ExchangeInfoRow from "./ExchangeInfoRow";
@@ -86,6 +83,7 @@ import longImg from "../../img/long.svg";
 import shortImg from "../../img/short.svg";
 import swapImg from "../../img/swap.svg";
 import { useUserReferralCode } from "../../Api/referrals";
+import { LeverageInput } from "./LeverageInput";
 
 const SWAP_ICONS = {
   [LONG]: longImg,
@@ -93,21 +91,6 @@ const SWAP_ICONS = {
   [SWAP]: swapImg,
 };
 const { AddressZero } = ethers.constants;
-
-const leverageSliderHandle = (props) => {
-  const { value, dragging, index, ...restProps } = props;
-  return (
-    <SliderTooltip
-      prefixCls="rc-slider-tooltip"
-      overlay={`${parseFloat(value).toFixed(2)}x`}
-      visible={dragging}
-      placement="top"
-      key={index}
-    >
-      <Slider.Handle value={value} {...restProps} />
-    </SliderTooltip>
-  );
-};
 
 function getNextAveragePrice({ size, sizeDelta, hasProfit, delta, nextPrice, isLong }) {
   if (!size || !sizeDelta || !delta || !nextPrice) {
@@ -224,12 +207,8 @@ export default function SwapBox(props) {
     [chainId, "Exchange-swap-leverage-option"],
     "2"
   );
-  const [isLeverageSliderEnabled, setIsLeverageSliderEnabled] = useLocalStorageSerializeKey(
-    [chainId, "Exchange-swap-leverage-slider-enabled"],
-    true
-  );
 
-  const hasLeverageOption = isLeverageSliderEnabled && !isNaN(parseFloat(leverageOption));
+  const hasLeverageOption = !isNaN(parseFloat(leverageOption));
 
   const [ordersToaOpen, setOrdersToaOpen] = useState(false);
 
@@ -1720,7 +1699,7 @@ export default function SwapBox(props) {
     feeBps = feeBasisPoints;
   }
 
-  const leverageMarks = {
+  const leverageMarks = { 
     2: "2x",
     5: "5x",
     10: "10x",
@@ -2155,39 +2134,7 @@ export default function SwapBox(props) {
         )}
         {(isLong || isShort) && (
           <div className="Exchange-leverage-box">
-            <div className="Exchange-leverage-slider-settings">
-              <Checkbox
-                isChecked={isLeverageSliderEnabled}
-                setIsChecked={setIsLeverageSliderEnabled}
-                onClick={() =>
-                  trackAction &&
-                  trackAction("Button clicked", {
-                    buttonName: `Leverage slider toggled ${isLeverageSliderEnabled ? "on" : "off"}`,
-                  })
-                }
-              >
-                <span>Leverage slider</span>
-              </Checkbox>
-            </div>
-            {isLeverageSliderEnabled && (
-              <div
-                className={cx("Exchange-leverage-slider", "App-slider", {
-                  positive: isLong,
-                  negative: isShort,
-                })}
-              >
-                <Slider
-                  min={1.1}
-                  max={30.5}
-                  step={0.1}
-                  marks={leverageMarks}
-                  handle={leverageSliderHandle}
-                  onChange={(value) => setLeverageOption(value)}
-                  value={leverageOption}
-                  defaultValue={leverageOption}
-                />
-              </div>
-            )}
+            <LeverageInput value={leverageOption} onChange={setLeverageOption} max={30.5} min={1.1} step={0.01} />
             {isShort && (
               <div className="Exchange-info-row">
                 <div className="Exchange-info-label">Profits In</div>

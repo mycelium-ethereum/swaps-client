@@ -1209,60 +1209,6 @@ button.App-button {
   padding: 0 2rem;
 }
 
-.App-slider .rc-slider-rail {
-  background: var(--action-inactive);
-}
-
-.App-slider .rc-slider-track {
-  background: var(--action-inactive);
-}
-
-.App-slider .rc-slider-dot {
-  border: none;
-  border-radius: 1px;
-  width: 2px;
-  margin-left: -1px;
-  background: var(--action-inactive);
-}
-
-.App-slider .rc-slider-dot-active {
-  background: var(--action-active);
-}
-
-.App-slider .rc-slider-handle {
-  background: var(--action-active);
-  border: solid 2px var(--action-active);
-}
-
-.App-slider .rc-slider-handle:active {
-  box-shadow: 0 0 4px 6px rgba(45, 66, 252, 0.2);
-}
-
-.App-slider .rc-slider-mark-text,
-.App-slider .rc-slider-mark-text-active {
-  color: white;
-  opacity: 0.5;
-}
-
-.App-slider .rc-slider-mark-text:hover,
-.App-slider .rc-slider-mark-text-active:hover {
-  opacity: 1;
-}
-
-.rc-slider-tooltip {
-  z-index: 5;
-}
-
-.rc-slider-tooltip-inner {
-  box-shadow: none;
-  padding: 0.3rem 0.5rem;
-  background: #303652;
-}
-
-.rc-slider-tooltip-placement-top .rc-slider-tooltip-arrow {
-  border-top-color: #303652;
-}
-
 .header-connect-btn {
   background: #3b43e3;
 }
