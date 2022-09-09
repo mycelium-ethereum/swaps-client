@@ -1,10 +1,16 @@
 import React from "react";
 import Davatar from "@davatar/react";
 import * as Styles from "./Referrals.styles";
-import { formatAmount, shortenAddress, USD_DECIMALS, copyReferralCode, getTierIdDisplay, TIER_DISCOUNT_INFO } from "../../Helpers";
+import {
+  formatAmount,
+  shortenAddress,
+  USD_DECIMALS,
+  copyReferralCode,
+  getTierIdDisplay,
+  TIER_DISCOUNT_INFO,
+} from "../../Helpers";
 import CopyIcon from "../../img/copy.svg";
 import Tooltip from "../../components/Tooltip/Tooltip";
-import {COMMISSIONS} from "./Referrals";
 
 export default function AccountBanner(props) {
   const {
@@ -20,28 +26,24 @@ export default function AccountBanner(props) {
     // commissions
     referrerTier,
     referrerRebates,
-    referrerVolume
+    referrerVolume,
   } = props;
 
   const getInfo = () => {
     if (!active) {
       return;
-    } else if (currentView === 'Rebates') {
+    } else if (currentView === "Rebates") {
       return (
         <>
           <div className="App-card-row">
             <div className="label">Total Volume Traded</div>
-            <div>
-              ${formatAmount(tradersVolume, USD_DECIMALS, 2, true, '0.00')}
-            </div>
+            <div>${formatAmount(tradersVolume, USD_DECIMALS, 2, true, "0.00")}</div>
           </div>
           <div className="App-card-row">
             <div className="label">Total Trading Fee Rebates</div>
-            <div>
-              ${formatAmount(tradersRebates, USD_DECIMALS, 2, true, '0.00')}
-            </div>
+            <div>${formatAmount(tradersRebates, USD_DECIMALS, 2, true, "0.00")}</div>
           </div>
-          {referralCodeInString &&
+          {referralCodeInString && (
             <div className="App-card-row">
               <div className="label">Active Code</div>
               <Styles.FlexContainer>
@@ -51,7 +53,7 @@ export default function AccountBanner(props) {
                 </Styles.CopyButton>
               </Styles.FlexContainer>
             </div>
-          }
+          )}
           <div className="App-card-row">
             <div className="label">Tier Level</div>
             {tradersTier && (
@@ -67,21 +69,17 @@ export default function AccountBanner(props) {
             )}
           </div>
         </>
-      )
+      );
     }
     return (
       <>
         <div className="App-card-row">
           <div className="label">Total Volume Referred</div>
-          <div>
-            ${formatAmount(referrerVolume, USD_DECIMALS, 2, true, '0.00')}
-          </div>
+          <div>${formatAmount(referrerVolume, USD_DECIMALS, 2, true, "0.00")}</div>
         </div>
         <div className="App-card-row">
           <div className="label">Total Commissions</div>
-          <div>
-            ${formatAmount(referrerRebates, USD_DECIMALS, 2, true, '0.00')}
-          </div>
+          <div>${formatAmount(referrerRebates, USD_DECIMALS, 2, true, "0.00")}</div>
         </div>
         {referrerTier && (
           <div className="App-card-row">
@@ -98,8 +96,8 @@ export default function AccountBanner(props) {
           </div>
         )}
       </>
-    )
-  }
+    );
+  };
 
   return (
     <Styles.AccountBanner className="App-card">
@@ -116,9 +114,7 @@ export default function AccountBanner(props) {
           <Styles.AccountBannerShortenedAddress> Wallet not connected </Styles.AccountBannerShortenedAddress>
         </Styles.AccountBannerAddresses>
       )}
-      <Styles.AccountBannerReferral>
-        {getInfo()}
-      </Styles.AccountBannerReferral>
+      <Styles.AccountBannerReferral>{getInfo()}</Styles.AccountBannerReferral>
     </Styles.AccountBanner>
   );
 }

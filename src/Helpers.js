@@ -160,10 +160,10 @@ export const TRIGGER_PREFIX_BELOW = "<";
 export const MIN_PROFIT_BIPS = 0;
 
 // USD tokens per interval given by kurtis
-export const MM_TOKENS_PER_INTERVAL = ethers.utils.parseUnits('0.1859475633', USD_DECIMALS);
+export const MM_TOKENS_PER_INTERVAL = ethers.utils.parseUnits("0.1859475633", USD_DECIMALS);
 export const FEE_MULTIPLIER_BASIS_POINTS = 4;
-export const MM_FEE_MULTIPLIER = ethers.utils.parseUnits('0.0006', FEE_MULTIPLIER_BASIS_POINTS);
-export const MM_SWAPS_FEE_MULTIPLIER = ethers.utils.parseUnits('0.0012', FEE_MULTIPLIER_BASIS_POINTS);
+export const MM_FEE_MULTIPLIER = ethers.utils.parseUnits("0.0006", FEE_MULTIPLIER_BASIS_POINTS);
+export const MM_SWAPS_FEE_MULTIPLIER = ethers.utils.parseUnits("0.0012", FEE_MULTIPLIER_BASIS_POINTS);
 
 export const MLP_POOL_COLORS = {
   ETH: "#6062a6",
@@ -558,7 +558,7 @@ export function getMarginFee(sizeDelta) {
   return sizeDelta.sub(afterFeeUsd);
 }
 
-export function getSupplyUrl(route = '/totalSupply') {
+export function getSupplyUrl(route = "/totalSupply") {
   // same supply across networks
   // return "https://stats.mycelium.xyz/total_supply";
   return `https://dev.api.tracer.finance/myc${route}`;
@@ -1583,10 +1583,10 @@ export function useENS(address) {
         const provider = new ethers.providers.JsonRpcProvider("https://rpc.ankr.com/eth");
         const name = await provider.lookupAddress(address.toLowerCase());
         if (name) {
-          setENSName(name)
+          setENSName(name);
         } else {
-          setENSName()
-        };
+          setENSName();
+        }
       }
     }
     resolveENS();
@@ -2000,21 +2000,6 @@ export function useAccountOrders(flagOrdersEnabled, overrideAccount) {
       const provider = getProvider(library, chainId);
       const orderBookContract = new ethers.Contract(orderBookAddress, OrderBook.abi, provider);
       const orderBookReaderContract = new ethers.Contract(orderBookReaderAddress, OrderBookReader.abi, provider);
-
-      const fetchIndexesFromServer = () => {
-        const ordersIndexesUrl = `${getServerBaseUrl(chainId)}/orders_indices?account=${account}`;
-        return fetch(ordersIndexesUrl)
-          .then(async (res) => {
-            const json = await res.json();
-            const ret = {};
-            for (const key of Object.keys(json)) {
-              ret[key.toLowerCase()] = json[key].map((val) => parseInt(val.value));
-            }
-
-            return ret;
-          })
-          .catch(() => ({ swap: [], increase: [], decrease: [] }));
-      };
 
       const fetchLastIndex = async (type) => {
         const method = type.toLowerCase() + "OrdersIndex";
@@ -3075,4 +3060,3 @@ export function getTierIdDisplay(tierId) {
   }
   return Number(tierId) + 1;
 }
-

@@ -118,7 +118,6 @@ import PageNotFound from "./views/PageNotFound/PageNotFound";
 import useSWR from "swr";
 import LinkDropdown from "./components/Navigation/LinkDropdown/LinkDropdown";
 import Sidebar from "./components/Navigation/Sidebar/Sidebar";
-import { Banner, BannerContent, BannerTitle } from "./components/Banner/Banner";
 
 if ("ethereum" in window) {
   window.ethereum.autoRefreshOnNetworkChange = false;
@@ -494,10 +493,6 @@ function FullApp() {
   const fadeVariants = {
     hidden: { opacity: 0 },
     visible: { opacity: 1 },
-  };
-  const slideVariants = {
-    hidden: { x: "-100%" },
-    visible: { x: 0 },
   };
 
   const [isSettingsVisible, setIsSettingsVisible] = useState(false);

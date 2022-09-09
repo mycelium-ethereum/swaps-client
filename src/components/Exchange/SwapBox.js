@@ -16,8 +16,6 @@ import {
   helperToast,
   formatAmount,
   bigNumberify,
-  ARBITRUM,
-  AVALANCHE,
   USD_DECIMALS,
   USDG_DECIMALS,
   LONG,
@@ -197,16 +195,6 @@ export default function SwapBox(props) {
   const isLong = swapOption === LONG;
   const isShort = swapOption === SHORT;
   const isSwap = swapOption === SWAP;
-
-  const getLeaderboardLink = () => {
-    if (chainId === ARBITRUM) {
-      return "https://www.gmx.house/arbitrum/leaderboard";
-    }
-    if (chainId === AVALANCHE) {
-      return "https://www.gmx.house/avalanche/leaderboard";
-    }
-    return "https://www.gmx.house";
-  };
 
   function getTokenLabel() {
     switch (true) {
@@ -708,7 +696,7 @@ export default function SwapBox(props) {
 
   const getSwapError = () => {
     const gasTokenInfo = getTokenInfo(infoTokens, ethers.constants.AddressZero);
-    if (gasTokenInfo.balance?.eq(0)){
+    if (gasTokenInfo.balance?.eq(0)) {
       return ["Not enough ETH for gas"];
     }
 
@@ -798,7 +786,7 @@ export default function SwapBox(props) {
 
   const getLeverageError = useCallback(() => {
     const gasTokenInfo = getTokenInfo(infoTokens, ethers.constants.AddressZero);
-    if (gasTokenInfo.balance?.eq(0)){
+    if (gasTokenInfo.balance?.eq(0)) {
       return ["Not enough ETH for gas"];
     }
     if (hasOutdatedUi) {
