@@ -54,6 +54,7 @@ import {
   ARBITRUM_TESTNET,
   PLACEHOLDER_ACCOUNT,
   getDefaultArbitrumRpcUrl,
+  shareToTwitter,
 } from "./Helpers";
 import ReaderV2 from "./abis/ReaderV2.json";
 
@@ -97,6 +98,9 @@ import logoImg from "./img/logo_MYC.svg";
 import logoSmallImg from "./img/logo_MYC_small.svg";
 import poolsSmallImg from "./img/myc_pools_short.svg";
 import connectWalletImg from "./img/ic_wallet_24.svg";
+import ethMergeHeader from "./img/eth-merge-modal-header.png";
+import ethMergeHeadermesh from "./img/eth-merge-modal-header-mesh.png";
+import twitterIcon from "./img/twitter-icon.svg";
 
 import metamaskImg from "./img/metamask.png";
 import coinbaseImg from "./img/coinbaseWallet.png";
@@ -118,7 +122,11 @@ import PageNotFound from "./views/PageNotFound/PageNotFound";
 import useSWR from "swr";
 import LinkDropdown from "./components/Navigation/LinkDropdown/LinkDropdown";
 import Sidebar from "./components/Navigation/Sidebar/Sidebar";
-import { Banner, BannerContent, BannerTitle } from "./components/Banner/Banner";
+
+const TWITTER_SHARE_TEXT = `Trade the Merge!
+
+ETH Fee-Free Spree on Mycelium Perpetual Swaps
+https://swaps.mycelium.xyz/`;
 
 if ("ethereum" in window) {
   window.ethereum.autoRefreshOnNetworkChange = false;
@@ -487,6 +495,7 @@ function FullApp() {
   };
 
   const [walletModalVisible, setWalletModalVisible] = useState();
+  const [mergeModalVisible, setMergeModalVisible] = useState(false);
   const connectWallet = () => setWalletModalVisible(true);
 
   const [isDrawerVisible, setIsDrawerVisible] = useState(undefined);
@@ -1006,6 +1015,64 @@ function FullApp() {
         pauseOnHover
       />
       <EventToastContainer />
+      {/* ETH Merge Modal */}
+      <Modal className="Eth-merge-modal" isVisible={mergeModalVisible} setIsVisible={setMergeModalVisible}>
+        <div className="Eth-merge-modal-header">
+          <img src={ethMergeHeader} className="Eth-merge-modal-graphic" alt="ETH Merge header graphic" />
+          <img src={ethMergeHeadermesh} className="Eth-merge-modal-mesh" alt="" />
+        </div>
+        <div className="Eth-merge-modal-title">
+          <small>Trade The Merge</small>
+          <h2>ETH Fee-Free Spree</h2>
+        </div>
+        <hr className="Eth-merge-modal-divider" />
+        <div className="Button-content">
+          <span>On Mycelium Perpetual Swaps</span>
+          <button className="App-button-option App-card-option" onClick={() => setMergeModalVisible(false)}>
+            Continue
+          </button>
+          <button className="App-button-option App-card-option" onClick={() => shareToTwitter(TWITTER_SHARE_TEXT)}>
+            Share on Twitter <img src={twitterIcon} alt="Twitter" />
+          </button>
+        </div>
+      </Modal>
+      <Modal
+        className="Connect-wallet-modal"
+        isVisible={walletModalVisible}
+        setIsVisible={setWalletModalVisible}
+        label="Connect Wallet"
+      >
+        <button
+          className="Wallet-btn MetaMask-btn"
+          onClick={() => {
+            activateMetaMask();
+            trackAction && trackAction("Button clicked", { buttonName: "Connect with MetaMask" });
+          }}
+        >
+          <img src={metamaskImg} alt="MetaMask" />
+          <div>MetaMask</div>
+        </button>
+        <button
+          className="Wallet-btn CoinbaseWallet-btn"
+          onClick={() => {
+            activateCoinBase();
+            trackAction && trackAction("Button clicked", { buttonName: "Connect with Coinbase Wallet" });
+          }}
+        >
+          <img src={coinbaseImg} alt="Coinbase Wallet" />
+          <div>Coinbase Wallet</div>
+        </button>
+        <button
+          className="Wallet-btn WalletConnect-btn"
+          onClick={() => {
+            activateWalletConnect();
+            trackAction && trackAction("Button clicked", { buttonName: "Connect with WalletConnect" });
+          }}
+        >
+          <img src={walletConnectImg} alt="WalletConnect" />
+          <div>WalletConnect</div>
+        </button>
+      </Modal>
       <Modal
         className="Connect-wallet-modal"
         isVisible={walletModalVisible}

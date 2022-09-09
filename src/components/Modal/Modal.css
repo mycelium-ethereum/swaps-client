@@ -28,7 +28,8 @@
   max-height: 90vh;
   overflow: auto;
   background: var(--background-primary);
-  border-radius: 4px;
+  border: 1px solid var(--cell-stroke);
+  border-radius: 8px;
 }
 
 .divider {
