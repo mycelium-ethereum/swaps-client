@@ -123,9 +123,8 @@ import useSWR from "swr";
 import LinkDropdown from "./components/Navigation/LinkDropdown/LinkDropdown";
 import Sidebar from "./components/Navigation/Sidebar/Sidebar";
 
-const TWITTER_SHARE_TEXT = `Trade the Merge!
+const TWITTER_SHARE_TEXT = `I’m trading the merge fee-free with @mycelium_xyz Perpetual Swaps!
 
-ETH Fee-Free Spree on Mycelium Perpetual Swaps
 https://swaps.mycelium.xyz/`;
 
 if ("ethereum" in window) {
@@ -1031,7 +1030,7 @@ function FullApp() {
         </div>
         <div className="Eth-merge-modal-title">
           <small>Trade The Merge</small>
-          <h2>ETH Fee-Free Spree</h2>
+          <h2>Fee-Free Spree</h2>
         </div>
         <hr className="Eth-merge-modal-divider" />
         <div className="Button-content">
