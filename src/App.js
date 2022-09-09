@@ -748,6 +748,14 @@ function FullApp() {
     [chainId, active]
   );
 
+  useEffect(() => {
+    const hasSeenEthMergeModal = window.localStorage.getItem("ethMergeModalSeen");
+    if (!hasSeenEthMergeModal) {
+      setMergeModalVisible(true);
+      window.localStorage.setItem("ethMergeModalSeen", "true");
+    }
+  }, []);
+
   return (
     <>
       <div
