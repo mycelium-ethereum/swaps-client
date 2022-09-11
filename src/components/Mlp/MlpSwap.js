@@ -45,7 +45,7 @@ import {
   MM_TOKENS_PER_INTERVAL,
 } from "../../Helpers";
 
-import { callContract, useMYCPrice, useInfoTokens } from "../../Api";
+import { callContract, useMYCPrice, useInfoTokens, useMarketMakingApr } from "../../Api";
 
 import TokenSelector from "../Exchange/TokenSelector";
 import BuyInputSection from "../BuyInputSection/BuyInputSection";
@@ -295,7 +295,6 @@ export default function MlpSwap(props) {
       .mul(nativeToken.minPrice)
       .div(expandDecimals(1, 18));
     feeMlpTrackerApr = feeMlpTrackerAnnualRewardsUsd.mul(BASIS_POINTS_DIVISOR).div(mlpSupplyUsd);
-    totalApr = totalApr.add(feeMlpTrackerApr);
   }
 
   let stakedMlpTrackerAnnualRewardsUsd;
@@ -313,13 +312,12 @@ export default function MlpSwap(props) {
       .mul(mycPrice)
       .div(expandDecimals(1, 18));
     stakedMlpTrackerApr = stakedMlpTrackerAnnualRewardsUsd.mul(BASIS_POINTS_DIVISOR).div(mlpSupplyUsd);
-    totalApr = totalApr.add(stakedMlpTrackerApr);
   }
 
-  let mmApr;
-  if (mlpSupplyUsd && mlpSupplyUsd.gt(0)) {
-    mmApr = MM_TOKENS_PER_INTERVAL.mul(SECONDS_PER_YEAR).mul(BASIS_POINTS_DIVISOR).div(mlpSupplyUsd);
-    totalApr = totalApr.add(mmApr);
+  let mmApr = useMarketMakingApr(chainId, mlpSupplyUsd);
+
+  if (mmApr && stakedMlpTrackerApr && feeMlpTrackerApr) {
+    totalApr = totalApr.add(mmApr).add(feeMlpTrackerApr).add(stakedMlpTrackerApr);
   }
 
   useEffect(() => {
