@@ -118,7 +118,7 @@ const renderer = ({ days, hours, minutes, seconds, completed }) => {
     // Render a completed state
     return (
       <>
-        <span>MERGE IN PROGRESS!</span>
+        <span className="merge-started-text">The Ethereum Merge is now in progress.</span>
       </>
     );
   } else {

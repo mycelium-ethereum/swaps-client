@@ -894,6 +894,13 @@ table.Exchange-list-small td {
   width: 100%;
   margin-top: 16px;
 }
+.Merge-countdown
+span.merge-started-text {
+  font-size: 20px;
+  font-weight: bold;
+  padding-top: 4px;
+  text-align: center;
+}
 .Merge-countdown > span {
   font-size: 10px;
 }
