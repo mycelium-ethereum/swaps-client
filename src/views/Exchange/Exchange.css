@@ -891,7 +891,7 @@ table.Exchange-list-small td {
   border: 1px solid var(--cell-highlight);
   border-radius: 4px;
   padding: 8px 16px 12px;
-  width: calc(100% - 28rem);
+  width: 100%;
   margin-top: 16px;
 }
 .Merge-countdown > span {
@@ -931,9 +931,6 @@ table.Exchange-list-small td {
 @media (max-width: 1500px) {
   .Exchange-swap-box {
     width: 25rem;
-  }
-  .Merge-countdown {
-    width: calc(100% - 26rem);
   }
 }
 
@@ -1038,9 +1035,6 @@ table.Exchange-list-small td {
     padding: 0.3rem 0;
     font-size: 0.8rem;
   }
-  .Merge-countdown {
-    width: 100%;
-  }
 }
 
 @media (max-width: 700px) {
@@ -1071,9 +1065,6 @@ table.Exchange-list-small td {
 
   .Exchange.page-layout .footer {
     padding: 1rem;
-  }
-  .Merge-countdown {
-    margin: 16px auto 0;
   }
 }
 @media (max-width: 700px) {
