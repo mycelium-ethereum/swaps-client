@@ -2570,6 +2570,7 @@ export function getInfoTokens(
 }
 
 export const CHART_PERIODS = {
+  "1m": 60,
   "5m": 60 * 5,
   "15m": 60 * 15,
   "1h": 60 * 60,
