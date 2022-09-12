@@ -53,10 +53,7 @@ function fillGaps(prices, periodSeconds) {
     
     if (low === 0) {
       newPrices.push({
-        time,
-        open,
-        close: open,
-        high: open * 1.0003,
+        ...prices[i],
         low: open * 0.9996,
       });
     } else {
