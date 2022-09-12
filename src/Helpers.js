@@ -106,12 +106,14 @@ export const MLP_DECIMALS = 18;
 export const MYC_DECIMALS = 18;
 export const DEFAULT_MAX_USDG_AMOUNT = expandDecimals(200 * 1000 * 1000, 18);
 
-export const TAX_BASIS_POINTS = 20;
+// export const TAX_BASIS_POINTS = 20;
+export const TAX_BASIS_POINTS = 30;
 export const STABLE_TAX_BASIS_POINTS = 2;
 export const MINT_BURN_FEE_BASIS_POINTS = 18;
 export const SWAP_FEE_BASIS_POINTS = 30;
 export const STABLE_SWAP_FEE_BASIS_POINTS = 3;
-export const MARGIN_FEE_BASIS_POINTS = 3;
+// export const MARGIN_FEE_BASIS_POINTS = 3;
+export const MARGIN_FEE_BASIS_POINTS = 0;
 
 export const LIQUIDATION_FEE = expandDecimals(5, USD_DECIMALS);
 
