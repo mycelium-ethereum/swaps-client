@@ -883,6 +883,39 @@ table.Exchange-list-small td {
   padding-top: 2rem;
   height: 5rem;
 }
+.Merge-countdown {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: var(--background-gradient);
+  border: 1px solid var(--cell-highlight);
+  border-radius: 4px;
+  padding: 8px 16px 12px;
+  width: calc(100% - 28rem);
+  margin-top: 16px;
+}
+.Merge-countdown > span {
+  font-size: 10px;
+}
+.Countdown-timer {
+  display: flex;
+  font-size: 30px;
+}
+.Countdown-section {
+  display: flex;
+  flex-direction: column;
+  margin-right: 12px;
+}
+.Countdown-section:last-of-type {
+  margin-right: 0;
+}
+.Countdown-section span:nth-child(1) {
+  font-size: 40px;
+  font-weight: bold;
+}
+.Countdown-section span:nth-child(2) {
+  font-size: 10px;
+}
 
 @media (max-width: 1640px) {
   .App-box.large,
@@ -898,6 +931,9 @@ table.Exchange-list-small td {
 @media (max-width: 1500px) {
   .Exchange-swap-box {
     width: 25rem;
+  }
+  .Merge-countdown {
+    width: calc(100% - 26rem);
   }
 }
 
@@ -1002,6 +1038,9 @@ table.Exchange-list-small td {
     padding: 0.3rem 0;
     font-size: 0.8rem;
   }
+  .Merge-countdown {
+    width: 100%;
+  }
 }
 
 @media (max-width: 700px) {
@@ -1032,5 +1071,13 @@ table.Exchange-list-small td {
 
   .Exchange.page-layout .footer {
     padding: 1rem;
+  }
+  .Merge-countdown {
+    margin: 16px auto 0;
+  }
+}
+@media (max-width: 700px) {
+  .Countdown-section span:nth-child(1) {
+    font-size: 30px;
   }
 }

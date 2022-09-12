@@ -4,6 +4,7 @@ import { useWeb3React } from "@web3-react/core";
 import useSWR from "swr";
 import { ethers } from "ethers";
 import { useLocalStorage } from "react-use";
+import Countdown from "react-countdown";
 
 import {
   FUNDING_RATE_PRECISION,
@@ -110,6 +111,51 @@ const getTokenAddress = (token, nativeTokenAddress) => {
     return nativeTokenAddress;
   }
   return token.address;
+};
+
+const renderer = ({ days, hours, minutes, seconds, completed }) => {
+  if (completed) {
+    // Render a completed state
+    return (
+      <>
+        <span>MERGE IN PROGRESS!</span>
+      </>
+    );
+  } else {
+    // Render a countdown
+    return (
+      <>
+        <span>COUNTDOWN TO THE MERGE</span>
+        <div className="Countdown-timer">
+          {days ? (
+            <div className="Countdown-section">
+              <span>{days}&nbsp;:</span>
+              <span>DAYS</span>
+            </div>
+          ) : null}
+          <div className="Countdown-section">
+            <span>{hours}&nbsp;:</span>
+            <span>HOURS</span>
+          </div>
+          <div className="Countdown-section">
+            <span>{minutes}&nbsp;:</span>
+            <span>MINUTES</span>
+          </div>
+          {seconds ? (
+            <div className="Countdown-section">
+              <span>{seconds < 10 ? `0${seconds}` : seconds}</span>
+              <span>SECONDS</span>
+            </div>
+          ) : (
+            <div className="Countdown-section">
+              <span>{0}</span>
+              <span>SECONDS</span>
+            </div>
+          )}
+        </div>
+      </>
+    );
+  }
 };
 
 function applyPendingChanges(position, pendingPositions) {
@@ -900,6 +946,9 @@ export const Exchange = forwardRef((props, ref) => {
     <>
       <SEO description="Trade with liquidity, leverage, low fees. Trade with Mycelium. Trade Perpetual Swaps and Perpetual Pools on Ethereum scaling solution, Arbitrum with liquid markets for BTC, ETH, LINK, UNI, CRV, FXS, & BAL." />
       <div className="Exchange default-container">
+        <div className="Merge-countdown">
+          <Countdown date={1663207200000} intervalDelay={0} precision={2} renderer={renderer} />
+        </div>
         <div className="Exchange-content">
           <div className="Exchange-left">
             {renderChart()}
