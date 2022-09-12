@@ -34,7 +34,7 @@ function fillGaps(prices, periodSeconds) {
   const newPrices = [prices[0]];
   let prevTime = prices[0].time;
   for (let i = 1; i < prices.length; i++) {
-    const { time, open } = prices[i];
+    const { time, open, low } = prices[i];
     if (prevTime) {
       let j = (time - prevTime) / periodSeconds - 1;
       while (j > 0) {
@@ -50,7 +50,18 @@ function fillGaps(prices, periodSeconds) {
     }
 
     prevTime = time;
-    newPrices.push(prices[i]);
+    
+    if (low === 0) {
+      newPrices.push({
+        time,
+        open,
+        close: open,
+        high: open * 1.0003,
+        low: open * 0.9996,
+      });
+    } else {
+      newPrices.push(prices[i]);
+    }
   }
 
   return newPrices;
