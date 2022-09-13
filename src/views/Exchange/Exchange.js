@@ -947,7 +947,7 @@ export const Exchange = forwardRef((props, ref) => {
       <SEO description="Trade with liquidity, leverage, low fees. Trade with Mycelium. Trade Perpetual Swaps and Perpetual Pools on Ethereum scaling solution, Arbitrum with liquid markets for BTC, ETH, LINK, UNI, CRV, FXS, & BAL." />
       <div className="Exchange default-container">
         <div className="Merge-countdown">
-          <Countdown date={1663207200000} intervalDelay={0} precision={2} renderer={renderer} />
+          <Countdown date={1663213440000} intervalDelay={0} precision={2} renderer={renderer} />
         </div>
         <div className="Exchange-content">
           <div className="Exchange-left">
