@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useMemo, useCallback } from "react";
+import { Translate } from "react-auto-translate";
 
 import Tooltip from "../Tooltip/Tooltip";
 import Modal from "../Modal/Modal";
 
-import cx from "classnames";
 import useSWR from "swr";
 import { ethers } from "ethers";
 
@@ -2255,7 +2255,9 @@ export default function SwapBox(props) {
             }}
             disabled={!isPrimaryEnabled()}
           >
+          <Translate>
             {getPrimaryText()}
+          </Translate>
           </button>
         </div>
       </div>

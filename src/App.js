@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback, useRef } from "react";
 import { SWRConfig } from "swr";
 import { ethers } from "ethers";
+import { Translator } from "react-auto-translate";
 
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -1277,11 +1278,29 @@ function App() {
     );
   }
 
+  const cacheProvider = {
+    get: (language, key) => ((JSON.parse(localStorage.getItem("translations")) || {})[key] || {})[language],
+    set: (language, key, value) => {
+      const existing = JSON.parse(localStorage.getItem("translations")) || {
+        [key]: {},
+      };
+      existing[key] = { ...existing[key], [language]: value };
+      localStorage.setItem("translations", JSON.stringify(existing));
+    },
+  };
+
   return (
     <SWRConfig value={{ refreshInterval: 5000 }}>
       <Web3ReactProvider getLibrary={getLibrary}>
         <ThemeProvider>
-          <FullApp />
+          <Translator
+            cacheProvider={cacheProvider}
+            from="en"
+            to="es"
+            googleApiKey={process.env.REACT_APP_GOOGLE_CLOUD_KEY}
+          >
+            <FullApp />
+          </Translator>
         </ThemeProvider>
         <ConsentModal hasConsented={hasConsented} setConsented={setConsented} />
       </Web3ReactProvider>
