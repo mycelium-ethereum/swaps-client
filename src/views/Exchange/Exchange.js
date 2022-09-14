@@ -868,7 +868,9 @@ export const Exchange = forwardRef((props, ref) => {
           />
           <div className="align-right Exchange-should-show-position-lines">
             <Checkbox isChecked={savedShouldShowPositionLines} setIsChecked={setSavedShouldShowPositionLines}>
-              <span className="muted">Chart positions</span>
+              <span className="muted">
+                <Text>Chart positions</Text>
+              </span>
             </Checkbox>
           </div>
         </div>
