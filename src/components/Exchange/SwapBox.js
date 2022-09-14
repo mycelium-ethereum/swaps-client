@@ -687,7 +687,7 @@ export default function SwapBox(props) {
 
   const getSwapError = () => {
     const gasTokenInfo = getTokenInfo(infoTokens, ethers.constants.AddressZero);
-    if (gasTokenInfo.balance?.eq(0)){
+    if (gasTokenInfo.balance?.eq(0)) {
       return ["Not enough ETH for gas"];
     }
 
@@ -777,7 +777,7 @@ export default function SwapBox(props) {
 
   const getLeverageError = useCallback(() => {
     const gasTokenInfo = getTokenInfo(infoTokens, ethers.constants.AddressZero);
-    if (gasTokenInfo.balance?.eq(0)){
+    if (gasTokenInfo.balance?.eq(0)) {
       return ["Not enough ETH for gas"];
     }
     if (hasOutdatedUi) {
@@ -1699,7 +1699,7 @@ export default function SwapBox(props) {
     feeBps = feeBasisPoints;
   }
 
-  const leverageMarks = { 
+  const leverageMarks = {
     2: "2x",
     5: "5x",
     10: "10x",
@@ -1808,6 +1808,8 @@ export default function SwapBox(props) {
       const spread = getSpread(fromTokenInfo, toTokenInfo, isLong, nativeTokenAddress);
       const entryPrice =
         isLong || isShort ? formatAmount(entryMarkPrice, USD_DECIMALS, 2, false) : "No entry price - swap";
+      const amountToReceivedUsd = isSwap ? formatAmount(fromUsdMin, USD_DECIMALS, 2, false) : formatAmount(toUsdMax, USD_DECIMALS, 2, false);
+      const amountToPayUsd = isSwap ? formatAmount(toUsdMax, USD_DECIMALS, 2, false) : formatAmount(fromUsdMin, USD_DECIMALS, 2, false);
       let liqPrice = parseFloat(determineLiquidationPrice());
       liqPrice = liqPrice < 0 ? 0 : liqPrice;
 
@@ -1823,18 +1825,20 @@ export default function SwapBox(props) {
         tokenToPay: fromToken.symbol,
         tokenToReceive: toToken.symbol,
         amountToPay: parseFloat(fromValue),
+        amountToPayUsd: parseFloat(amountToPayUsd),
         amountToReceive: parseFloat(toValue),
+        amountToReceivedUsd: parseFloat(amountToReceivedUsd),
         fromCurrencyBalance: parseFloat(formatAmount(fromBalance, fromToken.decimals, 4, false)),
         fromCurrencyToken: fromToken.symbol,
         leverage: parseFloat(leverage),
-        feesUsd: parseFloat(formatAmount(feesUsd, 4, 4, false)),
-        feesUsdFormatted: parseFloat(formatAmount(feesUsd, 4, 4, false).toFixed(2)),
-        [`fees${fromToken.symbol}`]: parseFloat(formatAmount(fees, fromToken.decimals, 4, false)),
+        feesUsd: feesUsd ? parseFloat(formatAmount(feesUsd, 4, 4, false)) : 0,
+        feesUsdFormatted: feesUsd ? parseFloat(formatAmount(feesUsd, 4, 2, false)) : 0,
+        [`fees${fromToken.symbol}`]: fees ? parseFloat(formatAmount(fees, fromToken.decimals, 4, false)) : 0,
         walletAddress: account,
         network: NETWORK_NAME[chainId],
         profitsIn: toToken.symbol,
         liqPrice: liqPrice,
-        collateralUsd: `${parseFloat(formatAmount(collateralAfterFees, USD_DECIMALS, 2, false))}`,
+        collateralUsd: parseFloat(formatAmount(collateralAfterFees, USD_DECIMALS, 2, false)),
         spreadIsHigh: spread.isHigh,
         spreadValue: parseFloat(formatAmount(spread.value, 4, 4, true)),
         entryPrice: parseFloat(entryPrice),
@@ -2239,6 +2243,7 @@ export default function SwapBox(props) {
             onClick={() => {
               const buttonText = getPrimaryText();
               onClickPrimary();
+              // Do not remove - required for analytics
               if (buttonText.includes("Approve")) {
                 trackTrade(1, fromToken?.symbol);
                 trackAction &&
@@ -2247,6 +2252,7 @@ export default function SwapBox(props) {
                     fromToken: fromToken?.symbol,
                   });
               } else {
+                trackTrade(2, fromToken?.symbol);
                 trackAction &&
                   trackAction("Button clicked", {
                     buttonName: buttonText,
