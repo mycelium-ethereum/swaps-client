@@ -1037,17 +1037,23 @@ function FullApp() {
           <img src={ethMergeHeadermesh} className="Eth-merge-modal-mesh" alt="" />
         </div>
         <div className="Eth-merge-modal-title">
-          <small>Trade The Merge</small>
-          <h2>Fee-Free Spree</h2>
+          <small>
+            <Text>Trade The Merge</Text>
+          </small>
+          <h2>
+            <Text>Fee-Free Spree</Text>
+          </h2>
         </div>
         <hr className="Eth-merge-modal-divider" />
         <div className="Button-content">
-          <span>On Mycelium Perpetual Swaps</span>
+          <span>
+            <Text>On Mycelium Perpetual Swaps</Text>
+          </span>
           <button className="App-button-option App-card-option" onClick={() => setMergeModalVisible(false)}>
-            Continue
+            <Text>Continue</Text>
           </button>
           <button className="App-button-option App-card-option" onClick={() => shareToTwitter(TWITTER_SHARE_TEXT)}>
-            Share on Twitter <img src={twitterIcon} alt="Twitter" />
+            <Text>Share on Twitter</Text> <img src={twitterIcon} alt="Twitter" />
           </button>
         </div>
       </Modal>
@@ -1307,9 +1313,9 @@ function App() {
             googleApiKey={process.env.REACT_APP_GCP_PRIVATE_KEY}
           >
             <FullApp />
+            <ConsentModal hasConsented={hasConsented} setConsented={setConsented} />
           </Translator>
         </ThemeProvider>
-        <ConsentModal hasConsented={hasConsented} setConsented={setConsented} />
       </Web3ReactProvider>
     </SWRConfig>
   );
