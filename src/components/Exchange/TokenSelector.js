@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import cx from "classnames";
+import { Text } from "../Translation/Text";
 
 import { formatAmount, expandDecimals, bigNumberify } from "../../Helpers";
 
@@ -75,7 +76,6 @@ export default function TokenSelector(props) {
           <div className="TokenSelector-token-row TokenSelector-token-input-row">
             <input
               type="text"
-              placeholder="Search Token"
               value={searchKeyword}
               onChange={(e) => onSearchKeywordChange(e)}
               onKeyDown={_handleKeyDown}
@@ -119,7 +119,7 @@ export default function TokenSelector(props) {
                   )}
                   <div className="Token-symbol">
                     <div className="Token-text">{token.symbol}</div>
-                    <span className="text-accent">{token.name}</span>
+                    <span className="text-accent"><Text>{token.name}</Text></span>
                   </div>
                 </div>
                 <div className="Token-balance">

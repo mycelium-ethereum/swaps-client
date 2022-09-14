@@ -1,4 +1,5 @@
 import React from "react";
+import { Text } from "../Translation/Text";
 
 import cx from "classnames";
 
@@ -26,7 +27,7 @@ export default function Tab(props) {
         return (
           <div className={cx("Tab-option", "muted", { active: opt === option })} onClick={() => onClick(opt)} key={opt}>
             {icons && icons[opt] && <img className="Tab-option-icon" src={icons[opt]} alt={option} />}
-            {label}
+            {typeof label === "string" ? <Text>{label}</Text> : label}
           </div>
         );
       })}

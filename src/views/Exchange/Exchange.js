@@ -5,6 +5,7 @@ import useSWR from "swr";
 import { ethers } from "ethers";
 import { useLocalStorage } from "react-use";
 import Countdown from "react-countdown";
+import { Text } from "../../components/Translation/Text";
 
 import {
   FUNDING_RATE_PRECISION,
@@ -118,38 +119,52 @@ const renderer = ({ days, hours, minutes, seconds, completed }) => {
     // Render a completed state
     return (
       <>
-        <span className="merge-started-text">The Ethereum Merge is now in progress.</span>
+        <span className="merge-started-text">
+          <Text>The Ethereum Merge is now in progress.</Text>
+        </span>
       </>
     );
   } else {
     // Render a countdown
     return (
       <>
-        <span>COUNTDOWN TO THE MERGE</span>
+        <span>
+          <Text>COUNTDOWN TO THE MERGE</Text>
+        </span>
         <div className="Countdown-timer">
           {days ? (
             <div className="Countdown-section">
               <span>{days}&nbsp;:</span>
-              <span>DAYS</span>
+              <span>
+                <Text>DAYS</Text>
+              </span>
             </div>
           ) : null}
           <div className="Countdown-section">
             <span>{hours}&nbsp;:</span>
-            <span>HOURS</span>
+            <span>
+              <Text>HOURS</Text>
+            </span>
           </div>
           <div className="Countdown-section">
             <span>{minutes}&nbsp;:</span>
-            <span>MINUTES</span>
+            <span>
+              <Text>MINUTES</Text>
+            </span>
           </div>
           {seconds ? (
             <div className="Countdown-section">
               <span>{seconds < 10 ? `0${seconds}` : seconds}</span>
-              <span>SECONDS</span>
+              <span>
+                <Text>SECONDS</Text>
+              </span>
             </div>
           ) : (
             <div className="Countdown-section">
               <span>{0}</span>
-              <span>SECONDS</span>
+              <span>
+                <Text>SECONDS</Text>
+              </span>
             </div>
           )}
         </div>

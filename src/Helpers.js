@@ -20,7 +20,7 @@ import OrderBook from "./abis/OrderBook.json";
 import { getWhitelistedTokens, isValidToken } from "./data/Tokens";
 import ComingSoonTooltip from "./components/Tooltip/ComingSoon";
 import { isAddress } from "ethers/lib/utils";
-import {SECONDS_PER_WEEK} from "./data/Fees";
+import { Text } from "./components/Translation/Text";
 
 const { AddressZero } = ethers.constants;
 
@@ -130,8 +130,9 @@ export const SHORT = "Short";
 export const MARKET = "Market";
 export const LIMIT = "Limit";
 export const STOP = "Stop";
-export const LEVERAGE_ORDER_OPTIONS = [MARKET, <ComingSoonTooltip handle={LIMIT} />];
-export const SWAP_ORDER_OPTIONS = [MARKET, <ComingSoonTooltip handle={LIMIT} />];
+export const LimitHandle = <Text>Limit</Text>;
+export const LEVERAGE_ORDER_OPTIONS = [MARKET, <ComingSoonTooltip handle={LimitHandle} />];
+export const SWAP_ORDER_OPTIONS = [MARKET, <ComingSoonTooltip handle={LimitHandle} />];
 export const SWAP_OPTIONS = [LONG, SHORT, SWAP];
 export const DEFAULT_SLIPPAGE_AMOUNT = 30;
 export const DEFAULT_HIGHER_SLIPPAGE_AMOUNT = 100;

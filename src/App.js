@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback, useRef } from "react";
 import { SWRConfig } from "swr";
 import { ethers } from "ethers";
 import { Translator } from "react-auto-translate";
+import { Text } from "./components/Translation/Text";
 
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -338,7 +339,10 @@ function AppHeaderUser({
             onClick={() => trackAction && trackAction("Button clicked", { buttonName: "Switch to Perpetual Pools" })}
           >
             <button className="default-btn switch-link">
-              <span>Switch to</span> <img src={poolsSmallImg} alt="Perpetual Pools" />
+              <span>
+                <Text>Switch to</Text>
+              </span>{" "}
+              <img src={poolsSmallImg} alt="Perpetual Pools" />
             </button>
           </a>
         </div>
@@ -385,7 +389,10 @@ function AppHeaderUser({
           onClick={() => trackAction && trackAction("Button clicked", { buttonName: "Switch to Perpetual Pools" })}
         >
           <button className="default-btn switch-link">
-            <span>Switch to</span> <img src={poolsSmallImg} alt="Perpetual Pools" />
+            <span>
+              <Text>Switch to</Text>
+            </span>{" "}
+            <img src={poolsSmallImg} alt="Perpetual Pools" />
           </button>
         </a>
       </div>
@@ -1296,8 +1303,8 @@ function App() {
           <Translator
             cacheProvider={cacheProvider}
             from="en"
-            to="es"
-            googleApiKey={process.env.REACT_APP_GOOGLE_CLOUD_KEY}
+            to="zh-CN"
+            googleApiKey={process.env.REACT_APP_GCP_PRIVATE_KEY}
           >
             <FullApp />
           </Translator>

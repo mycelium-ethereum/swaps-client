@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useRef, useCallback, useMemo } from "react";
 import cx from "classnames";
+import { Text } from "../Translation/Text";
 
 import { createChart } from "krasulya-lightweight-charts";
 
@@ -466,21 +467,21 @@ export default function ExchangeTVChart(props) {
               {!deltaPercentageStr && "-"}
               {deltaPercentageStr && deltaPercentageStr}
             </div>
-            <div className="ExchangeChart-info-label">24h Change</div>
+            <div className="ExchangeChart-info-label"><Text>24h Change</Text></div>
           </div>
           <div className="ExchangeChart-additional-info">
             <div>
               {!high && "-"}
               {high && high.toFixed(2)}
             </div>
-            <div className="ExchangeChart-info-label">24h High</div>
+            <div className="ExchangeChart-info-label"><Text>24h High</Text></div>
           </div>
           <div className="ExchangeChart-additional-info">
             <div>
               {!low && "-"}
               {low && low.toFixed(2)}
             </div>
-            <div className="ExchangeChart-info-label">24h Low</div>
+            <div className="ExchangeChart-info-label"><Text>24h Low</Text></div>
           </div>
         </div>
       </div>

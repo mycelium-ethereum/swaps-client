@@ -6,7 +6,8 @@ body,
   margin: 0;
   padding: 0;
   color: white;
-  font-family: "Inter";
+  /* font-family: "Inter", sans-serif;"; */
+  font-family: "Noto Sans", sans-serif;
   letter-spacing: 0.5px;
   font-size: 15.5px;
   background-color: var(--background-primary);
@@ -14,7 +15,8 @@ body,
 
 * {
   box-sizing: border-box;
-  font-family: "Inter";
+  /* font-family: "Inter"; */
+  font-family: "Noto Sans", sans-serif;
 }
 
 ::-webkit-scrollbar {

@@ -2,6 +2,7 @@ import React, { useEffect, useCallback, useMemo } from "react";
 import { ethers } from "ethers";
 import { Link } from "react-router-dom";
 import Tooltip from "../../components/Tooltip/Tooltip";
+import { Text } from "../Translation/Text";
 
 import {
   USD_DECIMALS,
@@ -55,17 +56,21 @@ function renderLiquidationTooltip(liquidationData, label) {
       handle={label}
       renderContent={() => (
         <>
-          {text}
+          <Text>{text}</Text>
           <br />
           <br />
-          Initial collateral: ${formatAmount(liquidationData.collateral, USD_DECIMALS, 2, true)}
+          <Text>Initial collateral:</Text> ${formatAmount(liquidationData.collateral, USD_DECIMALS, 2, true)}
           <br />
-          Min required collateral: ${formatAmount(minCollateral, USD_DECIMALS, 2, true)}
+          <Text>Min required collateral:</Text> ${formatAmount(minCollateral, USD_DECIMALS, 2, true)}
           <br />
-          Borrow fee: ${formatAmount(liquidationData.borrowFee, USD_DECIMALS, 2, true)}
+          <Text>Borrow fee:</Text> ${formatAmount(liquidationData.borrowFee, USD_DECIMALS, 2, true)}
           <br />
-          PnL: -${formatAmount(liquidationData.loss, USD_DECIMALS, 2, true)}
-          {liquidationData.type === "full" && <div>Liquidation fee: ${formatAmount(LIQUIDATION_FEE, 30, 2, true)}</div>}
+          <Text>PnL:</Text> -${formatAmount(liquidationData.loss, USD_DECIMALS, 2, true)}
+          {liquidationData.type === "full" && (
+            <div>
+              <Text>Liquidation fee: ${formatAmount(LIQUIDATION_FEE, 30, 2, true)}</Text>
+            </div>
+          )}
         </>
       )}
     />
@@ -207,13 +212,15 @@ export default function TradeHistory(props) {
 
         return (
           <>
-            Could not increase {indexToken.symbol} {params.isLong ? "Long" : "Short"},
-            {`+${formatAmount(params.sizeDelta, USD_DECIMALS, 2, true)}`} USD, Acceptable Price:&nbsp;
+            <Text>Could not increase</Text> {indexToken.symbol} <Text>{params.isLong ? "Long" : "Short"}</Text>,
+            {`+${formatAmount(params.sizeDelta, USD_DECIMALS, 2, true)}`} USD, <Text>Acceptable Price:</Text>&nbsp;
             {params.isLong ? "<" : ">"}&nbsp;
             <Tooltip
               position="left-top"
               handle={`${formatAmount(params.acceptablePrice, USD_DECIMALS, 2, true)} USD`}
-              renderContent={() => <>Try increasing the "Allowed Slippage", under the Settings menu on the top right</>}
+              renderContent={() => (
+                <Text>Try increasing the "Allowed Slippage", under the Settings menu on the top right</Text>
+              )}
             />
           </>
         );
@@ -231,13 +238,15 @@ export default function TradeHistory(props) {
 
         return (
           <>
-            Could not decrease {indexToken.symbol} {params.isLong ? "Long" : "Short"},
-            {`+${formatAmount(params.sizeDelta, USD_DECIMALS, 2, true)}`} USD, Acceptable Price:&nbsp;
+            <Text>Could not decrease</Text> {indexToken.symbol} <Text>{params.isLong ? "Long" : "Short"}</Text>,
+            {`+${formatAmount(params.sizeDelta, USD_DECIMALS, 2, true)}`} USD, <Text>Acceptable Price:</Text>&nbsp;
             {params.isLong ? ">" : "<"}&nbsp;
             <Tooltip
               position="left-top"
               handle={`${formatAmount(params.acceptablePrice, USD_DECIMALS, 2, true)} USD`}
-              renderContent={() => <>Try increasing the "Allowed Slippage", under the Settings menu on the top right</>}
+              renderContent={() => (
+                <Text>Try increasing the "Allowed Slippage", under the Settings menu on the top right</Text>
+              )}
             />
           </>
         );
@@ -425,7 +434,11 @@ export default function TradeHistory(props) {
 
   return (
     <div className="TradeHistory">
-      {tradesWithMessages.length === 0 && <div className="Exchange-empty-positions-list-note App-card">No trades yet</div>}
+      {tradesWithMessages.length === 0 && (
+        <div className="Exchange-empty-positions-list-note App-card">
+          <Text>No trades yet</Text>
+        </div>
+      )}
       {tradesWithMessages.length > 0 &&
         tradesWithMessages.map((trade, index) => {
           const tradeData = trade.data;
@@ -450,7 +463,7 @@ export default function TradeHistory(props) {
                   )}
                 </div>
                 <a className="plain" href={txUrl} target="_blank" rel="noopener noreferrer">
-                  {msg}
+                  <Text>{msg}</Text>
                 </a>
               </div>
             </div>

@@ -12,6 +12,7 @@ import {
   FaChartBar,
   FaSync,
 } from "react-icons/fa";
+import { Text } from "../../Translation/Text";
 
 import logoImg from "../../../img/logo_MYC.svg";
 import gitbookIcon from "../../../img/gitbook.svg";
@@ -104,13 +105,13 @@ export default function Sidebar({ sidebarVisible, setSidebarVisible }) {
           {navLinks.map((item) => (
             <MenuItem key={item.name}>
               <NavLink activeClassName="active" exact className="App-header-link-main" to={item.path}>
-                <item.icon /> {item.name}
+                <item.icon /> <Text>{item.name}</Text>
               </NavLink>
             </MenuItem>
           ))}
           <MenuItem>
             <a href="https://analytics.mycelium.xyz" target="_blank" rel="noopener noreferrer">
-              <FaChartBar /> Analytics
+              <FaChartBar /> <Text>Analytics</Text>
             </a>
           </MenuItem>
           <MenuItem>
@@ -119,7 +120,7 @@ export default function Sidebar({ sidebarVisible, setSidebarVisible }) {
               target="_blank"
               rel="noopener noreferrer"
             >
-              <FaBook /> Docs
+              <FaBook /> <Text>Docs</Text>
             </a>
           </MenuItem>
         </NavMenu>
@@ -127,7 +128,7 @@ export default function Sidebar({ sidebarVisible, setSidebarVisible }) {
           {legalLinks.map((item) => (
             <MenuItem key={item.name}>
               <a href={item.path} target="_blank" rel="noopener noreferrer">
-                <item.icon /> {item.name}
+                <item.icon /> <Text>{item.name}</Text>
               </a>
             </MenuItem>
           ))}
