@@ -5,7 +5,7 @@ export const DropdownContainer = styled.div`
 `;
 
 export const DropdownButton = styled.button`
-  display: none;
+  display: flex;
   align-items: center;
   justify-content: flex-end;
   color: white;
@@ -15,13 +15,19 @@ export const DropdownButton = styled.button`
   background: unset;
   border: unset;
   margin-right: 20px;
+  color: white;
 
   > img {
     margin-left: 8px;
     width: 20px;
     height: 20px;
   }
+`;
 
+export const LinkDropdownButton = styled(DropdownButton)`
+  @media (min-width: 1281px) {
+    display: none;
+  }
   @media (max-width: 1280px) {
     display: flex;
   }
@@ -46,11 +52,15 @@ export const LinkMenu = styled.ul(
   opacity: ${props.open ? 1 : 0};
   pointer-events: ${props.open ? "all" : "none"};
 
-  @media (min-width: 1281px) {
-    display: none;
-  }
-  @media (max-width: 670px) {
-    display: none;
+  ${
+    !props.isLanguageDropdown &&
+    `
+    @media (min-width: 1281px) {
+      display: none;
+    }
+    @media (max-width: 670px) {
+      display: none;
+    }`
   }
 `
 );
@@ -70,13 +80,20 @@ export const ListItem = styled.li`
     background-color: var(--action-stroke);
   }
 
-  a {
+  a,
+  button {
     display: flex;
     width: 100%;
     height: 100%;
     align-items: center;
     justify-content: center;
     font-size: 14px;
+    background: none;
+    border: 0;
+    color: white;
+  }
+
+  a {
     &.active {
       background-color: var(--action-stroke);
     }

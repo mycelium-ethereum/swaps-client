@@ -124,6 +124,7 @@ import PageNotFound from "./views/PageNotFound/PageNotFound";
 import useSWR from "swr";
 import LinkDropdown from "./components/Navigation/LinkDropdown/LinkDropdown";
 import Sidebar from "./components/Navigation/Sidebar/Sidebar";
+import LanguageDropdown from "./components/Navigation/LanguageDropdown/LanguageDropdown";
 
 const TWITTER_SHARE_TEXT = `I’m trading the merge fee-free with @mycelium_xyz Perpetual Swaps!
 
@@ -273,6 +274,8 @@ function AppHeaderUser({
   showNetworkSelectorModal,
   disconnectAccountAndCloseSettings,
   trackAction,
+  currentLang,
+  setCurrentLang,
 }) {
   const { chainId } = useChainId();
   const { active, account } = useWeb3React();
@@ -309,6 +312,7 @@ function AppHeaderUser({
             Trade
           </NavLink>
         </div>
+        <LanguageDropdown currentLang={currentLang} setCurrentLang={setCurrentLang} />
         {showSelector && (
           <NetworkSelector
             options={networkOptions}
@@ -359,6 +363,7 @@ function AppHeaderUser({
           Trade
         </NavLink>
       </div>
+      <LanguageDropdown currentLang={currentLang} setCurrentLang={setCurrentLang} />
       {showSelector && (
         <NetworkSelector
           options={networkOptions}
@@ -400,7 +405,8 @@ function AppHeaderUser({
   );
 }
 
-function FullApp() {
+function FullApp(props) {
+  const { currentLang, setCurrentLang } = props;
   const [sidebarVisible, setSidebarVisible] = useState(false);
   const [loggedInTracked, setLoggedInTracked] = useState(false);
   const { trackLogin, trackPageWithTraits, trackAction, analytics } = useAnalytics();
@@ -834,6 +840,8 @@ function FullApp() {
                   setWalletModalVisible={setWalletModalVisible}
                   showNetworkSelectorModal={showNetworkSelectorModal}
                   trackAction={trackAction}
+                  currentLang={currentLang}
+                  setCurrentLang={setCurrentLang}
                 />
               </div>
             </div>
@@ -862,6 +870,7 @@ function FullApp() {
                   <div className="App-header-container-right">
                     <AppHeaderLinks trackAction={trackAction} />
                     <LinkDropdown />
+                    <LanguageDropdown currentLang={currentLang} setCurrentLang={setCurrentLang} />
                     <AppHeaderUser
                       disconnectAccountAndCloseSettings={disconnectAccountAndCloseSettings}
                       openSettings={openSettings}
@@ -1275,6 +1284,7 @@ function PreviewApp() {
 
 function App() {
   const [hasConsented, setConsented] = useState(false);
+  const [currentLang, setCurrentLang] = useState("en");
 
   useEffect(() => {
     const consentAcknowledged = localStorage.getItem("consentAcknowledged") === "true";
@@ -1309,10 +1319,10 @@ function App() {
           <Translator
             cacheProvider={cacheProvider}
             from="en"
-            to="zh-CN"
+            to={currentLang}
             googleApiKey={process.env.REACT_APP_GCP_PRIVATE_KEY}
           >
-            <FullApp />
+            <FullApp currentLang={currentLang} setCurrentLang={setCurrentLang} />
             <ConsentModal hasConsented={hasConsented} setConsented={setConsented} />
           </Translator>
         </ThemeProvider>
