@@ -1212,7 +1212,7 @@ function ToastifyDebug(props) {
     <div className="Toastify-debug">
       {!open && (
         <span className="Toastify-debug-button" onClick={() => setOpen(true)}>
-          Show error
+          <Text>Show error</Text>
         </span>
       )}
       {open && props.children}
