@@ -460,10 +460,10 @@ export function deserialize(data) {
 
 export const helperToast = {
   success: (content) => {
-    toast.success(<Text>{content}</Text>);
+    toast.success(content);
   },
   error: (content) => {
-    toast.error(<Text>{content}</Text>);
+    toast.error(content);
   },
 };
 
@@ -2229,9 +2229,9 @@ export function approveTokens({
       const txUrl = getExplorerUrl(chainId) + "tx/" + res.hash;
       helperToast.success(
         <div>
-          Approval submitted!{" "}
+          <Text>Approval submitted!</Text>{" "}
           <a href={txUrl} target="_blank" rel="noopener noreferrer">
-            View status.
+            <Text>View status.</Text>
           </a>
           <br />
         </div>
@@ -2271,7 +2271,7 @@ export function approveTokens({
       } else {
         failMsg = "Approval failed.";
       }
-      helperToast.error(failMsg);
+      helperToast.error(<Text>failMsg</Text>);
     })
     .finally(() => {
       setIsApproving(false);
@@ -2385,7 +2385,7 @@ export const switchNetwork = async (chainId, active) => {
       method: "wallet_switchEthereumChain",
       params: [{ chainId: chainIdHex }],
     });
-    helperToast.success("Connected to " + getChainName(chainId));
+    helperToast.success(<Text>Connected to {getChainName(chainId)}</Text>);
     return getChainName(chainId);
   } catch (ex) {
     // https://docs.metamask.io/guide/rpc-api.html#other-rpc-methods
@@ -2406,10 +2406,10 @@ export const getWalletConnectHandler = (activate, deactivate, setActivatingConne
     setActivatingConnector(walletConnect);
     activate(walletConnect, (ex) => {
       if (ex instanceof UnsupportedChainIdError) {
-        helperToast.error("Unsupported chain. Switch to Arbitrum network on your wallet and try again");
+        helperToast.error(<Text>Unsupported chain. Switch to Arbitrum network on your wallet and try again</Text>);
         console.warn(ex);
       } else if (!(ex instanceof UserRejectedRequestErrorWalletConnect)) {
-        helperToast.error(ex.message);
+        helperToast.error(<Text>{ex.message}</Text>);
         console.warn(ex);
       }
       clearWalletConnectData();
@@ -2427,20 +2427,22 @@ export const getInjectedHandler = (activate) => {
       if (e instanceof UnsupportedChainIdError) {
         helperToast.error(
           <div>
-            <div>Your wallet is not connected to {getChainName(chainId)}.</div>
+            <div>
+              <Text>Your wallet is not connected to</Text> {getChainName(chainId)}.
+            </div>
             <br />
             <div className="clickable underline margin-bottom" onClick={() => switchNetwork(chainId, true)}>
-              Switch to {getChainName(chainId)}
+              <Text>Switch to</Text> {getChainName(chainId)}
             </div>
             <div className="clickable underline" onClick={() => switchNetwork(chainId, true)}>
-              Add {getChainName(chainId)}
+              <Text>Add</Text> {getChainName(chainId)}
             </div>
           </div>
         );
         return;
       }
       const errString = e.message ?? e.toString();
-      helperToast.error(errString);
+      helperToast.error(<Text>{errString}</Text>);
     });
   };
   return fn;
@@ -3055,7 +3057,7 @@ export function copyToClipboard(item) {
 /* REFERRAL CODE HELPERS */
 export function copyReferralCode(code) {
   copyToClipboard(`https://swaps.mycelium.xyz?${REFERRAL_CODE_QUERY_PARAMS}=${code}`);
-  helperToast.success("Referral link copied to your clipboard");
+  helperToast.success(<Text>Referral link copied to your clipboard</Text>);
 }
 
 export function getCodeError(value) {
