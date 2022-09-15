@@ -3104,3 +3104,11 @@ export function changeLanguage(language) {
   window.localStorage.setItem("selectedLang", language);
   window.history.replaceState(null, null, `?lang=${language}`);
 }
+
+export function changeFontFromLanguage(usesInterFont) {
+  if (usesInterFont) {
+    document.body.classList.add("inter-font");
+  } else {
+    document.body.classList.remove("inter-font");
+  }
+}

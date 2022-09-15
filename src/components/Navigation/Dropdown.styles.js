@@ -4,25 +4,41 @@ export const DropdownContainer = styled.div`
   position: relative;
 `;
 
-export const DropdownButton = styled.button`
+export const DropdownButton = styled.button(
+  (props) => `
   display: flex;
   align-items: center;
   justify-content: flex-end;
   color: white;
   font-family: "aileron", sans-serif;
   font-size: 14px;
-  width: 98px;
-  background: unset;
-  border: unset;
+  border-radius: 4px;
+  white-space: nowrap;
+  ${
+    props.isLanguageDropdown
+      ? `
+        height: 36px;
+        padding: 0 8px;
+        background: var(--background-gradient);
+        border: 1px solid var(--action-active);
+        `
+      : `
+          width: 98px;
+          background: unset;
+          border: unset;
+          `
+  }
+
   margin-right: 20px;
   color: white;
 
   > img {
-    margin-left: 8px;
+    ${props.isLanguageDropdown ? "margin-right: 8px" : "margin-left: 8px"};
     width: 20px;
     height: 20px;
   }
-`;
+`
+);
 
 export const LinkDropdownButton = styled(DropdownButton)`
   @media (min-width: 1281px) {
@@ -39,9 +55,8 @@ export const LinkDropdownButton = styled(DropdownButton)`
 export const LinkMenu = styled.ul(
   (props) => `
   position: absolute;
-  top: 24px;
-  left: 50%;
-  transform: translateX(-50%);
+  top: 30px;
+  left: 0;
   padding: 0;
   border-radius: 4px;
   width: 180px;
@@ -53,14 +68,18 @@ export const LinkMenu = styled.ul(
   pointer-events: ${props.open ? "all" : "none"};
 
   ${
-    !props.isLanguageDropdown &&
+    !props.isLanguageDropdown
+      ? `
+      @media (min-width: 1281px) {
+        display: none;
+      }
+      @media (max-width: 670px) {
+        display: none;
+      }
     `
-    @media (min-width: 1281px) {
-      display: none;
-    }
-    @media (max-width: 670px) {
-      display: none;
-    }`
+      : `
+      font-family: 'Noto Sans', sans-serif;
+      `
   }
 `
 );
@@ -68,7 +87,6 @@ export const LinkMenu = styled.ul(
 export const ListItem = styled.li`
   display: flex;
   align-items: center;
-  justify-content: center;
   height: 40px;
   width: 100%;
   border-bottom: 1px solid var(--action-active);
@@ -86,8 +104,8 @@ export const ListItem = styled.li`
     width: 100%;
     height: 100%;
     align-items: center;
-    justify-content: center;
     font-size: 14px;
+    padding: 0 16px;
     background: none;
     border: 0;
     color: white;

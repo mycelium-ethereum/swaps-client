@@ -51,9 +51,6 @@
   line-height: 150%;
   border-bottom: 1px solid var(--cell-highlight);
   transition: background-color 0.3s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
   height: 40px;
   width: 100%;
   transition: background-color 0.3s ease;

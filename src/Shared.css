@@ -6,17 +6,19 @@ body,
   margin: 0;
   padding: 0;
   color: white;
-  /* font-family: "Inter", sans-serif;"; */
-  font-family: "Noto Sans", sans-serif;
   letter-spacing: 0.5px;
   font-size: 15.5px;
   background-color: var(--background-primary);
+  font-family: "Noto Sans", sans-serif;
+}
+
+body.inter-font {
+  font-family: "Inter", sans-serif !important;
 }
 
 * {
   box-sizing: border-box;
-  /* font-family: "Inter"; */
-  font-family: "Noto Sans", sans-serif;
+  font-family: "Inter";
 }
 
 ::-webkit-scrollbar {

@@ -319,7 +319,7 @@ export default function ConfirmationBox(props) {
         </span>
         <div className="Confirmation-box-main-icon"></div>
         <div>
-          {isLong ? "Long" : "Short"}&nbsp;
+          <Text>{isLong ? "Long" : "Short"}</Text>&nbsp;
           {formatAmount(toAmount, toToken.decimals, 4, true)} {toToken.symbol} ($
           {formatAmount(toUsdMax, USD_DECIMALS, 2, true)})
         </div>

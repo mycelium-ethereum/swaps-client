@@ -22,6 +22,7 @@
   border-radius: 0px;
   border: 1px solid var(--cell-stroke);
   transition: all 0.3s ease;
+  white-space: nowrap;
 }
 
 .Tab.block .Tab-option:first-child {

@@ -1,37 +1,49 @@
 import { useState, useEffect, useRef } from "react";
 import { DropdownContainer, DropdownButton, LinkMenu, ListItem } from "../Dropdown.styles";
 import { useOutsideClick } from "../../../hooks/useOutsideClick";
-import chevronDown from "../../../img/chevron-down.svg";
-import { getLanguageFromUrl, getLanguageFromLocalStorage, changeLanguage } from "../../../Helpers";
+import translateIcon from "../../../img/translate.svg";
+import {
+  getLanguageFromUrl,
+  getLanguageFromLocalStorage,
+  changeLanguage,
+  changeFontFromLanguage,
+} from "../../../Helpers";
 
 const languages = [
   {
     name: "English",
     lang: "en",
+    useInterFont: true,
   },
   {
-    name: "Chinese",
+    name: "Chinese (中國人)",
     lang: "zh-CN",
+    useInterFont: false,
   },
   {
-    name: "Spanish",
-    lang: "es",
-  },
-  {
-    name: "Japanese",
+    name: "Japanese (日本)",
     lang: "ja",
+    useInterFont: false,
   },
   {
-    name: "Hindi",
+    name: "Hindi (हिन्दी)",
     lang: "hi",
+    useInterFont: false,
   },
   {
-    name: "Korean",
+    name: "Korean (한국인)",
     lang: "ko",
+    useInterFont: false,
   },
   {
-    name: "Russian",
+    name: "Russian (русский)",
     lang: "ru",
+    useInterFont: true,
+  },
+  {
+    name: "Spanish (español)",
+    lang: "es",
+    useInterFont: true,
   },
 ];
 
@@ -68,7 +80,9 @@ export default function LanguageDropdown({ currentLang, setCurrentLang }) {
   useEffect(() => {
     if (currentLang && currentLang !== "en") {
       changeLanguage(currentLang);
-      const label = languages.filter((item) => item.lang === currentLang)[0]?.name || "English";
+      const languageItem = languages.filter((item) => item.lang === currentLang)[0];
+      const label = languageItem?.name || "English";
+      changeFontFromLanguage(languageItem?.useInterFont);
       setCurrentLangLabel(label);
     } else {
       setCurrentLangLabel("English");
@@ -80,8 +94,8 @@ export default function LanguageDropdown({ currentLang, setCurrentLang }) {
 
   return (
     <DropdownContainer ref={containerRef}>
-      <DropdownButton onClick={handleToggle}>
-        {currentLangLabel} <img src={chevronDown} alt="Arrow down" />
+      <DropdownButton onClick={handleToggle} isLanguageDropdown>
+        <img src={translateIcon} alt="Arrow down" /> {currentLangLabel}
       </DropdownButton>
       <LinkMenu open={isOpen} isLanguageDropdown>
         {languages.map((item) => (

@@ -467,28 +467,40 @@ export default function ExchangeTVChart(props) {
               {!deltaPercentageStr && "-"}
               {deltaPercentageStr && deltaPercentageStr}
             </div>
-            <div className="ExchangeChart-info-label"><Text>24h Change</Text></div>
+            <div className="ExchangeChart-info-label">
+              <Text>24h Change</Text>
+            </div>
           </div>
           <div className="ExchangeChart-additional-info">
             <div>
               {!high && "-"}
               {high && high.toFixed(2)}
             </div>
-            <div className="ExchangeChart-info-label"><Text>24h High</Text></div>
+            <div className="ExchangeChart-info-label">
+              <Text>24h High</Text>
+            </div>
           </div>
           <div className="ExchangeChart-additional-info">
             <div>
               {!low && "-"}
               {low && low.toFixed(2)}
             </div>
-            <div className="ExchangeChart-info-label"><Text>24h Low</Text></div>
+            <div className="ExchangeChart-info-label">
+              <Text>24h Low</Text>
+            </div>
           </div>
         </div>
       </div>
       <div className="ExchangeChart-bottom App-box App-box-border">
         <div className="ExchangeChart-bottom-header">
           <div className="ExchangeChart-bottom-controls">
-            <Tab options={Object.keys(CHART_PERIODS)} option={period} setOption={setPeriod} trackAction={trackAction} />
+            <Tab
+              options={Object.keys(CHART_PERIODS)}
+              option={period}
+              setOption={setPeriod}
+              trackAction={trackAction}
+              noTranslate
+            />
           </div>
           {candleStatsHtml}
         </div>
