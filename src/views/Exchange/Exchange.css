@@ -883,46 +883,6 @@ table.Exchange-list-small td {
   padding-top: 2rem;
   height: 5rem;
 }
-.Merge-countdown {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  background: var(--background-gradient);
-  border: 1px solid var(--cell-highlight);
-  border-radius: 4px;
-  padding: 8px 16px 12px;
-  width: 100%;
-  margin-top: 16px;
-}
-.Merge-countdown
-span.merge-started-text {
-  font-size: 20px;
-  font-weight: bold;
-  padding-top: 4px;
-  text-align: center;
-}
-.Merge-countdown > span {
-  font-size: 10px;
-}
-.Countdown-timer {
-  display: flex;
-  font-size: 30px;
-}
-.Countdown-section {
-  display: flex;
-  flex-direction: column;
-  margin-right: 12px;
-}
-.Countdown-section:last-of-type {
-  margin-right: 0;
-}
-.Countdown-section span:nth-child(1) {
-  font-size: 40px;
-  font-weight: bold;
-}
-.Countdown-section span:nth-child(2) {
-  font-size: 10px;
-}
 
 @media (max-width: 1640px) {
   .App-box.large,
@@ -1072,10 +1032,5 @@ span.merge-started-text {
 
   .Exchange.page-layout .footer {
     padding: 1rem;
-  }
-}
-@media (max-width: 700px) {
-  .Countdown-section span:nth-child(1) {
-    font-size: 30px;
   }
 }

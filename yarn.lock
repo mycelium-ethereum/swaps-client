@@ -13659,7 +13659,6 @@ __metadata:
     prettier: ^2.5.1
     rc-slider: ^9.7.2
     react: ^17.0.1
-    react-countdown: ^2.3.2
     react-dom: ^17.0.1
     react-helmet: ^6.1.0
     react-hot-toast: ^2.2.0
@@ -16035,18 +16034,6 @@ __metadata:
   peerDependencies:
     react: ">=15.0.0"
   checksum: 87139fc2cc682d34ff8633c58ce96f89826cc3127499b623fb1d8c99dd8e1fe21055750a051933ffc500ca9c88aa017930deae963ffc635135c02907e5d75e22
-  languageName: node
-  linkType: hard
-
-"react-countdown@npm:^2.3.2":
-  version: 2.3.2
-  resolution: "react-countdown@npm:2.3.2"
-  dependencies:
-    prop-types: ^15.7.2
-  peerDependencies:
-    react: ">= 15"
-    react-dom: ">= 15"
-  checksum: 670d7f6f355cd2c862fde2039e3fbaf39dae2925d2dea78c0406c04a9a5c35cca61bbd137de04a965ebdbbbaee5d435a06f06c0786a86d7bfc175b4fd9789e19
   languageName: node
   linkType: hard
 
