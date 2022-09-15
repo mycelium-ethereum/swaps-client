@@ -1,14 +1,10 @@
 import React from "react";
 import cx from "classnames";
+import { Text } from "../Translation/Text";
 import * as Styles from "./ViewSwitch.styles";
 
 export default function ViewSwitch(props) {
-  const {
-    switchView,
-    currentView,
-    views,
-    children
-  } = props;
+  const { switchView, currentView, views, children } = props;
 
   return (
     <Styles.ViewSwitchContainer>
@@ -28,7 +24,7 @@ export default function ViewSwitch(props) {
               selected: currentView === view,
             })}
           >
-            {view}
+            <Text>{view}</Text>
           </Styles.ViewOption>
         ))}
       </Styles.ViewSwitch>

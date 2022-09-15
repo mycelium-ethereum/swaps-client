@@ -307,12 +307,12 @@ function AppHeaderUser({
             Trade
           </NavLink>
         </div> */}
+        <LanguageDropdown currentLang={currentLang} setCurrentLang={setCurrentLang} />
         <div className="App-header-user-link Trade-btn">
           <NavLink exact activeClassName="active" className="default-btn trade-link" to="/">
             Trade
           </NavLink>
         </div>
-        <LanguageDropdown currentLang={currentLang} setCurrentLang={setCurrentLang} />
         {showSelector && (
           <NetworkSelector
             options={networkOptions}
@@ -358,12 +358,12 @@ function AppHeaderUser({
 
   return (
     <div className="App-header-user">
+      <LanguageDropdown currentLang={currentLang} setCurrentLang={setCurrentLang} />
       <div className="App-header-user-link Trade-btn">
         <NavLink exact activeClassName="active" className="default-btn trade-link" to="/">
           Trade
         </NavLink>
       </div>
-      <LanguageDropdown currentLang={currentLang} setCurrentLang={setCurrentLang} />
       {showSelector && (
         <NetworkSelector
           options={networkOptions}
@@ -870,7 +870,6 @@ function FullApp(props) {
                   <div className="App-header-container-right">
                     <AppHeaderLinks trackAction={trackAction} />
                     <LinkDropdown />
-                    <LanguageDropdown currentLang={currentLang} setCurrentLang={setCurrentLang} />
                     <AppHeaderUser
                       disconnectAccountAndCloseSettings={disconnectAccountAndCloseSettings}
                       openSettings={openSettings}

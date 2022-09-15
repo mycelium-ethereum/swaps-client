@@ -1,34 +1,34 @@
 import React from "react";
 import { Menu } from "@headlessui/react";
-import * as Styles from "./RewardsRoundSelect.styles";
-import { FaChevronDown } from "react-icons/fa";
 import cx from "classnames";
+import { FaChevronDown } from "react-icons/fa";
+import { Text } from "../Translation/Text";
+import * as Styles from "./RewardsRoundSelect.styles";
 
 export default function RewardsRoundSelect({
   timeTillRewards,
   allRoundsRewardsData,
   setSelectedRound,
   trackAction,
-  rewardsMessage
+  rewardsMessage,
 }) {
-
   return (
-      <Styles.RewardsRoundSelect>
-        {!!allRoundsRewardsData && (
-          <RoundDropdown
-            allRoundsRewardsData={allRoundsRewardsData}
-            setSelectedRound={setSelectedRound}
-            rewardsMessage={rewardsMessage}
-            trackAction={trackAction}
-          />
-        )}
-        {timeTillRewards && (
-          <Styles.RewardsRoundNextRewards>
-            Next rewards in <Styles.RewardsRoundCountdown>{timeTillRewards}</Styles.RewardsRoundCountdown>
-          </Styles.RewardsRoundNextRewards>
-        )}
-      </Styles.RewardsRoundSelect>
-  )
+    <Styles.RewardsRoundSelect>
+      {!!allRoundsRewardsData && (
+        <RoundDropdown
+          allRoundsRewardsData={allRoundsRewardsData}
+          setSelectedRound={setSelectedRound}
+          rewardsMessage={rewardsMessage}
+          trackAction={trackAction}
+        />
+      )}
+      {timeTillRewards && (
+        <Styles.RewardsRoundNextRewards>
+          Next rewards in <Styles.RewardsRoundCountdown>{timeTillRewards}</Styles.RewardsRoundCountdown>
+        </Styles.RewardsRoundNextRewards>
+      )}
+    </Styles.RewardsRoundSelect>
+  );
 }
 
 export function RoundDropdown(props) {
@@ -51,7 +51,7 @@ export function RoundDropdown(props) {
                   })
                 }
               >
-                {rewardsMessage}
+                <Text>{rewardsMessage}</Text>
                 <FaChevronDown />
               </Styles.RoundSelectButton>
             </Menu.Button>
@@ -66,7 +66,7 @@ export function RoundDropdown(props) {
                         onClick={() => {
                           let selectedRound = parseFloat(rewardRound?.round);
                           if (index === 0) {
-                            selectedRound = "latest"
+                            selectedRound = "latest";
                           }
                           setSelectedRound(selectedRound);
                           trackAction &&
@@ -76,7 +76,7 @@ export function RoundDropdown(props) {
                             });
                         }}
                       >
-                        Round {parseFloat(rewardRound?.round) + 1}
+                        <Text>Round</Text> {parseFloat(rewardRound?.round) + 1}
                       </div>
                     </Menu.Item>
                   ))}

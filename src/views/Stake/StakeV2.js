@@ -1,10 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { useWeb3React } from "@web3-react/core";
 
 import Modal from "../../components/Modal/Modal";
 import Checkbox from "../../components/Checkbox/Checkbox";
 import Tooltip from "../../components/Tooltip/Tooltip";
+import { Text } from "../../components/Translation/Text";
 
 import Vault from "../../abis/Vault.json";
 import ReaderV2 from "../../abis/ReaderV2.json";
@@ -189,12 +190,12 @@ function CompoundModal(props) {
         <div className="CompoundModal-menu">
           <div>
             <Checkbox isChecked={shouldClaimMyc} setIsChecked={setShouldClaimMyc}>
-              Claim MYC Rewards
+              <Text>Claim MYC Rewards</Text>
             </Checkbox>
           </div>
           <div>
             <Checkbox isChecked={shouldClaimEsMyc} setIsChecked={setShouldClaimEsMyc}>
-              Claim esMYC Rewards
+              <Text>Claim esMYC Rewards</Text>
             </Checkbox>
           </div>
           <div>
@@ -203,17 +204,17 @@ function CompoundModal(props) {
               setIsChecked={setShouldClaimWeth}
               disabled={shouldConvertWeth || shouldBuyMlpWithEth}
             >
-              Claim {wrappedTokenSymbol} Rewards
+              <Text>Claim</Text> {wrappedTokenSymbol} <Text>Rewards</Text>
             </Checkbox>
           </div>
           <div>
             <Checkbox isChecked={shouldConvertWeth} setIsChecked={toggleConvertWeth}>
-              Convert {wrappedTokenSymbol} to {nativeTokenSymbol}
+              <Text>Convert</Text> {wrappedTokenSymbol} <Text>to</Text> {nativeTokenSymbol}
             </Checkbox>
           </div>
           <div>
             <Checkbox isChecked={shouldBuyMlpWithEth} setIsChecked={toggleBuyMlp}>
-              Buy MLP with {wrappedTokenSymbol}
+              <Text>Buy MLP with</Text> {wrappedTokenSymbol}
             </Checkbox>
           </div>
         </div>
@@ -316,28 +317,28 @@ function ClaimModal(props) {
         <div className="CompoundModal-menu">
           <div>
             <Checkbox isChecked={shouldClaimMyc} setIsChecked={setShouldClaimMyc}>
-              Claim MYC Rewards
+              <Text>Claim MYC Rewards</Text>
             </Checkbox>
           </div>
           <div>
             <Checkbox isChecked={shouldClaimEsMyc} setIsChecked={setShouldClaimEsMyc}>
-              Claim esMYC Rewards
+              <Text>Claim esMYC Rewards</Text>
             </Checkbox>
           </div>
           <div>
             <Checkbox isChecked={shouldClaimWeth} setIsChecked={setShouldClaimWeth} disabled={shouldConvertWeth}>
-              Claim {wrappedTokenSymbol} Rewards
+              <Text>Claim</Text> {wrappedTokenSymbol} <Text>Rewards</Text>
             </Checkbox>
           </div>
           <div>
             <Checkbox isChecked={shouldConvertWeth} setIsChecked={toggleConvertWeth}>
-              Convert {wrappedTokenSymbol} to {nativeTokenSymbol}
+              <Text>Convert</Text> {wrappedTokenSymbol} <Text>to</Text> {nativeTokenSymbol}
             </Checkbox>
           </div>
         </div>
         <div className="Exchange-swap-button-container">
           <button className="App-cta Exchange-swap-button" onClick={onClickPrimary} disabled={!isPrimaryEnabled()}>
-            {getPrimaryText()}
+            <Text>{getPrimaryText()}</Text>
           </button>
         </div>
       </Modal>
@@ -438,13 +439,15 @@ function VesterDepositModal(props) {
           <div className="Exchange-swap-section">
             <div className="Exchange-swap-section-top">
               <div className="muted">
-                <div className="Exchange-swap-usd">Deposit</div>
+                <div className="Exchange-swap-usd">
+                  <Text>Deposit</Text>
+                </div>
               </div>
               <div
                 className="muted align-right clickable"
                 onClick={() => setValue(formatAmountFree(maxAmount, 18, 18))}
               >
-                Max: {formatAmount(maxAmount, 18, 4, true)}
+                <Text>Max:</Text> {formatAmount(maxAmount, 18, 4, true)}
               </div>
             </div>
             <div className="Exchange-swap-section-bottom">
@@ -457,16 +460,24 @@ function VesterDepositModal(props) {
                   onChange={(e) => setValue(e.target.value)}
                 />
               </div>
-              <div className="PositionEditor-token-symbol">esMYC</div>
+              <div className="PositionEditor-token-symbol">
+                <Text>esMYC</Text>
+              </div>
             </div>
           </div>
           <div className="VesterDepositModal-info-rows">
             <div className="Exchange-info-row">
-              <div className="Exchange-info-label">Wallet</div>
-              <div className="align-right">{formatAmount(balance, 18, 2, true)} esMYC</div>
+              <div className="Exchange-info-label">
+                <Text>Wallet</Text>
+              </div>
+              <div className="align-right">
+                {formatAmount(balance, 18, 2, true)} <Text>esMYC</Text>
+              </div>
             </div>
             <div className="Exchange-info-row">
-              <div className="Exchange-info-label">Vault Capacity</div>
+              <div className="Exchange-info-label">
+                <Text>Vault Capacity</Text>
+              </div>
               <div className="align-right">
                 <Tooltip
                   handle={`${formatAmount(nextDepositAmount, 18, 2, true)} / ${formatAmount(
@@ -479,12 +490,12 @@ function VesterDepositModal(props) {
                   renderContent={() => {
                     return (
                       <>
-                        Vault Capacity for your Account
+                        <Text>Vault Capacity for your Account</Text>
                         <br />
                         <br />
-                        Deposited: {formatAmount(vestedAmount, 18, 2, true)} esMYC
+                        <Text>Deposited:</Text> {formatAmount(vestedAmount, 18, 2, true)} <Text>esMYC</Text>
                         <br />
-                        Max Capacity: {formatAmount(maxVestableAmount, 18, 2, true)} esMYC
+                        <Text>Max Capacity:</Text> {formatAmount(maxVestableAmount, 18, 2, true)} <Text>esMYC</Text>
                         <br />
                       </>
                     );
@@ -495,7 +506,7 @@ function VesterDepositModal(props) {
           </div>
           <div className="Exchange-swap-button-container">
             <button className="App-cta Exchange-swap-button" onClick={onClickPrimary} disabled={!isPrimaryEnabled()}>
-              {getPrimaryText()}
+              <Text>{getPrimaryText()}</Text>
             </button>
           </div>
         </Modal>
@@ -530,20 +541,22 @@ function VesterWithdrawModal(props) {
     <div className="StakeModal">
       <Modal isVisible={isVisible} setIsVisible={setIsVisible} label={title}>
         <div>
-          This will withdraw and unreserve all tokens as well as pause vesting.
+          <Text>This will withdraw and unreserve all tokens as well as pause vesting.</Text>
           <br />
           <br />
-          esMYC tokens that have been converted to MYC will remain as MYC tokens.
+          <Text>esMYC tokens that have been converted to MYC will remain as MYC tokens.</Text>
           <br />
           <br />
-          To claim MYC tokens without withdrawing, use the "Claim" button under the Total Rewards section.
+          <Text>To claim MYC tokens without withdrawing, use the "Claim" button under the Total Rewards section.</Text>
           <br />
           <br />
         </div>
         <div className="Exchange-swap-button-container">
           <button className="App-cta Exchange-swap-button" onClick={onClickPrimary} disabled={isWithdrawing}>
-            {!isWithdrawing && "Confirm Withdraw"}
-            {isWithdrawing && "Confirming..."}
+            <Text>
+              {!isWithdrawing && "Confirm Withdraw"}
+              {isWithdrawing && "Confirming..."}
+            </Text>
           </button>
         </div>
       </Modal>
@@ -707,7 +720,6 @@ export default function StakeV2({ setPendingTxns, connectWallet, trackAction }) 
   const stakingData = getStakingData(stakingInfo);
   const vestingData = getVestingData(vestingInfo);
 
-
   const processedData = getProcessedData(
     balanceData,
     supplyData,
@@ -718,7 +730,7 @@ export default function StakeV2({ setPendingTxns, connectWallet, trackAction }) 
     nativeTokenPrice,
     stakedMycSupply,
     mycPrice,
-    mycSupply,
+    mycSupply
   );
 
   const mmApr = useMarketMakingApr(chainId, processedData.mlpSupplyUsd);
@@ -741,8 +753,9 @@ export default function StakeV2({ setPendingTxns, connectWallet, trackAction }) 
   if (totalRewardTokensAndMlp && totalRewardTokensAndMlp.gt(0)) {
     earnMsg = (
       <div>
-        You are earning {nativeTokenSymbol} rewards with {formatAmount(totalRewardTokensAndMlp, 18, 2, true)} MLP
-        tokens.
+        <Text>You are earning</Text> {nativeTokenSymbol} <Text>rewards with</Text>{" "}
+        {formatAmount(totalRewardTokensAndMlp, 18, 2, true)} MLP
+        <Text>tokens.</Text>
       </div>
     );
   }
@@ -866,9 +879,11 @@ export default function StakeV2({ setPendingTxns, connectWallet, trackAction }) 
         <div className="StakeV2-cards">
           <div>
             <div className="Page-title-section">
-              <div className="Page-title">Earn</div>
+              <div className="Page-title">
+                <Text>Earn</Text>
+              </div>
               <div className="Page-description">
-                Stake{" "}
+                <Text>Stake</Text>{" "}
                 <a
                   href="https://swaps.docs.mycelium.xyz/protocol-design/mycelium-liquidity-pool-mlp/mlp-token"
                   target="_blank"
@@ -876,13 +891,17 @@ export default function StakeV2({ setPendingTxns, connectWallet, trackAction }) 
                 >
                   MLP
                 </a>{" "}
-                to earn rewards. Read the Terms of Use{" "}
+                <Text>to earn rewards. Read the Terms of Use</Text>{" "}
                 <a href="https://mycelium.xyz/rewards-terms-of-use" target="_blank" rel="noopener noreferrer">
-                  here
+                  <Text>here</Text>
                 </a>
                 .
               </div>
-              {earnMsg && <div className="Page-description">{earnMsg}</div>}
+              {earnMsg && (
+                <div className="Page-description">
+                  <Text>{earnMsg}</Text>
+                </div>
+              )}
             </div>
             <div className="App-card">
               <div className="App-card-title">
@@ -891,7 +910,9 @@ export default function StakeV2({ setPendingTxns, connectWallet, trackAction }) 
               </div>
               <StakeV2Styled.RewardsBanner>
                 <StakeV2Styled.RewardsBannerRow>
-                  <StakeV2Styled.RewardsBannerText secondary>Rewards</StakeV2Styled.RewardsBannerText>
+                  <StakeV2Styled.RewardsBannerText secondary>
+                    <Text>Rewards</Text>
+                  </StakeV2Styled.RewardsBannerText>
                   <div>
                     <StakeV2Styled.RewardsBannerTextWrap>
                       <StakeV2Styled.RewardsBannerText large inline>
@@ -915,19 +936,26 @@ export default function StakeV2({ setPendingTxns, connectWallet, trackAction }) 
                   </div>
                 </StakeV2Styled.RewardsBannerRow>
                 <StakeV2Styled.RewardsBannerRow>
-                  <StakeV2Styled.RewardsBannerText secondary>Market Making APR</StakeV2Styled.RewardsBannerText>
+                  <StakeV2Styled.RewardsBannerText secondary>
+                    <Text>Market Making APR</Text>
+                  </StakeV2Styled.RewardsBannerText>
                   <StakeV2Styled.RewardsBannerText large inline>
                     <Tooltip
                       handle={`${formatKeyAmount(processedData, "mmApr", 2, 2, true)}%`}
                       position="right-bottom"
-                      renderContent={() =>
-                        "Market Making APR is sourced from the spread of the traded markets and is realised by MLP holders through the appreciation of the MLP token."
-                      }
+                      renderContent={() => (
+                        <Text>
+                          Market Making APR is sourced from the spread of the traded markets and is realised by MLP
+                          holders through the appreciation of the MLP token.
+                        </Text>
+                      )}
                     />
                   </StakeV2Styled.RewardsBannerText>
                 </StakeV2Styled.RewardsBannerRow>
                 <StakeV2Styled.RewardsBannerRow>
-                  <StakeV2Styled.RewardsBannerText secondary>Total APR</StakeV2Styled.RewardsBannerText>
+                  <StakeV2Styled.RewardsBannerText secondary>
+                    <Text>Total APR</Text>
+                  </StakeV2Styled.RewardsBannerText>
                   <StakeV2Styled.RewardsBannerText large inline>
                     <Tooltip
                       handle={`${formatKeyAmount(processedData, "mlpAprTotal", 2, 2, true)}%`}
@@ -942,11 +970,15 @@ export default function StakeV2({ setPendingTxns, connectWallet, trackAction }) 
                               <span>{formatKeyAmount(processedData, "mlpAprForNativeToken", 2, 2, true)}%</span>
                             </div>
                             <div className="Tooltip-row">
-                              <span className="label">esMYC APR</span>
+                              <span className="label">
+                                <Text>esMYC</Text> APR
+                              </span>
                               <span>{formatKeyAmount(processedData, "mlpAprForEsMyc", 2, 2, true)}%</span>
                             </div>
                             <div className="Tooltip-row">
-                              <span className="label">Market Making APR</span>
+                              <span className="label">
+                                <Text>Market Making</Text> APR
+                              </span>
                               <span>{formatKeyAmount(processedData, "mmApr", 2, 2, true)}%</span>
                             </div>
                           </>
@@ -958,59 +990,69 @@ export default function StakeV2({ setPendingTxns, connectWallet, trackAction }) 
               </StakeV2Styled.RewardsBanner>
               <div className="App-card-content">
                 <div className="App-card-row">
-                  <div className="label">Price</div>
+                  <div className="label">
+                    <Text>Price</Text>
+                  </div>
                   <div>${formatKeyAmount(processedData, "mlpPrice", USD_DECIMALS, 3, true)}</div>
                 </div>
                 <div className="App-card-row">
-                  <div className="label">Wallet</div>
+                  <div className="label">
+                    <Text>Wallet</Text>
+                  </div>
                   <div>
-                    {formatKeyAmount(processedData, "mlpBalance", MLP_DECIMALS, 2, true)} MLP ($
+                    {formatKeyAmount(processedData, "mlpBalance", MLP_DECIMALS, 2, true)} <Text>MLP</Text> ($
                     {formatKeyAmount(processedData, "mlpBalanceUsd", USD_DECIMALS, 2, true)})
                   </div>
                 </div>
                 <div className="App-card-row">
-                  <div className="label">Staked</div>
+                  <div className="label">
+                    <Text>Staked</Text>
+                  </div>
                   <div>
-                    {formatKeyAmount(processedData, "mlpBalance", MLP_DECIMALS, 2, true)} MLP ($
+                    {formatKeyAmount(processedData, "mlpBalance", MLP_DECIMALS, 2, true)} <Text>MLP</Text> ($
                     {formatKeyAmount(processedData, "mlpBalanceUsd", USD_DECIMALS, 2, true)})
                   </div>
                 </div>
                 <div className="App-card-divider"></div>
                 <div className="App-card-row">
-                  <div className="label">Total Staked</div>
+                  <div className="label">
+                    <Text>Total Staked</Text>
+                  </div>
                   <div>
-                    {formatKeyAmount(processedData, "mlpSupply", 18, 2, true)} MLP ($
+                    {formatKeyAmount(processedData, "mlpSupply", 18, 2, true)} <Text>MLP</Text> ($
                     {formatKeyAmount(processedData, "mlpSupplyUsd", USD_DECIMALS, 2, true)})
                   </div>
                 </div>
                 <div className="App-card-row">
-                  <div className="label">Total Supply</div>
+                  <div className="label">
+                    <Text>Total Supply</Text>
+                  </div>
                   <div>
-                    {formatKeyAmount(processedData, "mlpSupply", 18, 2, true)} MLP ($
+                    {formatKeyAmount(processedData, "mlpSupply", 18, 2, true)} <Text>MLP</Text> ($
                     {formatKeyAmount(processedData, "mlpSupplyUsd", USD_DECIMALS, 2, true)})
                   </div>
                 </div>
                 <div className="App-card-divider"></div>
                 <div className="App-card-options">
                   <Link className="App-button-option App-card-option" to="/buy_mlp">
-                    Buy MLP
+                    <Text>Buy MLP</Text>
                   </Link>
                   <Link className="App-button-option App-card-option" to="/buy_mlp#redeem">
-                    Sell MLP
+                    <Text>Sell MLP</Text>
                   </Link>
                   {active && (
                     <button className="App-button-option App-card-option" onClick={() => showMlpCompoundModal()}>
-                      Compound
+                      <Text>Compound</Text>
                     </button>
                   )}
                   {active && (
                     <button className="App-button-option App-card-option" onClick={() => showMlpClaimModal()}>
-                      Claim
+                      <Text>Claim</Text>
                     </button>
                   )}
                   {!active && (
                     <button className="App-button-option App-card-option" onClick={() => connectWallet()}>
-                      Connect Wallet
+                      <Text>Connect Wallet</Text>
                     </button>
                   )}
                 </div>
@@ -1019,33 +1061,37 @@ export default function StakeV2({ setPendingTxns, connectWallet, trackAction }) 
           </div>
           <div>
             <div className="Page-title-section">
-              <div className="Page-title">Vest</div>
+              <div className="Page-title">
+                <Text>Vest</Text>
+              </div>
               <div className="Page-description">
-                Convert esMYC tokens to MYC tokens.
+                <Text>Convert esMYC tokens to MYC tokens.</Text>
                 <br />
-                Please read the{" "}
+                <Text>Please read the </Text>
                 <a
                   href="https://swaps.docs.mycelium.xyz/protocol-design/mycelium-liquidity-pool-mlp/mlp-rewards/esmyc-escrowed-myc"
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  vesting details
+                  <Text>vesting details</Text>
                 </a>{" "}
-                before using the vaults.
+                <Text>before using the vaults.</Text>
               </div>
             </div>
             <div className="App-card StakeV2-myc-card">
               <div className="App-card-title">
                 <img src={myc40Icon} alt="myc40Icon" />
-                esMYC Vault
+                <Text>esMYC Vault</Text>
               </div>
               <StakeV2Styled.RewardsBanner>
                 <StakeV2Styled.RewardsBannerRow>
-                  <StakeV2Styled.RewardsBannerText secondary>Staked Tokens</StakeV2Styled.RewardsBannerText>
+                  <StakeV2Styled.RewardsBannerText secondary>
+                    <Text>Staked Tokens</Text>
+                  </StakeV2Styled.RewardsBannerText>
                   <div>
                     <StakeV2Styled.RewardsBannerTextWrap>
                       <StakeV2Styled.RewardsBannerText large inline>
-                        {formatKeyAmount(vestingData, "mlpVesterVestedAmount", 18, 4, true)} esMYC
+                        {formatKeyAmount(vestingData, "mlpVesterVestedAmount", 18, 4, true)} <Text>esMYC</Text>
                       </StakeV2Styled.RewardsBannerText>{" "}
                       <StakeV2Styled.RewardsBannerText inline>
                         ($
@@ -1057,14 +1103,18 @@ export default function StakeV2({ setPendingTxns, connectWallet, trackAction }) 
               </StakeV2Styled.RewardsBanner>
               <div className="App-card-content">
                 <div className="App-card-row">
-                  <div className="label">Reserved for Vesting</div>
+                  <div className="label">
+                    <Text>Reserved for Vesting</Text>
+                  </div>
                   <div>
                     {formatKeyAmount(vestingData, "mlpVesterPairAmount", 18, 2, true)} /{" "}
                     {formatAmount(totalRewardTokens, 18, 2, true)}
                   </div>
                 </div>
                 <div className="App-card-row">
-                  <div className="label">Vesting Status</div>
+                  <div className="label">
+                    <Text>Vesting Status</Text>
+                  </div>
                   <div>
                     <Tooltip
                       handle={`${formatKeyAmount(vestingData, "mlpVesterClaimSum", 18, 4, true)} / ${formatKeyAmount(
@@ -1078,10 +1128,10 @@ export default function StakeV2({ setPendingTxns, connectWallet, trackAction }) 
                       renderContent={() => {
                         return (
                           <>
-                            {formatKeyAmount(vestingData, "mlpVesterClaimSum", 18, 4, true)} tokens have been converted
-                            to MYC from the&nbsp;
-                            {formatKeyAmount(vestingData, "mlpVesterVestedAmount", 18, 4, true)} esMYC deposited for
-                            vesting.
+                            {formatKeyAmount(vestingData, "mlpVesterClaimSum", 18, 4, true)}{" "}
+                            <Text>tokens have been converted to MYC from the</Text>&nbsp;
+                            {formatKeyAmount(vestingData, "mlpVesterVestedAmount", 18, 4, true)}{" "}
+                            <Text>esMYC deposited for vesting.</Text>
                           </>
                         );
                       }}
@@ -1089,20 +1139,19 @@ export default function StakeV2({ setPendingTxns, connectWallet, trackAction }) 
                   </div>
                 </div>
                 <div className="App-card-row">
-                  <div className="label">Claimable</div>
+                  <div className="label">
+                    <Text>Claimable</Text>
+                  </div>
                   <div>
                     <Tooltip
                       handle={`${formatKeyAmount(vestingData, "mlpVesterClaimable", 18, 4, true)} MYC`}
                       position="right-bottom"
-                      renderContent={() =>
-                        `${formatKeyAmount(
-                          vestingData,
-                          "mlpVesterClaimable",
-                          18,
-                          4,
-                          true
-                        )} MYC tokens can be claimed, use the options under the Earn section to claim them.`
-                      }
+                      renderContent={() => (
+                        <>
+                          {formatKeyAmount(vestingData, "mlpVesterClaimable", 18, 4, true)}{" "}
+                          <Text>MYC tokens can be claimed, use the options under the Earn section to claim them.</Text>
+                        </>
+                      )}
                     />
                   </div>
                 </div>
@@ -1110,17 +1159,17 @@ export default function StakeV2({ setPendingTxns, connectWallet, trackAction }) 
                 <div className="App-card-options">
                   {!active && (
                     <button className="App-button-option App-card-option" onClick={() => connectWallet()}>
-                      Connect Wallet
+                      <Text>Connect Wallet</Text>
                     </button>
                   )}
                   {active && (
                     <button className="App-button-option App-card-option" onClick={() => showMycVesterDepositModal()}>
-                      Deposit
+                      <Text>Deposit</Text>
                     </button>
                   )}
                   {active && (
                     <button className="App-button-option App-card-option" onClick={() => showMycVesterWithdrawModal()}>
-                      Withdraw
+                      <Text>Withdraw</Text>
                     </button>
                   )}
                   <a href="https://lend.mycelium.xyz" target="_blank" rel="noopener noreferrer">

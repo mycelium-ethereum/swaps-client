@@ -6,6 +6,7 @@ import { MdClose } from "react-icons/md";
 
 import "./Modal.css";
 import useLockBodyScroll from "../../hooks/useLockBodyScroll";
+import { Text } from "../Translation/Text";
 
 export default function Modal(props) {
   const { isVisible, setIsVisible, className, zIndex, onAfterOpen } = props;
@@ -52,7 +53,9 @@ export default function Modal(props) {
           />
           <div className="Modal-content">
             <div className="Modal-title-bar">
-              <div className="Modal-title">{props.label}</div>
+              <div className="Modal-title">
+                <Text>{props.label}</Text>
+              </div>
               <div className="Modal-close-button" onClick={() => setIsVisible(false)}>
                 <MdClose fontSize={20} className="Modal-close-icon" />
               </div>

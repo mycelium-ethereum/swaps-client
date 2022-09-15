@@ -1,5 +1,6 @@
 import React from "react";
 import cx from "classnames";
+import { Text } from "../Translation/Text";
 
 import "./BuyInputSection.css";
 
@@ -23,10 +24,13 @@ export default function BuyInputSection(props) {
     <div className="Exchange-swap-section buy-input">
       <div className="Exchange-swap-section-top">
         <div className="muted">
-          {topLeftLabel}: {balance}
+          <Text>{topLeftLabel}</Text>: {balance}
         </div>
         <div className={cx("align-right", { clickable: onClickTopRightLabel })} onClick={onClickTopRightLabel}>
-          <span className="Exchange-swap-label muted">{topRightLabel}</span>&nbsp;
+          <span className="Exchange-swap-label muted">
+            <Text>{topRightLabel}</Text>
+          </span>
+          &nbsp;
           <span className="Exchange-swap-balance">
             {tokenBalance} {/*(selectedToken && selectedToken.symbol) || defaultTokenName*/}
           </span>
@@ -56,7 +60,7 @@ export default function BuyInputSection(props) {
                   });
               }}
             >
-              MAX
+              <Text>MAX</Text>
             </div>
           )}
         </div>

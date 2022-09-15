@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { bigNumberify, getCodeError, helperToast, useDebounce } from "../../Helpers";
-import { encodeReferralCode, getReferralCodeTakenStatus, registerReferralCode } from '../../Api/referrals';
+import { encodeReferralCode, getReferralCodeTakenStatus, registerReferralCode } from "../../Api/referrals";
+import { Text } from "../../components/Translation/Text";
 import * as Styles from "./Referrals.styles";
 
 const getSampleReferrerStat = (code) => {
@@ -28,7 +29,7 @@ export default function CreateCodeModal(props) {
     setRecentlyAddedCodes,
     connectWallet,
     pendingTxns,
-    setPendingTxns
+    setPendingTxns,
   } = props;
 
   const [referralCode, setReferralCode] = useState("");
@@ -127,7 +128,7 @@ export default function CreateCodeModal(props) {
           sentMsg: "Referral code submitted!",
           failMsg: "Referral code creation failed.",
           pendingTxns,
-          setPendingTxns
+          setPendingTxns,
         });
         const receipt = await tx.wait();
         if (receipt.status === 1) {
@@ -147,38 +148,40 @@ export default function CreateCodeModal(props) {
     }
   }
   return (
-    <Styles.CodeModal
-      isVisible={isCreateCodeModalVisible}
-      setIsVisible={close}
-      label="Create Referral Code"
-    >
+    <Styles.CodeModal isVisible={isCreateCodeModalVisible} setIsVisible={close} label="Create Referral Code">
       <>
-      <div className="card-action">
-        {active ? (
-          <>
-            <Styles.CodeInput
-              className={`text-input ${!error && "mb-sm"}`}
-              type="text"
-              placeholder="Enter a code"
-              maxLength="20"
-              pattern="^[a-zA-Z0-9_]*$"
-              disabled={isSubmitting}
-              value={referralCode}
-              onChange={({ target }) => {
-                let { value } = target;
-                setReferralCode(value);
-                setError(getCodeError(value));
-              }}
-            />
-            {error && <Styles.ErrorText>{error}</Styles.ErrorText>}
-            <Styles.CodeButton className="default-btn" onClick={handleSubmit} disabled={!isPrimaryEnabled()}>{getPrimaryText()}</Styles.CodeButton>
-          </>
-        ) : (
-          <button className="App-cta Exchange-swap-button" onClick={connectWallet}>
-            Connect Wallet
-          </button>
-        )}
-      </div>
+        <div className="card-action">
+          {active ? (
+            <>
+              <Styles.CodeInput
+                className={`text-input ${!error && "mb-sm"}`}
+                type="text"
+                placeholder="Enter a code"
+                maxLength="20"
+                pattern="^[a-zA-Z0-9_]*$"
+                disabled={isSubmitting}
+                value={referralCode}
+                onChange={({ target }) => {
+                  let { value } = target;
+                  setReferralCode(value);
+                  setError(getCodeError(value));
+                }}
+              />
+              {error && (
+                <Styles.ErrorText>
+                  <Text>{error}</Text>
+                </Styles.ErrorText>
+              )}
+              <Styles.CodeButton className="default-btn" onClick={handleSubmit} disabled={!isPrimaryEnabled()}>
+                <Text>{getPrimaryText()}</Text>
+              </Styles.CodeButton>
+            </>
+          ) : (
+            <button className="App-cta Exchange-swap-button" onClick={connectWallet}>
+              <Text>Connect Wallet</Text>
+            </button>
+          )}
+        </div>
       </>
     </Styles.CodeModal>
   );

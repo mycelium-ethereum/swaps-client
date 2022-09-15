@@ -1,6 +1,21 @@
 import React, { useState, useEffect, useMemo } from "react";
 
-import { ETH_DECIMALS, expandDecimals, fetcher, getPageTitle, useChainId, useENS, REFERRALS_SELECTED_TAB_KEY, isHashZero, useLocalStorageSerializeKey, REFERRAL_CODE_KEY, bigNumberify, getTracerServerUrl, formatTimeTill, getTokenInfo } from "../../Helpers";
+import {
+  ETH_DECIMALS,
+  expandDecimals,
+  fetcher,
+  getPageTitle,
+  useChainId,
+  useENS,
+  REFERRALS_SELECTED_TAB_KEY,
+  isHashZero,
+  useLocalStorageSerializeKey,
+  REFERRAL_CODE_KEY,
+  bigNumberify,
+  getTracerServerUrl,
+  formatTimeTill,
+  getTokenInfo,
+} from "../../Helpers";
 import { useWeb3React } from "@web3-react/core";
 import * as Styles from "./Referrals.styles";
 import CreateCodeModal from "./CreateCodeModal";
@@ -13,9 +28,16 @@ import ReferralRewards from "./ReferralRewards";
 import AccountBanner from "./AccountBanner";
 import ReferralCodesTable from "./ReferralCodesTable";
 import { useLocalStorage } from "react-use";
-import { decodeReferralCode, useReferralsData, useReferrerTier, useUserReferralCode, useCodeOwner } from "../../Api/referrals";
+import {
+  decodeReferralCode,
+  useReferralsData,
+  useReferrerTier,
+  useUserReferralCode,
+  useCodeOwner,
+} from "../../Api/referrals";
 import useSWR from "swr";
 import { ethers } from "ethers";
+import { Text } from "../../components/Translation/Text";
 
 import FeeDistributorReader from "../../abis/FeeDistributorReader.json";
 import { getContract } from "../../Addresses";
@@ -29,15 +51,23 @@ export function isRecentReferralCodeNotExpired(referralCodeInfo) {
 
 const RebatesHeader = () => (
   <div className="Page-title-section mt-0">
-    <div className="Page-title">Trader Referrals</div>
-    <div className="Page-description">Claim trading fee rebates here.</div>
+    <div className="Page-title">
+      <Text>Trader Referrals</Text>
+    </div>
+    <div className="Page-description">
+      <Text>Claim trading fee rebates here.</Text>
+    </div>
   </div>
 );
 
 const CommissionsHeader = () => (
   <div className="Page-title-section mt-0">
-    <div className="Page-title">Referral Commissions</div>
-    <div className="Page-description">Claim referral commissions here.</div>
+    <div className="Page-title">
+      <Text>Referral Commissions</Text>
+    </div>
+    <div className="Page-description">
+      <Text>Claim referral commissions here.</Text>
+    </div>
   </div>
 );
 
@@ -63,7 +93,6 @@ export default function Referral(props) {
   const [selectedRound, setSelectedRound] = useState("latest");
   const [nextRewards, setNextRewards] = useState();
 
-
   const switchView = () => {
     setCurrentView(currentView === COMMISSIONS ? REBATES : COMMISSIONS);
     trackAction &&
@@ -71,9 +100,9 @@ export default function Referral(props) {
         buttonName: "Referral panel",
         view: currentView === "Commissions" ? "Rebates" : "Commissions",
       });
-  }
+  };
 
-  function handleClaim () {
+  function handleClaim() {
     // TODO handle claim
   }
 
@@ -81,9 +110,12 @@ export default function Referral(props) {
   const feeDistributorReader = getContract(chainId, "FeeDistributorReader");
 
   // Fetch all week data from server
-  const { data: allRoundsRewardsData, error: failedFetchingRewards } = useSWR([getTracerServerUrl(chainId, "/referralRewards")], {
-    fetcher: (...args) => fetch(...args).then((res) => res.json()),
-  });
+  const { data: allRoundsRewardsData, error: failedFetchingRewards } = useSWR(
+    [getTracerServerUrl(chainId, "/referralRewards")],
+    {
+      fetcher: (...args) => fetch(...args).then((res) => res.json()),
+    }
+  );
 
   // Fetch only the latest week's data from server
   const { data: currentRewardRound, error: failedFetchingRoundRewards } = useSWR(
@@ -94,7 +126,15 @@ export default function Referral(props) {
   );
 
   const { data: hasClaimed } = useSWR(
-    [`Rewards:claimed:${active}`, chainId, feeDistributorReader, "getUserClaimed", feeDistributor, account ?? ethers.constants.AddressZero, allRoundsRewardsData?.length ?? 1],
+    [
+      `Rewards:claimed:${active}`,
+      chainId,
+      feeDistributorReader,
+      "getUserClaimed",
+      feeDistributor,
+      account ?? ethers.constants.AddressZero,
+      allRoundsRewardsData?.length ?? 1,
+    ],
     {
       fetcher: fetcher(library, FeeDistributorReader),
     }
@@ -105,7 +145,7 @@ export default function Referral(props) {
       const ends = allRoundsRewardsData.map((week) => Number(week.end));
       const max = Math.max(...ends);
       if (!Number.isNaN(max)) {
-        setNextRewards(max)
+        setNextRewards(max);
       }
     }
   }, [allRoundsRewardsData]);
@@ -115,8 +155,10 @@ export default function Referral(props) {
     if (!currentRewardRound) {
       return undefined;
     }
-    const leaderBoardIndex = currentRewardRound.rewards?.findIndex((trader) => trader.user_address.toLowerCase() === account?.toLowerCase());
-    let traderData
+    const leaderBoardIndex = currentRewardRound.rewards?.findIndex(
+      (trader) => trader.user_address.toLowerCase() === account?.toLowerCase()
+    );
+    let traderData;
     if (leaderBoardIndex !== undefined && leaderBoardIndex >= 0) {
       traderData = currentRewardRound.rewards[leaderBoardIndex];
     }
@@ -149,7 +191,6 @@ export default function Referral(props) {
     userRoundData.totalRewardUsd = userRoundData.totalReward?.mul(ethPrice).div(expandDecimals(1, ETH_DECIMALS));
   }
 
-
   let referralCodeInString;
   if (userReferralCode && !isHashZero(userReferralCode)) {
     referralCodeInString = decodeReferralCode(userReferralCode);
@@ -159,10 +200,10 @@ export default function Referral(props) {
     referralCodeInString = decodeReferralCode(userReferralCodeInLocalStorage);
   }
 
-
   let cumulativeStats, referrerTotalStats, referrerTierInfo, referralTotalStats /*, rebateDistributions */;
   if (referralsData) {
-    ({ cumulativeStats, referrerTotalStats, referrerTierInfo, referralTotalStats /*, rebateDistributions */} = referralsData);
+    ({ cumulativeStats, referrerTotalStats, referrerTierInfo, referralTotalStats /*, rebateDistributions */ } =
+      referralsData);
   }
 
   const finalReferrerTotalStats = recentlyAddedCodes.filter(isRecentReferralCodeNotExpired).reduce((acc, cv) => {
@@ -223,16 +264,15 @@ export default function Referral(props) {
   }
 
   const isLatestRound = selectedRound === "latest";
-  let hasClaimedRound
-  if (selectedRound !== 'latest' && hasClaimed) {
-    hasClaimedRound = hasClaimed[selectedRound]
+  let hasClaimedRound;
+  if (selectedRound !== "latest" && hasClaimed) {
+    hasClaimedRound = hasClaimed[selectedRound];
   }
-
 
   const handleSetIsEnterCodeModalVisible = (isEdit) => {
     setIsEdit(isEdit);
     setIsEnterCodeModalVisible(true);
-  }
+  };
 
   return (
     <>
@@ -271,11 +311,7 @@ export default function Referral(props) {
             [COMMISSIONS]: <CommissionsHeader />,
           }[currentView]
         }
-        <ViewSwitch 
-          switchView={switchView}
-          currentView={currentView}
-          views={[REBATES, COMMISSIONS]}
-        />
+        <ViewSwitch switchView={switchView} currentView={currentView} views={[REBATES, COMMISSIONS]} />
         <Styles.PersonalReferralContainer>
           <AccountBanner
             active={active}
@@ -292,7 +328,7 @@ export default function Referral(props) {
             referrerRebates={referrerRebates}
             referrerVolume={referrerVolume}
           />
-          {currentView === REBATES && 
+          {currentView === REBATES && (
             <TraderRebateStats
               active={active}
               connectWallet={connectWallet}
@@ -301,8 +337,8 @@ export default function Referral(props) {
               handleSetIsEnterCodeModalVisible={handleSetIsEnterCodeModalVisible}
               tradersTier={tradersTier}
             />
-          }
-          {currentView === COMMISSIONS &&
+          )}
+          {currentView === COMMISSIONS && (
             <ReferralCodesTable
               chainId={chainId}
               active={active}
@@ -312,8 +348,8 @@ export default function Referral(props) {
               hasCreatedCode={hasCreatedCode}
               finalReferrerTotalStats={finalReferrerTotalStats}
             />
-          }
-          {userRoundData && /* disable for now */ false &&
+          )}
+          {userRoundData && /* disable for now */ false && (
             <ReferralRewards
               active={active}
               connectWallet={connectWallet}
@@ -327,7 +363,7 @@ export default function Referral(props) {
               hasClaimed={hasClaimedRound}
               handleClaim={handleClaim}
             />
-          }
+          )}
         </Styles.PersonalReferralContainer>
       </Styles.StyledReferralPage>
     </>

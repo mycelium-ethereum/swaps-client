@@ -30,8 +30,9 @@ import {
 } from "./Rewards.styles";
 import { RewardsButton } from "../../Shared.styles";
 import TooltipComponent from "../../components/Tooltip/Tooltip";
+import { Text } from "../../components/Translation/Text";
 
-import degenScore from '../../img/ic_degen.svg';
+import degenScore from "../../img/ic_degen.svg";
 
 const ARBISCAN_URL = "https://arbiscan.io/address/";
 const headings = ["Rank", "User", "Volume", "Reward", ""];
@@ -42,7 +43,9 @@ function RewardsTableWrapper({ children }) {
       <RewardsTableHeader>
         <tr>
           {headings.map((heading) => (
-            <RewardsTableHeading key={heading}>{heading}</RewardsTableHeading>
+            <RewardsTableHeading key={heading}>
+              <Text>{heading}</Text>
+            </RewardsTableHeading>
           ))}
         </tr>
       </RewardsTableHeader>
@@ -55,7 +58,9 @@ function TopFiftyIndicatorRow() {
   return (
     <TopFiftyRow>
       <TopFiftyRowCell colSpan={5} className="">
-        <span>Top 50% of traders</span>
+        <span>
+          <Text>Top 50% of traders</Text>
+        </span>
       </TopFiftyRowCell>
     </TopFiftyRow>
   );
@@ -73,7 +78,7 @@ function TableRow({
   rewardAmountUsd,
   latestRound,
   isClaiming,
-  hasClaimed
+  hasClaimed,
 }) {
   const hasLoaded = hasClaimed !== undefined;
   return (
@@ -97,23 +102,25 @@ function TableRow({
               </a>
               <span>{ensName}</span>
             </UserDetails>
-            {!!degenReward && !degenReward.eq(0) && <TooltipComponent
-              handle={<img src={degenScore} alt="degen_score_logo"/>}
-              renderContent={() => 'Rewards boosted by DegenScore'}
-            />}
+            {!!degenReward && !degenReward.eq(0) && (
+              <TooltipComponent
+                handle={<img src={degenScore} alt="degen_score_logo" />}
+                renderContent={() => "Rewards boosted by DegenScore"}
+              />
+            )}
           </div>
         </UserCell>
         <VolumeCell>${formatAmount(volume, USD_DECIMALS, 2, true)}</VolumeCell>
         <RewardCell>
           <TooltipComponent
-              handle={`${formatAmount(totalReward, ETH_DECIMALS, 4, true)} WETH`}
-              renderContent={() => (
-                <>
-                  Top 50%: {formatAmount(positionReward, ETH_DECIMALS, 6, true)} WETH
-                  <br />
-                  Degen rewards: {formatAmount(degenReward, ETH_DECIMALS, 6, true)} WETH
-                </>
-              )}
+            handle={`${formatAmount(totalReward, ETH_DECIMALS, 4, true)} WETH`}
+            renderContent={() => (
+              <>
+                <Text>Top</Text> 50%: {formatAmount(positionReward, ETH_DECIMALS, 6, true)} WETH
+                <br />
+                Degen <Text>rewards</Text>: {formatAmount(degenReward, ETH_DECIMALS, 6, true)} WETH
+              </>
+            )}
           />
           {rewardAmountUsd && `($${formatAmount(rewardAmountUsd, USD_DECIMALS, 2, true)})`}
         </RewardCell>
@@ -123,16 +130,11 @@ function TableRow({
           })}
         >
           {userRow && !totalReward.eq(0) && !latestRound && hasLoaded && !hasClaimed && (
-            <ClaimButton
-              disabled={isClaiming}
-              onClick={handleClaim}
-            >
-              {isClaiming ? 'Claiming WETH' : 'Claim WETH'}
+            <ClaimButton disabled={isClaiming} onClick={handleClaim}>
+              <Text>{isClaiming ? "Claiming" : "Claim"}</Text> WETH
             </ClaimButton>
           )}
-          {userRow && !totalReward.eq(0) && hasLoaded && hasClaimed &&
-            <span className="claimed">WETH Claimed</span>
-          }
+          {userRow && !totalReward.eq(0) && hasLoaded && hasClaimed && <span className="claimed">WETH Claimed</span>}
         </ClaimCell>
       </tr>
     </>
@@ -153,7 +155,7 @@ export default function Leaderboard(props) {
     handleClaim,
     latestRound,
     isClaiming,
-    hasClaimed
+    hasClaimed,
   } = props;
 
   return (
@@ -181,7 +183,9 @@ export default function Leaderboard(props) {
           </RewardsTableWrapper>
         ) : userAccount ? (
           <FullWidthText>
-            <p>No previous trades</p>
+            <p>
+              <Text>No previous trades</Text>
+            </p>
           </FullWidthText>
         ) : (
           <ConnectWalletOverlay>
@@ -198,7 +202,9 @@ export default function Leaderboard(props) {
               </tr>
             </RewardsTableWrapper>
             <ConnectWalletText>
-              <span>Connect to wallet to view your rewards</span>
+              <span>
+                <Text>Connect to wallet to view your rewards</Text>
+              </span>
               <RewardsButton
                 className="App-cta large"
                 onClick={() => {
@@ -209,51 +215,59 @@ export default function Leaderboard(props) {
                     });
                 }}
               >
-                Connect Wallet <WalletIcon src="/icons/wallet.svg" />
+                <Text>Connect Wallet</Text> <WalletIcon src="/icons/wallet.svg" />
               </RewardsButton>
             </ConnectWalletText>
           </ConnectWalletOverlay>
         )}
       </PersonalRewardsTableContainer>
-      <LeaderboardTitle>Leaderboard</LeaderboardTitle>
+      <LeaderboardTitle>
+        <Text>Leaderboard</Text>
+      </LeaderboardTitle>
       <RewardsTableContainer>
         <RewardsTableBorder />
         <ScrollContainer>
           {roundData?.rewards?.length > 0 ? (
             <RewardsTableWrapper>
-              {roundData?.rewards?.map(({ user_address, volume, totalReward, positionReward, degenReward, rewardAmountUsd }, index) => {
-                const isUserRow = user_address === userAccount;
-                return (
-                  <>
-                    {index === middleRow ? <TopFiftyIndicatorRow /> : null}
-                    <TableRow
-                      key={user_address}
-                      totalTraders={roundData.rewards.length}
-                      position={index + 1}
-                      ensName={isUserRow ? ensName : undefined}
-                      account={user_address}
-                      volume={volume}
-                      totalReward={totalReward}
-                      positionReward={positionReward}
-                      degenReward={degenReward}
-                      rewardAmountUsd={rewardAmountUsd}
-                      handleClaim={handleClaim}
-                      userRow={isUserRow}
-                      latestRound={latestRound}
-                      isClaiming={isClaiming}
-                      hasClaimed={hasClaimed}
-                    />
-                  </>
-                )
-              })}
+              {roundData?.rewards?.map(
+                ({ user_address, volume, totalReward, positionReward, degenReward, rewardAmountUsd }, index) => {
+                  const isUserRow = user_address === userAccount;
+                  return (
+                    <>
+                      {index === middleRow ? <TopFiftyIndicatorRow /> : null}
+                      <TableRow
+                        key={user_address}
+                        totalTraders={roundData.rewards.length}
+                        position={index + 1}
+                        ensName={isUserRow ? ensName : undefined}
+                        account={user_address}
+                        volume={volume}
+                        totalReward={totalReward}
+                        positionReward={positionReward}
+                        degenReward={degenReward}
+                        rewardAmountUsd={rewardAmountUsd}
+                        handleClaim={handleClaim}
+                        userRow={isUserRow}
+                        latestRound={latestRound}
+                        isClaiming={isClaiming}
+                        hasClaimed={hasClaimed}
+                      />
+                    </>
+                  );
+                }
+              )}
             </RewardsTableWrapper>
           ) : (!roundData?.rewards || roundData?.rewards?.length === 0) && selectedRound ? (
             <FullWidthText>
-              <p>No data available for Round {selectedRound}</p>
+              <p>
+                <Text>No data available for Round</Text> {selectedRound}
+              </p>
             </FullWidthText>
           ) : (
             <FullWidthText>
-              <p>Loading round data...</p>
+              <p>
+                <Text>Loading round data...</Text>
+              </p>
             </FullWidthText>
           )}
         </ScrollContainer>

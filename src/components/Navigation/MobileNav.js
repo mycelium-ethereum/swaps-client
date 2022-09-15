@@ -2,6 +2,7 @@ import React, { useEffect, useRef } from "react";
 import AddressDropdown from "../AddressDropdown/AddressDropdown";
 import { ConnectWalletButton } from "../Common/Button";
 import NetworkSelector from "../NetworkSelector/NetworkSelector";
+import { Text } from "../Translation/Text";
 import {
   AppHeaderLinkContainer,
   MyceliumCopy,
@@ -90,9 +91,13 @@ export default function AppHeaderLinks({
       <ScrollContainer>
         <div>
           <Header>
-            <span>Menu</span>
+            <span>
+              <Text>Menu</Text>
+            </span>
             <HeaderClose onClick={() => clickCloseIcon()}>
-              <span>Close</span>
+              <span>
+                <Text>Close</Text>
+              </span>
               <img src={navClose} className="close-icon" alt="Close icon" />
             </HeaderClose>
           </Header>
@@ -104,7 +109,7 @@ export default function AppHeaderLinks({
             onClick={() => trackAction && trackAction("Button clicked", { buttonName: "Switch to Perpetual Pools" })}
           >
             <SwitchButton className="default-btn switch-link">
-              Switch to <img src={poolsSmallImg} alt="Perpetual Pools" />
+              <Text>Switch to</Text> <img src={poolsSmallImg} alt="Perpetual Pools" />
             </SwitchButton>
           </a>
           <AccountDropdownContainer>
@@ -125,7 +130,7 @@ export default function AppHeaderLinks({
                 }}
                 imgSrc={connectWalletImg}
               >
-                Connect Wallet
+                <Text>Connect Wallet</Text>
               </ConnectWalletButton>
             )}
           </AccountDropdownContainer>
@@ -148,13 +153,13 @@ export default function AppHeaderLinks({
           {navLinks.map((navLink) => (
             <AppHeaderLinkContainer key={navLink.name}>
               <NavLink activeClassName="active" to={navLink.path} onClick={clickCloseIcon}>
-                {navLink.name}
+                <Text>{navLink.name}</Text>
               </NavLink>
             </AppHeaderLinkContainer>
           ))}
           <AppHeaderLinkContainer>
             <a href="https://analytics.mycelium.xyz" target="_blank" rel="noopener noreferrer">
-              Analytics
+              <Text>Analytics</Text>
             </a>
           </AppHeaderLinkContainer>
           <AppHeaderLinkContainer>
@@ -164,7 +169,7 @@ export default function AppHeaderLinks({
               rel="noopener noreferrer"
               onClick={clickCloseIcon}
             >
-              Docs
+              <Text>Docs</Text>
             </a>
           </AppHeaderLinkContainer>
           <AppHeaderLinkContainer>
@@ -176,7 +181,7 @@ export default function AppHeaderLinks({
                 clickCloseIcon();
               }}
             >
-              Settings
+              <Text>Settings</Text>
             </a>
           </AppHeaderLinkContainer>
           <MyceliumCopy>

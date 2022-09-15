@@ -8,6 +8,7 @@ import "./BuyMlp.css";
 import { getPageTitle, useChainId } from "../../Helpers";
 import { getNativeToken } from "../../data/Tokens";
 import SEO from "../../components/Common/SEO";
+import { Text } from "../../components/Translation/Text";
 
 export default function BuyMlp(props) {
   const { chainId } = useChainId();
@@ -35,9 +36,11 @@ export default function BuyMlp(props) {
             </div>
           */}
           <div className="section-title-content">
-            <div className="Page-title">Buy / Sell MLP</div>
+            <div className="Page-title">
+              <Text>Buy / Sell</Text> MLP
+            </div>
             <div className="Page-description">
-              Purchase{" "}
+              <Text>Purchase</Text>{" "}
               <a
                 href="https://swaps.docs.mycelium.xyz/protocol-design/mycelium-liquidity-pool-mlp/mlp-token"
                 target="_blank"
@@ -49,15 +52,19 @@ export default function BuyMlp(props) {
                   })
                 }
               >
-                MLP tokens
+                MLP <Text>tokens</Text>
               </a>{" "}
-              to earn {nativeTokenSymbol} fees from swaps and leverages trading.
+              <Text>to earn</Text> {nativeTokenSymbol} <Text>fees from swaps and leverages trading.</Text>
               <br />
-              Note that there is a minimum holding time of 15 minutes after a purchase.
+              <Text>Note that there is a minimum holding time of 15 minutes after a purchase.</Text>
               <br />
-              View <Link to="/earn">staking</Link> page. Read the Terms of Use{" "}
+              <Text>View</Text>{" "}
+              <Link to="/earn">
+                <Text>staking</Text>
+              </Link>{" "}
+              <Text>page. Read the Terms of Use</Text>{" "}
               <a href="https://mycelium.xyz/rewards-terms-of-use" target="_blank" rel="noopener noreferrer">
-                here
+                <Text>here</Text>
               </a>
               .
             </div>

@@ -20,6 +20,7 @@ import { ethers } from "ethers";
 import TraderRewards from "./TraderRewards";
 import Leaderboard from "./Leaderboard";
 import * as Styles from "./Rewards.styles";
+import { Text } from "../../components/Translation/Text";
 
 import SEO from "../../components/Common/SEO";
 import { getContract } from "../../Addresses";
@@ -31,12 +32,14 @@ import { RoundDropdown } from "../../components/RewardsRoundSelect/RewardsRoundS
 
 const PersonalHeader = () => (
   <div className="Page-title-section mt-0">
-    <div className="Page-title">Trader Rewards</div>
+    <div className="Page-title">
+      <Text>Trader Rewards</Text>
+    </div>
     <div className="Page-description">
-      Be in the top 50% of traders to earn weekly rewards.
-      <br /> Read the Terms of Use{" "}
+      <Text>Be in the top 50% of traders to earn weekly rewards.</Text>
+      <br /> <Text>Read the Terms of Use</Text>{" "}
       <a href="https://mycelium.xyz/rewards-terms-of-use" target="_blank" rel="noopener noreferrer">
-        here
+        <Text>here</Text>
       </a>
       .
     </div>
@@ -45,8 +48,12 @@ const PersonalHeader = () => (
 
 const LeaderboardHeader = () => (
   <div className="Page-title-section mt-0">
-    <div className="Page-title">Rewards Leaderboard</div>
-    <div className="Page-description">User rankings by volume.</div>
+    <div className="Page-title">
+      <Text>Rewards Leaderboard</Text>
+    </div>
+    <div className="Page-description">
+      <Text>User rankings by volume.</Text>
+    </div>
   </div>
 );
 
@@ -286,7 +293,7 @@ export default function Rewards(props) {
     }
     if (error) {
       setIsClaiming(true);
-      return
+      return;
     }
     const contract = new ethers.Contract(feeDistributor, FeeDistributor.abi, library.getSigner());
     callContract(
