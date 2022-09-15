@@ -21,6 +21,10 @@ export const DropdownButton = styled.button(
         padding: 0 8px;
         background: var(--background-gradient);
         border: 1px solid var(--action-active);
+        transition: background-color 0.3s ease;
+        &:hover {
+          background: var(--action-active);
+        }
         `
       : `
           width: 98px;
