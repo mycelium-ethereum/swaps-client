@@ -209,7 +209,11 @@ export default function PositionsList(props) {
                   .mul(position.size)
                   .mul(24)
                   .div(FUNDING_RATE_PRECISION);
-                borrowFeeText = `Borrow Fee / Day: $${formatAmount(borrowFeeRate, USD_DECIMALS, 2)}`;
+                borrowFeeText = (
+                  <>
+                    <Text>Borrow Fee / Day:</Text> ${formatAmount(borrowFeeRate, USD_DECIMALS, 2)}
+                  </>
+                );
               }
 
               return (
@@ -267,11 +271,7 @@ export default function PositionsList(props) {
                                 {formatAmount(position.collateral, USD_DECIMALS, 2, true)}
                                 <br />
                                 <Text>Borrow Fee:</Text> ${formatAmount(position.fundingFee, USD_DECIMALS, 2, true)}
-                                {borrowFeeText && (
-                                  <div>
-                                    <Text>{borrowFeeText}</Text>
-                                  </div>
-                                )}
+                                {borrowFeeText && <div>{borrowFeeText}</div>}
                                 <br />
                                 <Text>Use the "Edit" button to deposit or withdraw collateral.</Text>
                               </>
@@ -308,8 +308,8 @@ export default function PositionsList(props) {
                           renderContent={() => {
                             return (
                               <>
+                                <Text>Net Value:</Text>{" "}
                                 <Text>
-                                  Net Value:{" "}
                                   {showPnlAfterFees
                                     ? "Initial Collateral - Fees + PnL"
                                     : "Initial Collateral - Borrow Fee + PnL"}
@@ -454,7 +454,11 @@ export default function PositionsList(props) {
                   .mul(position.size)
                   .mul(24)
                   .div(FUNDING_RATE_PRECISION);
-                borrowFeeText = `Borrow Fee / Day: $${formatAmount(borrowFeeRate, USD_DECIMALS, 2)}`;
+                borrowFeeText = (
+                  <>
+                    <Text>Borrow Fee / Day:</Text> ${formatAmount(borrowFeeRate, USD_DECIMALS, 2)}
+                  </>
+                );
               }
 
               return (

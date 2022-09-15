@@ -220,7 +220,7 @@ function CompoundModal(props) {
         </div>
         <div className="Exchange-swap-button-container">
           <button className="App-cta Exchange-swap-button" onClick={onClickPrimary} disabled={!isPrimaryEnabled()}>
-            {getPrimaryText()}
+            <Text>{getPrimaryText()}</Text>
           </button>
         </div>
       </Modal>

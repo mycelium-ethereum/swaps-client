@@ -1292,7 +1292,8 @@ export default function SwapBox(props) {
       setIsPendingConfirmation(true);
       helperToast.error(
         <>
-        <Text>Leave at least</Text> {formatAmount(DUST_BNB, 18, 3)} {getConstant(chainId, "nativeTokenSymbol")} <Text>for gas</Text>
+          <Text>Leave at least</Text> {formatAmount(DUST_BNB, 18, 3)} {getConstant(chainId, "nativeTokenSymbol")}{" "}
+          <Text>for gas</Text>
         </>
       );
       return;
@@ -1452,7 +1453,7 @@ export default function SwapBox(props) {
         totalTokenWeights
       );
       if (nextToAmount.eq(0)) {
-        helperToast.error( <Text>Insufficient liquidity </Text>);
+        helperToast.error(<Text>Insufficient liquidity </Text>);
         return;
       }
       if (multiPath) {
@@ -1493,7 +1494,10 @@ export default function SwapBox(props) {
       setIsSubmitting(false);
       setIsPendingConfirmation(false);
       helperToast.error(
-        <><Text>Leave at least</Text> {formatAmount(DUST_BNB, 18, 3)} ${getConstant(chainId, "nativeTokenSymbol")} <Text>for gas</Text></>
+        <>
+          <Text>Leave at least</Text> {formatAmount(DUST_BNB, 18, 3)} ${getConstant(chainId, "nativeTokenSymbol")}{" "}
+          <Text>for gas</Text>
+        </>
       );
       return;
     }
@@ -1959,10 +1963,7 @@ export default function SwapBox(props) {
                 <div className="muted">
                   {toUsdMax && (
                     <div className="Exchange-swap-usd">
-                      <Text>
-                        {getToLabel()}: {formatAmount(toUsdMax, USD_DECIMALS, 2, true)}
-                      </Text>{" "}
-                      USD
+                      <Text>{getToLabel()}</Text>: {formatAmount(toUsdMax, USD_DECIMALS, 2, true)} USD
                     </div>
                   )}
                   {!toUsdMax && <Text>{getToLabel()}</Text>}

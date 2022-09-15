@@ -2258,20 +2258,20 @@ export function approveTokens({
       ) {
         failMsg = (
           <div>
-            There is not enough ETH in your account on Arbitrum to send this transaction.
+            <Text>There is not enough ETH in your account on Arbitrum to send this transaction.</Text>
             <br />
             <br />
             <a href={"https://arbitrum.io/bridge-tutorial/"} target="_blank" rel="noopener noreferrer">
-              Bridge ETH to Arbitrum
+              <Text>Bridge ETH to Arbitrum</Text>
             </a>
           </div>
         );
       } else if (e.message?.includes("User denied transaction signature")) {
-        failMsg = "Approval was cancelled.";
+        failMsg = <Text>Approval was cancelled.</Text>;
       } else {
-        failMsg = "Approval failed.";
+        failMsg = <Text>Approval failed.</Text>;
       }
-      helperToast.error(<Text>failMsg</Text>);
+      helperToast.error(failMsg);
     })
     .finally(() => {
       setIsApproving(false);

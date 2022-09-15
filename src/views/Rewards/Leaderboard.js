@@ -122,7 +122,7 @@ function TableRow({
               </>
             )}
           />
-          {rewardAmountUsd && `($${formatAmount(rewardAmountUsd, USD_DECIMALS, 2, true)})`}
+          {rewardAmountUsd && ` ($${formatAmount(rewardAmountUsd, USD_DECIMALS, 2, true)})`}
         </RewardCell>
         <ClaimCell
           className={cx({

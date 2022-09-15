@@ -849,6 +849,8 @@ function FullApp(props) {
                       setWalletModalVisible={setWalletModalVisible}
                       showNetworkSelectorModal={showNetworkSelectorModal}
                       trackAction={trackAction}
+                      currentLang={currentLang}
+                      setCurrentLang={setCurrentLang}
                     />
                   </div>
                   <div className="App-header-user-link Trade-btn-mobile">
@@ -1271,6 +1273,8 @@ function App() {
       localStorage.setItem("translations", JSON.stringify(existing));
     },
   };
+
+  console.log(JSON.parse(localStorage.getItem("translations")));
 
   return (
     <SWRConfig value={{ refreshInterval: 5000 }}>

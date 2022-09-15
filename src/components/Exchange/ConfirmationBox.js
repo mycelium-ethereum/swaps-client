@@ -581,7 +581,9 @@ export default function ConfirmationBox(props) {
           </ExchangeInfoRow>
           {!isMarketOrder && (
             <div className="Exchange-info-row">
-              <div className="Exchange-info-label">Limit Price</div>
+              <div className="Exchange-info-label">
+                <Text>Limit Price</Text>
+              </div>
               <div className="align-right">{getExchangeRateDisplay(triggerRatio, fromTokenInfo, toTokenInfo)}</div>
             </div>
           )}
@@ -591,7 +593,9 @@ export default function ConfirmationBox(props) {
             </ExchangeInfoRow>
           )}
           <div className="Exchange-info-row">
-            <div className="Exchange-info-label">Fees</div>
+            <div className="Exchange-info-label">
+              <Text>Fees</Text>
+            </div>
             <div className="align-right">
               {formatAmount(feeBps, 2, 2, true)}% ({formatAmount(fees, fromTokenInfo.decimals, 4, true)}{" "}
               {fromTokenInfo.symbol}: ${formatAmount(feesUsd, USD_DECIMALS, 2, true)})
@@ -600,13 +604,17 @@ export default function ConfirmationBox(props) {
           {renderExecutionFee()}
           {fromTokenUsd && (
             <div className="Exchange-info-row">
-              <div className="Exchange-info-label">{fromTokenInfo.symbol} Price</div>
+              <div className="Exchange-info-label">
+                {fromTokenInfo.symbol} <Text>Price</Text>
+              </div>
               <div className="align-right">{fromTokenUsd} USD</div>
             </div>
           )}
           {toTokenUsd && (
             <div className="Exchange-info-row">
-              <div className="Exchange-info-label">{toTokenInfo.symbol} Price</div>
+              <div className="Exchange-info-label">
+                {toTokenInfo.symbol} <Text>Price</Text>
+              </div>
               <div className="align-right">{toTokenUsd} USD</div>
             </div>
           )}
@@ -652,7 +660,7 @@ export default function ConfirmationBox(props) {
             className="App-cta Confirmation-box-button"
             disabled={!isPrimaryEnabled()}
           >
-            {getPrimaryText()}
+            <Text>{getPrimaryText()}</Text>
           </button>
         </div>
       </Modal>

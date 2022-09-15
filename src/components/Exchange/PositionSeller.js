@@ -1032,7 +1032,7 @@ export default function PositionSeller(props) {
               }}
               disabled={!isPrimaryEnabled()}
             >
-              {getPrimaryText()}
+              <Text>{getPrimaryText()}</Text>
             </button>
           </div>
         </Modal>

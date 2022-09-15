@@ -51,7 +51,7 @@ export default function LanguageDropdown({ currentLang, setCurrentLang }) {
   const [isOpen, setIsOpen] = useState(false);
   const [currentLangLabel, setCurrentLangLabel] = useState(null);
   const handleLanguageClick = (item) => {
-    setCurrentLang(item);
+    setCurrentLang && setCurrentLang(item);
     setIsOpen(false);
   };
 
