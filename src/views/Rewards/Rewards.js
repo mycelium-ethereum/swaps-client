@@ -276,19 +276,19 @@ export default function Rewards(props) {
     });
     let error;
     if (selectedRound === "latest") {
-      helperToast.error("Cannot claim rewards before round has ended");
+      helperToast.error(<Text>Cannot claim rewards before round has ended</Text>);
       error = true;
     }
     if (!userProof) {
-      helperToast.error("Fetching merkle proof");
+      helperToast.error(<Text>Fetching merkle proof</Text>);
       error = true;
     }
     if (userProof.amount === "0") {
-      helperToast.error(`No rewards for round: ${selectedRound}`);
+      helperToast.error(<Text>No rewards for round: ${selectedRound}</Text>);
       error = true;
     }
     if (!!userProof?.message) {
-      helperToast.error(`Invalid user proof`);
+      helperToast.error(<Text>Invalid user proof</Text>);
       error = true;
     }
     if (error) {

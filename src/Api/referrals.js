@@ -2,13 +2,23 @@ import { ethers } from "ethers";
 import { gql } from "@apollo/client";
 import { useState, useEffect } from "react";
 
-import { ARBITRUM, MAX_REFERRAL_CODE_LENGTH, bigNumberify, isAddressZero, helperToast, getProvider, fetcher, ARBITRUM_TESTNET } from "../Helpers";
+import {
+  ARBITRUM,
+  MAX_REFERRAL_CODE_LENGTH,
+  bigNumberify,
+  isAddressZero,
+  helperToast,
+  getProvider,
+  fetcher,
+  ARBITRUM_TESTNET,
+} from "../Helpers";
 import { arbitrumReferralsGraphClient, arbitrumTestnetReferralsGraphClient } from "./common";
 import { getContract } from "../Addresses";
 
 import ReferralStorage from "../abis/ReferralStorage.json";
 import { callContract } from ".";
 import useSWR from "swr";
+import { Text } from "../components/Translation/Text";
 
 const ACTIVE_CHAINS = [ARBITRUM];
 
@@ -63,7 +73,7 @@ export async function setTraderReferralCodeByUser(chainId, referralCode, { libra
   const contract = new ethers.Contract(referralStorageAddress, ReferralStorage.abi, library.getSigner());
   const codeOwner = await contract.codeOwners(referralCode);
   if (isAddressZero(codeOwner)) {
-    helperToast.error("Referral code does not exist");
+    helperToast.error(<Text>Referral code does not exist</Text>);
     return new Promise((resolve, reject) => {
       reject();
     });
@@ -98,7 +108,6 @@ export async function getReferralCodeTakenStatus(account, referralCode, chainId)
   }
   return { status: "none", info: referralCodeTakenInfo };
 }
-
 
 async function getCodeOwnersData(network, account, codes) {
   const referralCodeOwnerQuery = (referralCode) =>
@@ -160,7 +169,6 @@ export function useUserCodesOnAllChain(account) {
           return acc;
         }, {}),
       });
-
     }
 
     main();

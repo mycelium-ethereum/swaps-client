@@ -33,7 +33,7 @@ function AddressDropdown({ account, accountUrl, disconnectAccountAndCloseSetting
               onClick={() => {
                 copyToClipboard(account);
                 trackAction && trackAction("Button clicked", { buttonName: "Copy Address" });
-                helperToast.success("Address copied to your clipboard");
+                helperToast.success(<Text>Address copied to your clipboard</Text>);
               }}
             >
               <img src={copy} alt="Copy user address" />

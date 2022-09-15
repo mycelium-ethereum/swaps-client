@@ -762,7 +762,7 @@ export default function StakeV2({ setPendingTxns, connectWallet, trackAction }) 
 
   const showMlpCompoundModal = () => {
     if (ethBalance?.eq(0)) {
-      helperToast.error("You don't have any ETH to pay for gas");
+      helperToast.error(<Text>You don't have any ETH to pay for gas</Text>);
     } else {
       setIsCompoundModalVisible(true);
     }
@@ -770,7 +770,7 @@ export default function StakeV2({ setPendingTxns, connectWallet, trackAction }) 
 
   const showMlpClaimModal = () => {
     if (ethBalance?.eq(0)) {
-      helperToast.error("You don't have any ETH to pay for gas");
+      helperToast.error(<Text>You don't have any ETH to pay for gas</Text>);
     } else {
       setIsClaimModalVisible(true);
     }
@@ -778,10 +778,10 @@ export default function StakeV2({ setPendingTxns, connectWallet, trackAction }) 
 
   const showMycVesterDepositModal = () => {
     if (ethBalance?.eq(0)) {
-      helperToast.error("You don't have any ETH to pay for gas");
+      helperToast.error(<Text>You don't have any ETH to pay for gas</Text>);
       return;
     } else if (!vestingData) {
-      helperToast.error("Loading vesting data, please wait.");
+      helperToast.error(<Text>Loading vesting data, please wait.</Text>);
       return;
     }
     // let remainingVestableAmount = vestingData.mlpVester.maxVestableAmount.sub(vestingData.mlpVester.vestedAmount);
@@ -807,10 +807,10 @@ export default function StakeV2({ setPendingTxns, connectWallet, trackAction }) 
 
   const showMycVesterWithdrawModal = () => {
     if (ethBalance?.eq(0)) {
-      helperToast.error("You don't have any ETH to pay for gas");
+      helperToast.error(<Text>You don't have any ETH to pay for gas</Text>);
       return;
     } else if (!vestingData || !vestingData.mlpVesterVestedAmount || vestingData.mlpVesterVestedAmount.eq(0)) {
-      helperToast.error("You have not deposited any tokens for vesting.");
+      helperToast.error(<Text>You have not deposited any tokens for vesting.</Text>);
       return;
     }
 

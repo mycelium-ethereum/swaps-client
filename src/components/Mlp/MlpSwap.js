@@ -655,7 +655,7 @@ export default function MlpSwap(props) {
   const selectToken = (token) => {
     setAnchorOnSwapAmount(false);
     setSwapTokenAddress(token.address);
-    helperToast.success(`${token.symbol} selected in order form`);
+    helperToast.success(<>{token.symbol} <Text>selected in order form</Text></>);
   };
 
   let feePercentageText = formatAmount(feeBasisPoints, 2, 2, true, "-");

@@ -175,31 +175,6 @@ function getWsProvider(active, chainId) {
 }
 
 function AppHeaderLinks({ small, openSettings, clickCloseIcon, trackAction }) {
-  if (inPreviewMode()) {
-    return (
-      <div className="App-header-links preview">
-        <div className="App-header-link-container App-header-link-home">
-          <NavLink activeClassName="active" exact to="/">
-            HOME
-          </NavLink>
-        </div>
-        <div className="App-header-link-container">
-          <NavLink activeClassName="active" to="/earn">
-            EARN
-          </NavLink>
-        </div>
-        <div className="App-header-link-container">
-          <a
-            href="https://swaps.docs.mycelium.xyz/perpetual-swaps/mycelium-perpetual-swaps"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            ABOUT
-          </a>
-        </div>
-      </div>
-    );
-  }
   return (
     <div className="App-header-links">
       {small && (
@@ -223,27 +198,27 @@ function AppHeaderLinks({ small, openSettings, clickCloseIcon, trackAction }) {
       )}
       <div className="App-header-link-container">
         <NavLink exact activeClassName="active" to="/dashboard">
-          Dashboard
+          <Text>Dashboard</Text>
         </NavLink>
       </div>
       <div className="App-header-link-container">
         <NavLink exact activeClassName="active" to="/earn">
-          Earn
+          <Text>Earn</Text>
         </NavLink>
       </div>
       <div className="App-header-link-container">
         <NavLink exact activeClassName="active" to="/buy_mlp">
-          Buy
+          <Text>Buy</Text>
         </NavLink>
       </div>
       <div className="App-header-link-container">
         <NavLink exact activeClassName="active" to="/rewards">
-          Rewards
+          <Text>Rewards</Text>
         </NavLink>
       </div>
       <div className="App-header-link-container">
         <NavLink exact activeClassName="active" to="/referrals">
-          Referrals
+          <Text>Referrals</Text>
         </NavLink>
       </div>
       <div className="App-header-link-container">
@@ -252,14 +227,14 @@ function AppHeaderLinks({ small, openSettings, clickCloseIcon, trackAction }) {
           target="_blank"
           rel="noopener noreferrer"
         >
-          Docs
+          <Text>Docs</Text>
         </a>
       </div>
       {small && (
         <div className="App-header-link-container">
           {/* eslint-disable-next-line */}
           <a href="#" onClick={openSettings}>
-            Settings
+            <Text>Settings</Text>
           </a>
         </div>
       )}
@@ -302,15 +277,10 @@ function AppHeaderUser({
   if (!active) {
     return (
       <div className="App-header-user">
-        {/* <div className="App-header-user-link">
-          <NavLink exact activeClassName="active" className="default-btn trade-link" to="/">
-            Trade
-          </NavLink>
-        </div> */}
         <LanguageDropdown currentLang={currentLang} setCurrentLang={setCurrentLang} />
         <div className="App-header-user-link Trade-btn">
           <NavLink exact activeClassName="active" className="default-btn trade-link" to="/">
-            Trade
+            <Text>Trade</Text>
           </NavLink>
         </div>
         {showSelector && (
@@ -333,7 +303,7 @@ function AppHeaderUser({
           }}
           imgSrc={connectWalletImg}
         >
-          {small ? "Connect" : "Connect Wallet"}
+          <Text>{small ? "Connect" : "Connect Wallet"}</Text>
         </ConnectWalletButton>
         <div className="App-header-user-link Switch-app-btn">
           <a
@@ -361,7 +331,7 @@ function AppHeaderUser({
       <LanguageDropdown currentLang={currentLang} setCurrentLang={setCurrentLang} />
       <div className="App-header-user-link Trade-btn">
         <NavLink exact activeClassName="active" className="default-btn trade-link" to="/">
-          Trade
+          <Text>Trade</Text>
         </NavLink>
       </div>
       {showSelector && (
@@ -469,13 +439,13 @@ function FullApp(props) {
     if (!hasMetaMaskWalletExtension()) {
       helperToast.error(
         <div>
-          MetaMask not detected.
+          MetaMask <Text>not detected.</Text>
           <br />
           <br />
           <a href="https://metamask.io" target="_blank" rel="noopener noreferrer">
-            Install MetaMask
+            <Text>Install</Text> MetaMask
           </a>
-          {userOnMobileDevice ? ", and use MYC with its built-in browser" : " to start using MYC"}.
+          <Text>{userOnMobileDevice ? ", and use MYC with its built-in browser" : " to start using MYC"}</Text>.
         </div>
       );
       return false;
@@ -486,13 +456,13 @@ function FullApp(props) {
     if (!hasCoinBaseWalletExtension()) {
       helperToast.error(
         <div>
-          Coinbase Wallet not detected.
+          <Text>Coinbase Wallet not detected.</Text>
           <br />
           <br />
           <a href="https://www.coinbase.com/wallet" target="_blank" rel="noopener noreferrer">
-            Install Coinbase Wallet
+            <Text>Install Coinbase Wallet</Text>
           </a>
-          {userOnMobileDevice ? ", and use MYC with its built-in browser" : " to start using MYC"}.
+          <Text>{userOnMobileDevice ? ", and use MYC with its built-in browser" : " to start using MYC"}</Text>.
         </div>
       );
       return false;
@@ -582,17 +552,17 @@ function FullApp(props) {
     if (slippageError === "") {
       const slippage = parseFloat(slippageAmount);
       if (isNaN(slippage)) {
-        helperToast.error("Invalid slippage value");
+        helperToast.error(<Text>Invalid slippage value</Text>);
         return;
       }
       if (slippage > 5) {
-        helperToast.error("Slippage should be less than 5%");
+        helperToast.error(<Text>Slippage should be less than 5%</Text>);
         return;
       }
 
       const basisPoints = (slippage * BASIS_POINTS_DIVISOR) / 100;
       if (parseInt(basisPoints) !== parseFloat(basisPoints)) {
-        helperToast.error("Max slippage precision is 0.01%");
+        helperToast.error(<Text>Max slippage precision is 0.01%</Text>);
         return;
       }
 
@@ -624,9 +594,9 @@ function FullApp(props) {
             const txUrl = getExplorerUrl(chainId) + "tx/" + pendingTxn.hash;
             helperToast.error(
               <div>
-                Txn failed.{" "}
+                <Text>Transaction failed</Text>.{" "}
                 <a href={txUrl} target="_blank" rel="noopener noreferrer">
-                  View
+                  <Text>View</Text>
                 </a>
                 <br />
               </div>
@@ -638,7 +608,7 @@ function FullApp(props) {
               <div>
                 {pendingTxn.message}{" "}
                 <a href={txUrl} target="_blank" rel="noopener noreferrer">
-                  View
+                  <Text>View</Text>
                 </a>
                 <br />
               </div>
@@ -883,7 +853,7 @@ function FullApp(props) {
                   </div>
                   <div className="App-header-user-link Trade-btn-mobile">
                     <NavLink exact activeClassName="active" className="default-btn trade-link" to="/">
-                      Trade
+                      <Text>Trade</Text>
                     </NavLink>
                   </div>
                   {/* Hamburger menu */}
@@ -1004,19 +974,6 @@ function FullApp(props) {
             <Route exact path="/actions">
               <Actions trackAction={trackAction} />
             </Route>
-            {/*
-            <Route exact path="/begin_account_transfer">
-              <BeginAccountTransfer setPendingTxns={setPendingTxns} />
-            </Route>
-            <Route exact path="/complete_account_transfer/:sender/:receiver">
-              <CompleteAccountTransfer setPendingTxns={setPendingTxns} />
-            </Route>
-            <Route exact path="/debug">
-              <Debug />
-            </Route>
-            <Route exact path="/referral-terms">
-              <ReferralTerms />
-            </Route> */}
             <Route path="*">
               <PageNotFound />
             </Route>
@@ -1126,7 +1083,9 @@ function FullApp(props) {
           }}
         >
           <img src={coinbaseImg} alt="Coinbase Wallet" />
-          <div>Coinbase Wallet</div>
+          <div>
+            Coinbase <Text>Wallet</Text>
+          </div>
         </button>
         <button
           className="Wallet-btn WalletConnect-btn"
@@ -1146,7 +1105,9 @@ function FullApp(props) {
         label="Settings"
       >
         <div className="App-settings-row">
-          <div>Allowed Slippage</div>
+          <div>
+            <Text>Allowed Slippage</Text>
+          </div>
           <div className="App-slippage-tolerance-input-container">
             <input
               type="number"
@@ -1162,12 +1123,12 @@ function FullApp(props) {
         </div>
         <div className="Exchange-settings-row">
           <Checkbox isChecked={showPnlAfterFees} setIsChecked={setShowPnlAfterFees}>
-            Display PnL after fees
+            <Text>Display PnL after fees</Text>
           </Checkbox>
         </div>
         <div className="Exchange-settings-row">
           <Checkbox isChecked={isPnlInLeverage} setIsChecked={setIsPnlInLeverage}>
-            Include PnL in leverage display
+            <Text>Include PnL in leverage display</Text>
           </Checkbox>
         </div>
         <button
@@ -1180,7 +1141,7 @@ function FullApp(props) {
               });
           }}
         >
-          Save
+          <Text>Save</Text>
         </button>
       </Modal>
     </>

@@ -27,10 +27,9 @@
 
 .menu-items {
   position: absolute;
-  right: 0;
+  left: 0;
   top: calc(100% + 0.5rem);
   min-width: 10rem;
-  width: 100%;
   transform-origin: top right;
   border-radius: 4px;
   background: var(--background-gradient);

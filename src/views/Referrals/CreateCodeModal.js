@@ -133,7 +133,7 @@ export default function CreateCodeModal(props) {
         const receipt = await tx.wait();
         if (receipt.status === 1) {
           recentlyAddedCodes.push(getSampleReferrerStat(referralCode));
-          helperToast.success("Referral code created!");
+          helperToast.success(<Text>Referral code created!</Text>);
           setRecentlyAddedCodes(recentlyAddedCodes);
           setReferralCode("");
           setIsSubmitting(false);

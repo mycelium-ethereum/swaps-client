@@ -109,7 +109,11 @@ export default function PositionsList(props) {
   };
 
   const onPositionClick = (position) => {
-    helperToast.success(`${position.isLong ? "Long" : "Short"} ${position.indexToken.symbol} market selected`);
+    helperToast.success(
+      <>
+        <Text>{position.isLong ? "Long" : "Short"}</Text> {position.indexToken.symbol} <Text>market selected</Text>
+      </>
+    );
     setMarket(position.isLong ? LONG : SHORT, position.indexToken.address);
   };
 

@@ -278,14 +278,14 @@ export default function SwapBox(props) {
   useEffect(() => {
     if (!needOrderBookApproval && prevNeedOrderBookApproval && isWaitingForPluginApproval) {
       setIsWaitingForPluginApproval(false);
-      helperToast.success(<div>Orders enabled!</div>);
+      helperToast.success(<Text>Orders enabled!</Text>);
     }
   }, [needOrderBookApproval, prevNeedOrderBookApproval, setIsWaitingForPluginApproval, isWaitingForPluginApproval]);
 
   useEffect(() => {
     if (!needPositionRouterApproval && prevNeedPositionRouterApproval && isWaitingForPositionRouterApproval) {
       setIsWaitingForPositionRouterApproval(false);
-      helperToast.success(<div>Leverage enabled!</div>);
+      helperToast.success(<Text>Leverage enabled!</Text>);
     }
   }, [
     needPositionRouterApproval,
@@ -297,7 +297,7 @@ export default function SwapBox(props) {
   useEffect(() => {
     if (!needOrderBookApproval && prevNeedOrderBookApproval && isWaitingForPluginApproval) {
       setIsWaitingForPluginApproval(false);
-      helperToast.success(<div>Orders enabled!</div>);
+      helperToast.success(<Text>Orders enabled!</Text>);
     }
   }, [needOrderBookApproval, prevNeedOrderBookApproval, setIsWaitingForPluginApproval, isWaitingForPluginApproval]);
 
@@ -397,7 +397,11 @@ export default function SwapBox(props) {
       isWaitingForApproval
     ) {
       setIsWaitingForApproval(false);
-      helperToast.success(<div>{fromToken.symbol} approved!</div>);
+      helperToast.success(
+        <>
+          {fromToken.symbol} <Text>approved!</Text>
+        </>
+      );
     }
   }, [
     fromTokenAddress,
@@ -1287,7 +1291,9 @@ export default function SwapBox(props) {
       setIsSubmitting(false);
       setIsPendingConfirmation(true);
       helperToast.error(
-        `Leave at least ${formatAmount(DUST_BNB, 18, 3)} ${getConstant(chainId, "nativeTokenSymbol")} for gas`
+        <>
+        <Text>Leave at least</Text> {formatAmount(DUST_BNB, 18, 3)} {getConstant(chainId, "nativeTokenSymbol")} <Text>for gas</Text>
+        </>
       );
       return;
     }
@@ -1446,7 +1452,7 @@ export default function SwapBox(props) {
         totalTokenWeights
       );
       if (nextToAmount.eq(0)) {
-        helperToast.error("Insufficient liquidity");
+        helperToast.error( <Text>Insufficient liquidity </Text>);
         return;
       }
       if (multiPath) {
@@ -1487,7 +1493,7 @@ export default function SwapBox(props) {
       setIsSubmitting(false);
       setIsPendingConfirmation(false);
       helperToast.error(
-        `Leave at least ${formatAmount(DUST_BNB, 18, 3)} ${getConstant(chainId, "nativeTokenSymbol")} for gas`
+        <><Text>Leave at least</Text> {formatAmount(DUST_BNB, 18, 3)} ${getConstant(chainId, "nativeTokenSymbol")} <Text>for gas</Text></>
       );
       return;
     }

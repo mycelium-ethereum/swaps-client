@@ -86,6 +86,7 @@ export default function LanguageDropdown({ currentLang, setCurrentLang }) {
       setCurrentLangLabel(label);
     } else {
       setCurrentLangLabel("English");
+      changeFontFromLanguage(true);
     }
   }, [currentLang]);
 
