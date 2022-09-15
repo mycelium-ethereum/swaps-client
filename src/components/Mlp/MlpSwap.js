@@ -1328,7 +1328,7 @@ export default function MlpSwap(props) {
                           });
                       }}
                     >
-                      {isBuying ? "Buy with " + token.symbol : "Sell for " + token.symbol}
+                      <Text>{isBuying ? "Buy with" : "Sell for"}</Text>{" "}{token.symbol}
                     </button>
                   </td>
                 </tr>
@@ -1487,7 +1487,7 @@ export default function MlpSwap(props) {
                         "Fees"
                       ) : (
                         <Tooltip
-                          handle={`Fees`}
+                          handle={<Text>Fees</Text>}
                           renderContent={() => <Text>Please enter an amount to see fee percentages</Text>}
                         />
                       )}

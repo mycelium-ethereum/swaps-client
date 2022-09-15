@@ -1173,7 +1173,9 @@ export default function StakeV2({ setPendingTxns, connectWallet, trackAction }) 
                     </button>
                   )}
                   <a href="https://lend.mycelium.xyz" target="_blank" rel="noopener noreferrer">
-                    <button className="App-button-option App-card-option">MYC Lending</button>
+                    <button className="App-button-option App-card-option">
+                      MYC <Text>Lending</Text>
+                    </button>
                   </a>
                 </div>
               </div>

@@ -51,6 +51,7 @@ import Modal from "../Modal/Modal";
 import ExchangeInfoRow from "./ExchangeInfoRow";
 import Tooltip from "../Tooltip/Tooltip";
 import ComingSoonTooltip from "../Tooltip/ComingSoon";
+import { Text } from "../Translation/Text";
 
 const { AddressZero } = ethers.constants;
 
@@ -129,7 +130,10 @@ export default function PositionSeller(props) {
     fetcher: fetcher(library, PositionRouter),
   });
 
-  const orderOptions = [MARKET, <ComingSoonTooltip position="right-bottom" handle={orderOptionLabels[STOP]} />];
+  const orderOptions = [
+    MARKET,
+    <ComingSoonTooltip position="right-bottom" handle={<Text>{orderOptionLabels[STOP]}</Text>} />,
+  ];
 
   let [orderOption, setOrderOption] = useState(MARKET);
 
@@ -759,14 +763,14 @@ export default function PositionSeller(props) {
               <div className="muted">
                 {convertedAmountFormatted && (
                   <div className="Exchange-swap-usd">
-                    Close: {convertedAmountFormatted} {position.collateralToken.symbol}
+                    <Text>Close:</Text> {convertedAmountFormatted} {position.collateralToken.symbol}
                   </div>
                 )}
                 {!convertedAmountFormatted && "Close"}
               </div>
               {maxAmount && (
                 <div className="muted align-right clickable" onClick={() => setFromValue(maxAmountFormattedFree)}>
-                  Max: {maxAmountFormatted}
+                  <Text>Max:</Text> {maxAmountFormatted}
                 </div>
               )}
             </div>
@@ -787,7 +791,7 @@ export default function PositionSeller(props) {
                       setFromValue(maxAmountFormattedFree);
                     }}
                   >
-                    MAX
+                    <Text>MAX</Text>
                   </div>
                 )}
               </div>
@@ -797,14 +801,16 @@ export default function PositionSeller(props) {
           {orderOption === STOP && (
             <div className="Exchange-swap-section">
               <div className="Exchange-swap-section-top">
-                <div className="muted">Price</div>
+                <div className="muted">
+                  <Text>Price</Text>
+                </div>
                 <div
                   className="muted align-right clickable"
                   onClick={() => {
                     setTriggerPriceValue(formatAmountFree(position.markPrice, USD_DECIMALS, 2));
                   }}
                 >
-                  Mark: {formatAmount(position.markPrice, USD_DECIMALS, 2, true)}
+                  <Text>Mark:</Text> {formatAmount(position.markPrice, USD_DECIMALS, 2, true)}
                 </div>
               </div>
               <div className="Exchange-swap-section-bottom">
@@ -828,19 +834,25 @@ export default function PositionSeller(props) {
             {hasPendingProfit && orderOption !== STOP && (
               <div className="PositionEditor-accept-profit-warning">
                 <Checkbox isChecked={isProfitWarningAccepted} setIsChecked={setIsProfitWarningAccepted}>
-                  <span className="muted">Forfeit profit</span>
+                  <span className="muted">
+                    <Text>Forfeit profit</Text>
+                  </span>
                 </Checkbox>
               </div>
             )}
             <div className="PositionEditor-keep-leverage-settings">
               <Checkbox isChecked={keepLeverage} setIsChecked={setKeepLeverage}>
-                <span className="muted">Keep leverage at {formatAmount(position.leverage, 4, 2)}x</span>
+                <span className="muted">
+                  <Text>Keep leverage at</Text> {formatAmount(position.leverage, 4, 2)}x
+                </span>
               </Checkbox>
             </div>
             {orderOption === MARKET && (
               <div className="PositionEditor-allow-higher-slippage">
                 <Checkbox isChecked={isHigherSlippageAllowed} setIsChecked={setIsHigherSlippageAllowed}>
-                  <span className="muted">Allow up to 1% slippage</span>
+                  <span className="muted">
+                    <Text>Allow up to 1% slippage</Text>
+                  </span>
                 </Checkbox>
               </div>
             )}
@@ -853,11 +865,13 @@ export default function PositionSeller(props) {
                     renderContent={() => {
                       return (
                         <>
-                          You can change this in the settings menu on the top right of the page.
+                          <Text>You can change this in the settings menu on the top right of the page.</Text>
                           <br />
                           <br />
-                          Note that a low allowed slippage, e.g. less than 0.5%, may result in failed orders if prices
-                          are volatile.
+                          <Text>
+                            Note that a low allowed slippage, e.g. less than 0.5%, may result in failed orders if prices
+                            are volatile.
+                          </Text>
                         </>
                       );
                     }}
@@ -867,7 +881,9 @@ export default function PositionSeller(props) {
             )}
             {orderOption === STOP && (
               <div className="Exchange-info-row">
-                <div className="Exchange-info-label">Trigger Price</div>
+                <div className="Exchange-info-label">
+                  <Text>Trigger Price</Text>
+                </div>
                 <div className="align-right">
                   {!triggerPriceUsd && "-"}
                   {triggerPriceUsd && `${triggerPricePrefix} ${formatAmount(triggerPriceUsd, USD_DECIMALS, 2, true)}`}
@@ -875,15 +891,21 @@ export default function PositionSeller(props) {
               </div>
             )}
             <div className="Exchange-info-row">
-              <div className="Exchange-info-label">Entry Price</div>
+              <div className="Exchange-info-label">
+                <Text>Entry Price</Text>
+              </div>
               <div className="align-right">${formatAmount(position.averagePrice, USD_DECIMALS, 2, true)}</div>
             </div>
             <div className="Exchange-info-row">
-              <div className="Exchange-info-label">Exit Price</div>
+              <div className="Exchange-info-label">
+                <Text>Exit Price</Text>
+              </div>
               <div className="align-right">${formatAmount(position.markPrice, USD_DECIMALS, 2, true)}</div>
             </div>
             <div className="Exchange-info-row">
-              <div className="Exchange-info-label">Liq. Price</div>
+              <div className="Exchange-info-label">
+                <Text>Liq. Price</Text>
+              </div>
               <div className="align-right">
                 {isClosing && orderOption !== STOP && "-"}
                 {(!isClosing || orderOption === STOP) && (
@@ -905,7 +927,9 @@ export default function PositionSeller(props) {
               </div>
             </div>
             <div className="Exchange-info-row top-line">
-              <div className="Exchange-info-label">Size</div>
+              <div className="Exchange-info-label">
+                <Text>Size</Text>
+              </div>
               <div className="align-right">
                 {position && position.size && fromAmount && (
                   <div>
@@ -922,7 +946,9 @@ export default function PositionSeller(props) {
               </div>
             </div>
             <div className="Exchange-info-row">
-              <div className="Exchange-info-label">Collateral</div>
+              <div className="Exchange-info-label">
+                <Text>Collateral</Text>
+              </div>
               <div className="align-right">
                 {nextCollateral && !nextCollateral.eq(position.collateral) ? (
                   <div>
@@ -939,7 +965,9 @@ export default function PositionSeller(props) {
             </div>
             {!keepLeverage && (
               <div className="Exchange-info-row">
-                <div className="Exchange-info-label">Leverage</div>
+                <div className="Exchange-info-label">
+                  <Text>Leverage</Text>
+                </div>
                 <div className="align-right">
                   {isClosing && "-"}
                   {!isClosing && (
@@ -960,24 +988,32 @@ export default function PositionSeller(props) {
               </div>
             )}
             <div className="Exchange-info-row">
-              <div className="Exchange-info-label">PnL</div>
+              <div className="Exchange-info-label">
+                <Text>PnL</Text>
+              </div>
               <div className="align-right">
                 {deltaStr} ({deltaPercentageStr})
               </div>
             </div>
             <div className="Exchange-info-row top-line">
-              <div className="Exchange-info-label">Borrow Fee</div>
+              <div className="Exchange-info-label">
+                <Text>Borrow Fee</Text>
+              </div>
               <div className="align-right">${formatAmount(fundingFee, USD_DECIMALS, 2, true)}</div>
             </div>
             <div className="Exchange-info-row">
-              <div className="Exchange-info-label">Closing Fee</div>
+              <div className="Exchange-info-label">
+                <Text>Closing Fee</Text>
+              </div>
               <div className="align-right">
                 {positionFee && `$${formatAmount(positionFee, USD_DECIMALS, 2, true)}`}
                 {!positionFee && "-"}
               </div>
             </div>
             <div className="Exchange-info-row">
-              <div className="Exchange-info-label">Receive</div>
+              <div className="Exchange-info-label">
+                <Text>Receive</Text>
+              </div>
               <div className="align-right">
                 {formatAmount(convertedReceiveAmount, position.collateralToken.decimals, 4, true)}{" "}
                 {position.collateralToken.symbol} ($
