@@ -2,6 +2,8 @@ import React, { useEffect, useState, useRef, useCallback, useMemo } from "react"
 import cx from "classnames";
 
 import { createChart } from "krasulya-lightweight-charts";
+import { widget } from "../../charting_library";
+import * as Datafeeds from "../../datafeeds/udf/dist/bundle.js";
 
 import {
   USD_DECIMALS,
@@ -72,6 +74,12 @@ const getSeriesOptions = () => ({
   wickUpColor: "#4FE021",
   borderVisible: false,
 });
+
+const getLanguageFromURL = () => {
+  const regex = new RegExp("[\\?&]lang=([^&#]*)");
+  const results = regex.exec(window.location.search);
+  return results === null ? null : decodeURIComponent(results[1].replace(/\+/g, " "));
+};
 
 const getChartOptions = (width, height) => ({
   width,
@@ -234,17 +242,57 @@ export default function ExchangeTVChart(props) {
       return;
     }
 
-    const chart = createChart(
-      chartRef.current,
-      getChartOptions(chartRef.current.offsetWidth, chartRef.current.offsetHeight)
-    );
+    const widgetOptions = {
+      // BEWARE: no trailing slash is expected in feed URL
+      container: chartRef.current,
 
-    chart.subscribeCrosshairMove(onCrosshairMove);
+      locale: getLanguageFromURL() || "en",
+      disabled_features: ["use_localstorage_for_settings"],
+      enabled_features: ["study_templates"],
+      charts_storage_url: "https://saveload.tradingview.com",
+      charts_storage_api_version: "1.1",
+      symbol: "AAPL",
+      interval: "D",
+      datafeed: new Datafeeds.UDFCompatibleDatafeed("https://demo_feed.tradingview.com"),
+      // Fix from https://github.com/tradingview/charting-library-examples/issues/196
+      library_path: process.env.NODE_ENV === "production" ? "/charting_library/" : "/src/charting_library/", 
+      client_id: "test",
+      user_id: "public_user_id",
+      fullscreen: false,
+      autosize: true,
+      studies_overrides: {},
+    };
 
-    const series = chart.addCandlestickSeries(getSeriesOptions());
+    const tvWidget = new widget(widgetOptions);
 
-    setCurrentChart(chart);
-    setCurrentSeries(series);
+    tvWidget.onChartReady(() => {
+      tvWidget.headerReady().then(() => {
+        const button = tvWidget.createButton();
+        button.setAttribute("title", "Click to show a notification popup");
+        button.classList.add("apply-common-tooltip");
+        button.addEventListener("click", () =>
+          tvWidget.showNoticeDialog({
+            title: "Notification",
+            body: "TradingView Charting Library API works correctly",
+            callback: () => {
+              console.log("Noticed!");
+            },
+          })
+        );
+      });
+    });
+
+    // const chart = createChart(
+    //   chartRef.current,
+    //   getChartOptions(chartRef.current.offsetWidth, chartRef.current.offsetHeight)
+    // );
+
+    // chart.subscribeCrosshairMove(onCrosshairMove);
+
+    // const series = chart.addCandlestickSeries(getSeriesOptions());
+
+    // setCurrentChart(chart);
+    // setCurrentSeries(series);
   }, [ref, priceData, currentChart, onCrosshairMove]);
 
   useEffect(() => {
