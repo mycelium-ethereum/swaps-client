@@ -269,9 +269,6 @@ export default function ExchangeTVChart(props) {
 
       tvWidget.onChartReady(() => {
         const series = tvWidget.chart().getSeries();
-        console.log(series);
-        setCurrentChart(tvWidget.chart());
-        setCurrentSeries(series);
         // tvWidget.headerReady().then(() => {
         //   const button = tvWidget.createButton();
         //   button.setAttribute("title", "Click to show a notification popup");
