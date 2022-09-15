@@ -201,6 +201,7 @@ export default function ExchangeTVChart(props) {
   );
 
   const [chartInited, setChartInited] = useState(false);
+  const [advancedChartInited, setAdvancedChartInited] = useState(false);
   useEffect(() => {
     if (marketName !== previousMarketName) {
       setChartInited(false);
@@ -242,45 +243,53 @@ export default function ExchangeTVChart(props) {
       return;
     }
 
-    const widgetOptions = {
-      // BEWARE: no trailing slash is expected in feed URL
-      container: chartRef.current,
+    if (!advancedChartInited) {
+      const widgetOptions = {
+        // BEWARE: no trailing slash is expected in feed URL
+        container: chartRef.current,
 
-      locale: getLanguageFromURL() || "en",
-      disabled_features: ["use_localstorage_for_settings"],
-      enabled_features: ["study_templates"],
-      charts_storage_url: "https://saveload.tradingview.com",
-      charts_storage_api_version: "1.1",
-      symbol: "AAPL",
-      interval: "D",
-      datafeed: new Datafeeds.UDFCompatibleDatafeed("https://demo_feed.tradingview.com"),
-      // Fix from https://github.com/tradingview/charting-library-examples/issues/196
-      library_path: process.env.NODE_ENV === "production" ? "/charting_library/" : "/src/charting_library/", 
-      client_id: "test",
-      user_id: "public_user_id",
-      fullscreen: false,
-      autosize: true,
-      studies_overrides: {},
-    };
+        locale: getLanguageFromURL() || "en",
+        disabled_features: ["use_localstorage_for_settings"],
+        enabled_features: ["study_templates"],
+        charts_storage_url: "https://saveload.tradingview.com",
+        charts_storage_api_version: "1.1",
+        symbol: "AAPL",
+        interval: "D",
+        datafeed: new Datafeeds.UDFCompatibleDatafeed("https://demo_feed.tradingview.com"),
+        // Fix from https://github.com/tradingview/charting-library-examples/issues/196
+        library_path: process.env.NODE_ENV === "production" ? "/charting_library/" : "../../charting_library/",
+        client_id: "test",
+        user_id: "public_user_id",
+        fullscreen: false,
+        autosize: true,
+        studies_overrides: {},
+      };
 
-    const tvWidget = new widget(widgetOptions);
+      const tvWidget = new widget(widgetOptions);
 
-    tvWidget.onChartReady(() => {
-      tvWidget.headerReady().then(() => {
-        const button = tvWidget.createButton();
-        button.setAttribute("title", "Click to show a notification popup");
-        button.classList.add("apply-common-tooltip");
-        button.addEventListener("click", () =>
-          tvWidget.showNoticeDialog({
-            title: "Notification",
-            body: "TradingView Charting Library API works correctly",
-            callback: () => {
-              console.log("Noticed!");
-            },
-          })
-        );
+      tvWidget.onChartReady(() => {
+        const series = tvWidget.chart().getSeries();
+        console.log(series);
+        setCurrentChart(tvWidget.chart());
+        setCurrentSeries(series);
+        // tvWidget.headerReady().then(() => {
+        //   const button = tvWidget.createButton();
+        //   button.setAttribute("title", "Click to show a notification popup");
+        //   button.classList.add("apply-common-tooltip");
+        //   button.addEventListener("click", () =>
+        //     tvWidget.showNoticeDialog({
+        //       title: "Notification",
+        //       body: "TradingView Charting Library API works correctly",
+        //       callback: () => {
+        //         console.log("Noticed!");
+        //       },
+        //     })
+        //   );
+        // });
       });
-    });
+
+      setAdvancedChartInited(true);
+    }
 
     // const chart = createChart(
     //   chartRef.current,
@@ -293,7 +302,7 @@ export default function ExchangeTVChart(props) {
 
     // setCurrentChart(chart);
     // setCurrentSeries(series);
-  }, [ref, priceData, currentChart, onCrosshairMove]);
+  }, [ref, priceData, currentChart, currentSeries, onCrosshairMove]);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -533,12 +542,12 @@ export default function ExchangeTVChart(props) {
         </div>
       </div>
       <div className="ExchangeChart-bottom App-box App-box-border">
-        <div className="ExchangeChart-bottom-header">
+        {/* <div className="ExchangeChart-bottom-header">
           <div className="ExchangeChart-bottom-controls">
             <Tab options={Object.keys(CHART_PERIODS)} option={period} setOption={setPeriod} trackAction={trackAction} />
           </div>
           {candleStatsHtml}
-        </div>
+        </div> */}
         <div className="ExchangeChart-bottom-content" ref={chartRef}></div>
       </div>
     </div>
