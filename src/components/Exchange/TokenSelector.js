@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import cx from "classnames";
-import { Text } from "../Translation/Text";
 
 import { formatAmount, expandDecimals, bigNumberify } from "../../Helpers";
 
@@ -107,9 +106,10 @@ export default function TokenSelector(props) {
                 className="TokenSelector-token-row"
                 onClick={() => {
                   onSelectToken(token);
-                  trackAction && trackAction("Button clicked", {
-                    buttonName: `${props.label} Token Selection modal option - ${token.symbol}`,
-                  });
+                  trackAction &&
+                    trackAction("Button clicked", {
+                      buttonName: `${props.label} Token Selection modal option - ${token.symbol}`,
+                    });
                 }}
                 key={token.address}
               >
@@ -119,7 +119,7 @@ export default function TokenSelector(props) {
                   )}
                   <div className="Token-symbol">
                     <div className="Token-text">{token.symbol}</div>
-                    <span className="text-accent"><Text>{token.name}</Text></span>
+                    <span className="text-accent">{token.name}</span>
                   </div>
                 </div>
                 <div className="Token-balance">
@@ -146,9 +146,10 @@ export default function TokenSelector(props) {
         className="TokenSelector-box"
         onClick={() => {
           setIsModalVisible(true);
-          trackAction && trackAction("Button clicked", {
-            buttonName: `Token selector box`,
-          });
+          trackAction &&
+            trackAction("Button clicked", {
+              buttonName: `Token selector box`,
+            });
         }}
       >
         {tokenInfo.symbol}

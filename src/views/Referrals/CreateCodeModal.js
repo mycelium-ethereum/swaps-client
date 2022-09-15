@@ -156,7 +156,6 @@ export default function CreateCodeModal(props) {
               <Styles.CodeInput
                 className={`text-input ${!error && "mb-sm"}`}
                 type="text"
-                placeholder="Enter a code"
                 maxLength="20"
                 pattern="^[a-zA-Z0-9_]*$"
                 disabled={isSubmitting}

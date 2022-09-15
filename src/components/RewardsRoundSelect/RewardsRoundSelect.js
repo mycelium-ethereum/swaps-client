@@ -24,7 +24,7 @@ export default function RewardsRoundSelect({
       )}
       {timeTillRewards && (
         <Styles.RewardsRoundNextRewards>
-          Next rewards in <Styles.RewardsRoundCountdown>{timeTillRewards}</Styles.RewardsRoundCountdown>
+          <Text>Next rewards in</Text> <Styles.RewardsRoundCountdown>{timeTillRewards}</Styles.RewardsRoundCountdown>
         </Styles.RewardsRoundNextRewards>
       )}
     </Styles.RewardsRoundSelect>

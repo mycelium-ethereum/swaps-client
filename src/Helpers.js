@@ -460,10 +460,10 @@ export function deserialize(data) {
 
 export const helperToast = {
   success: (content) => {
-    toast.success(content);
+    toast.success(<Text>{content}</Text>);
   },
   error: (content) => {
-    toast.error(content);
+    toast.error(<Text>{content}</Text>);
   },
 };
 

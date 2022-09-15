@@ -1128,14 +1128,14 @@ export default function MlpSwap(props) {
               <th>
                 {isBuying ? (
                   <Tooltip
-                    handle={"Available"}
+                    handle={<Text>Available</Text>}
                     tooltipIconPosition="right"
                     position="right-bottom text-none"
                     renderContent={() => <Text>Available amount to deposit into MLP.</Text>}
                   />
                 ) : (
                   <Tooltip
-                    handle={"Available"}
+                    handle={<Text>Available</Text>}
                     tooltipIconPosition="right"
                     position="right-bottom text-none"
                     renderContent={() => {
@@ -1153,10 +1153,12 @@ export default function MlpSwap(props) {
                   />
                 )}
               </th>
-              <th>Wallet</th>
+              <th>
+                <Text>Wallet</Text>
+              </th>
               <th>
                 <Tooltip
-                  handle={"Fees"}
+                  handle={<Text>Fees</Text>}
                   tooltipIconPosition="right"
                   position="right-bottom text-none"
                   renderContent={() => {

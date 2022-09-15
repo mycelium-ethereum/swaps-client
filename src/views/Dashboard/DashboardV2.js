@@ -479,7 +479,11 @@ export default function DashboardV2() {
                     <TooltipComponent
                       handle={`$${formatAmount(aum, USD_DECIMALS, 0, true)}`}
                       position="right-bottom"
-                      renderContent={() => `Total value of tokens in MLP pool (${chainName})`}
+                      renderContent={() => (
+                        <>
+                          <Text>Total value of tokens in MLP pool</Text> ({chainName})
+                        </>
+                      )}
                     />
                   </div>
                 </div>
