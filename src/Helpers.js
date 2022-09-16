@@ -20,6 +20,7 @@ import OrderBook from "./abis/OrderBook.json";
 import { getWhitelistedTokens, isValidToken } from "./data/Tokens";
 import ComingSoonTooltip from "./components/Tooltip/ComingSoon";
 import { isAddress } from "ethers/lib/utils";
+import {SECONDS_PER_WEEK} from "./data/Fees";
 
 const { AddressZero } = ethers.constants;
 
@@ -105,12 +106,14 @@ export const MLP_DECIMALS = 18;
 export const MYC_DECIMALS = 18;
 export const DEFAULT_MAX_USDG_AMOUNT = expandDecimals(200 * 1000 * 1000, 18);
 
-export const TAX_BASIS_POINTS = 20;
+// export const TAX_BASIS_POINTS = 20;
+export const TAX_BASIS_POINTS = 30;
 export const STABLE_TAX_BASIS_POINTS = 2;
 export const MINT_BURN_FEE_BASIS_POINTS = 18;
-export const SWAP_FEE_BASIS_POINTS = 15;
+export const SWAP_FEE_BASIS_POINTS = 30;
 export const STABLE_SWAP_FEE_BASIS_POINTS = 3;
-export const MARGIN_FEE_BASIS_POINTS = 3;
+// export const MARGIN_FEE_BASIS_POINTS = 3;
+export const MARGIN_FEE_BASIS_POINTS = 0;
 
 export const LIQUIDATION_FEE = expandDecimals(5, USD_DECIMALS);
 
@@ -160,10 +163,10 @@ export const TRIGGER_PREFIX_BELOW = "<";
 export const MIN_PROFIT_BIPS = 0;
 
 // USD tokens per interval given by kurtis
-export const MM_TOKENS_PER_INTERVAL = ethers.utils.parseUnits('0.1859475633', USD_DECIMALS);
+export const MM_TOKENS_PER_INTERVAL = ethers.utils.parseUnits("0.1859475633", USD_DECIMALS);
 export const FEE_MULTIPLIER_BASIS_POINTS = 4;
-export const MM_FEE_MULTIPLIER = ethers.utils.parseUnits('0.0006', FEE_MULTIPLIER_BASIS_POINTS);
-export const MM_SWAPS_FEE_MULTIPLIER = ethers.utils.parseUnits('0.0012', FEE_MULTIPLIER_BASIS_POINTS);
+export const MM_FEE_MULTIPLIER = ethers.utils.parseUnits("0.0006", FEE_MULTIPLIER_BASIS_POINTS);
+export const MM_SWAPS_FEE_MULTIPLIER = ethers.utils.parseUnits("0.0012", FEE_MULTIPLIER_BASIS_POINTS);
 
 export const MLP_POOL_COLORS = {
   ETH: "#6062a6",
@@ -558,7 +561,7 @@ export function getMarginFee(sizeDelta) {
   return sizeDelta.sub(afterFeeUsd);
 }
 
-export function getSupplyUrl(route = '/totalSupply') {
+export function getSupplyUrl(route = "/totalSupply") {
   // same supply across networks
   // return "https://stats.mycelium.xyz/total_supply";
   return `https://dev.api.tracer.finance/myc${route}`;
@@ -1583,10 +1586,10 @@ export function useENS(address) {
         const provider = new ethers.providers.JsonRpcProvider("https://rpc.ankr.com/eth");
         const name = await provider.lookupAddress(address.toLowerCase());
         if (name) {
-          setENSName(name)
+          setENSName(name);
         } else {
-          setENSName()
-        };
+          setENSName();
+        }
       }
     }
     resolveENS();
@@ -2813,8 +2816,7 @@ export function getProcessedData(
       ? data.feeMlpTrackerAnnualRewardsUsd.mul(BASIS_POINTS_DIVISOR).div(data.mlpSupplyUsd)
       : bigNumberify(0);
 
-  data.mmApr = MM_TOKENS_PER_INTERVAL.mul(SECONDS_PER_YEAR).mul(BASIS_POINTS_DIVISOR).div(data.mlpSupplyUsd);
-  data.mlpAprTotal = data.mlpAprForNativeToken.add(data.mlpAprForEsMyc).add(data.mmApr);
+  data.mlpAprTotal = data.mlpAprForNativeToken.add(data.mlpAprForEsMyc);
 
   data.totalMlpRewardsUsd = data.stakedMlpTrackerRewardsUsd.add(data.feeMlpTrackerRewardsUsd);
 
@@ -3076,3 +3078,6 @@ export function getTierIdDisplay(tierId) {
   return Number(tierId) + 1;
 }
 
+export function shareToTwitter(text) {
+  window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`, "_blank");
+}

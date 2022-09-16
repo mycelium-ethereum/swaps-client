@@ -36,13 +36,15 @@ import {
   getTracerServerUrl,
   MM_FEE_MULTIPLIER,
   FEE_MULTIPLIER_BASIS_POINTS,
-  MM_SWAPS_FEE_MULTIPLIER,
+  BASIS_POINTS_DIVISOR,
   formatAmount,
-  USD_DECIMALS
+  USD_DECIMALS,
+  MM_SWAPS_FEE_MULTIPLIER
 } from "../Helpers";
 import { getTokens, getTokenBySymbol, getWhitelistedTokens } from "../data/Tokens";
 
 import { nissohGraphClient, arbitrumGraphClient, arbitrumTestnetGraphClient } from "./common";
+import { SECONDS_PER_WEEK } from "../data/Fees";
 export * from "./prices";
 
 const { AddressZero } = ethers.constants;
@@ -167,7 +169,7 @@ export function useMarketMakingFeesSince(chainId, from, to, stableTokens) {
             )
           }
         }, bigNumberify(0))
-        setRes((mmFees.add(swapMMFees)).div(expandDecimals(1, FEE_MULTIPLIER_BASIS_POINTS)))
+        setRes(mmFees.add(swapMMFees).div(expandDecimals(1, FEE_MULTIPLIER_BASIS_POINTS)))
       }
     }).catch(console.warn);
   }, [setRes, query, chainId, from]);
@@ -189,6 +191,7 @@ export function useUserSpreadCapture(chainId, account, mlpBalance) {
       }
     }`);
     getMycGraphClient(chainId).query({ query }).then((res) => {
+      console.log(res);
       if (res.data.cumulativeSpreadCapture && res.data.userSpreadCapture) {
         let cumulativeRewardsPerToken = bigNumberify(res.data.cumulativeSpreadCapture.cumulativeRewardsPerToken)
         let lastCumulativeRewardsPerToken = bigNumberify(res.data.userSpreadCapture.lastCumulativeRewardsPerToken)
@@ -199,10 +202,25 @@ export function useUserSpreadCapture(chainId, account, mlpBalance) {
 
   let userSpreadCapture;
   if (spreadCapturePerToken && mlpBalance) {
+    console.log(spreadCapturePerToken, mlpBalance);
     userSpreadCapture = (spreadCapturePerToken.mul(mlpBalance)).div(expandDecimals(1, 18)).div(expandDecimals(1, FEE_MULTIPLIER_BASIS_POINTS));
   }
 
   return userSpreadCapture
+}
+
+export const useMarketMakingApr = (chainId, mlpSupplyUsd) => {
+  const whitelistedTokens = getWhitelistedTokens(chainId);
+  const stableTokens = whitelistedTokens.filter((t) => t.isStable);
+
+  const [to] = useState(Math.floor(Date.now() / 1000));
+  const from = to - SECONDS_PER_WEEK;
+  const lastWeeksMMFees = useMarketMakingFeesSince(chainId, from, to, stableTokens)
+
+  if (lastWeeksMMFees && mlpSupplyUsd) {
+    let mmAnnualFeesUsd = lastWeeksMMFees.mul(52);
+    return mmAnnualFeesUsd.mul(BASIS_POINTS_DIVISOR).div(mlpSupplyUsd);
+  }
 }
 
 export function useVolume(chainId) {
