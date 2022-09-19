@@ -11,6 +11,10 @@
   margin-bottom: 1rem;
 }
 
+.StakeModal .Modal-content {
+  min-width: 424px;
+}
+
 .StakeModal .Fee-update-modal-content {
   width: 600px;
 }
@@ -38,6 +42,7 @@
 
 .StakeV2-buy-myc-modal .Modal-content {
   max-width: 30rem;
+  min-width: 424px;
 }
 
 .StakeV2-address-input input {

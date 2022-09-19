@@ -238,11 +238,13 @@ function ClaimModal(props) {
     setPendingTxns,
     nativeTokenSymbol,
     wrappedTokenSymbol,
+    processedData,
+    userSpreadCapture
   } = props;
   const [isClaiming, setIsClaiming] = useState(false);
 
   const [shouldClaimMyc, setShouldClaimMyc] = useLocalStorageSerializeKey(
-    [chainId, "StakeV2-compound-should-claim-myc"],
+    [chainId, "StakeV2-claim-should-claim-myc"],
     true
   );
 
@@ -257,6 +259,10 @@ function ClaimModal(props) {
   );
   const [shouldConvertWeth, setShouldConvertWeth] = useLocalStorageSerializeKey(
     [chainId, "StakeV2-claim-should-convert-weth"],
+    true
+  );
+  const [shouldClaimSpreadCapture, setShouldClaimSpreadCapture] = useLocalStorageSerializeKey(
+    [chainId, "StakeV2-claim-should-claim-spread-capture"],
     true
   );
 
@@ -315,26 +321,65 @@ function ClaimModal(props) {
     <div className="StakeModal">
       <Modal isVisible={isVisible} setIsVisible={setIsVisible} label="Claim Rewards">
         <div className="CompoundModal-menu">
-          <div>
-            <Checkbox isChecked={shouldClaimMyc} setIsChecked={setShouldClaimMyc}>
+          <StakeV2Styled.ModalRow>
+            <StakeV2Styled.ModalRowHeader>
               Claim MYC Rewards
-            </Checkbox>
-          </div>
-          <div>
-            <Checkbox isChecked={shouldClaimEsMyc} setIsChecked={setShouldClaimEsMyc}>
+            </StakeV2Styled.ModalRowHeader>
+            <StakeV2Styled.ModalRowText large inline>
+              0.00 MYC
+            </StakeV2Styled.ModalRowText>{" "}
+            <StakeV2Styled.ModalRowText inline secondary>
+              ($0.00)
+            </StakeV2Styled.ModalRowText>
+            <Checkbox isChecked={shouldClaimMyc} setIsChecked={setShouldClaimMyc} />
+          </StakeV2Styled.ModalRow>
+          <StakeV2Styled.ModalRow>
+            <StakeV2Styled.ModalRowHeader>
               Claim esMYC Rewards
-            </Checkbox>
-          </div>
-          <div>
-            <Checkbox isChecked={shouldClaimWeth} setIsChecked={setShouldClaimWeth} disabled={shouldConvertWeth}>
+            </StakeV2Styled.ModalRowHeader>
+            <StakeV2Styled.ModalRowText inline large>
+              {formatKeyAmount(processedData, "stakedMlpTrackerRewards", 18, 4)} esMYC
+            </StakeV2Styled.ModalRowText>{" "}
+            <StakeV2Styled.ModalRowText inline secondary>
+              ($
+              {formatKeyAmount(processedData, "stakedMlpTrackerRewardsUsd", USD_DECIMALS, 2, true)})
+            </StakeV2Styled.ModalRowText>
+            <Checkbox isChecked={shouldClaimEsMyc} setIsChecked={setShouldClaimEsMyc} />
+          </StakeV2Styled.ModalRow>
+          <StakeV2Styled.ModalRow>
+            <StakeV2Styled.ModalRowHeader>
               Claim {wrappedTokenSymbol} Rewards
-            </Checkbox>
-          </div>
-          <div>
-            <Checkbox isChecked={shouldConvertWeth} setIsChecked={toggleConvertWeth}>
+            </StakeV2Styled.ModalRowHeader>
+            <StakeV2Styled.ModalRowText large inline>
+              {formatKeyAmount(processedData, "feeMlpTrackerRewards", 18, 4)} {nativeTokenSymbol} (
+              {wrappedTokenSymbol})
+            </StakeV2Styled.ModalRowText>{" "}
+            <StakeV2Styled.ModalRowText inline secondary>
+              ($
+              {formatKeyAmount(processedData, "feeMlpTrackerRewardsUsd", USD_DECIMALS, 2, true)})
+            </StakeV2Styled.ModalRowText>
+            <Checkbox isChecked={shouldClaimWeth} setIsChecked={setShouldClaimWeth} disabled={shouldConvertWeth} />
+          </StakeV2Styled.ModalRow>
+          <StakeV2Styled.ModalRow>
+            <StakeV2Styled.ModalRowHeader>
               Convert {wrappedTokenSymbol} to {nativeTokenSymbol}
-            </Checkbox>
-          </div>
+            </StakeV2Styled.ModalRowHeader>
+            <Checkbox isChecked={shouldConvertWeth} setIsChecked={toggleConvertWeth} />
+          </StakeV2Styled.ModalRow>
+          <StakeV2Styled.ModalRow>
+            <StakeV2Styled.ModalRowHeader>
+              Market Making Rewards
+            </StakeV2Styled.ModalRowHeader>
+            <StakeV2Styled.ModalRowText large inline>
+              {formatKeyAmount(processedData, "feeMlpTrackerRewards", 18, 4)} {nativeTokenSymbol} (
+              {wrappedTokenSymbol})
+            </StakeV2Styled.ModalRowText>{" "}
+            <StakeV2Styled.ModalRowText inline secondary>
+              ($
+              {formatAmount(userSpreadCapture, USD_DECIMALS, 2, true, '0.00')})
+            </StakeV2Styled.ModalRowText>
+            <Checkbox isChecked={shouldClaimSpreadCapture} setIsChecked={setShouldClaimSpreadCapture} />
+          </StakeV2Styled.ModalRow>
         </div>
         <div className="Exchange-swap-button-container">
           <button className="App-cta Exchange-swap-button" onClick={onClickPrimary} disabled={!isPrimaryEnabled()}>
@@ -577,7 +622,7 @@ export default function StakeV2({ setPendingTxns, connectWallet, trackAction, sa
   const [vesterWithdrawAddress, setVesterWithdrawAddress] = useState("");
 
   const [isCompoundModalVisible, setIsCompoundModalVisible] = useState(false);
-  const [isClaimModalVisible, setIsClaimModalVisible] = useState(false);
+  const [isClaimModalVisible, setIsClaimModalVisible] = useState(true);
   const [isSpreadCaptureModalVisible, setIsSpreadCaptureModalVisible] = useState(false);
 
   const rewardRouterAddress = getContract(chainId, "RewardRouter");
@@ -872,6 +917,8 @@ export default function StakeV2({ setPendingTxns, connectWallet, trackAction, sa
         nativeTokenSymbol={nativeTokenSymbol}
         library={library}
         chainId={chainId}
+        processedData={processedData}
+        userSpreadCapture={userSpreadCapture}
       />
       <SpreadCaptureModal
         active={active}
