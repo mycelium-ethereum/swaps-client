@@ -568,9 +568,9 @@ const BASE_TRACER_URL = process.env.REACT_APP_TRACER_API ?? "https://api.tracer.
 
 export function getTracerServerUrl(chainId, path) {
   if (!chainId) {
-    console.error("chainId is not supported");
+    throw new Error("chainId is not supported");
   } else if (chainId !== ARBITRUM && chainId !== ARBITRUM_TESTNET) {
-    console.error("chainId is not supported");
+    throw new Error("chainId is not supported");
   }
 
   return `${BASE_TRACER_URL}/trs${path}?network=${chainId}`;
