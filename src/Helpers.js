@@ -423,7 +423,7 @@ export const networkOptions = [
   },
 ];
 
-const supportedChainIds = [ARBITRUM, AVALANCHE, ARBITRUM_TESTNET];
+const supportedChainIds = [ARBITRUM, ARBITRUM_TESTNET];
 const injectedConnector = new InjectedConnector({
   supportedChainIds,
 });
@@ -433,7 +433,6 @@ const getWalletConnectConnector = () => {
   return new WalletConnectConnector({
     rpc: {
       [ETHEREUM]: ETHEREUM_RPC_PROVIDERS[0],
-      [AVALANCHE]: AVALANCHE_RPC_PROVIDERS[0],
       [ARBITRUM]: ARBITRUM_RPC_PROVIDERS[0],
       [ARBITRUM_TESTNET]: ARBITRUM_TESTNET_RPC_PROVIDERS[0],
     },
