@@ -2764,7 +2764,8 @@ export function getProcessedData(
     data.stakedMycTrackerSupplyUsd && data.stakedMycTrackerSupplyUsd.gt(0)
       ? data.stakedMycTrackerAnnualRewardsUsd.mul(BASIS_POINTS_DIVISOR).div(data.stakedMycTrackerSupplyUsd)
       : bigNumberify(0);
-  data.feeMycTrackerAnnualRewardsUsd = stakingData.feeMycTracker.tokensPerInterval
+  // data.feeMycTrackerAnnualRewardsUsd = stakingData.feeMycTracker.tokensPerInterval
+  data.feeMycTrackerAnnualRewardsUsd = bigNumberify('56530125890000')
     .mul(SECONDS_PER_YEAR)
     .mul(nativeTokenPrice)
     .div(expandDecimals(1, 18));
