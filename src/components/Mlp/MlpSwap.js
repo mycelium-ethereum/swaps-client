@@ -43,6 +43,7 @@ import {
   ARBITRUM,
   PLACEHOLDER_ACCOUNT,
   MM_TOKENS_PER_INTERVAL,
+  TEMP_FMLP_TOKENS_PER_INTERVAL,
 } from "../../Helpers";
 
 import { callContract, useMYCPrice, useInfoTokens, useMarketMakingApr } from "../../Api";
@@ -82,7 +83,7 @@ function getStakingData(stakingInfo) {
     const key = keys[i];
     data[key] = {
       claimable: stakingInfo[i * propsLength],
-      tokensPerInterval: stakingInfo[i * propsLength + 1],
+      tokensPerInterval: key === 'feeMlpTracker' ? TEMP_FMLP_TOKENS_PER_INTERVAL : stakingInfo[i * propsLength + 1],
       averageStakedAmounts: stakingInfo[i * propsLength + 2],
       cumulativeRewards: stakingInfo[i * propsLength + 3],
       totalSupply: stakingInfo[i * propsLength + 4],

@@ -20,7 +20,6 @@ import OrderBook from "./abis/OrderBook.json";
 import { getWhitelistedTokens, isValidToken } from "./data/Tokens";
 import ComingSoonTooltip from "./components/Tooltip/ComingSoon";
 import { isAddress } from "ethers/lib/utils";
-import {SECONDS_PER_WEEK} from "./data/Fees";
 
 const { AddressZero } = ethers.constants;
 
@@ -40,6 +39,8 @@ export const DEFAULT_CHAIN_ID = ARBITRUM;
 export const CHAIN_ID = DEFAULT_CHAIN_ID;
 
 export const MIN_PROFIT_TIME = 0;
+
+export const TEMP_FMLP_TOKENS_PER_INTERVAL = bigNumberify('56530125890000')
 
 const SELECTED_NETWORK_LOCAL_STORAGE_KEY = "SELECTED_NETWORK";
 
@@ -2677,7 +2678,7 @@ export function getStakingData(stakingInfo) {
     const key = keys[i];
     data[key] = {
       claimable: stakingInfo[i * propsLength],
-      tokensPerInterval: stakingInfo[i * propsLength + 1],
+      tokensPerInterval: key === 'feeMlpTracker' ? TEMP_FMLP_TOKENS_PER_INTERVAL : stakingInfo[i * propsLength + 1],
       averageStakedAmounts: stakingInfo[i * propsLength + 2],
       cumulativeRewards: stakingInfo[i * propsLength + 3],
       totalSupply: stakingInfo[i * propsLength + 4],
