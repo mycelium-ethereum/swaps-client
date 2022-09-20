@@ -423,7 +423,7 @@ export const networkOptions = [
   },
 ];
 
-const supportedChainIds = [ARBITRUM, AVALANCHE, ARBITRUM_TESTNET];
+const supportedChainIds = [ARBITRUM, ARBITRUM_TESTNET];
 const injectedConnector = new InjectedConnector({
   supportedChainIds,
 });
@@ -433,7 +433,6 @@ const getWalletConnectConnector = () => {
   return new WalletConnectConnector({
     rpc: {
       [ETHEREUM]: ETHEREUM_RPC_PROVIDERS[0],
-      [AVALANCHE]: AVALANCHE_RPC_PROVIDERS[0],
       [ARBITRUM]: ARBITRUM_RPC_PROVIDERS[0],
       [ARBITRUM_TESTNET]: ARBITRUM_TESTNET_RPC_PROVIDERS[0],
     },
@@ -569,7 +568,7 @@ const BASE_TRACER_URL = process.env.REACT_APP_TRACER_API ?? "https://api.tracer.
 
 export function getTracerServerUrl(chainId, path) {
   if (!chainId) {
-    throw new Error("chainId is not provided");
+    throw new Error("chainId is not supported");
   } else if (chainId !== ARBITRUM && chainId !== ARBITRUM_TESTNET) {
     throw new Error("chainId is not supported");
   }
