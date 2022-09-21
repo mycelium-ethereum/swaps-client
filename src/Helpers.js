@@ -108,7 +108,7 @@ export const DEFAULT_MAX_USDG_AMOUNT = expandDecimals(200 * 1000 * 1000, 18);
 export const TAX_BASIS_POINTS = 30;
 export const STABLE_TAX_BASIS_POINTS = 2;
 export const MINT_BURN_FEE_BASIS_POINTS = 18;
-export const SWAP_FEE_BASIS_POINTS = 30;
+export const SWAP_FEE_BASIS_POINTS = 50;
 export const STABLE_SWAP_FEE_BASIS_POINTS = 3;
 export const MARGIN_FEE_BASIS_POINTS = 3;
 
@@ -1660,7 +1660,7 @@ export function useEagerConnect(setActivatingConnector) {
           setActivatingConnector(connector);
           await activate(connector, undefined, true);
         }
-      } catch (ex) {}
+      } catch (ex) { }
 
       setTried(true);
     })();
