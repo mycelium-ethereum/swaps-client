@@ -38,7 +38,7 @@ import {
   getProcessedData,
   getPageTitle,
 } from "../../Helpers";
-import { callContract, useMYCPrice, useTotalMYCSupply } from "../../Api";
+import { callContract, useMarketMakingApr, useMYCPrice, useTotalMYCSupply } from "../../Api";
 import { getConstant } from "../../Constants";
 
 import useSWR from "swr";
@@ -375,7 +375,7 @@ function VesterDepositModal(props) {
   }
 
   const getError = () => {
-    if (ethBalance?.eq(0)){
+    if (ethBalance?.eq(0)) {
       return ["Not enough ETH for gas"];
     }
 
@@ -551,51 +551,12 @@ function VesterWithdrawModal(props) {
   );
 }
 
-function FeeDistributionUpdateModal(props) {
-  const { isVisible, setIsVisible } = props;
-
-  const onClickPrimary = () => {
-    setIsVisible(false);
-  };
-
-  return (
-    <div className="StakeModal Fee-update-modal">
-      <Modal isVisible={isVisible} setIsVisible={setIsVisible} label="Fee Distribution Update">
-        <div className="Fee-update-modal-content">
-          <div>
-            <p>
-              As of this week, Mycelium Swaps will be moving to distribute MLP rewards every two weeks instead of
-              weekly. As a user, there will be no significant change in your experience, you will still receive the same
-              amount of rewards and be able to claim them continuously, whenever you like. However to support this
-              migration, you will see no ETH rewards on the UI this week as they will be released next week as part of
-              the first two week cycle. Please note that you are still receiving ETH rewards for providing liquidity
-              this week, you will just not be able to claim these rewards until next week. This is the only time this
-              will happen.
-            </p>
-            <p>
-              Next Wednesday, ETH rewards will start flowing again to cover the previous two weeks of fees. To
-              compensate for the delayed access to your rewards for this single week, we will be boosting the esMYC
-              rewards to a target APR of 50%. These boosted rewards will be reduced next week.
-            </p>
-          </div>
-          <div className="Exchange-swap-button-container">
-            <button className="App-cta Exchange-swap-button" onClick={onClickPrimary}>
-              Confirm
-            </button>
-          </div>
-        </div>
-      </Modal>
-    </div>
-  );
-}
-
 export default function StakeV2({ setPendingTxns, connectWallet, trackAction }) {
   const { active, library, account } = useWeb3React();
   const { chainId } = useChainId();
 
   const chainName = getChainName(chainId);
 
-  const [isFeeUpdateModalVisible, setIsFeeUpdateModalVisible] = useState(false);
   const [isVesterDepositModalVisible, setIsVesterDepositModalVisible] = useState(false);
   const [vesterDepositTitle, setVesterDepositTitle] = useState("");
   const [vesterDepositStakeTokenLabel, setVesterDepositStakeTokenLabel] = useState("");
@@ -746,6 +707,7 @@ export default function StakeV2({ setPendingTxns, connectWallet, trackAction }) 
   const stakingData = getStakingData(stakingInfo);
   const vestingData = getVestingData(vestingInfo);
 
+
   const processedData = getProcessedData(
     balanceData,
     supplyData,
@@ -756,8 +718,14 @@ export default function StakeV2({ setPendingTxns, connectWallet, trackAction }) 
     nativeTokenPrice,
     stakedMycSupply,
     mycPrice,
-    mycSupply
+    mycSupply,
   );
+
+  const mmApr = useMarketMakingApr(chainId, processedData.mlpSupplyUsd);
+  if (mmApr) {
+    processedData.mmApr = mmApr;
+    processedData.mlpAprTotal = processedData.mlpAprTotal.add(mmApr);
+  }
 
   let totalRewardTokens;
   if (processedData && processedData.bnMycInFeeMyc && processedData.bonusMycInFeeMyc) {
@@ -768,15 +736,6 @@ export default function StakeV2({ setPendingTxns, connectWallet, trackAction }) 
   if (totalRewardTokens && processedData && processedData.mlpBalance) {
     totalRewardTokensAndMlp = totalRewardTokens.add(processedData.mlpBalance);
   }
-
-  useEffect(() => {
-    window.scrollTo(0, 0);
-    const hasSeenFeePopup = window.localStorage.getItem("feeDistributionUpdateSeen");
-    if (!hasSeenFeePopup) {
-      setIsFeeUpdateModalVisible(true);
-      window.localStorage.setItem("feeDistributionUpdateSeen", "true");
-    }
-  }, []);
 
   let earnMsg;
   if (totalRewardTokensAndMlp && totalRewardTokensAndMlp.gt(0)) {
@@ -794,7 +753,7 @@ export default function StakeV2({ setPendingTxns, connectWallet, trackAction }) 
     } else {
       setIsCompoundModalVisible(true);
     }
-  }
+  };
 
   const showMlpClaimModal = () => {
     if (ethBalance?.eq(0)) {
@@ -802,7 +761,7 @@ export default function StakeV2({ setPendingTxns, connectWallet, trackAction }) 
     } else {
       setIsClaimModalVisible(true);
     }
-  }
+  };
 
   const showMycVesterDepositModal = () => {
     if (ethBalance?.eq(0)) {
@@ -836,7 +795,7 @@ export default function StakeV2({ setPendingTxns, connectWallet, trackAction }) 
   const showMycVesterWithdrawModal = () => {
     if (ethBalance?.eq(0)) {
       helperToast.error("You don't have any ETH to pay for gas");
-      return
+      return;
     } else if (!vestingData || !vestingData.mlpVesterVestedAmount || vestingData.mlpVesterVestedAmount.eq(0)) {
       helperToast.error("You have not deposited any tokens for vesting.");
       return;
@@ -849,7 +808,6 @@ export default function StakeV2({ setPendingTxns, connectWallet, trackAction }) 
 
   return (
     <div className="StakeV2 Page page-layout default-container">
-      <FeeDistributionUpdateModal isVisible={isFeeUpdateModalVisible} setIsVisible={setIsFeeUpdateModalVisible} />
       <VesterDepositModal
         isVisible={isVesterDepositModalVisible}
         setIsVisible={setIsVesterDepositModalVisible}
@@ -1041,10 +999,7 @@ export default function StakeV2({ setPendingTxns, connectWallet, trackAction }) 
                     Sell MLP
                   </Link>
                   {active && (
-                    <button
-                      className="App-button-option App-card-option"
-                      onClick={() => showMlpCompoundModal()}
-                    >
+                    <button className="App-button-option App-card-option" onClick={() => showMlpCompoundModal()}>
                       Compound
                     </button>
                   )}
@@ -1168,6 +1123,9 @@ export default function StakeV2({ setPendingTxns, connectWallet, trackAction }) 
                       Withdraw
                     </button>
                   )}
+                  <a href="https://lend.mycelium.xyz" target="_blank" rel="noopener noreferrer">
+                    <button className="App-button-option App-card-option">MYC Lending</button>
+                  </a>
                 </div>
               </div>
             </div>

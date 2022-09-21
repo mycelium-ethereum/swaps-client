@@ -716,7 +716,6 @@ export const Exchange = forwardRef((props, ref) => {
 
   const [chartPeriod] = useLocalStorage(JSON.stringify([chainId, "Chart-period"]));
   const [tableViewSelection] = useLocalStorage("List-section-v2");
-  const [isLeverageSliderEnabled] = useLocalStorage(JSON.stringify([chainId, "Exchange-swap-leverage-slider-enabled"]));
   const [leverageOption] = useLocalStorage(JSON.stringify([chainId, "Exchange-swap-leverage-option"]));
   const tableView =
     !!tableViewSelection && Object.keys(tableViewSelection).length > 0 ? tableViewSelection[chainId] : "Positions"; // localStorage item "List-section-v2" will return undefined if no selection has been made previously
@@ -728,7 +727,6 @@ export const Exchange = forwardRef((props, ref) => {
     chainId,
     swapOption,
     tableView,
-    isLeverageSliderEnabled,
     leverageOption,
   ];
 
@@ -749,8 +747,7 @@ export const Exchange = forwardRef((props, ref) => {
       // Get token to pay
       const tokenToPay = getToken(chainId, tokenSelection[swapOption].from).symbol;
       const tokenToReceive = getToken(chainId, tokenSelection[swapOption].to).symbol;
-      // Get leverage option if leverage slider enabled
-      const leverage = isLeverageSliderEnabled ? { leverage: parseInt(leverageOption) } : null;
+      const leverage = { leverage: parseInt(leverageOption) };
 
       const traits = {
         graphTime: chartPeriod,
@@ -759,7 +756,6 @@ export const Exchange = forwardRef((props, ref) => {
         marketPosition: swapOption,
         tokenToPay: tokenToPay,
         tokenToReceive: tokenToReceive,
-        leverageSliderEnabled: isLeverageSliderEnabled,
         ...leverage,
       };
       trackPageWithTraits(traits);
@@ -774,7 +770,6 @@ export const Exchange = forwardRef((props, ref) => {
     chainId,
     swapOption,
     tableView,
-    isLeverageSliderEnabled,
     leverageOption,
     analytics,
   ]);

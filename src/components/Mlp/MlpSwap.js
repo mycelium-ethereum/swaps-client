@@ -42,10 +42,9 @@ import {
   USDG_DECIMALS,
   ARBITRUM,
   PLACEHOLDER_ACCOUNT,
-  MM_TOKENS_PER_INTERVAL,
 } from "../../Helpers";
 
-import { callContract, useMYCPrice, useInfoTokens } from "../../Api";
+import { callContract, useMYCPrice, useInfoTokens, useMarketMakingApr } from "../../Api";
 
 import TokenSelector from "../Exchange/TokenSelector";
 import BuyInputSection from "../BuyInputSection/BuyInputSection";
@@ -295,7 +294,6 @@ export default function MlpSwap(props) {
       .mul(nativeToken.minPrice)
       .div(expandDecimals(1, 18));
     feeMlpTrackerApr = feeMlpTrackerAnnualRewardsUsd.mul(BASIS_POINTS_DIVISOR).div(mlpSupplyUsd);
-    totalApr = totalApr.add(feeMlpTrackerApr);
   }
 
   let stakedMlpTrackerAnnualRewardsUsd;
@@ -313,13 +311,12 @@ export default function MlpSwap(props) {
       .mul(mycPrice)
       .div(expandDecimals(1, 18));
     stakedMlpTrackerApr = stakedMlpTrackerAnnualRewardsUsd.mul(BASIS_POINTS_DIVISOR).div(mlpSupplyUsd);
-    totalApr = totalApr.add(stakedMlpTrackerApr);
   }
 
-  let mmApr;
-  if (mlpSupplyUsd && mlpSupplyUsd.gt(0)) {
-    mmApr = MM_TOKENS_PER_INTERVAL.mul(SECONDS_PER_YEAR).mul(BASIS_POINTS_DIVISOR).div(mlpSupplyUsd);
-    totalApr = totalApr.add(mmApr);
+  let mmApr = useMarketMakingApr(chainId, mlpSupplyUsd);
+
+  if (mmApr && stakedMlpTrackerApr && feeMlpTrackerApr) {
+    totalApr = totalApr.add(mmApr).add(feeMlpTrackerApr).add(stakedMlpTrackerApr);
   }
 
   useEffect(() => {
@@ -433,7 +430,7 @@ export default function MlpSwap(props) {
 
   const getError = () => {
     const gasTokenInfo = getTokenInfo(infoTokens, ethers.constants.AddressZero);
-    if (gasTokenInfo.balance?.eq(0)){
+    if (gasTokenInfo.balance?.eq(0)) {
       return ["Not enough ETH for gas"];
     }
 
@@ -807,7 +804,7 @@ export default function MlpSwap(props) {
             </div>
           </div>
           <div className="App-card-divider"></div>
-          <div className="App-card-content">
+          <div className="App-card-content Totals-section">
             {!isBuying && (
               <div className="App-card-row">
                 <div className="label">Reserved</div>
@@ -862,6 +859,23 @@ export default function MlpSwap(props) {
                 {formatAmount(mlpSupply, MLP_DECIMALS, 4, true)} MLP ($
                 {formatAmount(mlpSupplyUsd, USD_DECIMALS, 2, true)})
               </div>
+            </div>
+            <div className="Insurance-btn-container">
+              <Tooltip
+                handle={
+                  <a
+                    href="https://core.riskharbor.com/pool/arbitrum/0xbcA81A2118982182d897845571BE950aE94C619c/4"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <button className="App-button-option App-card-option Insurance-btn">MLP Insurance</button>
+                  </a>
+                }
+                position="left-top"
+                renderContent={() => {
+                  return <div className="Tooltip-row">Risk Harbor Insurance for fsMLP.</div>;
+                }}
+              />
             </div>
           </div>
         </div>

@@ -54,6 +54,7 @@ import {
   ARBITRUM_TESTNET,
   PLACEHOLDER_ACCOUNT,
   getDefaultArbitrumRpcUrl,
+  shareToTwitter,
 } from "./Helpers";
 import ReaderV2 from "./abis/ReaderV2.json";
 
@@ -97,6 +98,9 @@ import logoImg from "./img/logo_MYC.svg";
 import logoSmallImg from "./img/logo_MYC_small.svg";
 import poolsSmallImg from "./img/myc_pools_short.svg";
 import connectWalletImg from "./img/ic_wallet_24.svg";
+import ethMergeHeader from "./img/eth-merge-modal-header.png";
+import ethMergeHeadermesh from "./img/eth-merge-modal-header-mesh.png";
+import twitterIcon from "./img/twitter-icon.svg";
 
 import metamaskImg from "./img/metamask.png";
 import coinbaseImg from "./img/coinbaseWallet.png";
@@ -118,7 +122,6 @@ import PageNotFound from "./views/PageNotFound/PageNotFound";
 import useSWR from "swr";
 import LinkDropdown from "./components/Navigation/LinkDropdown/LinkDropdown";
 import Sidebar from "./components/Navigation/Sidebar/Sidebar";
-import { Banner, BannerContent, BannerTitle } from "./components/Banner/Banner";
 
 if ("ethereum" in window) {
   window.ethereum.autoRefreshOnNetworkChange = false;
@@ -487,6 +490,7 @@ function FullApp() {
   };
 
   const [walletModalVisible, setWalletModalVisible] = useState();
+  const [mergeModalVisible, setMergeModalVisible] = useState(false);
   const connectWallet = () => setWalletModalVisible(true);
 
   const [isDrawerVisible, setIsDrawerVisible] = useState(undefined);
@@ -738,6 +742,14 @@ function FullApp() {
     },
     [chainId, active]
   );
+
+  useEffect(() => {
+    const hasSeenEthMergeModal = window.localStorage.getItem("ethMergeModalSeen");
+    if (!hasSeenEthMergeModal) {
+      setMergeModalVisible(true);
+      window.localStorage.setItem("ethMergeModalSeen", "true");
+    }
+  }, []);
 
   return (
     <>
@@ -1006,6 +1018,43 @@ function FullApp() {
         pauseOnHover
       />
       <EventToastContainer />
+      <Modal
+        className="Connect-wallet-modal"
+        isVisible={walletModalVisible}
+        setIsVisible={setWalletModalVisible}
+        label="Connect Wallet"
+      >
+        <button
+          className="Wallet-btn MetaMask-btn"
+          onClick={() => {
+            activateMetaMask();
+            trackAction && trackAction("Button clicked", { buttonName: "Connect with MetaMask" });
+          }}
+        >
+          <img src={metamaskImg} alt="MetaMask" />
+          <div>MetaMask</div>
+        </button>
+        <button
+          className="Wallet-btn CoinbaseWallet-btn"
+          onClick={() => {
+            activateCoinBase();
+            trackAction && trackAction("Button clicked", { buttonName: "Connect with Coinbase Wallet" });
+          }}
+        >
+          <img src={coinbaseImg} alt="Coinbase Wallet" />
+          <div>Coinbase Wallet</div>
+        </button>
+        <button
+          className="Wallet-btn WalletConnect-btn"
+          onClick={() => {
+            activateWalletConnect();
+            trackAction && trackAction("Button clicked", { buttonName: "Connect with WalletConnect" });
+          }}
+        >
+          <img src={walletConnectImg} alt="WalletConnect" />
+          <div>WalletConnect</div>
+        </button>
+      </Modal>
       <Modal
         className="Connect-wallet-modal"
         isVisible={walletModalVisible}
