@@ -26,27 +26,27 @@ export default function ExchangeAdvancedTVChart(props) {
     }),
     []
   );
+  const [tvWidget, setTvWidget] = useState(null);
   const [showChart, setShowChart] = useState(false);
-  const [prevPeriod, setPrevPeriod] = useState(null);
+  const [prevPeriod, setPrevPeriod] = useState(period);
+  const [prevToken, setPrevToken] = useState(selectedToken?.address);
+
+  // useEffect(() => {
+  //   const interval = setInterval(() => {
+  //     updatePriceData(undefined, true);
+  //   }, 60 * 1000);
+  //   return () => clearInterval(interval);
+  // }, [updatePriceData]);
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      updatePriceData(undefined, true);
-    }, 60 * 1000);
-    return () => clearInterval(interval);
-  }, [updatePriceData]);
-
-  useEffect(() => {
-    if (prevPeriod !== period && priceData?.length) {
-      setPrevPeriod(period);
-      setShowChart(false);
+    if (!tvWidget && priceData?.length && selectedToken) {
       const widgetOptions = {
         ...defaultProps,
         symbol: `${selectedToken?.address}:${selectedToken?.symbol}/USD`,
         debug: false,
         datafeed: generateDataFeed(priceData),
         // interval: period.toUpperCase(),
-        interval: "1D",
+        interval: period,
         container: "tv_chart_container",
         library_path: process.env.NODE_ENV === "production" ? "/charting_library/" : "../../charting_library/",
         locale: getLanguageFromURL() || "en",
@@ -62,53 +62,54 @@ export default function ExchangeAdvancedTVChart(props) {
         timeframe: "14D",
         overrides: {
           "paneProperties.backgroundType": "solid",
-          // "paneProperties.background": "#000240",
-          // "scalesProperties.lineColor": "#3da8f5",
-          // "scalesProperties.textColor": "#fff",
-          // "scalesProperties.backgroundColor": "#000240",
-          // "paneProperties.backgroundGradientStartColor": "#000240",
-          // "paneProperties.backgroundGradientEndColor": "#000240",
+          "paneProperties.background": "#000a00",
+          "scalesProperties.lineColor": "#8b968c",
+          "scalesProperties.textColor": "#fff",
+          "scalesProperties.backgroundColor": "#000a00",
+          "paneProperties.backgroundGradientStartColor": "#000a00",
+          "paneProperties.backgroundGradientEndColor": "#000a00",
         },
-        // loading_screen: {
-        //   backgroundColor: "#000240!important",
-        //   foregroundColor: "#000240!important",
-        // },
-        // toolbar_bg: "#000240",
-        // custom_css_url: "/styles/chartStyles.css",
+        loading_screen: {
+          backgroundColor: "#000a00!important",
+          foregroundColor: "#000a00!important",
+        },
+        toolbar_bg: "#000a00",
+        custom_css_url: "/AdvancedTVChart.css",
       };
-
-      new widget(widgetOptions);
-      setShowChart(true);
+      const tvWidget = new widget(widgetOptions);
+      tvWidget.onChartReady(() => {
+        setShowChart(true);
+      });
+      setTvWidget(tvWidget);
     }
-  }, [defaultProps, selectedToken, priceData, period, prevPeriod]);
+  }, [defaultProps, selectedToken, priceData, tvWidget, period]);
 
-  // public componentDidUpdate(prevProps: ChartContainerProps, prevState: ChartContainerState): void {
-  //     if (
-  //         !tvWidgetReady ||
-  //         prevProps.selectedTracer.address !== this.props?.selectedTracer?.address
-  //     ) {
-  //         console.debug('Tracer has changed, new tracer', this.props.selectedTracer);
-  //         this.setState({ showChart: false });
-  //         const { address, marketId } = this.props?.selectedTracer ?? {
-  //             address: '',
-  //             marketId: 'ETH/USD',
-  //         };
-  //         if (this.state.tvWidgetReady) {
-  //             this.tvWidget?.setSymbol(
-  //                 `${address}:${marketId}`,
-  //                 '1D' as ChartingLibraryWidgetOptions['interval'],
-  //                 () => {
-  //                     this.setState({ showChart: true });
-  //                 },
-  //             );
-  //         }
-  //     }
-  // }
+  useEffect(() => {
+    if (tvWidget && prevPeriod !== period) {
+      setPrevPeriod(period);
+      setShowChart(false);
+      tvWidget.setResolution(period, () => setShowChart(true));
+    }
+  }, [period, prevPeriod, tvWidget]);
+
+  useEffect(() => {
+    if (showChart && tvWidget && prevToken !== selectedToken?.address) {
+      setShowChart(false);
+      setPrevToken(selectedToken?.address);
+      tvWidget.setSymbol(`${selectedToken?.address}:${selectedToken?.symbol}/USD`, period, () => {
+        setShowChart(false);
+      });
+    }
+  }, [showChart, prevToken, tvWidget, selectedToken?.address, selectedToken?.symbol, period]);
+
+  if (!priceData) {
+    return null;
+  }
 
   return (
     <>
       <div id={defaultProps.container} className="ExchangeChart tv" />
-      {showChart ? <>Loading</> : null}
+      {/* {!showChart ? <>Loading</> : null} */}
     </>
   );
 }

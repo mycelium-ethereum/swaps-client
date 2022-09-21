@@ -1,7 +1,12 @@
 const supportedResolutions = [
   // these work if you set it as default but seem to fail when changing
   // '5' as ChartingLibraryWidgetOptions['interval'],
-  "1D",
+  // CHART_PERIODS
+  "5",
+  "15",
+  "60",
+  "240",
+  "1d",
 ];
 
 const config = {
@@ -9,7 +14,6 @@ const config = {
 };
 
 export const generateDataFeed = (priceData) => {
-  console.log(priceData);
   if (!priceData) {
     return null;
   }

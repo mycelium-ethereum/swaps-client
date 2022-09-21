@@ -883,7 +883,6 @@ table.Exchange-list-small td {
   padding-top: 2rem;
   height: 5rem;
 }
-
 @media (max-width: 1640px) {
   .App-box.large,
   .Exchange-list.large {
