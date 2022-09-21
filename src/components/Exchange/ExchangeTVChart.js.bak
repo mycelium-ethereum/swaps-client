@@ -2,6 +2,8 @@ import React, { useEffect, useState, useRef, useCallback, useMemo } from "react"
 import cx from "classnames";
 
 import { createChart } from "krasulya-lightweight-charts";
+import { widget } from "../../charting_library";
+import * as Datafeeds from "../../datafeeds/udf/dist/bundle.js";
 
 import {
   USD_DECIMALS,
@@ -13,7 +15,9 @@ import {
   formatDateTime,
   usePrevious,
   getLiquidationPrice,
+  useLocalStorageSerializeKey,
 } from "../../Helpers";
+import { useChartPrices } from "../../Api";
 import Tab from "../Tab/Tab";
 
 import { getTokens, getToken } from "../../data/Tokens";
@@ -55,6 +59,8 @@ export function getChartToken(swapOption, fromToken, toToken, chainId) {
   return toToken;
 }
 
+const DEFAULT_PERIOD = "4h";
+
 const getSeriesOptions = () => ({
   // https://github.com/tradingview/lightweight-charts/blob/master/docs/area-series.md
   lineColor: "rgba(0, 48, 0, 0.2)",
@@ -68,6 +74,12 @@ const getSeriesOptions = () => ({
   wickUpColor: "#4FE021",
   borderVisible: false,
 });
+
+const getLanguageFromURL = () => {
+  const regex = new RegExp("[\\?&]lang=([^&#]*)");
+  const results = regex.exec(window.location.search);
+  return results === null ? null : decodeURIComponent(results[1].replace(/\+/g, " "));
+};
 
 const getChartOptions = (width, height) => ({
   width,
@@ -121,6 +133,8 @@ const getChartOptions = (width, height) => ({
 export default function ExchangeTVChart(props) {
   const {
     swapOption,
+    fromTokenAddress,
+    toTokenAddress,
     infoTokens,
     chainId,
     positions,
@@ -129,16 +143,28 @@ export default function ExchangeTVChart(props) {
     setToTokenAddress,
     sidebarVisible,
     trackAction,
-    chartToken,
-    setChartToken,
-    currentAveragePrice,
-    period,
-    setPeriod,
-    priceData,
-    updatePriceData,
   } = props;
   const [currentChart, setCurrentChart] = useState();
   const [currentSeries, setCurrentSeries] = useState();
+
+  let [period, setPeriod] = useLocalStorageSerializeKey([chainId, "Chart-period"], DEFAULT_PERIOD);
+  if (!(period in CHART_PERIODS)) {
+    period = DEFAULT_PERIOD;
+  }
+
+  const [hoveredCandlestick, setHoveredCandlestick] = useState();
+
+  const fromToken = getTokenInfo(infoTokens, fromTokenAddress);
+  const toToken = getTokenInfo(infoTokens, toTokenAddress);
+
+  const [chartToken, setChartToken] = useState({
+    maxPrice: null,
+    minPrice: null,
+  });
+  useEffect(() => {
+    const tmp = getChartToken(swapOption, fromToken, toToken, chainId);
+    setChartToken(tmp);
+  }, [swapOption, fromToken, toToken, chainId]);
 
   const symbol = chartToken ? (chartToken.isWrapped ? chartToken.baseSymbol : chartToken.symbol) : undefined;
   const marketName = chartToken ? symbol + "_USD" : undefined;
@@ -164,7 +190,18 @@ export default function ExchangeTVChart(props) {
   const ref = useRef(null);
   const chartRef = useRef(null);
 
+  const currentAveragePrice =
+    chartToken.maxPrice && chartToken.minPrice ? chartToken.maxPrice.add(chartToken.minPrice).div(2) : null;
+  const [priceData, updatePriceData] = useChartPrices(
+    chainId,
+    chartToken.symbol,
+    chartToken.isStable,
+    period,
+    currentAveragePrice
+  );
+
   const [chartInited, setChartInited] = useState(false);
+  const [advancedChartInited, setAdvancedChartInited] = useState(false);
   useEffect(() => {
     if (marketName !== previousMarketName) {
       setChartInited(false);
@@ -176,8 +213,6 @@ export default function ExchangeTVChart(props) {
     const to = Date.now() / 1000 + timezoneOffset;
     currentChart.timeScale().setVisibleRange({ from, to });
   }, [currentChart, period]);
-
-  const [hoveredCandlestick, setHoveredCandlestick] = useState();
 
   const onCrosshairMove = useCallback(
     (evt) => {
@@ -208,18 +243,61 @@ export default function ExchangeTVChart(props) {
       return;
     }
 
-    const chart = createChart(
-      chartRef.current,
-      getChartOptions(chartRef.current.offsetWidth, chartRef.current.offsetHeight)
-    );
+    if (!advancedChartInited) {
+      const widgetOptions = {
+        container: chartRef.current,
+        locale: getLanguageFromURL() || "en",
+        disabled_features: ["use_localstorage_for_settings"],
+        enabled_features: ["study_templates"],
+        charts_storage_url: "https://saveload.tradingview.com",
+        charts_storage_api_version: "1.1",
+        symbol: "AAPL",
+        interval: "D",
+        datafeed: new Datafeeds.UDFCompatibleDatafeed("https://demo_feed.tradingview.com"),
+        // Fix from https://github.com/tradingview/charting-library-examples/issues/196
+        library_path: process.env.NODE_ENV === "production" ? "/charting_library/" : "../../charting_library/",
+        client_id: "test",
+        user_id: "public_user_id",
+        fullscreen: false,
+        autosize: true,
+        studies_overrides: {},
+      };
 
-    chart.subscribeCrosshairMove(onCrosshairMove);
+      const tvWidget = new widget(widgetOptions);
 
-    const series = chart.addCandlestickSeries(getSeriesOptions());
+      tvWidget.onChartReady(() => {
+        const series = tvWidget.chart().getSeries();
+        // tvWidget.headerReady().then(() => {
+        //   const button = tvWidget.createButton();
+        //   button.setAttribute("title", "Click to show a notification popup");
+        //   button.classList.add("apply-common-tooltip");
+        //   button.addEventListener("click", () =>
+        //     tvWidget.showNoticeDialog({
+        //       title: "Notification",
+        //       body: "TradingView Charting Library API works correctly",
+        //       callback: () => {
+        //         console.log("Noticed!");
+        //       },
+        //     })
+        //   );
+        // });
+      });
 
-    setCurrentChart(chart);
-    setCurrentSeries(series);
-  }, [ref, priceData, currentChart, onCrosshairMove]);
+      setAdvancedChartInited(true);
+    }
+
+    // const chart = createChart(
+    //   chartRef.current,
+    //   getChartOptions(chartRef.current.offsetWidth, chartRef.current.offsetHeight)
+    // );
+
+    // chart.subscribeCrosshairMove(onCrosshairMove);
+
+    // const series = chart.addCandlestickSeries(getSeriesOptions());
+
+    // setCurrentChart(chart);
+    // setCurrentSeries(series);
+  }, [ref, priceData, currentChart, currentSeries, onCrosshairMove]);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -459,12 +537,12 @@ export default function ExchangeTVChart(props) {
         </div>
       </div>
       <div className="ExchangeChart-bottom App-box App-box-border">
-        <div className="ExchangeChart-bottom-header">
+        {/* <div className="ExchangeChart-bottom-header">
           <div className="ExchangeChart-bottom-controls">
             <Tab options={Object.keys(CHART_PERIODS)} option={period} setOption={setPeriod} trackAction={trackAction} />
           </div>
           {candleStatsHtml}
-        </div>
+        </div> */}
         <div className="ExchangeChart-bottom-content" ref={chartRef}></div>
       </div>
     </div>
