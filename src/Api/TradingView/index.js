@@ -1,13 +1,4 @@
-const supportedResolutions = [
-  // these work if you set it as default but seem to fail when changing
-  // '5' as ChartingLibraryWidgetOptions['interval'],
-  // CHART_PERIODS
-  "5",
-  "15",
-  "60",
-  "240",
-  "1d",
-];
+const supportedResolutions = ["5", "15", "60", "240", "1d"];
 
 const config = {
   supported_resolutions: [...supportedResolutions],

@@ -883,6 +883,32 @@ table.Exchange-list-small td {
   padding-top: 2rem;
   height: 5rem;
 }
+
+/* ADVANCED CHART */
+.ExchangeChart.AdvancedTv {
+  width: 100%;
+}
+.ExchangeChart.AdvancedTv .Overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  background-color: var(--background-primary);
+}
+.ExchangeChart.AdvancedTv .ExchangeChart-top {
+  position: relative;
+  margin-bottom: 16px;
+  min-height: 57px;
+}
+.ChartContainer {
+  position: relative;
+  flex-grow: 1;
+}
+.ChartContainer .Chart {
+  height: 426px;
+}
 @media (max-width: 1640px) {
   .App-box.large,
   .Exchange-list.large {

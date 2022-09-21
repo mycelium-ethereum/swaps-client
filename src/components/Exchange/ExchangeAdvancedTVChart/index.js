@@ -1,7 +1,10 @@
-import React, { useState, useEffect, useMemo } from "react";
-
+import React, { useState, useEffect, useMemo, useCallback } from "react";
+import cx from "classnames";
 import { widget } from "../../../charting_library";
 import { generateDataFeed } from "../../../Api/TradingView";
+import ChartTokenSelector from "../ChartTokenSelector";
+
+import { USD_DECIMALS, getTokenInfo, formatAmount } from "../../../Helpers";
 
 const getLanguageFromURL = () => {
   const regex = new RegExp("[\\?&]lang=([^&#]*)");
@@ -10,7 +13,20 @@ const getLanguageFromURL = () => {
 };
 
 export default function ExchangeAdvancedTVChart(props) {
-  const { selectedToken, priceData, updatePriceData, period, setPeriod } = props;
+  const {
+    chartToken,
+    setChartToken,
+    priceData,
+    updatePriceData,
+    period,
+    setPeriod,
+    infoTokens,
+    setToTokenAddress,
+    swapOption,
+    chainId,
+    currentAveragePrice,
+    trackAction,
+  } = props;
   const defaultProps = useMemo(
     () => ({
       symbol: "0x00000:default/market",
@@ -29,7 +45,7 @@ export default function ExchangeAdvancedTVChart(props) {
   const [tvWidget, setTvWidget] = useState(null);
   const [showChart, setShowChart] = useState(false);
   const [prevPeriod, setPrevPeriod] = useState(period);
-  const [prevToken, setPrevToken] = useState(selectedToken?.address);
+  const [prevToken, setPrevToken] = useState(chartToken?.address);
 
   // useEffect(() => {
   //   const interval = setInterval(() => {
@@ -38,52 +54,60 @@ export default function ExchangeAdvancedTVChart(props) {
   //   return () => clearInterval(interval);
   // }, [updatePriceData]);
 
-  useEffect(() => {
-    if (!tvWidget && priceData?.length && selectedToken) {
-      const widgetOptions = {
-        ...defaultProps,
-        symbol: `${selectedToken?.address}:${selectedToken?.symbol}/USD`,
-        debug: false,
-        datafeed: generateDataFeed(priceData),
-        // interval: period.toUpperCase(),
-        interval: period,
-        container: "tv_chart_container",
-        library_path: process.env.NODE_ENV === "production" ? "/charting_library/" : "../../charting_library/",
-        locale: getLanguageFromURL() || "en",
-        disabled_features: [
-          "use_localstorage_for_settings",
-          "save_chart_properties_to_local_storage",
-          "header_symbol_search",
-          "timeframes_toolbar",
-          "go_to_date",
-        ],
-        selectedToken: selectedToken,
-        enabled_features: [],
-        timeframe: "14D",
-        overrides: {
-          "paneProperties.backgroundType": "solid",
-          "paneProperties.background": "#000a00",
-          "scalesProperties.lineColor": "#8b968c",
-          "scalesProperties.textColor": "#fff",
-          "scalesProperties.backgroundColor": "#000a00",
-          "paneProperties.backgroundGradientStartColor": "#000a00",
-          "paneProperties.backgroundGradientEndColor": "#000a00",
-        },
-        loading_screen: {
-          backgroundColor: "#000a00!important",
-          foregroundColor: "#000a00!important",
-        },
-        toolbar_bg: "#000a00",
-        custom_css_url: "/AdvancedTVChart.css",
-      };
-      const tvWidget = new widget(widgetOptions);
-      tvWidget.onChartReady(() => {
-        setShowChart(true);
-      });
-      setTvWidget(tvWidget);
-    }
-  }, [defaultProps, selectedToken, priceData, tvWidget, period]);
+  const dataFeed = useMemo(() => generateDataFeed(priceData), [priceData]);
 
+  const createChart = useCallback(() => {
+    const widgetOptions = {
+      ...defaultProps,
+      symbol: `${chartToken?.address}:${chartToken?.symbol}/USD`,
+      debug: false,
+      datafeed: dataFeed,
+      // interval: period.toUpperCase(),
+      interval: period,
+      container: "tv_chart_container",
+      library_path: process.env.NODE_ENV === "production" ? "/charting_library/" : "../../charting_library/",
+      locale: getLanguageFromURL() || "en",
+      disabled_features: [
+        "use_localstorage_for_settings",
+        "save_chart_properties_to_local_storage",
+        "header_symbol_search",
+        "timeframes_toolbar",
+        "go_to_date",
+      ],
+      chartToken: chartToken,
+      enabled_features: [],
+      timeframe: "14D",
+      overrides: {
+        "paneProperties.backgroundType": "solid",
+        "paneProperties.background": "#000a00",
+        "scalesProperties.lineColor": "#8b968c",
+        "scalesProperties.textColor": "#fff",
+        "scalesProperties.backgroundColor": "#000a00",
+        "paneProperties.backgroundGradientStartColor": "#000a00",
+        "paneProperties.backgroundGradientEndColor": "#000a00",
+      },
+      loading_screen: {
+        backgroundColor: "#000a00 !important",
+        foregroundColor: "#000a00 !important",
+      },
+      toolbar_bg: "#000a00",
+      custom_css_url: "/AdvancedTVChart.css",
+    };
+    const tvWidget = new widget(widgetOptions);
+    tvWidget.onChartReady(() => {
+      setShowChart(true);
+    });
+    setTvWidget(tvWidget);
+  }, [chartToken, dataFeed, defaultProps, period]);
+
+  // Create chart
+  useEffect(() => {
+    if (!tvWidget && priceData?.length && chartToken) {
+      createChart();
+    }
+  }, [chartToken, priceData, tvWidget, createChart]);
+
+  // Update chart period
   useEffect(() => {
     if (tvWidget && prevPeriod !== period) {
       setPrevPeriod(period);
@@ -92,24 +116,135 @@ export default function ExchangeAdvancedTVChart(props) {
     }
   }, [period, prevPeriod, tvWidget]);
 
+  // Recreate chart on token change
   useEffect(() => {
-    if (showChart && tvWidget && prevToken !== selectedToken?.address) {
+    if (showChart && tvWidget && priceData?.length && prevToken !== chartToken?.address) {
+      if (tvWidget) {
+        tvWidget.remove();
+        setTvWidget(null);
+      }
+      createChart();
       setShowChart(false);
-      setPrevToken(selectedToken?.address);
-      tvWidget.setSymbol(`${selectedToken?.address}:${selectedToken?.symbol}/USD`, period, () => {
-        setShowChart(false);
-      });
+      setPrevToken(chartToken?.address);
     }
-  }, [showChart, prevToken, tvWidget, selectedToken?.address, selectedToken?.symbol, period]);
+  }, [showChart, prevToken, tvWidget, priceData, chartToken?.address, chartToken?.symbol, period, createChart]);
 
   if (!priceData) {
     return null;
   }
 
+  const onSelectToken = (token) => {
+    const tmp = getTokenInfo(infoTokens, token.address);
+    setChartToken(tmp);
+    setToTokenAddress(swapOption, token.address);
+  };
+
+  let high;
+  let low;
+  let deltaPrice;
+  let delta;
+  let deltaPercentage;
+  let deltaPercentageStr;
+
+  const now = parseInt(Date.now() / 1000);
+  const timeThreshold = now - 24 * 60 * 60;
+
+  if (priceData) {
+    for (let i = priceData.length - 1; i > 0; i--) {
+      const price = priceData[i];
+      if (price.time < timeThreshold) {
+        break;
+      }
+      if (!low) {
+        low = price.low;
+      }
+      if (!high) {
+        high = price.high;
+      }
+
+      if (price.high > high) {
+        high = price.high;
+      }
+      if (price.low < low) {
+        low = price.low;
+      }
+
+      deltaPrice = price.open;
+    }
+  }
+
+  if (deltaPrice && currentAveragePrice) {
+    const average = parseFloat(formatAmount(currentAveragePrice, USD_DECIMALS, 2));
+    delta = average - deltaPrice;
+    deltaPercentage = (delta * 100) / average;
+    if (deltaPercentage > 0) {
+      deltaPercentageStr = `+${deltaPercentage.toFixed(2)}%`;
+    } else {
+      deltaPercentageStr = `${deltaPercentage.toFixed(2)}%`;
+    }
+    if (deltaPercentage === 0) {
+      deltaPercentageStr = "0.00";
+    }
+  }
+
+  if (!chartToken) {
+    return null;
+  }
+
   return (
     <>
-      <div id={defaultProps.container} className="ExchangeChart tv" />
-      {/* {!showChart ? <>Loading</> : null} */}
+      <div className="ExchangeChart tv AdvancedTv">
+        <div className="ExchangeChart-top App-box App-box-border">
+          <div className="ExchangeChart-top-inner">
+            <div>
+              <div className="ExchangeChart-title">
+                <ChartTokenSelector
+                  chainId={chainId}
+                  selectedToken={chartToken}
+                  swapOption={swapOption}
+                  infoTokens={infoTokens}
+                  onSelectToken={onSelectToken}
+                  className="chart-token-selector"
+                  trackAction={trackAction}
+                />
+              </div>
+            </div>
+            <div>
+              <div className="ExchangeChart-main-price">
+                {chartToken.maxPrice && formatAmount(chartToken.maxPrice, USD_DECIMALS, 2)}
+              </div>
+              <div className="ExchangeChart-info-label">
+                ${chartToken.minPrice && formatAmount(chartToken.minPrice, USD_DECIMALS, 2)}
+              </div>
+            </div>
+            <div>
+              <div className={cx({ positive: deltaPercentage > 0, negative: deltaPercentage < 0 })}>
+                {!deltaPercentageStr && "-"}
+                {deltaPercentageStr && deltaPercentageStr}
+              </div>
+              <div className="ExchangeChart-info-label">24h Change</div>
+            </div>
+            <div className="ExchangeChart-additional-info">
+              <div>
+                {!high && "-"}
+                {high && high.toFixed(2)}
+              </div>
+              <div className="ExchangeChart-info-label">24h High</div>
+            </div>
+            <div className="ExchangeChart-additional-info">
+              <div>
+                {!low && "-"}
+                {low && low.toFixed(2)}
+              </div>
+              <div className="ExchangeChart-info-label">24h Low</div>
+            </div>
+          </div>
+        </div>
+        <div className="ChartContainer">
+          <div id={defaultProps.container} className="Chart" />
+          {!showChart ? <div className="Overlay" /> : null}
+        </div>
+      </div>
     </>
   );
 }

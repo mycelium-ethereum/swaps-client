@@ -940,11 +940,18 @@ export const Exchange = forwardRef((props, ref) => {
               updatePriceData={updatePriceData}
             /> */}
             <ExchangeAdvancedTVChart
-              selectedToken={chartToken}
+              infoTokens={infoTokens}
+              chartToken={chartToken}
+              setChartToken={setChartToken}
               priceData={priceData}
               updatePriceData={updatePriceData}
               period={period}
               setPeriod={setPeriod}
+              setToTokenAddress={setToTokenAddress}
+              swapOption={swapOption}
+              chainId={chainId}
+              currentAveragePrice={currentAveragePrice}
+              trackAction={trackAction}
             />
             <div className="Exchange-lists large">{getListSection()}</div>
           </div>
