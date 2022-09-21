@@ -42,7 +42,6 @@ import {
   USDG_DECIMALS,
   ARBITRUM,
   PLACEHOLDER_ACCOUNT,
-  MM_TOKENS_PER_INTERVAL,
 } from "../../Helpers";
 
 import { callContract, useMYCPrice, useInfoTokens, useMarketMakingApr } from "../../Api";
