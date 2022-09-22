@@ -53,6 +53,7 @@ import "./StakeV2.css";
 
 import SEO from "../../components/Common/SEO";
 import ClaimModal from "./ClaimModal";
+import Toggle from "../../components/Toggle/Toggle";
 
 function CompoundModal(props) {
   const {
@@ -67,6 +68,7 @@ function CompoundModal(props) {
     totalVesterRewards,
     nativeTokenSymbol,
     wrappedTokenSymbol,
+    processedData
   } = props;
   const [isCompounding, setIsCompounding] = useState(false);
 
@@ -144,14 +146,14 @@ function CompoundModal(props) {
       contract,
       "handleRewards",
       [
-        shouldClaimMyc,
-        false, // shouldStakeMYC,
-        shouldClaimEsMyc,
-        false, // shouldStakeEsMyc,
+        shouldClaimMyc, // shouldClaimMyc,
+        shouldClaimMyc, // shouldStakeMYC,
+        shouldClaimEsMyc, // shouldClaimEsMyc,
+        shouldClaimEsMyc, // shouldStakeEsMyc,
         false, // shouldStakeMultiplierPoints,
-        shouldClaimWeth || shouldConvertWeth || shouldBuyMlpWithEth,
-        shouldConvertWeth,
-        shouldBuyMlpWithEth,
+        shouldBuyMlpWithEth, // shouldClaimWeth,
+        false, // shouldConvertWeth,
+        shouldBuyMlpWithEth, // shouldBuyMlpWithEth
       ],
       {
         sentMsg: "Compound submitted!",
@@ -168,14 +170,6 @@ function CompoundModal(props) {
       });
   };
 
-  const toggleConvertWeth = (value) => {
-    if (value) {
-      setShouldClaimWeth(true);
-      setShouldBuyMlpWithEth(false);
-    }
-    setShouldConvertWeth(value);
-  };
-
   const toggleBuyMlp = (value) => {
     if (value) {
       setShouldClaimWeth(true);
@@ -188,35 +182,57 @@ function CompoundModal(props) {
     <div className="StakeModal">
       <Modal isVisible={isVisible} setIsVisible={setIsVisible} label="Compound Rewards">
         <div className="CompoundModal-menu">
-          <div>
-            <Checkbox isChecked={shouldClaimMyc} setIsChecked={setShouldClaimMyc}>
-              Claim MYC Rewards
-            </Checkbox>
-          </div>
-          <div>
-            <Checkbox isChecked={shouldClaimEsMyc} setIsChecked={setShouldClaimEsMyc}>
-              Claim esMYC Rewards
-            </Checkbox>
-          </div>
-          <div>
-            <Checkbox
-              isChecked={shouldClaimWeth}
-              setIsChecked={setShouldClaimWeth}
-              disabled={shouldConvertWeth || shouldBuyMlpWithEth}
-            >
-              Claim {wrappedTokenSymbol} Rewards
-            </Checkbox>
-          </div>
-          <div>
-            <Checkbox isChecked={shouldConvertWeth} setIsChecked={toggleConvertWeth}>
-              Convert {wrappedTokenSymbol} to {nativeTokenSymbol}
-            </Checkbox>
-          </div>
-          <div>
-            <Checkbox isChecked={shouldBuyMlpWithEth} setIsChecked={toggleBuyMlp}>
-              Buy MLP with {wrappedTokenSymbol}
-            </Checkbox>
-          </div>
+          <StakeV2Styled.ModalRow>
+            <StakeV2Styled.ModalRowHeader>
+              Claim and Stake MYC Rewards
+            </StakeV2Styled.ModalRowHeader>
+            {shouldClaimMyc &&
+              <>
+                <StakeV2Styled.ModalRowText large inline>
+                  0.00 MYC
+                </StakeV2Styled.ModalRowText>{" "}
+                <StakeV2Styled.ModalRowText inline secondary>
+                  ($0.00)
+                </StakeV2Styled.ModalRowText>
+              </>
+            }
+            <Toggle isChecked={shouldClaimMyc} handleToggle={setShouldClaimMyc} />
+          </StakeV2Styled.ModalRow>
+          <StakeV2Styled.ModalRow>
+            <StakeV2Styled.ModalRowHeader>
+              Claim and Stake esMYC Rewards
+            </StakeV2Styled.ModalRowHeader>
+            {shouldClaimEsMyc &&
+              <>
+                <StakeV2Styled.ModalRowText inline large>
+                  {formatKeyAmount(processedData, "stakedMlpTrackerRewards", 18, 4)} esMYC
+                </StakeV2Styled.ModalRowText>{" "}
+                <StakeV2Styled.ModalRowText inline secondary>
+                  ($
+                  {formatKeyAmount(processedData, "stakedMlpTrackerRewardsUsd", USD_DECIMALS, 2, true)})
+                </StakeV2Styled.ModalRowText>
+              </>
+            }
+            <Toggle isChecked={shouldClaimEsMyc} handleToggle={setShouldClaimEsMyc} />
+          </StakeV2Styled.ModalRow>
+          <StakeV2Styled.ModalRow>
+            <StakeV2Styled.ModalRowHeader>
+              Buy MLP with {wrappedTokenSymbol} Rewards
+            </StakeV2Styled.ModalRowHeader>
+            {shouldBuyMlpWithEth && 
+              <>
+                <StakeV2Styled.ModalRowText large inline>
+                  {formatKeyAmount(processedData, "feeMlpTrackerRewards", 18, 4)} {nativeTokenSymbol} (
+                  {wrappedTokenSymbol})
+                </StakeV2Styled.ModalRowText>{" "}
+                <StakeV2Styled.ModalRowText inline secondary>
+                  ($
+                  {formatKeyAmount(processedData, "feeMlpTrackerRewardsUsd", USD_DECIMALS, 2, true)})
+                </StakeV2Styled.ModalRowText>
+              </>
+            }
+            <Toggle isChecked={shouldBuyMlpWithEth} handleToggle={toggleBuyMlp} />
+          </StakeV2Styled.ModalRow>
         </div>
         <div className="Exchange-swap-button-container">
           <button className="App-cta Exchange-swap-button" onClick={onClickPrimary} disabled={!isPrimaryEnabled()}>
@@ -459,7 +475,7 @@ export default function StakeV2({ setPendingTxns, connectWallet, trackAction, sa
   const [vesterWithdrawAddress, setVesterWithdrawAddress] = useState("");
 
   const [isCompoundModalVisible, setIsCompoundModalVisible] = useState(false);
-  const [isClaimModalVisible, setIsClaimModalVisible] = useState(true);
+  const [isClaimModalVisible, setIsClaimModalVisible] = useState(false);
 
   const rewardRouterAddress = getContract(chainId, "RewardRouter");
   const rewardReaderAddress = getContract(chainId, "RewardReader");
@@ -732,6 +748,7 @@ export default function StakeV2({ setPendingTxns, connectWallet, trackAction, sa
         nativeTokenSymbol={nativeTokenSymbol}
         library={library}
         chainId={chainId}
+        processedData={processedData}
       />
       <ClaimModal
         active={active}
