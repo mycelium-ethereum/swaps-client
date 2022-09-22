@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { useWeb3React } from "@web3-react/core";
 
@@ -53,6 +53,7 @@ import "./StakeV2.css";
 
 import SEO from "../../components/Common/SEO";
 import SpreadCaptureModal from "./SpreadCaptureModal";
+import Toggle from "../../components/Toggle/Toggle";
 
 function CompoundModal(props) {
   const {
@@ -230,17 +231,23 @@ function CompoundModal(props) {
 
 function ClaimModal(props) {
   const {
+    active,
+    account,
+    setPendingTxns,
+    savedSlippageAmount,
+    infoTokens,
+    trackAction,
+    library,
+    chainId,
     isVisible,
     setIsVisible,
     rewardRouterAddress,
-    library,
-    chainId,
-    setPendingTxns,
     nativeTokenSymbol,
     wrappedTokenSymbol,
     processedData,
     userSpreadCapture
   } = props;
+
   const [isClaiming, setIsClaiming] = useState(false);
 
   const [shouldClaimMyc, setShouldClaimMyc] = useLocalStorageSerializeKey(
@@ -331,7 +338,7 @@ function ClaimModal(props) {
             <StakeV2Styled.ModalRowText inline secondary>
               ($0.00)
             </StakeV2Styled.ModalRowText>
-            <Checkbox isChecked={shouldClaimMyc} setIsChecked={setShouldClaimMyc} />
+            <Toggle isChecked={shouldClaimMyc} handleToggle={setShouldClaimMyc} />
           </StakeV2Styled.ModalRow>
           <StakeV2Styled.ModalRow>
             <StakeV2Styled.ModalRowHeader>
@@ -344,7 +351,7 @@ function ClaimModal(props) {
               ($
               {formatKeyAmount(processedData, "stakedMlpTrackerRewardsUsd", USD_DECIMALS, 2, true)})
             </StakeV2Styled.ModalRowText>
-            <Checkbox isChecked={shouldClaimEsMyc} setIsChecked={setShouldClaimEsMyc} />
+            <Toggle isChecked={shouldClaimEsMyc} handleToggle={setShouldClaimEsMyc} />
           </StakeV2Styled.ModalRow>
           <StakeV2Styled.ModalRow>
             <StakeV2Styled.ModalRowHeader>
@@ -358,13 +365,13 @@ function ClaimModal(props) {
               ($
               {formatKeyAmount(processedData, "feeMlpTrackerRewardsUsd", USD_DECIMALS, 2, true)})
             </StakeV2Styled.ModalRowText>
-            <Checkbox isChecked={shouldClaimWeth} setIsChecked={setShouldClaimWeth} disabled={shouldConvertWeth} />
+            <Toggle isChecked={shouldClaimWeth} handleToggle={setShouldClaimWeth} disabled={shouldConvertWeth} />
           </StakeV2Styled.ModalRow>
           <StakeV2Styled.ModalRow>
             <StakeV2Styled.ModalRowHeader>
               Convert {wrappedTokenSymbol} to {nativeTokenSymbol}
             </StakeV2Styled.ModalRowHeader>
-            <Checkbox isChecked={shouldConvertWeth} setIsChecked={toggleConvertWeth} />
+            <Toggle isChecked={shouldConvertWeth} handleToggle={toggleConvertWeth} />
           </StakeV2Styled.ModalRow>
           <StakeV2Styled.ModalRow>
             <StakeV2Styled.ModalRowHeader>
@@ -378,7 +385,19 @@ function ClaimModal(props) {
               ($
               {formatAmount(userSpreadCapture, USD_DECIMALS, 2, true, '0.00')})
             </StakeV2Styled.ModalRowText>
-            <Checkbox isChecked={shouldClaimSpreadCapture} setIsChecked={setShouldClaimSpreadCapture} />
+            <Toggle isChecked={shouldClaimSpreadCapture} handleToggle={setShouldClaimSpreadCapture} />
+
+            {shouldClaimSpreadCapture && <SpreadCaptureModal
+              active={active}
+              account={account}
+              setPendingTxns={setPendingTxns}
+              savedSlippageAmount={savedSlippageAmount}
+              infoTokens={infoTokens}
+              trackAction={trackAction}
+              library={library}
+              chainId={chainId}
+              userSpreadCapture={userSpreadCapture}
+            />}
           </StakeV2Styled.ModalRow>
         </div>
         <div className="Exchange-swap-button-container">
@@ -623,7 +642,6 @@ export default function StakeV2({ setPendingTxns, connectWallet, trackAction, sa
 
   const [isCompoundModalVisible, setIsCompoundModalVisible] = useState(false);
   const [isClaimModalVisible, setIsClaimModalVisible] = useState(true);
-  const [isSpreadCaptureModalVisible, setIsSpreadCaptureModalVisible] = useState(false);
 
   const rewardRouterAddress = getContract(chainId, "RewardRouter");
   const rewardReaderAddress = getContract(chainId, "RewardReader");
@@ -804,20 +822,13 @@ export default function StakeV2({ setPendingTxns, connectWallet, trackAction, sa
   };
 
   const showMlpClaimModal = () => {
-    if (ethBalance?.eq(0)) {
-      helperToast.error("You don't have any ETH to pay for gas");
-    } else {
-      setIsClaimModalVisible(true);
-    }
-  };
-
-  const showSpreadCaptureModal = () => {
+    // TODO re add balance check
     // if (ethBalance?.eq(0)) {
       // helperToast.error("You don't have any ETH to pay for gas");
     // } else {
-      setIsSpreadCaptureModalVisible(true);
+      setIsClaimModalVisible(true);
     // }
-  }
+  };
 
   const showMycVesterDepositModal = () => {
     if (ethBalance?.eq(0)) {
@@ -909,30 +920,21 @@ export default function StakeV2({ setPendingTxns, connectWallet, trackAction, sa
         active={active}
         account={account}
         setPendingTxns={setPendingTxns}
+        savedSlippageAmount={savedSlippageAmount}
+        infoTokens={infoTokens}
+        trackAction={trackAction}
+        library={library}
+        chainId={chainId}
         isVisible={isClaimModalVisible}
         setIsVisible={setIsClaimModalVisible}
         rewardRouterAddress={rewardRouterAddress}
         totalVesterRewards={processedData.totalVesterRewards}
         wrappedTokenSymbol={wrappedTokenSymbol}
         nativeTokenSymbol={nativeTokenSymbol}
-        library={library}
-        chainId={chainId}
         processedData={processedData}
         userSpreadCapture={userSpreadCapture}
       />
-      <SpreadCaptureModal
-        active={active}
-        account={account}
-        setPendingTxns={setPendingTxns}
-        savedSlippageAmount={savedSlippageAmount}
-        infoTokens={infoTokens}
-        trackAction={trackAction}
-        isVisible={isSpreadCaptureModalVisible}
-        setIsVisible={setIsSpreadCaptureModalVisible}
-        library={library}
-        chainId={chainId}
-        userSpreadCapture={userSpreadCapture}
-      />
+
       <div className="StakeV2-content">
         <div className="StakeV2-cards">
           <div>
@@ -1077,11 +1079,6 @@ export default function StakeV2({ setPendingTxns, connectWallet, trackAction, sa
                   {active && (
                     <button className="App-button-option App-card-option" onClick={() => showMlpClaimModal()}>
                       Claim
-                    </button>
-                  )}
-                  {active && (
-                    <button className="App-button-option App-card-option" onClick={() => showSpreadCaptureModal()}>
-                      Claim spread
                     </button>
                   )}
                   {!active && (

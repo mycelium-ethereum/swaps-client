@@ -36,7 +36,7 @@ export const ModalRow = styled.div`
 
   font-size: 12px;
 
-  .Checkbox {
+  .Toggle {
     position: absolute;
     right: 0;
     top: 0;
@@ -49,6 +49,7 @@ export const ModalRow = styled.div`
 
 export const ModalRowHeader = styled.div`
   color: var(--text-secondary);
+  margin-bottom: 4px;
 `
 
 export const ModalRowText = styled.div`

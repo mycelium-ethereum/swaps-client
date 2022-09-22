@@ -42,7 +42,6 @@ import RewardRouter from "../../abis/RewardRouter.json";
 
 import tlp24Icon from "../../img/ic_mlp_24.svg";
 import arrowIcon from "../../img/ic_convert_down.svg";
-import Modal from "../../components/Modal/Modal";
 
 import './SpreadCaptureModal.css';
 import BuyInputSection from "../../components/BuyInputSection/BuyInputSection";
@@ -52,6 +51,10 @@ const { AddressZero } = ethers.constants;
 
 export default function SpreadCaptureModal(props) {
   const {
+    active,
+    library,
+    account,
+    chainId,
     savedSlippageAmount,
     infoTokens,
     setPendingTxns,
@@ -59,13 +62,9 @@ export default function SpreadCaptureModal(props) {
     trackPageWithTraits,
     trackAction,
     analytics,
-    isVisible,
-    setIsVisible,
     userSpreadCapture
   } = props;
   const history = useHistory();
-  const { active, library, account } = useWeb3React();
-  const { chainId } = useChainId();
   const whitelistedTokens = getWhitelistedTokens(chainId);
   const [swapValue, setSwapValue] = useState("");
   const [mlpValue, setMlpValue] = useState("");
@@ -416,55 +415,58 @@ export default function SpreadCaptureModal(props) {
   ]);
 
   return (
-    <div className="Spread-capture-modal">
-      <Modal isVisible={isVisible} setIsVisible={setIsVisible} label="Withdraw Spread Capture">
-          <BuyInputSection
-            topLeftLabel={'Sell'}
-            staticInput={true}
-            inputValue={mlpValue}
-            balance={payBalance}
-            defaultTokenName={"MLP"}
-          >
-            <div className="selected-token">
-              MLP <img src={tlp24Icon} alt="tlp24Icon" />
-            </div>
-          </BuyInputSection>
+    <div className="Spread-capture">
+      <div className="Spread-capture-description">
+        Market Making Rewards are realised in the capital apprecitaion
+        of your MLP position. Sell a portion of your MLP position to
+        claim your Market Making Rewards.
+      </div>
+      <BuyInputSection
+        topLeftLabel={'Sell'}
+        staticInput={true}
+        inputValue={mlpValue}
+        balance={payBalance}
+        defaultTokenName={"MLP"}
+      >
+        <div className="selected-token">
+          MLP <img src={tlp24Icon} alt="tlp24Icon" />
+        </div>
+      </BuyInputSection>
 
-          <div className="AppOrder-ball-container">
-            <div className="AppOrder-ball">
-              <img
-                src={arrowIcon}
-                alt="arrowIcon"
-              />
-            </div>
-          </div>
-          <BuyInputSection
-            topLeftLabel={"Receive"}
-            staticInput={true}
-            inputValue={swapValue}
-            balance={receiveBalance}
-            selectedToken={swapToken}
-            trackAction={trackAction}
-          >
-            <TokenSelector
-              label="Receive"
-              chainId={chainId}
-              tokenAddress={swapTokenAddress}
-              onSelectToken={onSelectSwapToken}
-              tokens={whitelistedTokens}
-              infoTokens={infoTokens}
-              className="MlpSwap-from-token"
-              showSymbolImage={true}
-              showTokenImgInDropdown={true}
-              trackAction={trackAction}
-            />
-          </BuyInputSection>
-          <div className="Exchange-swap-button-container">
-            <button className="App-cta Exchange-swap-button" onClick={onClickPrimary} disabled={!isPrimaryEnabled()}>
-              {getPrimaryText()}
-            </button>
-          </div>
-      </Modal>
+      <div className="AppOrder-ball-container">
+        <div className="AppOrder-ball">
+          <img
+            src={arrowIcon}
+            alt="arrowIcon"
+          />
+        </div>
+      </div>
+      <BuyInputSection
+        topLeftLabel={"Receive"}
+        staticInput={true}
+        inputValue={swapValue}
+        balance={receiveBalance}
+        selectedToken={swapToken}
+        trackAction={trackAction}
+      >
+        <TokenSelector
+          label="Receive"
+          chainId={chainId}
+          tokenAddress={swapTokenAddress}
+          onSelectToken={onSelectSwapToken}
+          tokens={whitelistedTokens}
+          infoTokens={infoTokens}
+          className="MlpSwap-from-token"
+          showSymbolImage={true}
+          showTokenImgInDropdown={true}
+          trackAction={trackAction}
+        />
+      </BuyInputSection>
+      <div className="Exchange-swap-button-container">
+        <button className="App-cta Exchange-swap-button" onClick={onClickPrimary} disabled={!isPrimaryEnabled()}>
+          {getPrimaryText()}
+        </button>
+      </div>
     </div>
   );
 }

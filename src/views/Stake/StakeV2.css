@@ -13,6 +13,7 @@
 
 .StakeModal .Modal-content {
   min-width: 424px;
+  max-width: 424px;
 }
 
 .StakeModal .Fee-update-modal-content {
