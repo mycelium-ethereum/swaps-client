@@ -52,8 +52,7 @@ import * as StakeV2Styled from "./StakeV2Styles";
 import "./StakeV2.css";
 
 import SEO from "../../components/Common/SEO";
-import SpreadCaptureModal from "./SpreadCaptureModal";
-import Toggle from "../../components/Toggle/Toggle";
+import ClaimModal from "./ClaimModal";
 
 function CompoundModal(props) {
   const {
@@ -218,187 +217,6 @@ function CompoundModal(props) {
               Buy MLP with {wrappedTokenSymbol}
             </Checkbox>
           </div>
-        </div>
-        <div className="Exchange-swap-button-container">
-          <button className="App-cta Exchange-swap-button" onClick={onClickPrimary} disabled={!isPrimaryEnabled()}>
-            {getPrimaryText()}
-          </button>
-        </div>
-      </Modal>
-    </div>
-  );
-}
-
-function ClaimModal(props) {
-  const {
-    active,
-    account,
-    setPendingTxns,
-    savedSlippageAmount,
-    infoTokens,
-    trackAction,
-    library,
-    chainId,
-    isVisible,
-    setIsVisible,
-    rewardRouterAddress,
-    nativeTokenSymbol,
-    wrappedTokenSymbol,
-    processedData,
-    userSpreadCapture
-  } = props;
-
-  const [isClaiming, setIsClaiming] = useState(false);
-
-  const [shouldClaimMyc, setShouldClaimMyc] = useLocalStorageSerializeKey(
-    [chainId, "StakeV2-claim-should-claim-myc"],
-    true
-  );
-
-  const [shouldClaimEsMyc, setShouldClaimEsMyc] = useLocalStorageSerializeKey(
-    [chainId, "StakeV2-claim-should-claim-esMyc"],
-    true
-  );
-
-  const [shouldClaimWeth, setShouldClaimWeth] = useLocalStorageSerializeKey(
-    [chainId, "StakeV2-claim-should-claim-weth"],
-    true
-  );
-  const [shouldConvertWeth, setShouldConvertWeth] = useLocalStorageSerializeKey(
-    [chainId, "StakeV2-claim-should-convert-weth"],
-    true
-  );
-  const [shouldClaimSpreadCapture, setShouldClaimSpreadCapture] = useLocalStorageSerializeKey(
-    [chainId, "StakeV2-claim-should-claim-spread-capture"],
-    true
-  );
-
-  const isPrimaryEnabled = () => {
-    return !isClaiming;
-  };
-
-  const getPrimaryText = () => {
-    if (isClaiming) {
-      return `Claiming...`;
-    }
-    return "Claim";
-  };
-
-  const onClickPrimary = () => {
-    setIsClaiming(true);
-
-    const contract = new ethers.Contract(rewardRouterAddress, RewardRouter.abi, library.getSigner());
-    callContract(
-      chainId,
-      contract,
-      "handleRewards",
-      [
-        shouldClaimMyc, // shouldClaimMYC,
-        false, // shouldStakeMYC
-        shouldClaimEsMyc, // shouldClaimEsMyc,
-        false, // shouldStakeEsMyc
-        false, // shouldStakeMultiplierPoints
-        shouldClaimWeth,
-        shouldConvertWeth,
-        false, // shouldBuyTlpWithEth
-      ],
-      {
-        sentMsg: "Claim submitted.",
-        failMsg: "Claim failed.",
-        successMsg: "Claim completed!",
-        setPendingTxns,
-      }
-    )
-      .then(async (res) => {
-        setIsVisible(false);
-      })
-      .finally(() => {
-        setIsClaiming(false);
-      });
-  };
-
-  const toggleConvertWeth = (value) => {
-    if (value) {
-      setShouldClaimWeth(true);
-    }
-    setShouldConvertWeth(value);
-  };
-
-  return (
-    <div className="StakeModal">
-      <Modal isVisible={isVisible} setIsVisible={setIsVisible} label="Claim Rewards">
-        <div className="CompoundModal-menu">
-          <StakeV2Styled.ModalRow>
-            <StakeV2Styled.ModalRowHeader>
-              Claim MYC Rewards
-            </StakeV2Styled.ModalRowHeader>
-            <StakeV2Styled.ModalRowText large inline>
-              0.00 MYC
-            </StakeV2Styled.ModalRowText>{" "}
-            <StakeV2Styled.ModalRowText inline secondary>
-              ($0.00)
-            </StakeV2Styled.ModalRowText>
-            <Toggle isChecked={shouldClaimMyc} handleToggle={setShouldClaimMyc} />
-          </StakeV2Styled.ModalRow>
-          <StakeV2Styled.ModalRow>
-            <StakeV2Styled.ModalRowHeader>
-              Claim esMYC Rewards
-            </StakeV2Styled.ModalRowHeader>
-            <StakeV2Styled.ModalRowText inline large>
-              {formatKeyAmount(processedData, "stakedMlpTrackerRewards", 18, 4)} esMYC
-            </StakeV2Styled.ModalRowText>{" "}
-            <StakeV2Styled.ModalRowText inline secondary>
-              ($
-              {formatKeyAmount(processedData, "stakedMlpTrackerRewardsUsd", USD_DECIMALS, 2, true)})
-            </StakeV2Styled.ModalRowText>
-            <Toggle isChecked={shouldClaimEsMyc} handleToggle={setShouldClaimEsMyc} />
-          </StakeV2Styled.ModalRow>
-          <StakeV2Styled.ModalRow>
-            <StakeV2Styled.ModalRowHeader>
-              Claim {wrappedTokenSymbol} Rewards
-            </StakeV2Styled.ModalRowHeader>
-            <StakeV2Styled.ModalRowText large inline>
-              {formatKeyAmount(processedData, "feeMlpTrackerRewards", 18, 4)} {nativeTokenSymbol} (
-              {wrappedTokenSymbol})
-            </StakeV2Styled.ModalRowText>{" "}
-            <StakeV2Styled.ModalRowText inline secondary>
-              ($
-              {formatKeyAmount(processedData, "feeMlpTrackerRewardsUsd", USD_DECIMALS, 2, true)})
-            </StakeV2Styled.ModalRowText>
-            <Toggle isChecked={shouldClaimWeth} handleToggle={setShouldClaimWeth} disabled={shouldConvertWeth} />
-          </StakeV2Styled.ModalRow>
-          <StakeV2Styled.ModalRow>
-            <StakeV2Styled.ModalRowHeader>
-              Convert {wrappedTokenSymbol} to {nativeTokenSymbol}
-            </StakeV2Styled.ModalRowHeader>
-            <Toggle isChecked={shouldConvertWeth} handleToggle={toggleConvertWeth} />
-          </StakeV2Styled.ModalRow>
-          <StakeV2Styled.ModalRow>
-            <StakeV2Styled.ModalRowHeader>
-              Market Making Rewards
-            </StakeV2Styled.ModalRowHeader>
-            <StakeV2Styled.ModalRowText large inline>
-              {formatKeyAmount(processedData, "feeMlpTrackerRewards", 18, 4)} {nativeTokenSymbol} (
-              {wrappedTokenSymbol})
-            </StakeV2Styled.ModalRowText>{" "}
-            <StakeV2Styled.ModalRowText inline secondary>
-              ($
-              {formatAmount(userSpreadCapture, USD_DECIMALS, 2, true, '0.00')})
-            </StakeV2Styled.ModalRowText>
-            <Toggle isChecked={shouldClaimSpreadCapture} handleToggle={setShouldClaimSpreadCapture} />
-
-            {shouldClaimSpreadCapture && <SpreadCaptureModal
-              active={active}
-              account={account}
-              setPendingTxns={setPendingTxns}
-              savedSlippageAmount={savedSlippageAmount}
-              infoTokens={infoTokens}
-              trackAction={trackAction}
-              library={library}
-              chainId={chainId}
-              userSpreadCapture={userSpreadCapture}
-            />}
-          </StakeV2Styled.ModalRow>
         </div>
         <div className="Exchange-swap-button-container">
           <button className="App-cta Exchange-swap-button" onClick={onClickPrimary} disabled={!isPrimaryEnabled()}>
@@ -616,7 +434,7 @@ function VesterWithdrawModal(props) {
   );
 }
 
-export default function StakeV2({ setPendingTxns, connectWallet, trackAction, savedSlippageAmount, infoTokens }) {
+export default function StakeV2({ setPendingTxns, connectWallet, trackAction, savedSlippageAmount, infoTokens, trackPageWithTraits, analytics }) {
   const { active, library, account } = useWeb3React();
   const { chainId } = useChainId();
 
@@ -822,12 +640,11 @@ export default function StakeV2({ setPendingTxns, connectWallet, trackAction, sa
   };
 
   const showMlpClaimModal = () => {
-    // TODO re add balance check
-    // if (ethBalance?.eq(0)) {
-      // helperToast.error("You don't have any ETH to pay for gas");
-    // } else {
+    if (ethBalance?.eq(0)) {
+      helperToast.error("You don't have any ETH to pay for gas");
+    } else {
       setIsClaimModalVisible(true);
-    // }
+    }
   };
 
   const showMycVesterDepositModal = () => {
@@ -921,8 +738,11 @@ export default function StakeV2({ setPendingTxns, connectWallet, trackAction, sa
         account={account}
         setPendingTxns={setPendingTxns}
         savedSlippageAmount={savedSlippageAmount}
+        connectWallet={connectWallet}
         infoTokens={infoTokens}
         trackAction={trackAction}
+        trackPageWithTraits={trackPageWithTraits}
+        analytics={analytics}
         library={library}
         chainId={chainId}
         isVisible={isClaimModalVisible}

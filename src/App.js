@@ -935,6 +935,8 @@ function FullApp() {
                 setPendingTxns={setPendingTxns}
                 connectWallet={connectWallet}
                 trackAction={trackAction}
+                trackPageWithTraits={trackPageWithTraits}
+                analytics={analytics}
                 infoTokens={infoTokens}
                 savedSlippageAmount={savedSlippageAmount}
               />
