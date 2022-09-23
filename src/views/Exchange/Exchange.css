@@ -896,6 +896,13 @@ table.Exchange-list-small td {
   height: 100%;
   z-index: 1;
   background-color: var(--background-primary);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+.ExchangeChart.AdvancedTv .Overlay.active {
+  opacity: 1;
+  pointer-events: auto;
 }
 .ExchangeChart.AdvancedTv .ExchangeChart-top {
   position: relative;

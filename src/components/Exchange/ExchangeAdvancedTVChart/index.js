@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo, useCallback } from "react";
 import cx from "classnames";
 import { widget } from "../../../charting_library";
-import { generateDataFeed } from "../../../Api/TradingView";
+import { generateDataFeed, supportedResolutions } from "../../../Api/TradingView";
 import ChartTokenSelector from "../ChartTokenSelector";
 
 import { USD_DECIMALS, getTokenInfo, formatAmount } from "../../../Helpers";
@@ -10,6 +10,23 @@ const getLanguageFromURL = () => {
   const regex = new RegExp("[\\?&]lang=([^&#]*)");
   const results = regex.exec(window.location.search);
   return results === null ? null : decodeURIComponent(results[1].replace(/\+/g, " "));
+};
+
+const translateLightweightChartPeriod = (period) => {
+  switch (period) {
+    case "5m":
+      return supportedResolutions[0]; // 5
+    case "15m":
+      return supportedResolutions[1]; // 15
+    case "1h":
+      return supportedResolutions[2]; //60
+    case "4h":
+      return supportedResolutions[3]; // 240
+    case "1d":
+      return supportedResolutions[4]; // 1d
+    default:
+      return supportedResolutions[3]; // 240
+  }
 };
 
 export default function ExchangeAdvancedTVChart(props) {
@@ -110,21 +127,24 @@ export default function ExchangeAdvancedTVChart(props) {
   // Update chart period
   useEffect(() => {
     if (tvWidget && prevPeriod !== period) {
-      setPrevPeriod(period);
+      const advancedChartPeriod = translateLightweightChartPeriod(period);
+      setPrevPeriod(advancedChartPeriod);
       setShowChart(false);
-      tvWidget.setResolution(period, () => setShowChart(true));
+      tvWidget.setResolution(advancedChartPeriod, () => setShowChart(true));
     }
   }, [period, prevPeriod, tvWidget]);
 
   // Recreate chart on token change
   useEffect(() => {
     if (showChart && tvWidget && priceData?.length && prevToken !== chartToken?.address) {
-      if (tvWidget) {
-        tvWidget.remove();
-        setTvWidget(null);
-      }
-      createChart();
       setShowChart(false);
+      setTimeout(() => {
+        if (tvWidget) {
+          tvWidget.remove();
+          setTvWidget(null);
+        }
+        createChart();
+      }, 300); // Wait for overlay animation to complete
       setPrevToken(chartToken?.address);
     }
   }, [showChart, prevToken, tvWidget, priceData, chartToken?.address, chartToken?.symbol, period, createChart]);
@@ -242,7 +262,11 @@ export default function ExchangeAdvancedTVChart(props) {
         </div>
         <div className="ChartContainer">
           <div id={defaultProps.container} className="Chart" />
-          {!showChart ? <div className="Overlay" /> : null}
+          <div
+            className={cx("Overlay", {
+              active: !showChart,
+            })}
+          />
         </div>
       </div>
     </>
