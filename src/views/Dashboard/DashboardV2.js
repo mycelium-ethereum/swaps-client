@@ -44,6 +44,7 @@ import {
   useVolume,
   useMarketMakingFeesSince,
   useFeesSince,
+  useLendingApr,
 } from "../../Api";
 
 import { getContract } from "../../Addresses";
@@ -63,6 +64,7 @@ import avalanche24Icon from "../../img/ic_avalanche_24.svg";
 
 import AssetDropdown from "./AssetDropdown";
 import SEO from "../../components/Common/SEO";
+import { ADDRESS_ZERO } from "@uniswap/v3-sdk";
 
 const { AddressZero } = ethers.constants;
 
@@ -197,6 +199,12 @@ export default function DashboardV2() {
     { arbitrum: chainId === ARBITRUM ? library : undefined },
     active
   );
+
+  const ethToken = infoTokens[ADDRESS_ZERO];
+  const ethPrice = ethToken.maxPrice;
+  // const ethPrice = formatAmount(ethToken.maxPrice, USD_DECIMALS, 2, false);
+
+  const lendingApr = useLendingApr(mycPrice, ethPrice);
 
   let { mainnet: totalMYCInLiquidityMainnet, arbitrum: totalMYCInLiquidityArbitrum } = useTotalMYCInLiquidity(
     chainId,
@@ -636,6 +644,12 @@ export default function DashboardV2() {
                           />
                         </div>
                       </div>
+                      {lendingApr && (
+                        <div className="App-card-row">
+                          <div className="label">Lending APR</div>
+                          <div>{lendingApr}%</div>
+                        </div>
+                      )}
                     </div>
                   </div>
                   <div className="stats-piechart" onMouseLeave={onMYCDistributionChartLeave}>
@@ -680,10 +694,21 @@ export default function DashboardV2() {
                     )}
                   </div>
                 </div>
-                <div className="Lending-btn">
-                  <a href="https://lend.mycelium.xyz" target="_blank" rel="noopener noreferrer">
-                    <button className="App-button-option App-card-option">MYC Lending</button>
-                  </a>
+                <div className="Button-container">
+                  <div className="Lending-btn">
+                    <a href="https://lend.mycelium.xyz" target="_blank" rel="noopener noreferrer">
+                      <button className="App-button-option App-card-option">MYC Lending</button>
+                    </a>
+                  </div>
+                  <div className="Buy-btn">
+                    <a
+                      href="https://app.1inch.io/#/42161/unified/swap/USDC/0xc74fe4c715510ec2f8c61d70d397b32043f55abe"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      <button className="App-button-option App-card-option">Buy MYC</button>
+                    </a>
+                  </div>
                 </div>
               </div>
               <div className="App-card">
