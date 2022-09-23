@@ -888,6 +888,13 @@ table.Exchange-list-small td {
 .ExchangeChart.AdvancedTv {
   width: 100%;
 }
+
+.ExchangeChart.AdvancedTv .ExchangeChart-bottom-controls {
+  position: absolute;
+  top: 50px;
+  left: 60px;
+  background-color: var(--background-primary);
+}
 .ExchangeChart.AdvancedTv .Overlay {
   position: absolute;
   top: 0;

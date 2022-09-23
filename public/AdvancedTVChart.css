@@ -17,3 +17,6 @@ body {
   border: 1px solid #003000;
   border-radius: 4px;
 }
+div[data-name="legend"] {
+  transform: translateY(50px);
+}

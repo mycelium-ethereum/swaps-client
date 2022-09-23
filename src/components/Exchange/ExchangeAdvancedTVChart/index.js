@@ -3,8 +3,9 @@ import cx from "classnames";
 import { widget } from "../../../charting_library";
 import { generateDataFeed, supportedResolutions } from "../../../Api/TradingView";
 import ChartTokenSelector from "../ChartTokenSelector";
+import Tab from "../../Tab/Tab";
 
-import { USD_DECIMALS, getTokenInfo, formatAmount } from "../../../Helpers";
+import { CHART_PERIODS, USD_DECIMALS, getTokenInfo, formatAmount } from "../../../Helpers";
 
 const getLanguageFromURL = () => {
   const regex = new RegExp("[\\?&]lang=([^&#]*)");
@@ -12,7 +13,7 @@ const getLanguageFromURL = () => {
   return results === null ? null : decodeURIComponent(results[1].replace(/\+/g, " "));
 };
 
-const translateLightweightChartPeriod = (period) => {
+const convertLightweightChartPeriod = (period) => {
   switch (period) {
     case "5m":
       return supportedResolutions[0]; // 5
@@ -27,6 +28,14 @@ const translateLightweightChartPeriod = (period) => {
     default:
       return supportedResolutions[3]; // 240
   }
+};
+
+const TIMEFRAME = {
+  "5m": "210", // 5 * 14
+  "15m": "840", // 15 * 14
+  "1h": "3360", // 60 * 14
+  "4h": "7d", // 240 * 14
+  "1d": "14d", // 1440 * 14
 };
 
 export default function ExchangeAdvancedTVChart(props) {
@@ -44,6 +53,7 @@ export default function ExchangeAdvancedTVChart(props) {
     currentAveragePrice,
     trackAction,
   } = props;
+
   const defaultProps = useMemo(
     () => ({
       symbol: "0x00000:default/market",
@@ -62,7 +72,8 @@ export default function ExchangeAdvancedTVChart(props) {
   const [tvWidget, setTvWidget] = useState(null);
   const [showChart, setShowChart] = useState(false);
   const [prevPeriod, setPrevPeriod] = useState(period);
-  const [prevToken, setPrevToken] = useState(chartToken?.address);
+  const [prevToken, setPrevToken] = useState(null);
+  const [prevPriceDataLength, setPrevPriceDataLength] = useState(0);
 
   // useEffect(() => {
   //   const interval = setInterval(() => {
@@ -74,26 +85,26 @@ export default function ExchangeAdvancedTVChart(props) {
   const dataFeed = useMemo(() => generateDataFeed(priceData), [priceData]);
 
   const createChart = useCallback(() => {
+    const advancedChartPeriod = convertLightweightChartPeriod(period);
     const widgetOptions = {
       ...defaultProps,
       symbol: `${chartToken?.address}:${chartToken?.symbol}/USD`,
       debug: false,
       datafeed: dataFeed,
-      // interval: period.toUpperCase(),
-      interval: period,
+      interval: advancedChartPeriod,
       container: "tv_chart_container",
       library_path: process.env.NODE_ENV === "production" ? "/charting_library/" : "../../charting_library/",
       locale: getLanguageFromURL() || "en",
       disabled_features: [
-        "use_localstorage_for_settings",
-        "save_chart_properties_to_local_storage",
         "header_symbol_search",
         "timeframes_toolbar",
         "go_to_date",
+        "use_localstorage_for_settings",
+        "save_chart_properties_to_local_storage",
       ],
       chartToken: chartToken,
       enabled_features: [],
-      timeframe: "14D",
+      timeframe: TIMEFRAME[period],
       overrides: {
         "paneProperties.backgroundType": "solid",
         "paneProperties.background": "#000a00",
@@ -102,6 +113,10 @@ export default function ExchangeAdvancedTVChart(props) {
         "scalesProperties.backgroundColor": "#000a00",
         "paneProperties.backgroundGradientStartColor": "#000a00",
         "paneProperties.backgroundGradientEndColor": "#000a00",
+        "paneProperties.legendProperties.showStudyArguments": false,
+        "paneProperties.legendProperties.showStudyTitles": false,
+        "paneProperties.legendProperties.showStudyValues": false,
+        "paneProperties.legendProperties.showSeriesTitle": false,
       },
       loading_screen: {
         backgroundColor: "#000a00 !important",
@@ -126,17 +141,9 @@ export default function ExchangeAdvancedTVChart(props) {
 
   // Update chart period
   useEffect(() => {
-    if (tvWidget && prevPeriod !== period) {
-      const advancedChartPeriod = translateLightweightChartPeriod(period);
-      setPrevPeriod(advancedChartPeriod);
-      setShowChart(false);
-      tvWidget.setResolution(advancedChartPeriod, () => setShowChart(true));
-    }
-  }, [period, prevPeriod, tvWidget]);
-
-  // Recreate chart on token change
-  useEffect(() => {
-    if (showChart && tvWidget && priceData?.length && prevToken !== chartToken?.address) {
+    if (tvWidget && prevPeriod !== period && priceData?.length !== prevPriceDataLength) {
+      setPrevPeriod(period);
+      setPrevPriceDataLength(priceData.length);
       setShowChart(false);
       setTimeout(() => {
         if (tvWidget) {
@@ -145,7 +152,22 @@ export default function ExchangeAdvancedTVChart(props) {
         }
         createChart();
       }, 300); // Wait for overlay animation to complete
+      setShowChart(true);
+    }
+  }, [period, prevPeriod, tvWidget, createChart, prevPriceDataLength, priceData?.length]);
+
+  // Recreate chart on token change
+  useEffect(() => {
+    if (showChart && tvWidget && priceData?.length && prevToken !== chartToken?.address) {
+      setShowChart(false);
       setPrevToken(chartToken?.address);
+      setTimeout(() => {
+        if (tvWidget) {
+          tvWidget.remove();
+          setTvWidget(null);
+        }
+        createChart();
+      }, 300); // Wait for overlay animation to complete
     }
   }, [showChart, prevToken, tvWidget, priceData, chartToken?.address, chartToken?.symbol, period, createChart]);
 
@@ -262,6 +284,9 @@ export default function ExchangeAdvancedTVChart(props) {
         </div>
         <div className="ChartContainer">
           <div id={defaultProps.container} className="Chart" />
+          <div className="ExchangeChart-bottom-controls">
+            <Tab options={Object.keys(CHART_PERIODS)} option={period} setOption={setPeriod} trackAction={trackAction} />
+          </div>
           <div
             className={cx("Overlay", {
               active: !showChart,
