@@ -153,7 +153,7 @@ export default function AppHeaderLinks({
             </AppHeaderLinkContainer>
           ))}
           <AppHeaderLinkContainer>
-            <a href="https://lend.mycelium.xyz" target="_blank" rel="noopener noreferrer">
+            <a href="https://stake.mycelium.xyz" target="_blank" rel="noopener noreferrer">
               Lending
             </a>
           </AppHeaderLinkContainer>

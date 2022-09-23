@@ -696,7 +696,7 @@ export default function DashboardV2() {
                 </div>
                 <div className="Button-container">
                   <div className="Lending-btn">
-                    <a href="https://lend.mycelium.xyz" target="_blank" rel="noopener noreferrer">
+                    <a href="https://stake.mycelium.xyz" target="_blank" rel="noopener noreferrer">
                       <button className="App-button-option App-card-option">MYC Lending</button>
                     </a>
                   </div>

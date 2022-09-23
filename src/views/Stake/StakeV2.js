@@ -707,7 +707,6 @@ export default function StakeV2({ setPendingTxns, connectWallet, trackAction }) 
   const stakingData = getStakingData(stakingInfo);
   const vestingData = getVestingData(vestingInfo);
 
-
   const processedData = getProcessedData(
     balanceData,
     supplyData,
@@ -718,7 +717,7 @@ export default function StakeV2({ setPendingTxns, connectWallet, trackAction }) 
     nativeTokenPrice,
     stakedMycSupply,
     mycPrice,
-    mycSupply,
+    mycSupply
   );
 
   const mmApr = useMarketMakingApr(chainId, processedData.mlpSupplyUsd);
@@ -1123,7 +1122,7 @@ export default function StakeV2({ setPendingTxns, connectWallet, trackAction }) 
                       Withdraw
                     </button>
                   )}
-                  <a href="https://lend.mycelium.xyz" target="_blank" rel="noopener noreferrer">
+                  <a href="https://stake.mycelium.xyz" target="_blank" rel="noopener noreferrer">
                     <button className="App-button-option App-card-option">MYC Lending</button>
                   </a>
                 </div>
