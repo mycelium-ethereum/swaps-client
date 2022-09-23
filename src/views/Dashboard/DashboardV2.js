@@ -701,27 +701,13 @@ export default function DashboardV2() {
                     </a>
                   </div>
                   <div className="Buy-btn">
-                    <TooltipComponent
-                      position="left-top"
-                      className="nowrap"
-                      handle={
-                        <a
-                          href="https://app.1inch.io/#/42161/unified/swap/ETH/USDC"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                        >
-                          <button className="App-button-option App-card-option">Buy MYC </button>
-                        </a>
-                      }
-                      renderContent={() => (
-                        <>
-                          Import the token address on 1inch to purchase MYC.
-                          <br />
-                          <br />
-                          <b>0xc74fe4c715510ec2f8c61d70d397b32043f55abe</b>
-                        </>
-                      )}
-                    />
+                    <a
+                      href="https://app.1inch.io/#/42161/unified/swap/USDC/0xc74fe4c715510ec2f8c61d70d397b32043f55abe"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      <button className="App-button-option App-card-option">Buy MYC</button>
+                    </a>
                   </div>
                 </div>
               </div>
