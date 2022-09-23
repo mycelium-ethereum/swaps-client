@@ -903,13 +903,21 @@ table.Exchange-list-small td {
   height: 100%;
   z-index: 1;
   background-color: var(--background-primary);
-  opacity: 0;
   pointer-events: none;
+  opacity: 0;
   transition: opacity 0.3s ease;
 }
+.ExchangeChart.AdvancedTv .Overlay svg {
+  width: 60px;
+  height: 60px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
 .ExchangeChart.AdvancedTv .Overlay.active {
-  opacity: 1;
   pointer-events: auto;
+  opacity: 1;
 }
 .ExchangeChart.AdvancedTv .ExchangeChart-top {
   position: relative;

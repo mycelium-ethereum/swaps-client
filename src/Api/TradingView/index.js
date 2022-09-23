@@ -1,4 +1,4 @@
-export const supportedResolutions = ["5", "15", "60", "240", "1d"];
+export const supportedResolutions = ["5", "15", "60", "240", "1440"];
 
 const config = {
   supported_resolutions: [...supportedResolutions],

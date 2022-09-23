@@ -24,7 +24,7 @@ const convertLightweightChartPeriod = (period) => {
     case "4h":
       return supportedResolutions[3]; // 240
     case "1d":
-      return supportedResolutions[4]; // 1d
+      return supportedResolutions[4]; // 1440
     default:
       return supportedResolutions[3]; // 240
   }
@@ -33,9 +33,9 @@ const convertLightweightChartPeriod = (period) => {
 const TIMEFRAME = {
   "5m": "210", // 5 * 14
   "15m": "840", // 15 * 14
-  "1h": "3360", // 60 * 14
-  "4h": "7d", // 240 * 14
-  "1d": "14d", // 1440 * 14
+  "1h": "7D", // 60 * 14
+  "4h": "7D", // 240 * 14
+  "1d": "14D", // 1440 * 14
 };
 
 export default function ExchangeAdvancedTVChart(props) {
@@ -158,7 +158,7 @@ export default function ExchangeAdvancedTVChart(props) {
 
   // Recreate chart on token change
   useEffect(() => {
-    if (showChart && tvWidget && priceData?.length && prevToken !== chartToken?.address) {
+    if (showChart && tvWidget && priceData?.length !== prevPriceDataLength && prevToken !== chartToken?.address) {
       setShowChart(false);
       setPrevToken(chartToken?.address);
       setTimeout(() => {
@@ -169,7 +169,24 @@ export default function ExchangeAdvancedTVChart(props) {
         createChart();
       }, 300); // Wait for overlay animation to complete
     }
-  }, [showChart, prevToken, tvWidget, priceData, chartToken?.address, chartToken?.symbol, period, createChart]);
+  }, [
+    showChart,
+    prevToken,
+    tvWidget,
+    priceData,
+    chartToken?.address,
+    chartToken?.symbol,
+    period,
+    createChart,
+    prevPriceDataLength,
+  ]);
+
+  useEffect(() => {
+    if (!priceData) {
+      tvWidget.remove();
+      setTvWidget(null);
+    }
+  }, [tvWidget]);
 
   if (!priceData) {
     return null;
@@ -291,7 +308,33 @@ export default function ExchangeAdvancedTVChart(props) {
             className={cx("Overlay", {
               active: !showChart,
             })}
-          />
+          >
+            <svg
+              version="1.1"
+              id="L9"
+              xmlns="http://www.w3.org/2000/svg"
+              x="0px"
+              y="0px"
+              viewBox="0 0 100 100"
+              enableBackground="new 0 0 0 0"
+              className="mx-auto h-20 w-20"
+            >
+              <path
+                fill="#098200"
+                d="M73,50c0-12.7-10.3-23-23-23S27,37.3,27,50 M30.9,50c0-10.5,8.5-19.1,19.1-19.1S69.1,39.5,69.1,50"
+              >
+                <animateTransform
+                  attributeName="transform"
+                  attributeType="XML"
+                  type="rotate"
+                  dur="1s"
+                  from="0 50 50"
+                  to="360 50 50"
+                  repeatCount="indefinite"
+                />
+              </path>
+            </svg>
+          </div>
         </div>
       </div>
     </>
