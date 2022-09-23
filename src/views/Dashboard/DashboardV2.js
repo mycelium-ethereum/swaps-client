@@ -44,7 +44,7 @@ import {
   useVolume,
   useMarketMakingFeesSince,
   useFeesSince,
-  useLendingApr,
+  useStakingApr,
 } from "../../Api";
 
 import { getContract } from "../../Addresses";
@@ -204,7 +204,7 @@ export default function DashboardV2() {
   const ethPrice = ethToken.maxPrice;
   // const ethPrice = formatAmount(ethToken.maxPrice, USD_DECIMALS, 2, false);
 
-  const lendingApr = useLendingApr(mycPrice, ethPrice);
+  const stakingApr = useStakingApr(mycPrice, ethPrice);
 
   let { mainnet: totalMYCInLiquidityMainnet, arbitrum: totalMYCInLiquidityArbitrum } = useTotalMYCInLiquidity(
     chainId,
@@ -644,10 +644,10 @@ export default function DashboardV2() {
                           />
                         </div>
                       </div>
-                      {lendingApr && (
+                      {stakingApr && (
                         <div className="App-card-row">
-                          <div className="label">Lending APR</div>
-                          <div>{lendingApr}%</div>
+                          <div className="label">Staking APR</div>
+                          <div>{stakingApr}%</div>
                         </div>
                       )}
                     </div>
@@ -695,9 +695,9 @@ export default function DashboardV2() {
                   </div>
                 </div>
                 <div className="Button-container">
-                  <div className="Lending-btn">
+                  <div className="Staking-btn">
                     <a href="https://stake.mycelium.xyz" target="_blank" rel="noopener noreferrer">
-                      <button className="App-button-option App-card-option">MYC Lending</button>
+                      <button className="App-button-option App-card-option">MYC Staking</button>
                     </a>
                   </div>
                   <div className="Buy-btn">

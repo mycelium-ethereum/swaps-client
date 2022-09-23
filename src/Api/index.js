@@ -1224,27 +1224,27 @@ function ToastifyDebug(props) {
   );
 }
 
-export function useLendingApr(mycPrice, ethPrice) {
-  const [lendingApr, setLendingApr] = useState(null);
+export function useStakingApr(mycPrice, ethPrice) {
+  const [stakingApr, setStakingApr] = useState(null);
 
-  const { data: mycAssetsInLending } = useSWR(
-    [`DashboardV2:mycInLending:${ARBITRUM}`, ARBITRUM, getContract(ARBITRUM, "LentMYC"), "totalAssets"],
+  const { data: mycAssetsInStaking } = useSWR(
+    [`DashboardV2:mycInStaking:${ARBITRUM}`, ARBITRUM, getContract(ARBITRUM, "LentMYC"), "totalAssets"],
     {
       fetcher: fetcher(undefined, LentMyc),
     }
   );
 
-  const { data: pendingMycDepositsInLending } = useSWR(
-    [`DashboardV2:pendingMycInLending:${ARBITRUM}`, ARBITRUM, getContract(ARBITRUM, "LentMYC"), "pendingDeposits"],
+  const { data: pendingMycDepositsInStaking } = useSWR(
+    [`DashboardV2:pendingMycInStaking:${ARBITRUM}`, ARBITRUM, getContract(ARBITRUM, "LentMYC"), "pendingDeposits"],
     {
       fetcher: fetcher(undefined, LentMyc),
     }
   );
 
   useEffect(() => {
-    if (mycAssetsInLending && pendingMycDepositsInLending && ethPrice && mycPrice) {
+    if (mycAssetsInStaking && pendingMycDepositsInStaking && ethPrice && mycPrice) {
       // Format prices
-      const mycDeposited = mycAssetsInLending.add(pendingMycDepositsInLending).div(expandDecimals(1, ETH_DECIMALS));
+      const mycDeposited = mycAssetsInStaking.add(pendingMycDepositsInStaking).div(expandDecimals(1, ETH_DECIMALS));
 
       let ethDistributed = ethers.utils.parseEther("34.5807416");
       let mycUSDValue = mycDeposited.mul(mycPrice);
@@ -1252,11 +1252,11 @@ export function useLendingApr(mycPrice, ethPrice) {
 
       const aprPercentageForCycle = ethers.utils.formatUnits(ethUSDValue.div(mycUSDValue));
       const aprPercentageYearly = parseFloat(aprPercentageForCycle) * FORTNIGHTS_IN_YEAR * 100;
-      setLendingApr(aprPercentageYearly.toFixed(2));
+      setStakingApr(aprPercentageYearly.toFixed(2));
     }
-  }, [mycAssetsInLending, pendingMycDepositsInLending, ethPrice, mycPrice]);
+  }, [mycAssetsInStaking, pendingMycDepositsInStaking, ethPrice, mycPrice]);
 
-  return lendingApr;
+  return stakingApr;
 }
 
 export async function callContract(chainId, contract, method, params, opts) {

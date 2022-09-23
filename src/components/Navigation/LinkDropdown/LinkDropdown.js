@@ -66,7 +66,7 @@ export default function LinkDropdown() {
         ))}
         <ListItem>
           <a href="https://stake.mycelium.xyz" target="_blank" rel="noopener noreferrer">
-            Lending
+            Staking
           </a>
         </ListItem>
         <ListItem>
