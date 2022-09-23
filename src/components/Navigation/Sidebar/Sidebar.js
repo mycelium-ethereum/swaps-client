@@ -121,7 +121,7 @@ export default function Sidebar({ sidebarVisible, setSidebarVisible }) {
           ))}
           <MenuItem>
             <a href="https://lend.mycelium.xyz" target="_blank" rel="noopener noreferrer">
-              <FaFileInvoiceDollar /> Lending
+              <FaFileInvoiceDollar /> Lending <ExternalLinkIcon src={externalLinkIcon} />
             </a>
           </MenuItem>
         </NavMenu>
