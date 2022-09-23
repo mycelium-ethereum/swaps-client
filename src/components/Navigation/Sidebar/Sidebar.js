@@ -1,4 +1,13 @@
-import { SideMenu, Logo, NavMenu, MenuItem, SocialLinksMenu, PullTab, LegalMenu } from "./Sidebar.styles";
+import {
+  SideMenu,
+  Logo,
+  NavMenu,
+  MenuItem,
+  SocialLinksMenu,
+  PullTab,
+  LegalMenu,
+  ExternalLinkIcon,
+} from "./Sidebar.styles";
 import { NavLink } from "react-router-dom";
 import {
   FaChartLine,
@@ -11,6 +20,7 @@ import {
   FaLayerGroup,
   FaChartBar,
   FaSync,
+  FaFileInvoiceDollar,
 } from "react-icons/fa";
 
 import logoImg from "../../../img/logo_MYC.svg";
@@ -19,6 +29,7 @@ import twitterIcon from "../../../img/twitter.svg";
 import githubIcon from "../../../img/github.svg";
 import arrowLeftIcon from "../../../img/arrow-left.svg";
 import discordIcon from "../../../img/discord.svg";
+import externalLinkIcon from "../../../img/external-link.svg";
 
 const navLinks = [
   {
@@ -109,8 +120,15 @@ export default function Sidebar({ sidebarVisible, setSidebarVisible }) {
             </MenuItem>
           ))}
           <MenuItem>
+            <a href="https://lend.mycelium.xyz" target="_blank" rel="noopener noreferrer">
+              <FaFileInvoiceDollar /> Lending
+            </a>
+          </MenuItem>
+        </NavMenu>
+        <LegalMenu>
+          <MenuItem>
             <a href="https://analytics.mycelium.xyz" target="_blank" rel="noopener noreferrer">
-              <FaChartBar /> Analytics
+              <FaChartBar /> Analytics <ExternalLinkIcon src={externalLinkIcon} />
             </a>
           </MenuItem>
           <MenuItem>
@@ -119,15 +137,13 @@ export default function Sidebar({ sidebarVisible, setSidebarVisible }) {
               target="_blank"
               rel="noopener noreferrer"
             >
-              <FaBook /> Docs
+              <FaBook /> Docs <ExternalLinkIcon src={externalLinkIcon} />
             </a>
           </MenuItem>
-        </NavMenu>
-        <LegalMenu>
           {legalLinks.map((item) => (
             <MenuItem key={item.name}>
               <a href={item.path} target="_blank" rel="noopener noreferrer">
-                <item.icon /> {item.name}
+                <item.icon /> {item.name} <ExternalLinkIcon src={externalLinkIcon} />
               </a>
             </MenuItem>
           ))}

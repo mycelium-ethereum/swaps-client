@@ -9,6 +9,7 @@ import OrderBook from "../abis/OrderBook.json";
 import PositionManager from "../abis/PositionManager.json";
 import Vault from "../abis/Vault.json";
 import Router from "../abis/Router.json";
+import LentMyc from "../abis/LentMyc.json";
 import UniPool from "../abis/UniPool.json";
 import Token from "../abis/Token.json";
 import VaultReader from "../abis/VaultReader.json";
@@ -37,7 +38,11 @@ import {
   MM_FEE_MULTIPLIER,
   FEE_MULTIPLIER_BASIS_POINTS,
   BASIS_POINTS_DIVISOR,
-  MM_SWAPS_FEE_MULTIPLIER
+  MM_SWAPS_FEE_MULTIPLIER,
+  FORTNIGHTS_IN_YEAR,
+  ETH_DECIMALS,
+  limitDecimals,
+  USD_DECIMALS,
 } from "../Helpers";
 import { getTokens, getTokenBySymbol, getWhitelistedTokens } from "../data/Tokens";
 
@@ -52,7 +57,7 @@ function getMycGraphClient(chainId) {
     return arbitrumGraphClient;
   } else if (chainId === ARBITRUM_TESTNET) {
     return arbitrumTestnetGraphClient;
-  } 
+  }
   throw new Error(`Unsupported chain ${chainId}`);
 }
 
@@ -90,30 +95,29 @@ export function useFeesSince(chainId, from, to) {
 
   useEffect(() => {
     if (!from) {
-      return
+      return;
     }
-    getMycGraphClient(chainId).query({ query }).then((res) => {
-      if (res.data.feeStats) {
-        let fees = res.data.feeStats.reduce((sum, stat) => (
-            sum
-              .add(stat.mint)
-              .add(stat.burn)
-              .add(stat.swap)
-              .add(stat.marginAndLiquidation)
-          ), bigNumberify(0)
-        );
-        setRes(fees)
-      }
-    }).catch(console.warn);
+    getMycGraphClient(chainId)
+      .query({ query })
+      .then((res) => {
+        if (res.data.feeStats) {
+          let fees = res.data.feeStats.reduce(
+            (sum, stat) => sum.add(stat.mint).add(stat.burn).add(stat.swap).add(stat.marginAndLiquidation),
+            bigNumberify(0)
+          );
+          setRes(fees);
+        }
+      })
+      .catch(console.warn);
   }, [setRes, query, chainId, from]);
 
-  return res
+  return res;
 }
 
 export function useMarketMakingFeesSince(chainId, from, to, stableTokens) {
   const [res, setRes] = useState();
 
-  const stableMap = stableTokens.reduce((o, t) => ({ ...o, [t.address.toLowerCase()]: true }), {})
+  const stableMap = stableTokens.reduce((o, t) => ({ ...o, [t.address.toLowerCase()]: true }), {});
 
   const query = gql(`{
     hourlyVolumes (first: 1000, where: { id_gte: ${from}, id_lt: ${to}}) {
@@ -132,47 +136,45 @@ export function useMarketMakingFeesSince(chainId, from, to, stableTokens) {
       tokenA
       tokenB
     },
-  }`)
+  }`);
 
   useEffect(() => {
     if (!from) {
-      return
+      return;
     }
-    getMycGraphClient(chainId).query({ query }).then((res) => {
-      if (res.data.hourlyVolumes) {
-        let mmFees = res.data.hourlyVolumes.reduce((sum, stat) => (
-            sum
-              .add(MM_FEE_MULTIPLIER.mul(stat.mint))
-              .add(MM_FEE_MULTIPLIER.mul(stat.burn))
-              .add(MM_FEE_MULTIPLIER.mul(stat.margin))
-              .add(MM_FEE_MULTIPLIER.mul(stat.liquidation))
-          ), bigNumberify(0)
-        );
+    getMycGraphClient(chainId)
+      .query({ query })
+      .then((res) => {
+        if (res.data.hourlyVolumes) {
+          let mmFees = res.data.hourlyVolumes.reduce(
+            (sum, stat) =>
+              sum
+                .add(MM_FEE_MULTIPLIER.mul(stat.mint))
+                .add(MM_FEE_MULTIPLIER.mul(stat.burn))
+                .add(MM_FEE_MULTIPLIER.mul(stat.margin))
+                .add(MM_FEE_MULTIPLIER.mul(stat.liquidation)),
+            bigNumberify(0)
+          );
 
-        const allSwapsVolume = res.data.tokensSwapsVolume1.concat(res.data.tokensSwapsVolume2);
-        let swapMMFees = allSwapsVolume.reduce((sum, stat) => {
-          const tokenAIsStable = stableMap[stat.tokenA];
-          const tokenBIsStable = stableMap[stat.tokenB];
-          if (tokenAIsStable && tokenBIsStable) {
-            return sum
-          } else if (!tokenAIsStable && !tokenBIsStable) {
-            return (
-              sum
-                .add(MM_SWAPS_FEE_MULTIPLIER.mul(stat.swap))
-            )
-          } else {
-            return (
-              sum
-                .add(MM_FEE_MULTIPLIER.mul(stat.swap))
-            )
-          }
-        }, bigNumberify(0))
-        setRes(mmFees.add(swapMMFees).div(expandDecimals(1, FEE_MULTIPLIER_BASIS_POINTS)))
-      }
-    }).catch(console.warn);
+          const allSwapsVolume = res.data.tokensSwapsVolume1.concat(res.data.tokensSwapsVolume2);
+          let swapMMFees = allSwapsVolume.reduce((sum, stat) => {
+            const tokenAIsStable = stableMap[stat.tokenA];
+            const tokenBIsStable = stableMap[stat.tokenB];
+            if (tokenAIsStable && tokenBIsStable) {
+              return sum;
+            } else if (!tokenAIsStable && !tokenBIsStable) {
+              return sum.add(MM_SWAPS_FEE_MULTIPLIER.mul(stat.swap));
+            } else {
+              return sum.add(MM_FEE_MULTIPLIER.mul(stat.swap));
+            }
+          }, bigNumberify(0));
+          setRes(mmFees.add(swapMMFees).div(expandDecimals(1, FEE_MULTIPLIER_BASIS_POINTS)));
+        }
+      })
+      .catch(console.warn);
   }, [setRes, query, chainId, from]);
 
-  return res
+  return res;
 }
 
 export const useMarketMakingApr = (chainId, mlpSupplyUsd) => {
@@ -181,13 +183,13 @@ export const useMarketMakingApr = (chainId, mlpSupplyUsd) => {
 
   const [to] = useState(Math.floor(Date.now() / 1000));
   const from = to - SECONDS_PER_WEEK;
-  const lastWeeksMMFees = useMarketMakingFeesSince(chainId, from, to, stableTokens)
+  const lastWeeksMMFees = useMarketMakingFeesSince(chainId, from, to, stableTokens);
 
   if (lastWeeksMMFees && mlpSupplyUsd) {
     let mmAnnualFeesUsd = lastWeeksMMFees.mul(52);
     return mmAnnualFeesUsd.mul(BASIS_POINTS_DIVISOR).div(mlpSupplyUsd);
   }
-}
+};
 
 export function useVolume(chainId) {
   const query = gql(`{
@@ -206,7 +208,7 @@ export function useVolume(chainId) {
     getMycGraphClient(chainId).query({ query }).then(setRes).catch(console.warn);
   }, [setRes, query, chainId]);
 
-  return res ? res.data.volumeStat: null;
+  return res ? res.data.volumeStat : null;
 }
 
 export function useAllOrdersStats(chainId) {
@@ -620,18 +622,21 @@ export function useMYCPrice(chainId, libraries, active) {
 }
 
 export function useTotalMYCSupply() {
-  const { data: mycSupply, mutate: updateMYCSupply } = useSWR([getSupplyUrl('/totalSupply')], {
+  const { data: mycSupply, mutate: updateMYCSupply } = useSWR([getSupplyUrl("/totalSupply")], {
     fetcher: (...args) => fetch(...args).then((res) => res.text()),
   });
 
-  const { data: circulatingMycSupply, mutate: updateMYCCirculatingSupply } = useSWR([getSupplyUrl('/circulatingSupply')], {
-    fetcher: (...args) => fetch(...args).then((res) => res.text()),
-  });
+  const { data: circulatingMycSupply, mutate: updateMYCCirculatingSupply } = useSWR(
+    [getSupplyUrl("/circulatingSupply")],
+    {
+      fetcher: (...args) => fetch(...args).then((res) => res.text()),
+    }
+  );
 
   const mutate = useCallback(() => {
     updateMYCSupply();
     updateMYCCirculatingSupply();
-  }, [updateMYCSupply, updateMYCCirculatingSupply])
+  }, [updateMYCSupply, updateMYCCirculatingSupply]);
 
   return {
     total: mycSupply ? bigNumberify(ethers.utils.parseUnits(mycSupply, 18)) : undefined,
@@ -743,29 +748,29 @@ export function useTotalMYCInLiquidity() {
   );
 
   // const { data: tcrInUniswapLiquidityOnArbitrum, mutate: mutateTCRInUniswapLiquidityOnArbitrum } = useSWR(
-    // [
-      // `StakeV2:tcrInLiquidity:${ARBITRUM}`,
-      // ARBITRUM,
-      // getContract(ARBITRUM, "TCR"),
-      // "balanceOf",
-      // poolAddressArbitrum.uniswapTcr,
-    // ],
-    // {
-      // fetcher: fetcher(undefined, Token),
-    // }
+  // [
+  // `StakeV2:tcrInLiquidity:${ARBITRUM}`,
+  // ARBITRUM,
+  // getContract(ARBITRUM, "TCR"),
+  // "balanceOf",
+  // poolAddressArbitrum.uniswapTcr,
+  // ],
+  // {
+  // fetcher: fetcher(undefined, Token),
+  // }
   // );
 
   // const { data: tcrInBalancerLiquidityOnArbitrum, mutate: mutateTCRInBalancerLiquidityOnArbitrum } = useSWR(
-    // [
-      // `StakeV2:mycBalancerLiquidity:${ARBITRUM}`,
-      // ARBITRUM,
-      // getContract(ARBITRUM, "TCR"),
-      // "balanceOf",
-      // poolAddressArbitrum.balancer,
-    // ],
-    // {
-      // fetcher: fetcher(undefined, Token),
-    // }
+  // [
+  // `StakeV2:mycBalancerLiquidity:${ARBITRUM}`,
+  // ARBITRUM,
+  // getContract(ARBITRUM, "TCR"),
+  // "balanceOf",
+  // poolAddressArbitrum.balancer,
+  // ],
+  // {
+  // fetcher: fetcher(undefined, Token),
+  // }
   // );
 
   const { data: mycInUniswapLiquidityOnMainnet, mutate: mutateMYCInUniswapLiquidityOnMainnet } = useSWR(
@@ -795,16 +800,16 @@ export function useTotalMYCInLiquidity() {
   );
 
   // const { data: tcrInSushiswapLiquidityOnMainnet, mutate: mutateTCRInSushiSwapLiquidityOnMainnet } = useSWR(
-    // [
-      // `StakeV2:tcrInSushiswapLiquidity:${ETHEREUM}`,
-      // ETHEREUM,
-      // getContract(ETHEREUM, "TCR"),
-      // "balanceOf",
-      // poolAddressMainnet.sushiswap,
-    // ],
-    // {
-      // fetcher: fetcher(undefined, Token),
-    // }
+  // [
+  // `StakeV2:tcrInSushiswapLiquidity:${ETHEREUM}`,
+  // ETHEREUM,
+  // getContract(ETHEREUM, "TCR"),
+  // "balanceOf",
+  // poolAddressMainnet.sushiswap,
+  // ],
+  // {
+  // fetcher: fetcher(undefined, Token),
+  // }
   // );
 
   const mutate = useCallback(() => {
@@ -826,11 +831,13 @@ export function useTotalMYCInLiquidity() {
 
     mutateMYCInUniswapLiquidityOnMainnet,
     // mutateTCRInSushiSwapLiquidityOnMainnet,
-    mutateMYCInBalancerLiquidityOnMainnet
+    mutateMYCInBalancerLiquidityOnMainnet,
   ]);
 
   if (mycInUniswapLiquidityOnMainnet && mycInBalancerLiquidityOnMainnet && mycTcrInUniswapLiquidityOnArbitrum) {
-    let total = bigNumberify(mycInUniswapLiquidityOnMainnet).add(mycInBalancerLiquidityOnMainnet).add(mycTcrInUniswapLiquidityOnArbitrum);
+    let total = bigNumberify(mycInUniswapLiquidityOnMainnet)
+      .add(mycInBalancerLiquidityOnMainnet)
+      .add(mycTcrInUniswapLiquidityOnArbitrum);
     totalMYCMainnet.current = total;
   }
 
@@ -970,7 +977,6 @@ export async function approvePlugin(
     setPendingTxns,
   });
 }
-
 
 export async function createSwapOrder(
   chainId,
@@ -1216,6 +1222,41 @@ function ToastifyDebug(props) {
       {open && props.children}
     </div>
   );
+}
+
+export function useLendingApr(mycPrice, ethPrice) {
+  const [lendingApr, setLendingApr] = useState(null);
+
+  const { data: mycAssetsInLending } = useSWR(
+    [`DashboardV2:mycInLending:${ARBITRUM}`, ARBITRUM, getContract(ARBITRUM, "LentMYC"), "totalAssets"],
+    {
+      fetcher: fetcher(undefined, LentMyc),
+    }
+  );
+
+  const { data: pendingMycDepositsInLending } = useSWR(
+    [`DashboardV2:pendingMycInLending:${ARBITRUM}`, ARBITRUM, getContract(ARBITRUM, "LentMYC"), "pendingDeposits"],
+    {
+      fetcher: fetcher(undefined, LentMyc),
+    }
+  );
+
+  useEffect(() => {
+    if (mycAssetsInLending && pendingMycDepositsInLending && ethPrice && mycPrice) {
+      // Format prices
+      const mycDeposited = mycAssetsInLending.add(pendingMycDepositsInLending).div(expandDecimals(1, ETH_DECIMALS));
+
+      let ethDistributed = ethers.utils.parseEther("34.5807416");
+      let mycUSDValue = mycDeposited.mul(mycPrice);
+      let ethUSDValue = ethDistributed.mul(ethPrice);
+
+      const aprPercentageForCycle = ethers.utils.formatUnits(ethUSDValue.div(mycUSDValue));
+      const aprPercentageYearly = parseFloat(aprPercentageForCycle) * FORTNIGHTS_IN_YEAR * 100;
+      setLendingApr(aprPercentageYearly.toFixed(2));
+    }
+  }, [mycAssetsInLending, pendingMycDepositsInLending, ethPrice, mycPrice]);
+
+  return lendingApr;
 }
 
 export async function callContract(chainId, contract, method, params, opts) {

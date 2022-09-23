@@ -75,11 +75,12 @@
 .stats-container {
   display: flex;
 }
-.Lending-btn {
-  display: block;
+.Button-container {
+  display: flex;
+  align-items: center;
 }
 .Lending-btn button.App-button-option {
-  margin: 0;
+  margin: 0 8px 0 0;
 }
 .stats-piechart {
   margin: -10px;

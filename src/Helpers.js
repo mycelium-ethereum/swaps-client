@@ -93,6 +93,7 @@ export const MAX_LEVERAGE = 100 * 10000;
 export const MAX_PRICE_DEVIATION_BASIS_POINTS = 250;
 export const DEFAULT_GAS_LIMIT = 1 * 1000 * 1000;
 export const SECONDS_PER_YEAR = 31536000;
+export const FORTNIGHTS_IN_YEAR = 365 / 14;
 export const USDG_DECIMALS = 18;
 export const USD_DECIMALS = 30;
 export const BASIS_POINTS_DIVISOR = 10000;
@@ -1660,7 +1661,7 @@ export function useEagerConnect(setActivatingConnector) {
           setActivatingConnector(connector);
           await activate(connector, undefined, true);
         }
-      } catch (ex) { }
+      } catch (ex) {}
 
       setTried(true);
     })();

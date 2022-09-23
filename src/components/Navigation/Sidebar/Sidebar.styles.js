@@ -69,6 +69,11 @@ export const MenuItem = styled.li`
     }
   }
 `;
+export const ExternalLinkIcon = styled.img`
+  width: 16px;
+  height: 16px;
+  margin-left: 10px;
+`;
 
 export const SocialLinksMenu = styled.div`
   width: max-content;
