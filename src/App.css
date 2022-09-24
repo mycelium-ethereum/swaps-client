@@ -757,6 +757,14 @@ button.App-connect-wallet:hover {
   margin: 0.4rem;
 }
 
+.App-card-option:first-child {
+  margin-left: 0rem;
+}
+
+.App-card-option:last-child {
+  margin-right: 0rem;
+}
+
 .App-header a.App-header-link-main,
 .App-header .App-header-link-main {
   font-size: 1.1rem;
@@ -1006,12 +1014,12 @@ button.App-button-option {
   cursor: pointer;
   display: inline-block;
   padding: 0.4rem 0.7rem;
-  border-radius: 7px;
+  border-radius: 4px;
   color: white;
   text-decoration: none;
-  border: none;
+  border: 1px solid var(--action-active);
   font-size: 1rem;
-  background-color: var(--action-active);
+  background: var(--action-gradient);
   transition: all 0.3s ease;
 }
 

@@ -78,45 +78,22 @@
   background: rgba(255, 255, 255, 0.7);
 }
 
-.StakeV2-cards {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  grid-gap: 1rem;
-}
-
-.StakeV2-cards .App-card-title {
-  gap: 8px;
-  justify-content: start;
-}
-
-.StakeV2-myc-card .App-card-row a.label {
-  color: var(--text-secondary);
-}
-
-.StakeV2-cards .App-card-row .label {
-  color: var(--text-secondary);
-}
-
-.StakeV2-content {
-  margin-left: auto;
-  margin-right: auto;
-  width: 100%;
-}
-
 .Spread-capture-swap > .TokenSelector-box-symbol {
   margin-left: 0.5rem;
   display: none;
 }
 
-.Spread-capture .buy-input .Exchange-swap-section-top {
-  font-size: 16px!important;
+.Mlp-price-chart.ExchangeChart.tv {
+  height: 20rem;
 }
 
-@media (max-width: 900px) {
-  .StakeV2-cards {
-    grid-template-columns: 1fr;
-  }
+.Mlp-price-chart.ExchangeChart.tv > .ExchangeChart-bottom {
+  top: 0;
+  border-radius: 0px;
+}
 
+
+@media (max-width: 900px) {
   .StakeV2-total-rewards-card {
     grid-row: 4;
   }

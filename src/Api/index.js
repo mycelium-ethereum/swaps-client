@@ -1328,3 +1328,108 @@ export async function callContract(chainId, contract, method, params, opts) {
     throw e;
   }
 }
+
+const NOW_TS = parseInt(Date.now() / 1000);
+const FIRST_DATE_TS = NOW_TS - 60 * 60 * 24 * 7 * 52;
+
+export function useMlpPrices(chainId) {
+  const from = FIRST_DATE_TS;
+  const to = NOW_TS;
+
+  const query = gql(`{
+    mlpStats(
+      first: 1000,
+      orderBy: id,
+      orderDirection: desc,
+      where: { period: "daily", id_gte: ${from}, id_lte: ${to} }
+    ) {
+      id
+      aumInUsdg
+      mlpSupply
+      distributedUsd
+      distributedEth
+    }
+  }`);
+
+  const [data, setData] = useState();
+
+  useEffect(() => {
+    getMycGraphClient(chainId).query({ query }).then(setData).catch(console.warn);
+  }, [setData, query, chainId]);
+
+  let cumulativeDistributedUsdPerMlp = 0;
+  let cumulativeDistributedEthPerMlp = 0;
+  const mlpChartData = useMemo(() => {
+    if (!data) {
+      return null;
+    }
+
+    const getTimestamp = (item) =>
+      item.timestamp || parseInt(item.id);
+
+    let prevMlpSupply;
+    let prevAum;
+
+    let ret = data.data.mlpStats
+      .filter((item) => item.id % 86400 === 0)
+      .reduce((memo, item) => {
+        const last = memo[memo.length - 1];
+
+        const aum = Number(item.aumInUsdg) / 1e18;
+        const mlpSupply = Number(item.mlpSupply) / 1e18;
+
+        const distributedUsd = Number(item.distributedUsd) / 1e30;
+        const distributedUsdPerMlp = distributedUsd / mlpSupply || 0;
+        cumulativeDistributedUsdPerMlp += distributedUsdPerMlp;
+
+        const distributedEth = Number(item.distributedEth) / 1e18;
+        const distributedEthPerMlp = distributedEth / mlpSupply || 0;
+        cumulativeDistributedEthPerMlp += distributedEthPerMlp;
+
+        const mlpPrice = aum / mlpSupply;
+        const timestamp = parseInt(item.id);
+
+        const newItem = {
+          time: timestamp,
+          aum,
+          mlpSupply,
+          value: mlpPrice,
+          cumulativeDistributedEthPerMlp,
+          cumulativeDistributedUsdPerMlp,
+          distributedUsdPerMlp,
+          distributedEthPerMlp,
+        };
+
+        if (last && last.timestamp === timestamp) {
+          memo[memo.length - 1] = newItem;
+        } else {
+          memo.push(newItem);
+        }
+
+        return memo;
+      }, [])
+      .map((item) => {
+        let { mlpSupply, aum } = item;
+        if (!mlpSupply) {
+          mlpSupply = prevMlpSupply;
+        }
+        if (!aum) {
+          aum = prevAum;
+        }
+        item.mlpSupplyChange = prevMlpSupply
+          ? ((mlpSupply - prevMlpSupply) / prevMlpSupply) * 100
+          : 0;
+        if (item.mlpSupplyChange > 1000) item.mlpSupplyChange = 0;
+        item.aumChange = prevAum ? ((aum - prevAum) / prevAum) * 100 : 0;
+        if (item.aumChange > 1000) item.aumChange = 0;
+        prevMlpSupply = mlpSupply;
+        prevAum = aum;
+        return item;
+      });
+
+    // ret = fillNa(ret);
+    return ret;
+  }, [data]);
+
+  return mlpChartData;
+}
