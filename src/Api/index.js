@@ -39,7 +39,8 @@ import {
   BASIS_POINTS_DIVISOR,
   formatAmount,
   USD_DECIMALS,
-  MM_SWAPS_FEE_MULTIPLIER
+  MM_SWAPS_FEE_MULTIPLIER,
+  calcMarketMakingFees
 } from "../Helpers";
 import { getTokens, getTokenBySymbol, getWhitelistedTokens } from "../data/Tokens";
 
@@ -191,7 +192,6 @@ export function useUserSpreadCapture(chainId, account, mlpBalance) {
       }
     }`);
     getMycGraphClient(chainId).query({ query }).then((res) => {
-      console.log(res);
       if (res.data.cumulativeSpreadCapture && res.data.userSpreadCapture) {
         let cumulativeRewardsPerToken = bigNumberify(res.data.cumulativeSpreadCapture.cumulativeRewardsPerToken)
         let lastCumulativeRewardsPerToken = bigNumberify(res.data.userSpreadCapture.lastCumulativeRewardsPerToken)
@@ -202,7 +202,6 @@ export function useUserSpreadCapture(chainId, account, mlpBalance) {
 
   let userSpreadCapture;
   if (spreadCapturePerToken && mlpBalance) {
-    console.log(spreadCapturePerToken, mlpBalance);
     userSpreadCapture = (spreadCapturePerToken.mul(mlpBalance)).div(expandDecimals(1, 18)).div(expandDecimals(1, FEE_MULTIPLIER_BASIS_POINTS));
   }
 
@@ -1340,8 +1339,8 @@ export function useMlpPrices(chainId) {
     mlpStats(
       first: 1000,
       orderBy: id,
-      orderDirection: desc,
-      where: { period: "daily", id_gte: ${from}, id_lte: ${to} }
+      orderDirection: asc,
+      where: { period: daily }
     ) {
       id
       aumInUsdg
@@ -1352,8 +1351,8 @@ export function useMlpPrices(chainId) {
     feeStats (
       first: 1000,
       orderBy: id,
-      orderDirection: desc,
-      where: { period: "daily", id_gte: ${from}, id_lte: ${to} }
+      orderDirection: asc,
+      where: { period: daily }
     ) {
       id
       margin
@@ -1362,8 +1361,20 @@ export function useMlpPrices(chainId) {
       liquidation
       mint
       burn
+    },
+    volumeStats(
+      first: 1000
+      orderBy: id
+      orderDirection: asc
+      where: { period: daily }
+    ) {
+      id
+      margin
+      liquidation
+      mint
+      burn
+      swap
     }
-
   }`);
 
   const [data, setData] = useState();
@@ -1393,6 +1404,13 @@ export function useMlpPrices(chainId) {
         .add(stat.burn)
     }), {})
 
+    const volumeStatsById = data.data.volumeStats.reduce((o, stat) => ({
+      ...o,
+      [stat.id]: {
+        ...stat
+      }
+    }), {})
+
     let ret = data.data.mlpStats
       .filter((item) => item.id % 86400 === 0)
       .reduce((memo, item) => {
@@ -1409,12 +1427,13 @@ export function useMlpPrices(chainId) {
         const distributedEthPerMlp = distributedEth / mlpSupply || 0;
         cumulativeDistributedEthPerMlp += distributedEthPerMlp;
 
-        const feeStat = feeStatsById[item.id] ?? '0';
+        const feeStat = feeStatsById[item.id] ?? ethers.BigNumber.from(0);
+        const mmFees = calcMarketMakingFees(volumeStatsById[item.id])
+        const totalFees = parseFloat(ethers.utils.formatUnits(feeStat.add(mmFees), USD_DECIMALS))
 
         const mlpPrice = aum / mlpSupply;
-        const mlpPriceWithFees = (parseFloat(ethers.utils.formatUnits(feeStat, USD_DECIMALS)) + aum) / mlpSupply;
+        const mlpPriceWithFees = (totalFees + aum) / mlpSupply;
 
-        console.log(mlpPrice, mlpPriceWithFees);
         const timestamp = parseInt(item.id);
 
         const newItem = {

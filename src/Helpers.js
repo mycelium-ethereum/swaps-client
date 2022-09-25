@@ -3081,3 +3081,20 @@ export function getTierIdDisplay(tierId) {
 export function shareToTwitter(text) {
   window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`, "_blank");
 }
+
+export function calcMarketMakingFees (data) {
+  if (!data) {
+    return 0
+  }
+  const mmFees = ethers.BigNumber.from(0)
+      .add(MM_SWAPS_FEE_MULTIPLIER.mul(data.swap))
+      .add(MM_FEE_MULTIPLIER.mul(data.mint))
+      .add(MM_FEE_MULTIPLIER.mul(data.burn))
+      .add(MM_FEE_MULTIPLIER.mul(data.margin))
+      .add(MM_FEE_MULTIPLIER.mul(data.liquidation));
+
+  return mmFees.div(expandDecimals(1, FEE_MULTIPLIER_BASIS_POINTS))
+}
+
+
+
