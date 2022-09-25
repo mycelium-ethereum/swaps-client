@@ -1348,7 +1348,22 @@ export function useMlpPrices(chainId) {
       mlpSupply
       distributedUsd
       distributedEth
+    },
+    feeStats (
+      first: 1000,
+      orderBy: id,
+      orderDirection: desc,
+      where: { period: "daily", id_gte: ${from}, id_lte: ${to} }
+    ) {
+      id
+      margin
+      marginAndLiquidation
+      swap
+      liquidation
+      mint
+      burn
     }
+
   }`);
 
   const [data, setData] = useState();
@@ -1370,6 +1385,14 @@ export function useMlpPrices(chainId) {
     let prevMlpSupply;
     let prevAum;
 
+    const feeStatsById = data.data.feeStats.reduce((o, stat) => ({
+      ...o,
+      [stat.id]: ethers.BigNumber.from(stat.marginAndLiquidation)
+        .add(stat.swap)
+        .add(stat.mint)
+        .add(stat.burn)
+    }), {})
+
     let ret = data.data.mlpStats
       .filter((item) => item.id % 86400 === 0)
       .reduce((memo, item) => {
@@ -1386,14 +1409,20 @@ export function useMlpPrices(chainId) {
         const distributedEthPerMlp = distributedEth / mlpSupply || 0;
         cumulativeDistributedEthPerMlp += distributedEthPerMlp;
 
+        const feeStat = feeStatsById[item.id] ?? '0';
+
         const mlpPrice = aum / mlpSupply;
+        const mlpPriceWithFees = (parseFloat(ethers.utils.formatUnits(feeStat, USD_DECIMALS)) + aum) / mlpSupply;
+
+        console.log(mlpPrice, mlpPriceWithFees);
         const timestamp = parseInt(item.id);
 
         const newItem = {
           time: timestamp,
           aum,
           mlpSupply,
-          value: mlpPrice,
+          value: mlpPriceWithFees,
+          mlpPrice,
           cumulativeDistributedEthPerMlp,
           cumulativeDistributedUsdPerMlp,
           distributedUsdPerMlp,

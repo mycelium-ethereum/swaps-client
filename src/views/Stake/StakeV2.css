@@ -87,6 +87,10 @@
   height: 20rem;
 }
 
+.Mlp-price-chart.ExchangeChart.tv .ExchangeChart-bottom-stats {
+  margin-left: 0;
+}
+
 .Mlp-price-chart.ExchangeChart.tv > .ExchangeChart-bottom {
   top: 0;
   border-radius: 0px;

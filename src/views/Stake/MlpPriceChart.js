@@ -152,7 +152,7 @@ export default function MlpPriceChart(props) {
     period = DEFAULT_PERIOD;
   }
 
-  const [hoveredCandlestick, setHoveredCandlestick] = useState();
+  const [hoveredPoint, setHoveredPoint] = useState();
 
   const fromToken = getTokenInfo(infoTokens, fromTokenAddress);
   const toToken = getTokenInfo(infoTokens, toTokenAddress);
@@ -192,25 +192,24 @@ export default function MlpPriceChart(props) {
   const onCrosshairMove = useCallback(
     (evt) => {
       if (!evt.time) {
-        setHoveredCandlestick(null);
+        setHoveredPoint(null);
         return;
       }
+      const priceDataById = priceData.reduce((o, stat) => ({
+        ...o,
+        [stat.time]: {
+          ...stat
+        }
+      }), {})
 
-      for (const point of evt.seriesPrices.values()) {
-        setHoveredCandlestick((hoveredCandlestick) => {
-          if (hoveredCandlestick && hoveredCandlestick.time === evt.time) {
-            // rerender optimisations
-            return hoveredCandlestick;
-          }
-          return {
-            time: evt.time,
-            ...point,
-          };
-        });
-        break;
+      const hoveredPoint = priceDataById[evt.time];
+      if (!hoveredPoint) {
+        return
       }
+      
+      setHoveredPoint(hoveredPoint);
     },
-    [setHoveredCandlestick]
+    [setHoveredPoint, priceData]
   );
 
   useEffect(() => {
@@ -279,34 +278,35 @@ export default function MlpPriceChart(props) {
     if (!priceData) {
       return null;
     }
-    const candlestick = hoveredCandlestick || priceData[priceData.length - 1];
+    const candlestick = hoveredPoint || priceData[priceData.length - 1];
     if (!candlestick) {
       return null;
     }
 
     const className = cx({
       "ExchangeChart-bottom-stats": true,
-      positive: candlestick.open <= candlestick.close,
-      negative: candlestick.open > candlestick.close,
-      [`length-${String(parseInt(candlestick.close)).length}`]: true,
+      // positive: candlestick.open <= candlestick.close,
+      // negative: candlestick.open > candlestick.close,
+      // [`length-${String(parseInt(candlestick.close)).length}`]: true,
     });
 
-    const toFixedNumbers = 2;
+    const toFixedNumbers = 3;
 
-    return (<></>)
-    // return (
-      // <div className={className}>
-        // <span className="ExchangeChart-bottom-stats-label">O</span>
-        // <span className="ExchangeChart-bottom-stats-value">{candlestick.open.toFixed(toFixedNumbers)}</span>
-        // <span className="ExchangeChart-bottom-stats-label">H</span>
-        // <span className="ExchangeChart-bottom-stats-value">{candlestick.high.toFixed(toFixedNumbers)}</span>
-        // <span className="ExchangeChart-bottom-stats-label">L</span>
-        // <span className="ExchangeChart-bottom-stats-value">{candlestick.low.toFixed(toFixedNumbers)}</span>
-        // <span className="ExchangeChart-bottom-stats-label">C</span>
-        // <span className="ExchangeChart-bottom-stats-value">{candlestick.close.toFixed(toFixedNumbers)}</span>
-      // </div>
-    // );
-  }, [hoveredCandlestick, priceData]);
+    return (
+      <div className={className}>
+        <span className="ExchangeChart-bottom-stats-label">p</span>
+        <span className="ExchangeChart-bottom-stats-value">{candlestick.mlpPrice.toFixed(toFixedNumbers)}</span>
+        <span className="ExchangeChart-bottom-stats-label">w/fees</span>
+        <span className="ExchangeChart-bottom-stats-value">{candlestick.value.toFixed(toFixedNumbers)}</span>
+        {/*
+        <span className="ExchangeChart-bottom-stats-label">L</span>
+        <span className="ExchangeChart-bottom-stats-value">{candlestick.low.toFixed(toFixedNumbers)}</span>
+        <span className="ExchangeChart-bottom-stats-label">C</span>
+        <span className="ExchangeChart-bottom-stats-value">{candlestick.close.toFixed(toFixedNumbers)}</span>
+        */}
+      </div>
+    );
+  }, [hoveredPoint, priceData]);
 
   let high;
   let low;
@@ -364,9 +364,11 @@ export default function MlpPriceChart(props) {
     <div className="Mlp-price-chart ExchangeChart tv" ref={ref}>
       <div className="ExchangeChart-bottom App-box App-box-border">
         <div className="ExchangeChart-bottom-header">
+          {/*
           <div className="ExchangeChart-bottom-controls">
             <Tab options={Object.keys(CHART_PERIODS)} option={period} setOption={setPeriod} trackAction={trackAction} />
           </div>
+          */}
           {candleStatsHtml}
         </div>
         <div className="ExchangeChart-bottom-content" ref={chartRef}></div>
