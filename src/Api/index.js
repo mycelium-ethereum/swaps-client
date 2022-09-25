@@ -178,7 +178,7 @@ export function useMarketMakingFeesSince(chainId, from, to, stableTokens) {
   return res
 }
 
-export function useUserSpreadCapture(chainId, account, mlpBalance) {
+export function useUserSpreadCapture(chainId, account, mlpBalance, ethPrice) {
   const [spreadCapturePerToken, setSpreadCapturePerToken] = useState();
 
   useEffect(() => {
@@ -200,12 +200,16 @@ export function useUserSpreadCapture(chainId, account, mlpBalance) {
     }).catch(console.warn);
   }, [chainId, account]);
 
-  let userSpreadCapture;
-  if (spreadCapturePerToken && mlpBalance) {
+  let userSpreadCapture, userSpreadCaptureEth;
+  if (spreadCapturePerToken && mlpBalance && ethPrice) {
     userSpreadCapture = (spreadCapturePerToken.mul(mlpBalance)).div(expandDecimals(1, 18)).div(expandDecimals(1, FEE_MULTIPLIER_BASIS_POINTS));
+    userSpreadCaptureEth = (userSpreadCapture.mul(expandDecimals(1, 18))).div(ethPrice);
   }
 
-  return userSpreadCapture
+  return ({
+    userSpreadCapture,
+    userSpreadCaptureEth
+  })
 }
 
 export const useMarketMakingApr = (chainId, mlpSupplyUsd) => {

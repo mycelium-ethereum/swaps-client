@@ -148,7 +148,7 @@ function CompoundModal(props) {
       "handleRewards",
       [
         shouldClaimMyc, // shouldClaimMyc,
-        shouldClaimMyc, // shouldStakeMYC,
+        false, // shouldStakeMYC,
         shouldClaimEsMyc, // shouldClaimEsMyc,
         shouldClaimEsMyc, // shouldStakeEsMyc,
         false, // shouldStakeMultiplierPoints,
@@ -185,15 +185,15 @@ function CompoundModal(props) {
         <div className="CompoundModal-menu">
           <StakeV2Styled.ModalRow>
             <StakeV2Styled.ModalRowHeader>
-              Claim and Stake MYC Rewards
+              Claim MYC Rewards
             </StakeV2Styled.ModalRowHeader>
             {shouldClaimMyc &&
               <>
                 <StakeV2Styled.ModalRowText large inline>
-                  0.00 MYC
+                  {formatKeyAmount(processedData, "mlpVesterRewards", 18, 4)} MYC
                 </StakeV2Styled.ModalRowText>{" "}
                 <StakeV2Styled.ModalRowText inline secondary>
-                  ($0.00)
+                  (${formatKeyAmount(processedData, "mlpVesterRewardsUsd", USD_DECIMALS, 4)})
                 </StakeV2Styled.ModalRowText>
               </>
             }
@@ -621,7 +621,7 @@ export default function StakeV2({ setPendingTxns, connectWallet, trackAction, sa
     mycSupply,
   );
 
-  let userSpreadCapture = useUserSpreadCapture(chainId, account, processedData?.mlpBalance)
+  let { userSpreadCapture, userSpreadCaptureEth } = useUserSpreadCapture(chainId, account, processedData?.mlpBalance, nativeTokenPrice)
   const mmApr = useMarketMakingApr(chainId, processedData.mlpSupplyUsd);
   if (mmApr) {
     processedData.mmApr = mmApr;
@@ -771,6 +771,7 @@ export default function StakeV2({ setPendingTxns, connectWallet, trackAction, sa
         nativeTokenSymbol={nativeTokenSymbol}
         processedData={processedData}
         userSpreadCapture={userSpreadCapture}
+        userSpreadCaptureEth={userSpreadCaptureEth}
       />
 
       <StakeV2Styled.StakeV2Content className="StakeV2-content">

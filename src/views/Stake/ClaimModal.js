@@ -29,6 +29,7 @@ import {
   USDG_DECIMALS,
   PLACEHOLDER_ACCOUNT,
   formatKeyAmount,
+  ETH_DECIMALS,
 } from "../../Helpers";
 
 
@@ -70,7 +71,8 @@ export default function ClaimModal(props) {
     nativeTokenSymbol,
     wrappedTokenSymbol,
     processedData,
-    userSpreadCapture
+    userSpreadCapture,
+    userSpreadCaptureEth,
   } = props;
 
   const [isClaiming, setIsClaiming] = useState(false);
@@ -525,10 +527,10 @@ export default function ClaimModal(props) {
             {shouldClaimMyc &&
               <>
                 <StakeV2Styled.ModalRowText large inline>
-                  0.00 MYC
+                  {formatKeyAmount(processedData, "mlpVesterRewards", 18, 4, true)} MYC
                 </StakeV2Styled.ModalRowText>{" "}
                 <StakeV2Styled.ModalRowText inline secondary>
-                  ($0.00)
+                  (${formatKeyAmount(processedData, "mlpVesterRewardsUsd", USD_DECIMALS, 4, true)})
                 </StakeV2Styled.ModalRowText>
               </>
             }
@@ -582,7 +584,7 @@ export default function ClaimModal(props) {
             {shouldClaimSpreadCapture  &&
               <>
                 <StakeV2Styled.ModalRowText large inline>
-                  {formatKeyAmount(processedData, "feeMlpTrackerRewards", 18, 4)} {nativeTokenSymbol} (
+                  {shouldZeroSpreadCapture ? '0.00' : formatAmount(userSpreadCaptureEth, ETH_DECIMALS, 5, true, '0.00')} (
                   {wrappedTokenSymbol})
                 </StakeV2Styled.ModalRowText>{" "}
                 <StakeV2Styled.ModalRowText inline secondary>
