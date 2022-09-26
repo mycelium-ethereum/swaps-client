@@ -185,7 +185,7 @@ export const useMarketMakingApr = (chainId, mlpSupplyUsd) => {
   const from = to - SECONDS_PER_WEEK;
   const lastWeeksMMFees = useMarketMakingFeesSince(chainId, from, to, stableTokens);
 
-  if (lastWeeksMMFees && mlpSupplyUsd) {
+  if (lastWeeksMMFees && mlpSupplyUsd && mlpSupplyUsd.gt(0)) {
     let mmAnnualFeesUsd = lastWeeksMMFees.mul(52);
     return mmAnnualFeesUsd.mul(BASIS_POINTS_DIVISOR).div(mlpSupplyUsd);
   }
