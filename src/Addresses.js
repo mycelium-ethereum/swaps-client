@@ -1,7 +1,7 @@
 const CONTRACTS = {
   1: {
     UniswapMycEthPool: "0x66dD48889Df1Fc32cBa3aBfA2c453906d527eB2e",
-    
+
     UniswapTcrEthPool: "0x10b5c63a0a94ec3036238190bc88608a02e91e2c",
     SushiswapTcrEthPool: "0xe55c3e83852429334a986b265d03b879a3d188ac",
 
@@ -12,9 +12,9 @@ const CONTRACTS = {
     MYC: "0x4b13006980aCB09645131b91D259eaA111eaF5Ba",
 
     WETH: "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2",
-    USDC: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48"
+    USDC: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
   },
-  
+
   56: {
     // bsc mainnet
     Treasury: "0xa44E7252a0C137748F523F112644042E5987FfC7",
@@ -82,7 +82,7 @@ const CONTRACTS = {
     RewardRouter: "0x0a83c05d3Bd25127c270715E5cd9CA869697b948",
     RewardReader: "0xE6c94E0d0EA43FF89f0952E97eD3d2cD89DB4C12",
 
-    // https://github.com/OffchainLabs/arbitrum/blob/950c2f91b2e951cd3764394e0a73eac3797aecf3/packages/arb-ts/src/lib/networks.ts#L65 
+    // https://github.com/OffchainLabs/arbitrum/blob/950c2f91b2e951cd3764394e0a73eac3797aecf3/packages/arb-ts/src/lib/networks.ts#L65
     NATIVE_TOKEN: "0xB47e6A5f8b33b3F17603C83a0535A9dcD7E32681",
     MLP: "0x4960Eb3D3686943E365f71602c778C8b484B80a9",
     TCR: "0xE28DB434b53bDDfe72e3Bb287c8345632baBdB7c",
@@ -113,7 +113,7 @@ const CONTRACTS = {
     ReferralReader: "0x9A3d3D5Df8F105cadb1F67587ab49d42146D5389",
 
     FeeDistributor: "0x057B99E0112A0D9fDA7503bDc8b6995fA2ff997D",
-    FeeDistributorReader: "0x55ce0A81b697f1eff846e8a56D3f303A5BE490b1"
+    FeeDistributorReader: "0x55ce0A81b697f1eff846e8a56D3f303A5BE490b1",
   },
   42161: {
     // arbitrum mainnet
@@ -161,7 +161,9 @@ const CONTRACTS = {
     ReferralReader: "0xb220724b6b68a84392eC22e841eDe5519863A21F",
 
     FeeDistributor: "0xc136c6a977af230B4F288dCE7f9432b0e91e4657",
-    FeeDistributorReader: "0xe6d60D6A7d39d9435403e0993890D6B50B4B03BC"
+    FeeDistributorReader: "0xe6d60D6A7d39d9435403e0993890D6B50B4B03BC",
+
+    LentMYC: "0x9B225FF56C48671d4D04786De068Ed8b88b672d6",
   },
   43114: {
     // avalanche

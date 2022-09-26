@@ -123,10 +123,6 @@ import useSWR from "swr";
 import LinkDropdown from "./components/Navigation/LinkDropdown/LinkDropdown";
 import Sidebar from "./components/Navigation/Sidebar/Sidebar";
 
-const TWITTER_SHARE_TEXT = `I’m trading the merge fee-free with @mycelium_xyz Perpetual Swaps!
-
-https://swaps.mycelium.xyz/`;
-
 if ("ethereum" in window) {
   window.ethereum.autoRefreshOnNetworkChange = false;
 }
@@ -1030,27 +1026,6 @@ function FullApp() {
         pauseOnHover
       />
       <EventToastContainer />
-      {/* ETH Merge Modal */}
-      <Modal className="Eth-merge-modal" isVisible={mergeModalVisible} setIsVisible={setMergeModalVisible}>
-        <div className="Eth-merge-modal-header">
-          <img src={ethMergeHeader} className="Eth-merge-modal-graphic" alt="ETH Merge header graphic" />
-          <img src={ethMergeHeadermesh} className="Eth-merge-modal-mesh" alt="" />
-        </div>
-        <div className="Eth-merge-modal-title">
-          <small>Trade The Merge</small>
-          <h2>Fee-Free Spree</h2>
-        </div>
-        <hr className="Eth-merge-modal-divider" />
-        <div className="Button-content">
-          <span>On Mycelium Perpetual Swaps</span>
-          <button className="App-button-option App-card-option" onClick={() => setMergeModalVisible(false)}>
-            Continue
-          </button>
-          <button className="App-button-option App-card-option" onClick={() => shareToTwitter(TWITTER_SHARE_TEXT)}>
-            Share on Twitter <img src={twitterIcon} alt="Twitter" />
-          </button>
-        </div>
-      </Modal>
       <Modal
         className="Connect-wallet-modal"
         isVisible={walletModalVisible}

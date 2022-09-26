@@ -75,11 +75,12 @@
 .stats-container {
   display: flex;
 }
-.Lending-btn {
-  display: block;
+.Button-container {
+  display: flex;
+  align-items: center;
 }
-.Lending-btn button.App-button-option {
-  margin: 0;
+.Staking-btn button.App-button-option {
+  margin: 0 8px 0 0;
 }
 .stats-piechart {
   margin: -10px;
@@ -187,7 +188,7 @@
   .stats-container {
     flex-wrap: wrap;
   }
-  .Lending-btn {
+  .Staking-btn {
     margin: 0 auto;
   }
 

@@ -20,7 +20,6 @@ import OrderBook from "./abis/OrderBook.json";
 import { getWhitelistedTokens, isValidToken } from "./data/Tokens";
 import ComingSoonTooltip from "./components/Tooltip/ComingSoon";
 import { isAddress } from "ethers/lib/utils";
-import {SECONDS_PER_WEEK} from "./data/Fees";
 
 const { AddressZero } = ethers.constants;
 
@@ -94,6 +93,7 @@ export const MAX_LEVERAGE = 100 * 10000;
 export const MAX_PRICE_DEVIATION_BASIS_POINTS = 250;
 export const DEFAULT_GAS_LIMIT = 1 * 1000 * 1000;
 export const SECONDS_PER_YEAR = 31536000;
+export const FORTNIGHTS_IN_YEAR = 365 / 14;
 export const USDG_DECIMALS = 18;
 export const USD_DECIMALS = 30;
 export const BASIS_POINTS_DIVISOR = 10000;
@@ -106,14 +106,12 @@ export const MLP_DECIMALS = 18;
 export const MYC_DECIMALS = 18;
 export const DEFAULT_MAX_USDG_AMOUNT = expandDecimals(200 * 1000 * 1000, 18);
 
-// export const TAX_BASIS_POINTS = 20;
 export const TAX_BASIS_POINTS = 30;
 export const STABLE_TAX_BASIS_POINTS = 2;
 export const MINT_BURN_FEE_BASIS_POINTS = 18;
-export const SWAP_FEE_BASIS_POINTS = 30;
+export const SWAP_FEE_BASIS_POINTS = 50;
 export const STABLE_SWAP_FEE_BASIS_POINTS = 3;
-// export const MARGIN_FEE_BASIS_POINTS = 3;
-export const MARGIN_FEE_BASIS_POINTS = 0;
+export const MARGIN_FEE_BASIS_POINTS = 3;
 
 export const LIQUIDATION_FEE = expandDecimals(5, USD_DECIMALS);
 
@@ -425,7 +423,7 @@ export const networkOptions = [
   },
 ];
 
-const supportedChainIds = [ARBITRUM, AVALANCHE, ARBITRUM_TESTNET];
+const supportedChainIds = [ARBITRUM, ARBITRUM_TESTNET];
 const injectedConnector = new InjectedConnector({
   supportedChainIds,
 });
@@ -435,7 +433,6 @@ const getWalletConnectConnector = () => {
   return new WalletConnectConnector({
     rpc: {
       [ETHEREUM]: ETHEREUM_RPC_PROVIDERS[0],
-      [AVALANCHE]: AVALANCHE_RPC_PROVIDERS[0],
       [ARBITRUM]: ARBITRUM_RPC_PROVIDERS[0],
       [ARBITRUM_TESTNET]: ARBITRUM_TESTNET_RPC_PROVIDERS[0],
     },
@@ -571,7 +568,7 @@ const BASE_TRACER_URL = process.env.REACT_APP_TRACER_API ?? "https://api.tracer.
 
 export function getTracerServerUrl(chainId, path) {
   if (!chainId) {
-    throw new Error("chainId is not provided");
+    throw new Error("chainId is not supported");
   } else if (chainId !== ARBITRUM && chainId !== ARBITRUM_TESTNET) {
     throw new Error("chainId is not supported");
   }

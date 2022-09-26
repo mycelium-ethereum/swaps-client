@@ -606,7 +606,6 @@ export default function StakeV2({ setPendingTxns, connectWallet, trackAction, sa
   const stakingData = getStakingData(stakingInfo);
   const vestingData = getVestingData(vestingInfo);
 
-
   const processedData = getProcessedData(
     balanceData,
     supplyData,
@@ -617,7 +616,7 @@ export default function StakeV2({ setPendingTxns, connectWallet, trackAction, sa
     nativeTokenPrice,
     stakedMycSupply,
     mycPrice,
-    mycSupply,
+    mycSupply
   );
 
   let { userSpreadCapture, userSpreadCaptureEth } = useUserSpreadCapture(chainId, account, processedData?.mlpBalance, nativeTokenPrice)
@@ -1062,7 +1061,7 @@ export default function StakeV2({ setPendingTxns, connectWallet, trackAction, sa
                 </StakeV2Styled.RewardsBannerText>
                 <StakeV2Styled.Buttons>
                   <a href="https://lend.mycelium.xyz" target="_blank" rel="noopener noreferrer">
-                    <button className="App-button-option App-card-option">MYC Lending</button>
+                    <button className="App-button-option App-card-option">MYC Staking</button>
                   </a>
                 </StakeV2Styled.Buttons>
               </StakeV2Styled.StakingBannerRow>
