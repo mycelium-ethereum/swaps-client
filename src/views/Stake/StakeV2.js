@@ -70,9 +70,13 @@ function CompoundModal(props) {
     nativeTokenSymbol,
     wrappedTokenSymbol,
     processedData,
-    setHasRecentlyClaimed
+    setHasRecentlyClaimed,
+    vesterAddress,
+    stakedMlpTrackerAddress,
+    esMycAddress
   } = props;
   const [isCompounding, setIsCompounding] = useState(false);
+  const [isDepositing, setIsDepositing] = useState(false);
 
   const [shouldClaimMyc, setShouldClaimMyc] = useLocalStorageSerializeKey(
     [chainId, "StakeV2-compound-should-claim-myc"],
@@ -90,8 +94,6 @@ function CompoundModal(props) {
   );
 
   const mycAddress = getContract(chainId, "MYC");
-  const stakedMlpTrackerAddress = getContract(chainId, "StakedMlpTracker");
-
   const [isApproving, setIsApproving] = useState(false);
 
   const { data: tokenAllowance } = useSWR(
@@ -104,7 +106,7 @@ function CompoundModal(props) {
   const needApproval = tokenAllowance && totalVesterRewards && totalVesterRewards.gt(tokenAllowance);
 
   const isPrimaryEnabled = () => {
-    return !isCompounding && !isApproving && !isCompounding;
+    return !isCompounding && !isApproving && !isCompounding && !isDepositing;
   };
 
   const getPrimaryText = () => {
@@ -116,6 +118,9 @@ function CompoundModal(props) {
     }
     if (isCompounding) {
       return "Compounding...";
+    }
+    if (isDepositing) {
+      return "Depositing..."
     }
     return "Compound";
   };
@@ -157,15 +162,40 @@ function CompoundModal(props) {
       }
     )
       .then(async (res) => {
-        setIsVisible(false);
         if (shouldBuyMlpWithEth) {
           setHasRecentlyClaimed(Date.now())
+        }
+        if (shouldClaimEsMyc) {
+          await res.wait()
+          depositEsMyc()
+        } else {
+          setIsVisible(false);
         }
       })
       .finally(() => {
         setIsCompounding(false);
       });
   };
+
+  const depositEsMyc = async () => {
+    setIsDepositing(true);
+    const contract = new ethers.Contract(vesterAddress, Vester.abi, library.getSigner());
+    const esMyc = new ethers.Contract(esMycAddress, Token.abi, library.getSigner());
+    const balance = await esMyc.balanceOf(account);
+
+    callContract(chainId, contract, "deposit", [balance], {
+      sentMsg: "Deposit submitted!",
+      failMsg: "Deposit failed!",
+      successMsg: "Deposited!",
+      setPendingTxns,
+    })
+      .then(async (res) => {
+        setIsVisible(false);
+      })
+      .finally(() => {
+        setIsDepositing(false);
+      });
+  }
 
   return (
     <div className="StakeModal">
@@ -189,7 +219,7 @@ function CompoundModal(props) {
           </StakeV2Styled.ModalRow>
           <StakeV2Styled.ModalRow>
             <StakeV2Styled.ModalRowHeader>
-              Claim esMYC Rewards
+              Claim and vest esMYC Rewards
             </StakeV2Styled.ModalRowHeader>
             {shouldClaimEsMyc &&
               <>
@@ -737,6 +767,9 @@ export default function StakeV2({ setPendingTxns, connectWallet, trackAction, sa
         chainId={chainId}
         processedData={processedData}
         setHasRecentlyClaimed={setHasRecentlyClaimed}
+        vesterAddress={mlpVesterAddress}
+        stakedMlpTrackerAddress={stakedMlpTrackerAddress}
+        esMycAddress={esMycAddress}
       />
       <ClaimModal
         active={active}
