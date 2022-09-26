@@ -158,3 +158,28 @@ export const ModalRowText = styled.div`
 
 export const Buttons = styled.div`
 `
+
+/* CLAIM MODAL */
+export const ClaimModal = styled.div`
+
+`
+
+export const SpreadCapture = styled.div`
+  & > .buy-input .Exchange-swap-section-top {
+    font-size: 16px!important;
+  }
+
+  & > .buy-input {
+    border: 1px solid var(--cell-highlight);
+  }
+`
+
+export const SpreadCaptureDescription = styled.div`
+  color: var(--text-secondary);
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+`
+
+
+
+

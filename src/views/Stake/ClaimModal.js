@@ -45,7 +45,6 @@ import RewardRouter from "../../abis/RewardRouter.json";
 import tlp24Icon from "../../img/ic_mlp_24.svg";
 import arrowIcon from "../../img/ic_convert_down.svg";
 
-import './ClaimModal.css';
 import * as StakeV2Styled from "./StakeV2Styles";
 import BuyInputSection from "../../components/BuyInputSection/BuyInputSection";
 import TokenSelector from "../../components/Exchange/TokenSelector";
@@ -517,7 +516,7 @@ export default function ClaimModal(props) {
   };
 
   return (
-    <div className="StakeModal">
+    <StakeV2Styled.ClaimModal className="StakeModal">
       <Modal isVisible={isVisible} setIsVisible={setIsVisible} label="Claim Rewards">
         <div className="CompoundModal-menu">
           <StakeV2Styled.ModalRow>
@@ -592,12 +591,12 @@ export default function ClaimModal(props) {
                   {shouldZeroSpreadCapture ? '0.00' : formatAmount(userSpreadCapture, USD_DECIMALS, 2, true, '0.00')})
                 </StakeV2Styled.ModalRowText>
 
-                <div className="Spread-capture">
-                  <div className="Spread-capture-description">
+                <StakeV2Styled.SpreadCapture>
+                  <StakeV2Styled.SpreadCaptureDescription>
                     Market Making Rewards are realised in the capital apprecitaion
                     of your MLP position. Sell a portion of your MLP position to
                     claim your Market Making Rewards.
-                  </div>
+                  </StakeV2Styled.SpreadCaptureDescription>
                   <BuyInputSection
                     topLeftLabel={'Sell'}
                     staticInput={true}
@@ -639,7 +638,7 @@ export default function ClaimModal(props) {
                       trackAction={trackAction}
                     />
                   </BuyInputSection>
-                </div>
+                </StakeV2Styled.SpreadCapture>
               </>
             }
             <Toggle isChecked={shouldClaimSpreadCapture} handleToggle={setShouldClaimSpreadCapture} />
@@ -651,6 +650,6 @@ export default function ClaimModal(props) {
           </button>
         </div>
       </Modal>
-    </div>
+    </StakeV2Styled.ClaimModal>
   );
 }
