@@ -1052,9 +1052,6 @@ export default function StakeV2({ setPendingTxns, connectWallet, trackAction, sa
                       Withdraw
                     </button>
                   )}
-                  <a href="https://lend.mycelium.xyz" target="_blank" rel="noopener noreferrer">
-                    <button className="App-button-option App-card-option">MYC Lending</button>
-                  </a>
                 </StakeV2Styled.Buttons>
               </StakeV2Styled.StakingBannerRow>
               <StakeV2Styled.StakingBannerRow borderTop>
