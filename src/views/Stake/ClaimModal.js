@@ -72,6 +72,7 @@ export default function ClaimModal(props) {
     processedData,
     userSpreadCapture,
     userSpreadCaptureEth,
+    setHasRecentlyClaimed
   } = props;
 
   const [isClaiming, setIsClaiming] = useState(false);
@@ -99,11 +100,6 @@ export default function ClaimModal(props) {
     true
   );
 
-  // used since there is some delay in the graph updating
-  const [hasRecentlyClaimed, setHasRecentlyClaimed] = useLocalStorageSerializeKey(
-    [chainId, "StakeV2-has-recently-claimed-spread-capture"],
-    true
-  );
 
   const history = useHistory();
   const whitelistedTokens = getWhitelistedTokens(chainId);
@@ -176,9 +172,6 @@ export default function ClaimModal(props) {
     }
   );
 
-  // if claimed in the last 5 minutes then zero out rewards
-  const shouldZeroSpreadCapture = useMemo(() => Number(hasRecentlyClaimed) + (60 * 5 * 1000) > Date.now(), [hasRecentlyClaimed])
-
   const redemptionTime = lastPurchaseTime ? lastPurchaseTime.add(MLP_COOLDOWN_DURATION) : undefined;
   const inCooldownWindow = redemptionTime && parseInt(Date.now() / 1000) < redemptionTime;
 
@@ -194,13 +187,11 @@ export default function ClaimModal(props) {
       : expandDecimals(1, USD_DECIMALS);
 
   useEffect(() => {
-    if (shouldZeroSpreadCapture) {
-      setMlpValue('0')
-    } else if (userSpreadCapture && mlpPrice) {
+    if (userSpreadCapture && mlpPrice) {
       let mlpAmount = userSpreadCapture.mul(expandDecimals(1, MLP_DECIMALS)).div(mlpPrice)
       setMlpValue(formatAmount(mlpAmount, MLP_DECIMALS))
     }
-  }, [userSpreadCapture, mlpPrice, shouldZeroSpreadCapture])
+  }, [userSpreadCapture, mlpPrice])
 
   const swapToken = getToken(chainId, swapTokenAddress);
   const swapTokenInfo = getTokenInfo(infoTokens, swapTokenAddress);
@@ -491,7 +482,7 @@ export default function ClaimModal(props) {
         false, // shouldStakeMultiplierPoints
         shouldClaimWeth,
         shouldConvertWeth,
-        false, // shouldBuyTlpWithEth
+        false, // shouldBuyMlpWithEth
       ],
       {
         sentMsg: "Claim submitted.",
@@ -583,12 +574,12 @@ export default function ClaimModal(props) {
             {shouldClaimSpreadCapture  &&
               <>
                 <StakeV2Styled.ModalRowText large inline>
-                  {shouldZeroSpreadCapture ? '0.00' : formatAmount(userSpreadCaptureEth, ETH_DECIMALS, 5, true, '0.00')} (
+                  {formatAmount(userSpreadCaptureEth, ETH_DECIMALS, 5, true, '0.00')} (
                   {wrappedTokenSymbol})
                 </StakeV2Styled.ModalRowText>{" "}
                 <StakeV2Styled.ModalRowText inline secondary>
                   ($
-                  {shouldZeroSpreadCapture ? '0.00' : formatAmount(userSpreadCapture, USD_DECIMALS, 2, true, '0.00')})
+                  {formatAmount(userSpreadCapture, USD_DECIMALS, 2, true, '0.00')})
                 </StakeV2Styled.ModalRowText>
 
                 <StakeV2Styled.SpreadCapture>

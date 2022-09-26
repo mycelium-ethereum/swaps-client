@@ -43,6 +43,7 @@ import {
   MM_SWAPS_FEE_MULTIPLIER,
   calcMarketMakingFees,
   FORTNIGHTS_IN_YEAR,
+  useLocalStorageSerializeKey,
 } from "../Helpers";
 import { getTokens, getTokenBySymbol, getWhitelistedTokens } from "../data/Tokens";
 
@@ -180,6 +181,14 @@ export function useMarketMakingFeesSince(chainId, from, to, stableTokens) {
 export function useUserSpreadCapture(chainId, account, mlpBalance, ethPrice) {
   const [spreadCapturePerToken, setSpreadCapturePerToken] = useState();
 
+  const [hasRecentlyClaimed, setHasRecentlyClaimed] = useLocalStorageSerializeKey(
+    [chainId, "Recently-claimed-spread-capture"],
+    true
+  );
+
+  // if claimed in the last 5 minutes then zero out rewards
+  const shouldZeroSpreadCapture = useMemo(() => Number(hasRecentlyClaimed) + (60 * 5 * 1000) > Date.now(), [hasRecentlyClaimed])
+
   useEffect(() => {
     const query = gql(`{
       cumulativeSpreadCapture(id: "total") {
@@ -201,13 +210,19 @@ export function useUserSpreadCapture(chainId, account, mlpBalance, ethPrice) {
 
   let userSpreadCapture, userSpreadCaptureEth;
   if (spreadCapturePerToken && mlpBalance && ethPrice) {
-    userSpreadCapture = (spreadCapturePerToken.mul(mlpBalance)).div(expandDecimals(1, 18)).div(expandDecimals(1, FEE_MULTIPLIER_BASIS_POINTS));
-    userSpreadCaptureEth = (userSpreadCapture.mul(expandDecimals(1, 18))).div(ethPrice);
+    if (shouldZeroSpreadCapture) {
+      userSpreadCapture = ethers.BigNumber.from(0);
+      userSpreadCaptureEth = ethers.BigNumber.from(0);
+    } else {
+      userSpreadCapture = (spreadCapturePerToken.mul(mlpBalance)).div(expandDecimals(1, 18)).div(expandDecimals(1, FEE_MULTIPLIER_BASIS_POINTS));
+      userSpreadCaptureEth = (userSpreadCapture.mul(expandDecimals(1, 18))).div(ethPrice);
+    }
   }
 
   return ({
     userSpreadCapture,
-    userSpreadCaptureEth
+    userSpreadCaptureEth,
+    setHasRecentlyClaimed
   })
 }
 

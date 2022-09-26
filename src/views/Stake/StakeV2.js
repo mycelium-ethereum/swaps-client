@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { Link } from "react-router-dom";
 import { useWeb3React } from "@web3-react/core";
 
@@ -36,6 +36,7 @@ import {
   getStakingData,
   getProcessedData,
   getPageTitle,
+  ETH_DECIMALS,
 } from "../../Helpers";
 import { callContract, useMarketMakingApr, useMYCPrice, useTotalMYCSupply, useUserSpreadCapture } from "../../Api";
 import { getConstant } from "../../Constants";
@@ -68,7 +69,8 @@ function CompoundModal(props) {
     totalVesterRewards,
     nativeTokenSymbol,
     wrappedTokenSymbol,
-    processedData
+    processedData,
+    setHasRecentlyClaimed
   } = props;
   const [isCompounding, setIsCompounding] = useState(false);
 
@@ -82,14 +84,6 @@ function CompoundModal(props) {
     true
   );
 
-  const [shouldClaimWeth, setShouldClaimWeth] = useLocalStorageSerializeKey(
-    [chainId, "StakeV2-compound-should-claim-weth"],
-    true
-  );
-  const [shouldConvertWeth, setShouldConvertWeth] = useLocalStorageSerializeKey(
-    [chainId, "StakeV2-compound-should-convert-weth"],
-    false
-  );
   const [shouldBuyMlpWithEth, setShouldBuyMlpWithEth] = useLocalStorageSerializeKey(
     [chainId, "StakeV2-compound-should-buy-mlp"],
     true
@@ -164,18 +158,13 @@ function CompoundModal(props) {
     )
       .then(async (res) => {
         setIsVisible(false);
+        if (shouldBuyMlpWithEth) {
+          setHasRecentlyClaimed(Date.now())
+        }
       })
       .finally(() => {
         setIsCompounding(false);
       });
-  };
-
-  const toggleBuyMlp = (value) => {
-    if (value) {
-      setShouldClaimWeth(true);
-      setShouldConvertWeth(false);
-    }
-    setShouldBuyMlpWithEth(value);
   };
 
   return (
@@ -231,7 +220,7 @@ function CompoundModal(props) {
                 </StakeV2Styled.ModalRowText>
               </>
             }
-            <Toggle isChecked={shouldBuyMlpWithEth} handleToggle={toggleBuyMlp} />
+            <Toggle isChecked={shouldBuyMlpWithEth} handleToggle={setShouldBuyMlpWithEth} />
           </StakeV2Styled.ModalRow>
         </div>
         <div className="Exchange-swap-button-container">
@@ -619,7 +608,7 @@ export default function StakeV2({ setPendingTxns, connectWallet, trackAction, sa
     mycSupply
   );
 
-  let { userSpreadCapture, userSpreadCaptureEth } = useUserSpreadCapture(chainId, account, processedData?.mlpBalance, nativeTokenPrice)
+  let { userSpreadCapture, userSpreadCaptureEth, setHasRecentlyClaimed } = useUserSpreadCapture(chainId, account, processedData?.mlpBalance, nativeTokenPrice)
   const mmApr = useMarketMakingApr(chainId, processedData.mlpSupplyUsd);
   if (mmApr) {
     processedData.mmApr = mmApr;
@@ -748,6 +737,7 @@ export default function StakeV2({ setPendingTxns, connectWallet, trackAction, sa
         library={library}
         chainId={chainId}
         processedData={processedData}
+        setHasRecentlyClaimed={setHasRecentlyClaimed}
       />
       <ClaimModal
         active={active}
@@ -768,6 +758,7 @@ export default function StakeV2({ setPendingTxns, connectWallet, trackAction, sa
         wrappedTokenSymbol={wrappedTokenSymbol}
         nativeTokenSymbol={nativeTokenSymbol}
         processedData={processedData}
+        setHasRecentlyClaimed={setHasRecentlyClaimed}
         userSpreadCapture={userSpreadCapture}
         userSpreadCaptureEth={userSpreadCaptureEth}
       />
@@ -916,15 +907,21 @@ export default function StakeV2({ setPendingTxns, connectWallet, trackAction, sa
                   </div>
                   <div className="App-card-row">
                     <div className="label">Market Making Rewards</div>
+                    <StakeV2Styled.RewardsBannerTextWrap>
                       <StakeV2Styled.RewardsBannerText large>
                         <Tooltip
-                          handle={`$${formatAmount(userSpreadCapture, USD_DECIMALS, 2, true, '0.00')}`}
+                          handle={`${formatAmount(userSpreadCaptureEth, ETH_DECIMALS, 2, true, '0.00')} ${nativeTokenSymbol}`}
                           position="right-bottom"
                           renderContent={() =>
                             "Market Making rewards are sourced from the spread of the traded markets and is realised by MLP holders through the appreciation of the MLP token."
                           }
                         />
+                      </StakeV2Styled.RewardsBannerText>{" "}
+                      <StakeV2Styled.RewardsBannerText secondary>
+                        ($
+                        {formatAmount(userSpreadCapture, USD_DECIMALS, 2, true, '0.00')})
                       </StakeV2Styled.RewardsBannerText>
+                    </StakeV2Styled.RewardsBannerTextWrap>
                   </div>
                 </StakeV2Styled.RewardsBannerRow>
               <StakeV2Styled.Buttons>
