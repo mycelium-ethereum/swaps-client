@@ -1021,6 +1021,8 @@ button.App-button-option {
   font-size: 1rem;
   background: var(--action-gradient);
   transition: all 0.3s ease;
+  min-width: 145px;
+  text-align: center;
 }
 
 a.App-button-option:hover,
