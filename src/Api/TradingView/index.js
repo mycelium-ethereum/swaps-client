@@ -1,4 +1,5 @@
-export const supportedResolutions = ["5", "15", "60", "240", "1440"];
+// [5m, 15m, 60m (1h), 240m(4h), 1D(24h)]
+export const supportedResolutions = ["5", "15", "60", "240", "24H"];
 
 const config = {
   supported_resolutions: [...supportedResolutions],
@@ -55,8 +56,15 @@ export const generateDataFeed = (priceData) => {
             ...el,
             time: el.time * 1000, //TradingView requires bar time in ms
           };
-        });
-        onResult(bars, { noData: false });
+        })
+
+        if (!periodParams.firstDataRequest) {
+          onResult([], { noData: true});
+        } else if (bars.length < periodParams.countBack) {
+          onResult(bars, { noData: false });
+        } else {
+          onResult(bars, { noData: false });
+        }
       } else {
         onResult([], { noData: true });
       }

@@ -24,7 +24,7 @@ const convertLightweightChartPeriod = (period) => {
     case "4h":
       return supportedResolutions[3]; // 240
     case "1d":
-      return supportedResolutions[4]; // 1440
+      return supportedResolutions[4]; // D
     default:
       return supportedResolutions[3]; // 240
   }
@@ -101,6 +101,7 @@ export default function ExchangeAdvancedTVChart(props) {
         "go_to_date",
         "use_localstorage_for_settings",
         "save_chart_properties_to_local_storage",
+        "header_resolutions"
       ],
       chartToken: chartToken,
       enabled_features: [],
