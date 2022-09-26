@@ -37,7 +37,6 @@ import {
   MM_FEE_MULTIPLIER,
   FEE_MULTIPLIER_BASIS_POINTS,
   BASIS_POINTS_DIVISOR,
-  formatAmount,
   USD_DECIMALS,
   MM_SWAPS_FEE_MULTIPLIER,
   calcMarketMakingFees
@@ -1332,13 +1331,7 @@ export async function callContract(chainId, contract, method, params, opts) {
   }
 }
 
-const NOW_TS = parseInt(Date.now() / 1000);
-const FIRST_DATE_TS = NOW_TS - 60 * 60 * 24 * 7 * 52;
-
 export function useMlpPrices(chainId) {
-  const from = FIRST_DATE_TS;
-  const to = NOW_TS;
-
   const query = gql(`{
     mlpStats(
       first: 1000,
@@ -1393,9 +1386,6 @@ export function useMlpPrices(chainId) {
     if (!data) {
       return null;
     }
-
-    const getTimestamp = (item) =>
-      item.timestamp || parseInt(item.id);
 
     let prevMlpSupply;
     let prevAum;

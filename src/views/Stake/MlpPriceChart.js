@@ -6,21 +6,15 @@ import { createChart } from "krasulya-lightweight-charts";
 import {
   USD_DECIMALS,
   SWAP,
-  INCREASE,
   CHART_PERIODS,
-  getTokenInfo,
   formatAmount,
   formatDateTime,
-  usePrevious,
-  getLiquidationPrice,
   useLocalStorageSerializeKey,
 } from "../../Helpers";
-import { useChartPrices, useMlpPrices } from "../../Api";
-import Tab from "../../components/Tab/Tab";
+import { useMlpPrices } from "../../Api";
 
-import { getTokens, getToken } from "../../data/Tokens";
-
-const PRICE_LINE_TEXT_WIDTH = 15;
+import { getTokens } from "../../data/Tokens";
+import { ethers } from "ethers";
 
 const timezoneOffset = -new Date().getTimezoneOffset() * 60;
 
@@ -133,13 +127,9 @@ const getChartOptions = (width, height) => ({
 
 export default function MlpPriceChart(props) {
   const {
-    swapOption,
-    fromTokenAddress,
-    toTokenAddress,
-    infoTokens,
     chainId,
     sidebarVisible,
-    trackAction,
+    mlpPrice
   } = props;
 
   const priceData = useMlpPrices(chainId);
@@ -154,34 +144,12 @@ export default function MlpPriceChart(props) {
 
   const [hoveredPoint, setHoveredPoint] = useState();
 
-  const fromToken = getTokenInfo(infoTokens, fromTokenAddress);
-  const toToken = getTokenInfo(infoTokens, toTokenAddress);
-
-  const [chartToken, setChartToken] = useState({
-    maxPrice: null,
-    minPrice: null,
-  });
-  useEffect(() => {
-    const tmp = getChartToken(swapOption, fromToken, toToken, chainId);
-    setChartToken(tmp);
-  }, [swapOption, fromToken, toToken, chainId]);
-
-  const symbol = chartToken ? (chartToken.isWrapped ? chartToken.baseSymbol : chartToken.symbol) : undefined;
-  const marketName = chartToken ? symbol + "_USD" : undefined;
-  const previousMarketName = usePrevious(marketName);
-
   const ref = useRef(null);
   const chartRef = useRef(null);
 
-  const currentAveragePrice =
-    chartToken.maxPrice && chartToken.minPrice ? chartToken.maxPrice.add(chartToken.minPrice).div(2) : null;
+  const currentPrice = mlpPrice;
 
   const [chartInited, setChartInited] = useState(false);
-  useEffect(() => {
-    if (marketName !== previousMarketName) {
-      setChartInited(false);
-    }
-  }, [marketName, previousMarketName]);
 
   const scaleChart = useCallback(() => {
     const from = Date.now() / 1000 - (7 * 24 * CHART_PERIODS[period]) / 2 + timezoneOffset;
@@ -262,9 +230,16 @@ export default function MlpPriceChart(props) {
   }, [currentChart, sidebarVisible]);
 
   useEffect(() => {
-    if (currentSeries && priceData && priceData.length) {
+    if (currentSeries && priceData && priceData.length && mlpPrice) {
+      const priceData_ = priceData.slice();
+      const lastValue = priceData_.pop();
+      const newLastValue = {
+        ...lastValue,
+        value: parseFloat(ethers.utils.formatUnits(mlpPrice, USD_DECIMALS))
+      }
+      priceData_.push(newLastValue);
 
-      currentSeries.setData(priceData);
+      currentSeries.setData(priceData_);
       currentChart.timeScale().fitContent();
 
       if (!chartInited) {
@@ -272,22 +247,19 @@ export default function MlpPriceChart(props) {
         setChartInited(true);
       }
     }
-  }, [priceData, currentSeries, chartInited, scaleChart]);
+  }, [priceData, currentSeries, chartInited, scaleChart, mlpPrice]);
 
-  const candleStatsHtml = useMemo(() => {
+  const statsHtml = useMemo(() => {
     if (!priceData) {
       return null;
     }
-    const candlestick = hoveredPoint || priceData[priceData.length - 1];
-    if (!candlestick) {
+    const point = hoveredPoint || priceData[priceData.length - 1];
+    if (!point) {
       return null;
     }
 
     const className = cx({
       "ExchangeChart-bottom-stats": true,
-      // positive: candlestick.open <= candlestick.close,
-      // negative: candlestick.open > candlestick.close,
-      // [`length-${String(parseInt(candlestick.close)).length}`]: true,
     });
 
     const toFixedNumbers = 3;
@@ -295,21 +267,13 @@ export default function MlpPriceChart(props) {
     return (
       <div className={className}>
         <span className="ExchangeChart-bottom-stats-label">p</span>
-        <span className="ExchangeChart-bottom-stats-value">{candlestick.mlpPrice.toFixed(toFixedNumbers)}</span>
+        <span className="ExchangeChart-bottom-stats-value">{point.mlpPrice.toFixed(toFixedNumbers)}</span>
         <span className="ExchangeChart-bottom-stats-label">w/fees</span>
-        <span className="ExchangeChart-bottom-stats-value">{candlestick.value.toFixed(toFixedNumbers)}</span>
-        {/*
-        <span className="ExchangeChart-bottom-stats-label">L</span>
-        <span className="ExchangeChart-bottom-stats-value">{candlestick.low.toFixed(toFixedNumbers)}</span>
-        <span className="ExchangeChart-bottom-stats-label">C</span>
-        <span className="ExchangeChart-bottom-stats-value">{candlestick.close.toFixed(toFixedNumbers)}</span>
-        */}
+        <span className="ExchangeChart-bottom-stats-value">{point.value.toFixed(toFixedNumbers)}</span>
       </div>
     );
   }, [hoveredPoint, priceData]);
 
-  let high;
-  let low;
   let deltaPrice;
   let delta;
   let deltaPercentage;
@@ -324,26 +288,12 @@ export default function MlpPriceChart(props) {
       if (price.time < timeThreshold) {
         break;
       }
-      if (!low) {
-        low = price.low;
-      }
-      if (!high) {
-        high = price.high;
-      }
-
-      if (price.high > high) {
-        high = price.high;
-      }
-      if (price.low < low) {
-        low = price.low;
-      }
-
-      deltaPrice = price.open;
+      deltaPrice = price.value;
     }
   }
 
-  if (deltaPrice && currentAveragePrice) {
-    const average = parseFloat(formatAmount(currentAveragePrice, USD_DECIMALS, 2));
+  if (deltaPrice && currentPrice) {
+    const average = parseFloat(formatAmount(currentPrice, USD_DECIMALS, 2));
     delta = average - deltaPrice;
     deltaPercentage = (delta * 100) / average;
     if (deltaPercentage > 0) {
@@ -356,20 +306,11 @@ export default function MlpPriceChart(props) {
     }
   }
 
-  if (!chartToken) {
-    return null;
-  }
-
   return (
     <div className="Mlp-price-chart ExchangeChart tv" ref={ref}>
       <div className="ExchangeChart-bottom App-box App-box-border">
         <div className="ExchangeChart-bottom-header">
-          {/*
-          <div className="ExchangeChart-bottom-controls">
-            <Tab options={Object.keys(CHART_PERIODS)} option={period} setOption={setPeriod} trackAction={trackAction} />
-          </div>
-          */}
-          {candleStatsHtml}
+          {statsHtml}
         </div>
         <div className="ExchangeChart-bottom-content" ref={chartRef}></div>
       </div>

@@ -150,7 +150,7 @@ function CompoundModal(props) {
         shouldClaimMyc, // shouldClaimMyc,
         false, // shouldStakeMYC,
         shouldClaimEsMyc, // shouldClaimEsMyc,
-        shouldClaimEsMyc, // shouldStakeEsMyc,
+        false, // shouldStakeEsMyc,
         false, // shouldStakeMultiplierPoints,
         shouldBuyMlpWithEth, // shouldClaimWeth,
         false, // shouldConvertWeth,
@@ -201,7 +201,7 @@ function CompoundModal(props) {
           </StakeV2Styled.ModalRow>
           <StakeV2Styled.ModalRow>
             <StakeV2Styled.ModalRowHeader>
-              Claim and Stake esMYC Rewards
+              Claim esMYC Rewards
             </StakeV2Styled.ModalRowHeader>
             {shouldClaimEsMyc &&
               <>
@@ -802,9 +802,7 @@ export default function StakeV2({ setPendingTxns, connectWallet, trackAction, sa
             </StakeV2Styled.CardTitle>
             <MlpPriceChart
               chainId={chainId}
-              fromTokenAddress={nativeTokenAddress}
-              toTokenAddress={nativeTokenAddress}
-              infoTokens={infoTokens}
+              mlpPrice={processedData.mlpPrice}
             />
             <StakeV2Styled.MlpInfo>
               <StakeV2Styled.RewardsBanner>
