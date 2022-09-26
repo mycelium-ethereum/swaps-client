@@ -41,7 +41,6 @@ import {
   USD_DECIMALS,
   ETH_DECIMALS,
   MM_SWAPS_FEE_MULTIPLIER,
-  calcMarketMakingFees,
   FORTNIGHTS_IN_YEAR,
   useLocalStorageSerializeKey,
 } from "../Helpers";
@@ -1412,19 +1411,6 @@ export function useMlpPrices(chainId, currentMlpPrice) {
       liquidation
       mint
       burn
-    },
-    volumeStats(
-      first: 1000
-      orderBy: id
-      orderDirection: asc
-      where: { period: daily }
-    ) {
-      id
-      margin
-      liquidation
-      mint
-      burn
-      swap
     }
   }`);
 
@@ -1452,13 +1438,6 @@ export function useMlpPrices(chainId, currentMlpPrice) {
         .add(stat.burn)
     }), {})
 
-    const volumeStatsById = data.data.volumeStats.reduce((o, stat) => ({
-      ...o,
-      [stat.id]: {
-        ...stat
-      }
-    }), {})
-
     let cumulativeFees = ethers.BigNumber.from(0);
     let ret = data.data.mlpStats
       .filter((item) => item.id % 86400 === 0)
@@ -1477,8 +1456,7 @@ export function useMlpPrices(chainId, currentMlpPrice) {
         cumulativeDistributedEthPerMlp += distributedEthPerMlp;
 
         const feeStat = feeStatsById[item.id] ?? ethers.BigNumber.from(0);
-        const mmFees = calcMarketMakingFees(volumeStatsById[item.id])
-        cumulativeFees = cumulativeFees.add(feeStat.add(mmFees))
+        cumulativeFees = cumulativeFees.add(feeStat)
         const totalFees = parseFloat(ethers.utils.formatUnits(cumulativeFees, USD_DECIMALS))
 
         const mlpPrice = aum / mlpSupply;
