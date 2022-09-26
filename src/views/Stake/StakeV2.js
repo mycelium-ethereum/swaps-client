@@ -629,8 +629,7 @@ export default function StakeV2({ setPendingTxns, connectWallet, trackAction, sa
   if (totalRewardTokensAndMlp && totalRewardTokensAndMlp.gt(0)) {
     earnMsg = (
       <div>
-        You are earning {nativeTokenSymbol} rewards with {formatAmount(totalRewardTokensAndMlp, 18, 2, true)} MLP
-        tokens.
+        You are earning {nativeTokenSymbol} rewards with {formatKeyAmount(processedData, "mlpBalance", MLP_DECIMALS, 2, true)} MLP tokens.
       </div>
     );
   }
@@ -1051,7 +1050,7 @@ export default function StakeV2({ setPendingTxns, connectWallet, trackAction, sa
               </StakeV2Styled.StakingBannerRow>
               <StakeV2Styled.StakingBannerRow borderTop>
                 <StakeV2Styled.RewardsBannerText large title>
-                  esMYC Vault
+                  MYC Staking
                 </StakeV2Styled.RewardsBannerText>
                 <StakeV2Styled.RewardsBannerText secondary>
                   Stake MYC to Mycelium to receive interest in ETH.
