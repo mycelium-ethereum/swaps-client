@@ -512,7 +512,7 @@ export default function ClaimModal(props) {
         <div className="CompoundModal-menu">
           <StakeV2Styled.ModalRow>
             <StakeV2Styled.ModalRowHeader>
-              Claim MYC Rewards
+              Claim Vested MYC 
             </StakeV2Styled.ModalRowHeader>
             {shouldClaimMyc &&
               <>
