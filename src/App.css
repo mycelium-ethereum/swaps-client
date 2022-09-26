@@ -754,11 +754,7 @@ button.App-connect-wallet:hover {
 }
 
 .App-card-option {
-  margin: 0.4rem;
-}
-
-.App-card-option:first-child {
-  margin-left: 0rem;
+  margin: 0.4rem 1rem 0.4rem 0;
 }
 
 .App-card-option:last-child {

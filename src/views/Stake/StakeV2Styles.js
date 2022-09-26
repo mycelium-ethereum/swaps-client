@@ -64,7 +64,6 @@ export const MlpInfo = styled.div`
 export const VestingInfo = styled.div`
   border: 1px solid var(--cell-stroke);
   border-top: none;
-  background: var(--cell-gradient);
   color: var(--text-primary);
   font-size: 16px;
 `
@@ -72,6 +71,7 @@ export const VestingInfo = styled.div`
 export const StakedTokens = styled.div`
   display: flex;
   border-bottom: 1px solid var(--cell-stroke);
+  background: var(--cell-gradient);
   justify-content: space-between;
   padding: 1rem;
 `
