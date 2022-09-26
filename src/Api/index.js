@@ -1459,6 +1459,7 @@ export function useMlpPrices(chainId, currentMlpPrice) {
       }
     }), {})
 
+    let cumulativeFees = ethers.BigNumber.from(0);
     let ret = data.data.mlpStats
       .filter((item) => item.id % 86400 === 0)
       .reduce((memo, item, i) => {
@@ -1477,7 +1478,8 @@ export function useMlpPrices(chainId, currentMlpPrice) {
 
         const feeStat = feeStatsById[item.id] ?? ethers.BigNumber.from(0);
         const mmFees = calcMarketMakingFees(volumeStatsById[item.id])
-        const totalFees = parseFloat(ethers.utils.formatUnits(feeStat.add(mmFees), USD_DECIMALS))
+        cumulativeFees = cumulativeFees.add(feeStat.add(mmFees))
+        const totalFees = parseFloat(ethers.utils.formatUnits(cumulativeFees, USD_DECIMALS))
 
         const mlpPrice = aum / mlpSupply;
         const mlpPriceWithFees = (totalFees + aum) / mlpSupply;
@@ -1488,16 +1490,16 @@ export function useMlpPrices(chainId, currentMlpPrice) {
           time: timestamp,
           aum,
           mlpSupply,
-          value: mlpPriceWithFees,
-          mlpPrice,
+          value: mlpPrice,
+          mlpPriceWithFees: mlpPriceWithFees,
           cumulativeDistributedEthPerMlp,
           cumulativeDistributedUsdPerMlp,
           distributedUsdPerMlp,
           distributedEthPerMlp,
         };
         if (i === data.data.mlpStats.length - 1 && currentMlpPrice) {
-          newItem.value = parseFloat(ethers.utils.formatUnits(currentMlpPrice, USD_DECIMALS))
-          newItem.mlpPrice = parseFloat(ethers.utils.formatUnits(currentMlpPrice, USD_DECIMALS))
+          newItem.mlpPriceWithFees = Number.isNaN(mlpPrice) ? parseFloat(ethers.utils.formatUnits(currentMlpPrice, USD_DECIMALS)) : mlpPriceWithFees;
+          newItem.value = parseFloat(ethers.utils.formatUnits(currentMlpPrice, USD_DECIMALS));
         }
 
         if (last && last.timestamp === timestamp) {

@@ -255,9 +255,9 @@ export default function MlpPriceChart(props) {
     return (
       <div className={className}>
         <span className="ExchangeChart-bottom-stats-label">p</span>
-        <span className="ExchangeChart-bottom-stats-value">{point.mlpPrice.toFixed(toFixedNumbers)}</span>
-        <span className="ExchangeChart-bottom-stats-label">w/fees</span>
         <span className="ExchangeChart-bottom-stats-value">{point.value.toFixed(toFixedNumbers)}</span>
+        <span className="ExchangeChart-bottom-stats-label">w/fees</span>
+        <span className="ExchangeChart-bottom-stats-value">{point.mlpPriceWithFees.toFixed(toFixedNumbers)}</span>
       </div>
     );
   }, [hoveredPoint, priceData]);
