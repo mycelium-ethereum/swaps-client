@@ -132,7 +132,7 @@ export default function MlpPriceChart(props) {
     mlpPrice
   } = props;
 
-  const priceData = useMlpPrices(chainId);
+  const priceData = useMlpPrices(chainId, mlpPrice);
 
   const [currentChart, setCurrentChart] = useState();
   const [currentSeries, setCurrentSeries] = useState();
@@ -152,9 +152,7 @@ export default function MlpPriceChart(props) {
   const [chartInited, setChartInited] = useState(false);
 
   const scaleChart = useCallback(() => {
-    const from = Date.now() / 1000 - (7 * 24 * CHART_PERIODS[period]) / 2 + timezoneOffset;
-    const to = Date.now() / 1000 + timezoneOffset;
-    currentChart.timeScale().setVisibleRange({ from, to });
+    currentChart.timeScale().fitContent();
   }, [currentChart, period]);
 
   const onCrosshairMove = useCallback(
@@ -230,24 +228,15 @@ export default function MlpPriceChart(props) {
   }, [currentChart, sidebarVisible]);
 
   useEffect(() => {
-    if (currentSeries && priceData && priceData.length && mlpPrice) {
-      const priceData_ = priceData.slice();
-      const lastValue = priceData_.pop();
-      const newLastValue = {
-        ...lastValue,
-        value: parseFloat(ethers.utils.formatUnits(mlpPrice, USD_DECIMALS))
-      }
-      priceData_.push(newLastValue);
-
-      currentSeries.setData(priceData_);
-      currentChart.timeScale().fitContent();
+    if (currentSeries && priceData && priceData.length) {
+      currentSeries.setData(priceData);
 
       if (!chartInited) {
         scaleChart();
         setChartInited(true);
       }
     }
-  }, [priceData, currentSeries, chartInited, scaleChart, mlpPrice]);
+  }, [priceData, currentSeries, chartInited, scaleChart]);
 
   const statsHtml = useMemo(() => {
     if (!priceData) {

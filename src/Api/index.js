@@ -1331,7 +1331,7 @@ export async function callContract(chainId, contract, method, params, opts) {
   }
 }
 
-export function useMlpPrices(chainId) {
+export function useMlpPrices(chainId, currentMlpPrice) {
   const query = gql(`{
     mlpStats(
       first: 1000,
@@ -1407,7 +1407,7 @@ export function useMlpPrices(chainId) {
 
     let ret = data.data.mlpStats
       .filter((item) => item.id % 86400 === 0)
-      .reduce((memo, item) => {
+      .reduce((memo, item, i) => {
         const last = memo[memo.length - 1];
 
         const aum = Number(item.aumInUsdg) / 1e18;
@@ -1441,13 +1441,16 @@ export function useMlpPrices(chainId) {
           distributedUsdPerMlp,
           distributedEthPerMlp,
         };
+        if (i === data.data.mlpStats.length - 1 && currentMlpPrice) {
+          newItem.value = parseFloat(ethers.utils.formatUnits(currentMlpPrice, USD_DECIMALS))
+          newItem.mlpPrice = parseFloat(ethers.utils.formatUnits(currentMlpPrice, USD_DECIMALS))
+        }
 
         if (last && last.timestamp === timestamp) {
           memo[memo.length - 1] = newItem;
         } else {
           memo.push(newItem);
         }
-
         return memo;
       }, [])
       .map((item) => {
@@ -1471,7 +1474,7 @@ export function useMlpPrices(chainId) {
 
     // ret = fillNa(ret);
     return ret;
-  }, [data]);
+  }, [data, currentMlpPrice]);
 
   return mlpChartData;
 }

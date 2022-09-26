@@ -3,7 +3,6 @@ import { Link } from "react-router-dom";
 import { useWeb3React } from "@web3-react/core";
 
 import Modal from "../../components/Modal/Modal";
-import Checkbox from "../../components/Checkbox/Checkbox";
 import Tooltip from "../../components/Tooltip/Tooltip";
 
 import Vault from "../../abis/Vault.json";
