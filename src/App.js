@@ -1231,11 +1231,6 @@ function PreviewApp() {
               </AnimatePresence>
             </div>
           </header>
-          <Switch>
-            <Route exact path="/earn">
-              <Stake />
-            </Route>
-          </Switch>
         </div>
       </div>
     </>

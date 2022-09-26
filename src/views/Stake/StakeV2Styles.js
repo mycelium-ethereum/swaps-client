@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-const lg = '900px';
+const lg = '1080px';
 const sm = '550px';
 
 export const StakeV2Content = styled.div`
@@ -28,7 +28,7 @@ export const StakeV2Card = styled.div`
   // chart and mlp info
   &:first-child {
     width: 100%;
-    min-width: 650px;
+    min-width: 775px;
     @media (max-width: ${lg}) {
       min-width: 100%;
     }
@@ -81,7 +81,7 @@ export const StakedTokens = styled.div`
 export const RewardsBanner = styled.div`
   background: var(--cell-gradient);
   font-size: 16px;
-  padding: 1rem;
+  padding: 0 1rem;
   color: var(--text-primary);
   &:first-child { 
     border-right: 1px solid var(--cell-stroke);

@@ -102,7 +102,6 @@ const getChartOptions = (width, height) => ({
   timeScale: {
     rightOffset: 5,
     borderVisible: false,
-    barSpacing: 5,
     timeVisible: true,
     fixLeftEdge: true,
   },
@@ -110,8 +109,8 @@ const getChartOptions = (width, height) => ({
   priceScale: {
     borderVisible: false,
     scaleMargins: {
-        top: 0.6,
-        bottom: 0,
+        top: 0.5,
+        bottom: 0.3,
     },
   },
   crosshair: {

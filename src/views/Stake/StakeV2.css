@@ -1,3 +1,7 @@
+.App {
+  background-image: var(--background-primary)!important;
+}
+
 .StakeV2 {
   padding-left: 1rem;
   padding-right: 1rem;
@@ -94,8 +98,10 @@
 .Mlp-price-chart.ExchangeChart.tv > .ExchangeChart-bottom {
   top: 0;
   border-radius: 0px;
+  bottom: 0;
+  background: url(../../img/background_mesh.png);
+  background-size: cover;
 }
-
 
 @media (max-width: 900px) {
   .StakeV2-total-rewards-card {

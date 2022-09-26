@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { useWeb3React } from "@web3-react/core";
 
@@ -795,7 +795,7 @@ export default function StakeV2({ setPendingTxns, connectWallet, trackAction, sa
             <StakeV2Styled.MlpInfo>
               <StakeV2Styled.RewardsBanner>
                 <StakeV2Styled.RewardsBannerRow>
-                  <StakeV2Styled.RewardsBannerText>Statistics</StakeV2Styled.RewardsBannerText>
+                  <StakeV2Styled.RewardsBannerText large>Statistics</StakeV2Styled.RewardsBannerText>
                 </StakeV2Styled.RewardsBannerRow>
                 <StakeV2Styled.RewardsBannerRow>
                   <div className="App-card-row">
@@ -875,7 +875,7 @@ export default function StakeV2({ setPendingTxns, connectWallet, trackAction, sa
               </StakeV2Styled.RewardsBanner>
               <StakeV2Styled.RewardsBanner>
                 <StakeV2Styled.RewardsBannerRow>
-                  <StakeV2Styled.RewardsBannerText>Rewards</StakeV2Styled.RewardsBannerText>
+                  <StakeV2Styled.RewardsBannerText large>Rewards</StakeV2Styled.RewardsBannerText>
                 </StakeV2Styled.RewardsBannerRow>
                 <StakeV2Styled.RewardsBannerRow>
                   <div className="App-card-row">
