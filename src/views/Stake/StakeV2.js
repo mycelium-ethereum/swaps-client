@@ -38,7 +38,7 @@ import {
   getPageTitle,
   ETH_DECIMALS,
 } from "../../Helpers";
-import { callContract, useMarketMakingApr, useMYCPrice, useTotalMYCSupply, useUserSpreadCapture } from "../../Api";
+import { callContract, useMarketMakingApr, useMYCPrice, useStakingApr, useTotalMYCSupply, useUserSpreadCapture } from "../../Api";
 import { getConstant } from "../../Constants";
 
 import useSWR from "swr";
@@ -638,6 +638,8 @@ export default function StakeV2({ setPendingTxns, connectWallet, trackAction, sa
     mycSupply
   );
 
+  const stakingApr = useStakingApr(mycPrice, nativeTokenPrice);
+
   let { userSpreadCapture, userSpreadCaptureEth, setHasRecentlyClaimed } = useUserSpreadCapture(chainId, account, processedData?.mlpBalance, nativeTokenPrice)
   const mmApr = useMarketMakingApr(chainId, processedData.mlpSupplyUsd);
   if (mmApr) {
@@ -942,7 +944,7 @@ export default function StakeV2({ setPendingTxns, connectWallet, trackAction, sa
                     <StakeV2Styled.RewardsBannerTextWrap>
                       <StakeV2Styled.RewardsBannerText large>
                         <Tooltip
-                          handle={`${formatAmount(userSpreadCaptureEth, ETH_DECIMALS, 2, true, '0.00')} ${nativeTokenSymbol}`}
+                          handle={`${formatAmount(userSpreadCaptureEth, ETH_DECIMALS, 4, true, '0.00')} ${nativeTokenSymbol}`}
                           position="right-bottom"
                           renderContent={() =>
                             "Market Making rewards are sourced from the spread of the traded markets and is realised by MLP holders through the appreciation of the MLP token."
@@ -958,13 +960,13 @@ export default function StakeV2({ setPendingTxns, connectWallet, trackAction, sa
                 </StakeV2Styled.RewardsBannerRow>
               <StakeV2Styled.Buttons>
                   {active && (
-                    <button className="App-button-option App-card-option" onClick={() => showMlpCompoundModal()}>
-                      Compound
+                    <button className="App-button-option App-card-option" onClick={() => showMlpClaimModal()}>
+                      Claim
                     </button>
                   )}
                   {active && (
-                    <button className="App-button-option App-card-option" onClick={() => showMlpClaimModal()}>
-                      Claim
+                    <button className="App-button-option App-card-option" onClick={() => showMlpCompoundModal()}>
+                      Compound
                     </button>
                   )}
                   {!active && (
@@ -1085,9 +1087,15 @@ export default function StakeV2({ setPendingTxns, connectWallet, trackAction, sa
                 <StakeV2Styled.RewardsBannerText large title>
                   MYC Staking
                 </StakeV2Styled.RewardsBannerText>
-                <StakeV2Styled.RewardsBannerText secondary>
-                  Stake MYC to Mycelium to receive interest in ETH.
+                <StakeV2Styled.RewardsBannerText secondary title>
+                  Stake MYC to receive interest in ETH
                 </StakeV2Styled.RewardsBannerText>
+                {stakingApr && (
+                  <div className="App-card-row">
+                    <div className="label">Staking APR</div>
+                    <div>{stakingApr}%</div>
+                  </div>
+                )}
                 <StakeV2Styled.Buttons>
                   <a href="https://lend.mycelium.xyz" target="_blank" rel="noopener noreferrer">
                     <button className="App-button-option App-card-option">MYC Staking</button>
