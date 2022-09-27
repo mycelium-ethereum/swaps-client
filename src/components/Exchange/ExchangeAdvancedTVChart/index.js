@@ -97,11 +97,10 @@ export default function ExchangeAdvancedTVChart(props) {
       locale: getLanguageFromURL() || "en",
       disabled_features: [
         "header_symbol_search",
+        "header_toolbar_compare",
         "timeframes_toolbar",
         "go_to_date",
-        "use_localstorage_for_settings",
-        "save_chart_properties_to_local_storage",
-        "header_resolutions"
+        "header_resolutions",
       ],
       chartToken: chartToken,
       enabled_features: [],
@@ -153,7 +152,6 @@ export default function ExchangeAdvancedTVChart(props) {
         }
         createChart();
       }, 300); // Wait for overlay animation to complete
-      setShowChart(true);
     }
   }, [period, prevPeriod, tvWidget, createChart, prevPriceDataLength, priceData?.length]);
 
@@ -187,7 +185,16 @@ export default function ExchangeAdvancedTVChart(props) {
       tvWidget.remove();
       setTvWidget(null);
     }
-  }, [tvWidget]);
+  }, [tvWidget, priceData]);
+
+  const CHART_PERIODS_WITH_CURRENT = useMemo(() => {
+    const periodKeys = Object.keys(CHART_PERIODS);
+    const curIdx = periodKeys.findIndex((key) => key === period);
+    periodKeys.splice(curIdx, 1); // Remove current the period from the list
+    periodKeys.unshift(period); // And add it to the front of the list
+    console.log(periodKeys);
+    return periodKeys;
+  }, [period]);
 
   if (!priceData) {
     return null;
@@ -251,6 +258,10 @@ export default function ExchangeAdvancedTVChart(props) {
     return null;
   }
 
+  // const updatePeriod = (period) => {
+  //   setPeriod(period);
+  // };
+
   return (
     <>
       <div className="ExchangeChart tv AdvancedTv">
@@ -303,7 +314,13 @@ export default function ExchangeAdvancedTVChart(props) {
         <div className="ChartContainer">
           <div id={defaultProps.container} className="Chart" />
           <div className="ExchangeChart-bottom-controls">
-            <Tab options={Object.keys(CHART_PERIODS)} option={period} setOption={setPeriod} trackAction={trackAction} />
+            <Tab
+              options={CHART_PERIODS_WITH_CURRENT}
+              option={period}
+              setOption={setPeriod}
+              trackAction={trackAction}
+              hideSelected
+            />
           </div>
           <div
             className={cx("Overlay", {

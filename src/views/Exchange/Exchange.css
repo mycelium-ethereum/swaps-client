@@ -891,9 +891,16 @@ table.Exchange-list-small td {
 
 .ExchangeChart.AdvancedTv .ExchangeChart-bottom-controls {
   position: absolute;
-  top: 50px;
+  top: 60px;
   left: 60px;
   background-color: var(--background-primary);
+  width: 46.5px;
+  overflow: hidden;
+  border-radius: 4px;
+  transition: width 0.3s ease;
+}
+.ExchangeChart.AdvancedTv .ExchangeChart-bottom-controls:hover {
+  width: 232.5px;
 }
 .ExchangeChart.AdvancedTv .Overlay {
   position: absolute;
@@ -983,6 +990,17 @@ table.Exchange-list-small td {
 
   .ExchangeChart {
     height: 25rem;
+  }
+
+  .ChartContainer .Chart {
+    height: 318px;
+  }
+
+  .ExchangeChart.AdvancedTv .ExchangeChart-bottom-controls {
+    width: 38.75px;
+  }
+  .ExchangeChart.AdvancedTv .ExchangeChart-bottom-controls:hover {
+    width: 193.75px;
   }
 
   .Exchange-content {
@@ -1079,5 +1097,21 @@ table.Exchange-list-small td {
 
   .Exchange.page-layout .footer {
     padding: 1rem;
+  }
+}
+
+@media (max-width: 370px) {
+  .ExchangeChart-top-inner div:not(:first-child),
+  .ExchangeChart-top-inner div:not(:first-child) div {
+    font-size: 10px;
+  }
+  .ExchangeChart.AdvancedTv .ExchangeChart-top {
+    display: flex;
+    align-items: center;
+  }
+  .ExchangeChart-top-inner {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
   }
 }

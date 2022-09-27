@@ -2,6 +2,7 @@
   --tv-color-platform-background: #003000 !important;
   --tv-color-pane-background: #000a00 !important;
   --tv-color-pane-background-secondary: #003000;
+  --tv-color-toolbar-button-background-expanded: #098200 !important;
   --tv-color-toolbar-button-background-hover: #098200;
   --tv-color-toolbar-button-background-secondary-hover: #098200;
   --tv-color-toolbar-button-background-expanded: white;
@@ -19,4 +20,35 @@ body {
 }
 div[data-name="legend"] {
   transform: translateY(50px);
+}
+div[class*="dialog"] {
+  background-color: #000a00;
+  border: 1px solid #098200;
+}
+div[class*="dialog"] div[data-role="list-item"]:hover {
+  background-color: #098200;
+}
+div[class*="dialog"],
+div[data-role="list-item"] span,
+div[class*="title"],
+span[class*="title"],
+span[class*="close"],
+div[class*="text"] {
+  color: white !important;
+}
+
+span[class*="close"]:hover {
+  background-color: #098200;
+}
+div[class*="fadeTop"] {
+  background-image: linear-gradient(0deg, #fff0, #098200);
+}
+div[class*="fadeBot"] {
+  background-image: linear-gradient(180deg, #fff0, #098200);
+}
+div[class*="fadeRight"] {
+  background-image: linear-gradient(to right, #fff0, #098200);
+}
+div[class*="fadeLeft"] {
+  background-image: linear-gradient(to left, #fff0, #098200);
 }
