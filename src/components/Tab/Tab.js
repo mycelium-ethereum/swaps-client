@@ -5,18 +5,7 @@ import cx from "classnames";
 import "./Tab.css";
 
 export default function Tab(props) {
-  const {
-    options,
-    option,
-    setOption,
-    onChange,
-    type = "block",
-    className,
-    optionLabels,
-    icons,
-    trackAction,
-    hideSelected,
-  } = props;
+  const { options, option, setOption, onChange, type = "block", className, optionLabels, icons, trackAction } = props;
   const onClick = (opt) => {
     if (setOption) {
       setOption(opt);
@@ -32,12 +21,12 @@ export default function Tab(props) {
 
   return (
     <div className={cx("Tab", type, className)}>
-      {options.map((opt, i) => {
+      {options.map((opt) => {
         const label = optionLabels && optionLabels[opt] ? optionLabels[opt] : opt;
         return (
           <div
             className={cx("Tab-option", "muted", {
-              active: (opt === option && !hideSelected) || (hideSelected && i === 0),
+              active: opt === option,
             })}
             onClick={() => onClick(opt)}
             key={opt}

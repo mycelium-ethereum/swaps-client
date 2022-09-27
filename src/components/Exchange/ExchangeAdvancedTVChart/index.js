@@ -2,10 +2,6 @@ import React, { useState, useEffect, useMemo, useCallback } from "react";
 import cx from "classnames";
 import { widget } from "../../../charting_library";
 import { generateDataFeed, supportedResolutions } from "../../../Api/TradingView";
-import ChartTokenSelector from "../ChartTokenSelector";
-import Tab from "../../Tab/Tab";
-
-import { CHART_PERIODS, USD_DECIMALS, getTokenInfo, formatAmount } from "../../../Helpers";
 
 const getLanguageFromURL = () => {
   const regex = new RegExp("[\\?&]lang=([^&#]*)");
@@ -39,20 +35,7 @@ const TIMEFRAME = {
 };
 
 export default function ExchangeAdvancedTVChart(props) {
-  const {
-    chartToken,
-    setChartToken,
-    priceData,
-    updatePriceData,
-    period,
-    setPeriod,
-    infoTokens,
-    setToTokenAddress,
-    swapOption,
-    chainId,
-    currentAveragePrice,
-    trackAction,
-  } = props;
+  const { chartToken, priceData, period } = props;
 
   const defaultProps = useMemo(
     () => ({
@@ -74,13 +57,6 @@ export default function ExchangeAdvancedTVChart(props) {
   const [prevPeriod, setPrevPeriod] = useState(period);
   const [prevToken, setPrevToken] = useState(null);
   const [prevPriceDataLength, setPrevPriceDataLength] = useState(0);
-
-  // useEffect(() => {
-  //   const interval = setInterval(() => {
-  //     updatePriceData(undefined, true);
-  //   }, 60 * 1000);
-  //   return () => clearInterval(interval);
-  // }, [updatePriceData]);
 
   const dataFeed = useMemo(() => generateDataFeed(priceData), [priceData]);
 
@@ -139,7 +115,7 @@ export default function ExchangeAdvancedTVChart(props) {
     }
   }, [chartToken, priceData, tvWidget, createChart]);
 
-  // Update chart period
+  // Update chart on period change
   useEffect(() => {
     if (tvWidget && prevPeriod !== period && priceData?.length !== prevPriceDataLength) {
       setPrevPeriod(period);
@@ -187,172 +163,44 @@ export default function ExchangeAdvancedTVChart(props) {
     }
   }, [tvWidget, priceData]);
 
-  const CHART_PERIODS_WITH_CURRENT = useMemo(() => {
-    const periodKeys = Object.keys(CHART_PERIODS);
-    const curIdx = periodKeys.findIndex((key) => key === period);
-    periodKeys.splice(curIdx, 1); // Remove current the period from the list
-    periodKeys.unshift(period); // And add it to the front of the list
-    console.log(periodKeys);
-    return periodKeys;
-  }, [period]);
-
-  if (!priceData) {
+  if (!priceData || !chartToken) {
     return null;
   }
-
-  const onSelectToken = (token) => {
-    const tmp = getTokenInfo(infoTokens, token.address);
-    setChartToken(tmp);
-    setToTokenAddress(swapOption, token.address);
-  };
-
-  let high;
-  let low;
-  let deltaPrice;
-  let delta;
-  let deltaPercentage;
-  let deltaPercentageStr;
-
-  const now = parseInt(Date.now() / 1000);
-  const timeThreshold = now - 24 * 60 * 60;
-
-  if (priceData) {
-    for (let i = priceData.length - 1; i > 0; i--) {
-      const price = priceData[i];
-      if (price.time < timeThreshold) {
-        break;
-      }
-      if (!low) {
-        low = price.low;
-      }
-      if (!high) {
-        high = price.high;
-      }
-
-      if (price.high > high) {
-        high = price.high;
-      }
-      if (price.low < low) {
-        low = price.low;
-      }
-
-      deltaPrice = price.open;
-    }
-  }
-
-  if (deltaPrice && currentAveragePrice) {
-    const average = parseFloat(formatAmount(currentAveragePrice, USD_DECIMALS, 2));
-    delta = average - deltaPrice;
-    deltaPercentage = (delta * 100) / average;
-    if (deltaPercentage > 0) {
-      deltaPercentageStr = `+${deltaPercentage.toFixed(2)}%`;
-    } else {
-      deltaPercentageStr = `${deltaPercentage.toFixed(2)}%`;
-    }
-    if (deltaPercentage === 0) {
-      deltaPercentageStr = "0.00";
-    }
-  }
-
-  if (!chartToken) {
-    return null;
-  }
-
-  // const updatePeriod = (period) => {
-  //   setPeriod(period);
-  // };
 
   return (
     <>
-      <div className="ExchangeChart tv AdvancedTv">
-        <div className="ExchangeChart-top App-box App-box-border">
-          <div className="ExchangeChart-top-inner">
-            <div>
-              <div className="ExchangeChart-title">
-                <ChartTokenSelector
-                  chainId={chainId}
-                  selectedToken={chartToken}
-                  swapOption={swapOption}
-                  infoTokens={infoTokens}
-                  onSelectToken={onSelectToken}
-                  className="chart-token-selector"
-                  trackAction={trackAction}
-                />
-              </div>
-            </div>
-            <div>
-              <div className="ExchangeChart-main-price">
-                {chartToken.maxPrice && formatAmount(chartToken.maxPrice, USD_DECIMALS, 2)}
-              </div>
-              <div className="ExchangeChart-info-label">
-                ${chartToken.minPrice && formatAmount(chartToken.minPrice, USD_DECIMALS, 2)}
-              </div>
-            </div>
-            <div>
-              <div className={cx({ positive: deltaPercentage > 0, negative: deltaPercentage < 0 })}>
-                {!deltaPercentageStr && "-"}
-                {deltaPercentageStr && deltaPercentageStr}
-              </div>
-              <div className="ExchangeChart-info-label">24h Change</div>
-            </div>
-            <div className="ExchangeChart-additional-info">
-              <div>
-                {!high && "-"}
-                {high && high.toFixed(2)}
-              </div>
-              <div className="ExchangeChart-info-label">24h High</div>
-            </div>
-            <div className="ExchangeChart-additional-info">
-              <div>
-                {!low && "-"}
-                {low && low.toFixed(2)}
-              </div>
-              <div className="ExchangeChart-info-label">24h Low</div>
-            </div>
-          </div>
-        </div>
-        <div className="ChartContainer">
-          <div id={defaultProps.container} className="Chart" />
-          <div className="ExchangeChart-bottom-controls">
-            <Tab
-              options={CHART_PERIODS_WITH_CURRENT}
-              option={period}
-              setOption={setPeriod}
-              trackAction={trackAction}
-              hideSelected
-            />
-          </div>
-          <div
-            className={cx("Overlay", {
-              active: !showChart,
-            })}
+      <div className="ChartContainer">
+        <div id={defaultProps.container} className="Chart" />
+        <div
+          className={cx("Overlay", {
+            active: !showChart,
+          })}
+        >
+          <svg
+            version="1.1"
+            id="L9"
+            xmlns="http://www.w3.org/2000/svg"
+            x="0px"
+            y="0px"
+            viewBox="0 0 100 100"
+            enableBackground="new 0 0 0 0"
+            className="mx-auto h-20 w-20"
           >
-            <svg
-              version="1.1"
-              id="L9"
-              xmlns="http://www.w3.org/2000/svg"
-              x="0px"
-              y="0px"
-              viewBox="0 0 100 100"
-              enableBackground="new 0 0 0 0"
-              className="mx-auto h-20 w-20"
+            <path
+              fill="#098200"
+              d="M73,50c0-12.7-10.3-23-23-23S27,37.3,27,50 M30.9,50c0-10.5,8.5-19.1,19.1-19.1S69.1,39.5,69.1,50"
             >
-              <path
-                fill="#098200"
-                d="M73,50c0-12.7-10.3-23-23-23S27,37.3,27,50 M30.9,50c0-10.5,8.5-19.1,19.1-19.1S69.1,39.5,69.1,50"
-              >
-                <animateTransform
-                  attributeName="transform"
-                  attributeType="XML"
-                  type="rotate"
-                  dur="1s"
-                  from="0 50 50"
-                  to="360 50 50"
-                  repeatCount="indefinite"
-                />
-              </path>
-            </svg>
-          </div>
+              <animateTransform
+                attributeName="transform"
+                attributeType="XML"
+                type="rotate"
+                dur="1s"
+                from="0 50 50"
+                to="360 50 50"
+                repeatCount="indefinite"
+              />
+            </path>
+          </svg>
         </div>
       </div>
     </>

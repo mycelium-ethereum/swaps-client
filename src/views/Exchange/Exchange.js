@@ -54,6 +54,7 @@ import Tab from "../../components/Tab/Tab";
 
 import "./Exchange.css";
 import SEO from "../../components/Common/SEO";
+import { ExchangeHeader } from "../../components/Exchange/ExchangeHeader";
 const { AddressZero } = ethers.constants;
 
 const PENDING_POSITION_VALID_DURATION = 600 * 1000;
@@ -876,6 +877,8 @@ export const Exchange = forwardRef((props, ref) => {
     );
   };
 
+  const [selectedChart, setSelectedChart] = useState("lightweight");
+
   const [chartToken, setChartToken] = useState({
     maxPrice: null,
     minPrice: null,
@@ -919,64 +922,23 @@ export const Exchange = forwardRef((props, ref) => {
       <div className="Exchange default-container">
         <div className="Exchange-content">
           <div className="Exchange-left">
-            {/* <div className="ExchangeChart tv">
-        <div className="ExchangeChart-top App-box App-box-border">
-          <div className="ExchangeChart-top-inner">
-            <div>
-              <div className="ExchangeChart-title">
-                <ChartTokenSelector
-                  chainId={chainId}
-                  selectedToken={chartToken}
-                  swapOption={swapOption}
-                  infoTokens={infoTokens}
-                  onSelectToken={onSelectToken}
-                  className="chart-token-selector"
-                  trackAction={trackAction}
-                />
-              </div>
-            </div>
-            <div>
-              <div className="ExchangeChart-main-price">
-                {chartToken.maxPrice && formatAmount(chartToken.maxPrice, USD_DECIMALS, 2)}
-              </div>
-              <div className="ExchangeChart-info-label">
-                ${chartToken.minPrice && formatAmount(chartToken.minPrice, USD_DECIMALS, 2)}
-              </div>
-            </div>
-            <div>
-              <div className={cx({ positive: deltaPercentage > 0, negative: deltaPercentage < 0 })}>
-                {!deltaPercentageStr && "-"}
-                {deltaPercentageStr && deltaPercentageStr}
-              </div>
-              <div className="ExchangeChart-info-label">24h Change</div>
-            </div>
-            <div className="ExchangeChart-additional-info">
-              <div>
-                {!high && "-"}
-                {high && high.toFixed(2)}
-              </div>
-              <div className="ExchangeChart-info-label">24h High</div>
-            </div>
-            <div className="ExchangeChart-additional-info">
-              <div>
-                {!low && "-"}
-                {low && low.toFixed(2)}
-              </div>
-              <div className="ExchangeChart-info-label">24h Low</div>
-            </div>
-          </div>
-          <div className="ExchangeChart-top-controls">
-          <Tab
-              options={CHART_PERIODS_WITH_CURRENT}
-              option={period}
-              setOption={setPeriod}
-              trackAction={trackAction}
-              hideSelected
-            />
-          </div>
-        </div> */}
-
-            {/* <ExchangeTVChart
+            <div className="ExchangeChart tv">
+              <ExchangeHeader
+                priceData={priceData}
+                currentAveragePrice={currentAveragePrice}
+                setChartToken={setChartToken}
+                setToTokenAddress={setToTokenAddress}
+                swapOption={swapOption}
+                chainId={chainId}
+                chartToken={chartToken}
+                trackAction={trackAction}
+                period={period}
+                setPeriod={setPeriod}
+                infoTokens={infoTokens}
+                selectedChart={selectedChart}
+                setSelectedChart={setSelectedChart}
+              />
+              {/* <ExchangeTVChart
               fromTokenAddress={fromTokenAddress}
               toTokenAddress={toTokenAddress}
               infoTokens={infoTokens}
@@ -996,19 +958,20 @@ export const Exchange = forwardRef((props, ref) => {
               priceData={priceData}
               updatePriceData={updatePriceData}
             /> */}
-            <ExchangeAdvancedTVChart
-              infoTokens={infoTokens}
-              chartToken={chartToken}
-              setChartToken={setChartToken}
-              priceData={priceData}
-              period={period}
-              setPeriod={setPeriod}
-              setToTokenAddress={setToTokenAddress}
-              swapOption={swapOption}
-              chainId={chainId}
-              currentAveragePrice={currentAveragePrice}
-              trackAction={trackAction}
-            />
+              <ExchangeAdvancedTVChart
+                infoTokens={infoTokens}
+                chartToken={chartToken}
+                setChartToken={setChartToken}
+                priceData={priceData}
+                period={period}
+                setPeriod={setPeriod}
+                setToTokenAddress={setToTokenAddress}
+                swapOption={swapOption}
+                chainId={chainId}
+                currentAveragePrice={currentAveragePrice}
+                trackAction={trackAction}
+              />
+            </div>
             <div className="Exchange-lists large">{getListSection()}</div>
           </div>
           <div className="Exchange-right">

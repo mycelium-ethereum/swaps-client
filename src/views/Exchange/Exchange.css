@@ -885,7 +885,7 @@ table.Exchange-list-small td {
 }
 
 /* ADVANCED CHART */
-.ExchangeChart.AdvancedTv {
+/* .ExchangeChart.AdvancedTv {
   width: 100%;
 }
 
@@ -930,6 +930,12 @@ table.Exchange-list-small td {
   position: relative;
   margin-bottom: 16px;
   min-height: 57px;
+} */
+
+.ExchangeChart-top-controls {
+  display: flex;
+  margin: 16px 0;
+  justify-content: space-between;
 }
 .ChartContainer {
   position: relative;
