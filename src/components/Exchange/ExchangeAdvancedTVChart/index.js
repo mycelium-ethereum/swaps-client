@@ -31,7 +31,7 @@ const TIMEFRAME = {
   "15m": "840",
   "1h": "1680",
   "4h": "7D",
-  "1d": "20D",
+  "1d": "30D",
 };
 
 export default function ExchangeAdvancedTVChart(props) {
@@ -42,8 +42,9 @@ export default function ExchangeAdvancedTVChart(props) {
       symbol: "0x00000:default/market",
       interval: "1D",
       container: "tv_chart_container",
-      charts_storage_url: "",
       charts_storage_api_version: "1.1",
+      charts_storage_url: "",
+      // charts_storage_url: "https://saveload.tradingview.com",
       client_id: "tradingview.com",
       user_id: "public_user_id",
       fullscreen: false,

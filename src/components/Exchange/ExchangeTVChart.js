@@ -8,16 +8,13 @@ import {
   SWAP,
   INCREASE,
   CHART_PERIODS,
-  getTokenInfo,
   formatAmount,
   formatDateTime,
   usePrevious,
   getLiquidationPrice,
 } from "../../Helpers";
-import Tab from "../Tab/Tab";
 
 import { getTokens, getToken } from "../../data/Tokens";
-import ChartTokenSelector from "./ChartTokenSelector";
 
 const PRICE_LINE_TEXT_WIDTH = 15;
 
@@ -121,19 +118,13 @@ const getChartOptions = (width, height) => ({
 export default function ExchangeTVChart(props) {
   const {
     swapOption,
-    infoTokens,
     chainId,
     positions,
     savedShouldShowPositionLines,
     orders,
-    setToTokenAddress,
     sidebarVisible,
-    trackAction,
     chartToken,
-    setChartToken,
-    currentAveragePrice,
     period,
-    setPeriod,
     priceData,
     updatePriceData,
   } = props;
@@ -242,7 +233,7 @@ export default function ExchangeTVChart(props) {
   }, [currentChart]);
 
   useEffect(() => {
-    if (!currentChart) {
+    if (!currentChart && !chartRef?.current) {
       return;
     }
     const resizeChart = () => {
@@ -354,63 +345,9 @@ export default function ExchangeTVChart(props) {
     );
   }, [hoveredCandlestick, priceData]);
 
-  let high;
-  let low;
-  let deltaPrice;
-  let delta;
-  let deltaPercentage;
-  let deltaPercentageStr;
-
-  const now = parseInt(Date.now() / 1000);
-  const timeThreshold = now - 24 * 60 * 60;
-
-  if (priceData) {
-    for (let i = priceData.length - 1; i > 0; i--) {
-      const price = priceData[i];
-      if (price.time < timeThreshold) {
-        break;
-      }
-      if (!low) {
-        low = price.low;
-      }
-      if (!high) {
-        high = price.high;
-      }
-
-      if (price.high > high) {
-        high = price.high;
-      }
-      if (price.low < low) {
-        low = price.low;
-      }
-
-      deltaPrice = price.open;
-    }
-  }
-
-  if (deltaPrice && currentAveragePrice) {
-    const average = parseFloat(formatAmount(currentAveragePrice, USD_DECIMALS, 2));
-    delta = average - deltaPrice;
-    deltaPercentage = (delta * 100) / average;
-    if (deltaPercentage > 0) {
-      deltaPercentageStr = `+${deltaPercentage.toFixed(2)}%`;
-    } else {
-      deltaPercentageStr = `${deltaPercentage.toFixed(2)}%`;
-    }
-    if (deltaPercentage === 0) {
-      deltaPercentageStr = "0.00";
-    }
-  }
-
   if (!chartToken) {
     return null;
   }
-
-  const onSelectToken = (token) => {
-    const tmp = getTokenInfo(infoTokens, token.address);
-    setChartToken(tmp);
-    setToTokenAddress(swapOption, token.address);
-  };
 
   return (
     <>
