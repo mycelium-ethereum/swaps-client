@@ -236,7 +236,6 @@
 
 .ExchangeChart {
   position: relative;
-  height: 32rem;
 }
 
 .ExchangeChart-main-price {
@@ -884,25 +883,42 @@ table.Exchange-list-small td {
   height: 5rem;
 }
 
-/* ADVANCED CHART */
-/* .ExchangeChart.AdvancedTv {
+/* LIGHTWEIGHT CHART */
+.LightweightChart-container {
+  position: relative;
+  /* max-width: 798px; */
+}
+.LightweightChart {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  border: 1px solid var(--cell-stroke);
+  border-radius: 4px;
   width: 100%;
+  height: 100%;
+}
+.LightweightChart + .CandleStats {
+  position: absolute;
+  left: 0px;
+  top: 20px;
 }
 
-.ExchangeChart.AdvancedTv .ExchangeChart-bottom-controls {
-  position: absolute;
-  top: 60px;
-  left: 60px;
-  background-color: var(--background-primary);
-  width: 46.5px;
-  overflow: hidden;
-  border-radius: 4px;
-  transition: width 0.3s ease;
+/* ADVANCED CHART */
+.ExchangeChart-top-controls {
+  display: flex;
+  margin: 16px 0;
+  justify-content: space-between;
 }
-.ExchangeChart.AdvancedTv .ExchangeChart-bottom-controls:hover {
-  width: 232.5px;
+.ChartContainer {
+  position: relative;
+  flex-grow: 1;
 }
-.ExchangeChart.AdvancedTv .Overlay {
+.LightweightChart-container,
+.ChartContainer .Chart {
+  height: 426px;
+}
+.ChartContainer .Overlay {
   position: absolute;
   top: 0;
   left: 0;
@@ -914,7 +930,7 @@ table.Exchange-list-small td {
   opacity: 0;
   transition: opacity 0.3s ease;
 }
-.ExchangeChart.AdvancedTv .Overlay svg {
+.ChartContainer .Overlay svg {
   width: 60px;
   height: 60px;
   position: absolute;
@@ -922,27 +938,9 @@ table.Exchange-list-small td {
   left: 50%;
   transform: translate(-50%, -50%);
 }
-.ExchangeChart.AdvancedTv .Overlay.active {
+.ChartContainer .Overlay.active {
   pointer-events: auto;
   opacity: 1;
-}
-.ExchangeChart.AdvancedTv .ExchangeChart-top {
-  position: relative;
-  margin-bottom: 16px;
-  min-height: 57px;
-} */
-
-.ExchangeChart-top-controls {
-  display: flex;
-  margin: 16px 0;
-  justify-content: space-between;
-}
-.ChartContainer {
-  position: relative;
-  flex-grow: 1;
-}
-.ChartContainer .Chart {
-  height: 426px;
 }
 @media (max-width: 1640px) {
   .App-box.large,
@@ -956,12 +954,12 @@ table.Exchange-list-small td {
 }
 
 @media (max-width: 1500px) {
-  .Exchange-swap-box {
-    width: 25rem;
-  }
 }
 
-@media (max-width: 1100px) {
+@media (max-width: 1160px) {
+  .LightweightChart + .CandleStats {
+    left: 20px;
+  }
   .Exchange-swap-box {
     width: auto;
   }
@@ -993,12 +991,7 @@ table.Exchange-list-small td {
   .Exchange-swap-placeholder {
     display: none;
   }
-
-  .ExchangeChart {
-    height: 25rem;
-  }
-
-  .ChartContainer .Chart {
+  .LightweightChart-container .ChartContainer .Chart {
     height: 318px;
   }
 
@@ -1103,6 +1096,15 @@ table.Exchange-list-small td {
 
   .Exchange.page-layout .footer {
     padding: 1rem;
+  }
+}
+@media (max-width: 480px) {
+  .ExchangeChart-top-controls {
+    flex-direction: column;
+  }
+  .ExchangeChart-top-controls,
+  .Tab.block {
+    margin-bottom: 16px;
   }
 }
 

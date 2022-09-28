@@ -938,39 +938,42 @@ export const Exchange = forwardRef((props, ref) => {
                 selectedChart={selectedChart}
                 setSelectedChart={setSelectedChart}
               />
-              {/* <ExchangeTVChart
-              fromTokenAddress={fromTokenAddress}
-              toTokenAddress={toTokenAddress}
-              infoTokens={infoTokens}
-              swapOption={swapOption}
-              chainId={chainId}
-              positions={positions}
-              savedShouldShowPositionLines={savedShouldShowPositionLines}
-              orders={orders}
-              setToTokenAddress={setToTokenAddress}
-              sidebarVisible={sidebarVisible}
-              trackAction={trackAction}
-              chartToken={chartToken}
-              setChartToken={setChartToken}
-              currentAveragePrice={currentAveragePrice}
-              period={period}
-              setPeriod={setPeriod}
-              priceData={priceData}
-              updatePriceData={updatePriceData}
-            /> */}
-              <ExchangeAdvancedTVChart
-                infoTokens={infoTokens}
-                chartToken={chartToken}
-                setChartToken={setChartToken}
-                priceData={priceData}
-                period={period}
-                setPeriod={setPeriod}
-                setToTokenAddress={setToTokenAddress}
-                swapOption={swapOption}
-                chainId={chainId}
-                currentAveragePrice={currentAveragePrice}
-                trackAction={trackAction}
-              />
+              {selectedChart === "lightweight" ? (
+                <ExchangeTVChart
+                  fromTokenAddress={fromTokenAddress}
+                  toTokenAddress={toTokenAddress}
+                  infoTokens={infoTokens}
+                  swapOption={swapOption}
+                  chainId={chainId}
+                  positions={positions}
+                  savedShouldShowPositionLines={savedShouldShowPositionLines}
+                  orders={orders}
+                  setToTokenAddress={setToTokenAddress}
+                  sidebarVisible={sidebarVisible}
+                  trackAction={trackAction}
+                  chartToken={chartToken}
+                  setChartToken={setChartToken}
+                  currentAveragePrice={currentAveragePrice}
+                  period={period}
+                  setPeriod={setPeriod}
+                  priceData={priceData}
+                  updatePriceData={updatePriceData}
+                />
+              ) : (
+                <ExchangeAdvancedTVChart
+                  infoTokens={infoTokens}
+                  chartToken={chartToken}
+                  setChartToken={setChartToken}
+                  priceData={priceData}
+                  period={period}
+                  setPeriod={setPeriod}
+                  setToTokenAddress={setToTokenAddress}
+                  swapOption={swapOption}
+                  chainId={chainId}
+                  currentAveragePrice={currentAveragePrice}
+                  trackAction={trackAction}
+                />
+              )}
             </div>
             <div className="Exchange-lists large">{getListSection()}</div>
           </div>

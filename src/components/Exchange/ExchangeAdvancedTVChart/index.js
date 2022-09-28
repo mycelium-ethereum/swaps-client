@@ -27,11 +27,11 @@ const convertLightweightChartPeriod = (period) => {
 };
 
 const TIMEFRAME = {
-  "5m": "210", // 5 * 14
-  "15m": "840", // 15 * 14
-  "1h": "7D", // 60 * 14
-  "4h": "7D", // 240 * 14
-  "1d": "14D", // 1440 * 14
+  "5m": "210",
+  "15m": "840",
+  "1h": "1680",
+  "4h": "7D",
+  "1d": "20D",
 };
 
 export default function ExchangeAdvancedTVChart(props) {
@@ -117,7 +117,7 @@ export default function ExchangeAdvancedTVChart(props) {
 
   // Update chart on period change
   useEffect(() => {
-    if (tvWidget && prevPeriod !== period && priceData?.length !== prevPriceDataLength) {
+    if (tvWidget && prevPeriod !== period && priceData?.length !== prevPriceDataLength && priceData?.length > 0) {
       setPrevPeriod(period);
       setPrevPriceDataLength(priceData.length);
       setShowChart(false);

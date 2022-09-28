@@ -233,6 +233,8 @@ export default function ExchangeTVChart(props) {
       return;
     }
     const resizeChart = () => {
+      console.log(chartRef.current.offsetWidth);
+      console.log(chartRef.current.offsetHeight);
       currentChart.resize(chartRef.current.offsetWidth, chartRef.current.offsetHeight);
     };
     window.addEventListener("resize", resizeChart);
@@ -411,62 +413,11 @@ export default function ExchangeTVChart(props) {
   };
 
   return (
-    <div className="ExchangeChart tv" ref={ref}>
-      <div className="ExchangeChart-top App-box App-box-border">
-        <div className="ExchangeChart-top-inner">
-          <div>
-            <div className="ExchangeChart-title">
-              <ChartTokenSelector
-                chainId={chainId}
-                selectedToken={chartToken}
-                swapOption={swapOption}
-                infoTokens={infoTokens}
-                onSelectToken={onSelectToken}
-                className="chart-token-selector"
-                trackAction={trackAction}
-              />
-            </div>
-          </div>
-          <div>
-            <div className="ExchangeChart-main-price">
-              {chartToken.maxPrice && formatAmount(chartToken.maxPrice, USD_DECIMALS, 2)}
-            </div>
-            <div className="ExchangeChart-info-label">
-              ${chartToken.minPrice && formatAmount(chartToken.minPrice, USD_DECIMALS, 2)}
-            </div>
-          </div>
-          <div>
-            <div className={cx({ positive: deltaPercentage > 0, negative: deltaPercentage < 0 })}>
-              {!deltaPercentageStr && "-"}
-              {deltaPercentageStr && deltaPercentageStr}
-            </div>
-            <div className="ExchangeChart-info-label">24h Change</div>
-          </div>
-          <div className="ExchangeChart-additional-info">
-            <div>
-              {!high && "-"}
-              {high && high.toFixed(2)}
-            </div>
-            <div className="ExchangeChart-info-label">24h High</div>
-          </div>
-          <div className="ExchangeChart-additional-info">
-            <div>
-              {!low && "-"}
-              {low && low.toFixed(2)}
-            </div>
-            <div className="ExchangeChart-info-label">24h Low</div>
-          </div>
-        </div>
+    <>
+      <div className="LightweightChart-container" ref={ref}>
+        <div className="LightweightChart" ref={chartRef}></div>
+        <div className="CandleStats">{candleStatsHtml}</div>
       </div>
-      <div className="ExchangeChart-bottom App-box App-box-border">
-        <div className="ExchangeChart-bottom-header">
-          <div className="ExchangeChart-bottom-controls">
-            <Tab options={Object.keys(CHART_PERIODS)} option={period} setOption={setPeriod} trackAction={trackAction} />
-          </div>
-          {candleStatsHtml}
-        </div>
-        <div className="ExchangeChart-bottom-content" ref={chartRef}></div>
-      </div>
-    </div>
+    </>
   );
 }

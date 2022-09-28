@@ -1,4 +1,5 @@
-import { ToggleSwitch, SwitchThumb } from "./ChartToggle.styles.js";
+import cx from "classnames";
+import { SwitchContainer, ToggleSwitch, SwitchThumb, SwitchText } from "./ChartToggle.styles.js";
 
 export const ChartToggle = (props) => {
   const { selectedChart, setSelectedChart } = props;
@@ -8,8 +9,26 @@ export const ChartToggle = (props) => {
   };
 
   return (
-    <ToggleSwitch onClick={handleSwitch}>
-      <SwitchThumb selectedChart={selectedChart} />
-    </ToggleSwitch>
+    <SwitchContainer>
+      <ToggleSwitch
+        onClick={handleSwitch}
+        className={cx({
+          selected: selectedChart === "advanced",
+        })}
+      >
+        <SwitchThumb
+          className={cx({
+            selected: selectedChart === "advanced",
+          })}
+        />
+      </ToggleSwitch>
+      <SwitchText
+        className={cx({
+          selected: selectedChart === "advanced",
+        })}
+      >
+        Trading View
+      </SwitchText>
+    </SwitchContainer>
   );
 };

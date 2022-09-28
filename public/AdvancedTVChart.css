@@ -52,3 +52,9 @@ div[class*="fadeRight"] {
 div[class*="fadeLeft"] {
   background-image: linear-gradient(to left, #fff0, #098200);
 }
+
+/* Hide Heikin Ashi candle style option and separator */
+div[data-value="ha"],
+div[data-name="menu-inner"] div[class*="separator"] {
+  display: none;
+}
