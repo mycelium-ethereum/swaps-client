@@ -220,13 +220,11 @@ export default function ExchangeTVChart(props) {
   }, [updatePriceData]);
 
   useEffect(() => {
-    if (!currentChart) {
+    if (!currentChart && !chartRef?.current) {
       return;
     }
     const resizeChart = () => {
-      console.log(chartRef.current.offsetWidth);
-      console.log(chartRef.current.offsetHeight);
-      currentChart.resize(chartRef.current.offsetWidth, chartRef.current.offsetHeight);
+      currentChart?.resize(chartRef.current.offsetWidth, chartRef.current.offsetHeight);
     };
     window.addEventListener("resize", resizeChart);
     return () => window.removeEventListener("resize", resizeChart);
@@ -237,7 +235,7 @@ export default function ExchangeTVChart(props) {
       return;
     }
     const resizeChart = () => {
-      currentChart.resize(chartRef.current.offsetWidth, chartRef.current.offsetHeight);
+      currentChart?.resize(chartRef.current.offsetWidth, chartRef.current.offsetHeight);
     };
     let timeout = setTimeout(() => {
       resizeChart();

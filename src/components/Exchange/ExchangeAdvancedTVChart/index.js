@@ -94,6 +94,27 @@ export default function ExchangeAdvancedTVChart(props) {
         "paneProperties.legendProperties.showStudyTitles": false,
         "paneProperties.legendProperties.showStudyValues": false,
         "paneProperties.legendProperties.showSeriesTitle": false,
+
+        "mainSeriesProperties.candleStyle.drawBorder": false,
+        "mainSeriesProperties.candleStyle.wickColor": "#737375",
+        "mainSeriesProperties.candleStyle.upColor": "#4fe021",
+        "mainSeriesProperties.candleStyle.wickUpColor": "#4fe021",
+        "mainSeriesProperties.candleStyle.downColor": "#FF5621",
+        "mainSeriesProperties.candleStyle.wickDownColor": "#FF5621",
+
+        "mainSeriesProperties.hollowCandleStyle.borderColor": "#737375",
+        "mainSeriesProperties.hollowCandleStyle.borderUpColor": "#4fe021",
+        "mainSeriesProperties.hollowCandleStyle.borderDownColor": "#FF5621",
+        "mainSeriesProperties.hollowCandleStyle.wickColor": "#737375",
+        "mainSeriesProperties.hollowCandleStyle.wickUpColor": "#4fe021",
+        "mainSeriesProperties.hollowCandleStyle.wickDownColor": "#FF5621",
+        "mainSeriesProperties.hollowCandleStyle.drawBody": false,
+
+        "mainSeriesProperties.barStyle.upColor": "#4fe021",
+        "mainSeriesProperties.barStyle.downColor": "#FF5621",
+
+        "mainSeriesProperties.baselineStyle.topLineColor": "#4fe021",
+        "mainSeriesProperties.baselineStyle.bottomLineColor": "#FF5621",
       },
       loading_screen: {
         backgroundColor: "#000a00 !important",
