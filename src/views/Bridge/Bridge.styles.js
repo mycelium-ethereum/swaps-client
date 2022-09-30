@@ -106,7 +106,7 @@ export const TokenButton = styled.button`
 
   .token-name {
     font-weight: 600;
-    font-size: 24px;
+    font-size: 20px;
     line-height: 36px;
     margin-right: 12px;
     color: white;
