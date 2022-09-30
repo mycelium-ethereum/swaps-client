@@ -163,7 +163,9 @@ export const Buttons = styled.div`
 
 /* CLAIM MODAL */
 export const ClaimModal = styled.div`
-
+  .AppOrder-ball {
+    pointer-events: none;
+  }
 `
 
 export const SpreadCapture = styled.div`
