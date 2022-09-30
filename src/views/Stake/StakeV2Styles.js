@@ -44,7 +44,7 @@ export const CardTitle = styled.div`
   padding: 0.75rem 1rem;
   font-size: 1rem;
   margin-bottom: 0;
-  border-bottom: ${({ borderBottom }) => borderBottom ? '1px solid var(--cell-stroke)' : ''};
+  border-bottom: 1px solid var(--cell-stroke);
 
   gap: 8px;
   justify-content: start;

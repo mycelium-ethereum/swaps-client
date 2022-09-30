@@ -820,7 +820,7 @@ export default function StakeV2({ setPendingTxns, connectWallet, trackAction, sa
               {earnMsg && <div className="Page-description">{earnMsg}</div>}
             </div>
             <StakeV2Styled.Card>
-              <StakeV2Styled.CardTitle className="App-card-title" borderBottom>
+              <StakeV2Styled.CardTitle className="App-card-title">
                 <img src={mlp40Icon} alt="mlp40Icon" />
                 MLP ({chainName})
               </StakeV2Styled.CardTitle>
