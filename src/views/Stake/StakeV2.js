@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useMemo } from "react";
 import { Link } from "react-router-dom";
 import { useWeb3React } from "@web3-react/core";
 
@@ -38,7 +38,7 @@ import {
   getProcessedData,
   getPageTitle,
 } from "../../Helpers";
-import { callContract, useMarketMakingApr, useMYCPrice, useTotalMYCSupply } from "../../Api";
+import { callContract, useMarketMakingApr, useMYCPrice, useTotalMYCSupply, useTotalStaked } from "../../Api";
 import { getConstant } from "../../Constants";
 
 import useSWR from "swr";
@@ -696,10 +696,20 @@ export default function StakeV2({ setPendingTxns, connectWallet, trackAction }) 
   const { mycPrice } = useMYCPrice(chainId, { arbitrum: chainId === ARBITRUM ? library : undefined }, active);
 
   const { total: mycSupply } = useTotalMYCSupply();
+  const totalMycStaked = useTotalStaked();
+
+  const stakingTvl = useMemo(() => {
+    if (!mycPrice || !totalMycStaked) return bigNumberify(0);
+    return mycPrice.mul(totalMycStaked);
+  }, [mycPrice, totalMycStaked]);
 
   let aum;
+  let aumWithStaking;
   if (aums && aums.length > 0) {
     aum = aums[0].add(aums[1]).div(2);
+  }
+  if (stakingTvl && aum) {
+    aumWithStaking = aum.add(stakingTvl);
   }
 
   const { balanceData, supplyData } = getBalanceAndSupplyData(walletBalances);
@@ -714,6 +724,7 @@ export default function StakeV2({ setPendingTxns, connectWallet, trackAction }) 
     stakingData,
     vestingData,
     aum,
+    aumWithStaking,
     nativeTokenPrice,
     stakedMycSupply,
     mycPrice,
@@ -975,6 +986,10 @@ export default function StakeV2({ setPendingTxns, connectWallet, trackAction }) 
                   </div>
                 </div>
                 <div className="App-card-divider"></div>
+                <div className="App-card-row">
+                  <div className="label">AUM</div>
+                  <div>${formatKeyAmount(processedData, "assetsUnderManagement", USD_DECIMALS, 2, true)}</div>
+                </div>
                 <div className="App-card-row">
                   <div className="label">Total Staked</div>
                   <div>

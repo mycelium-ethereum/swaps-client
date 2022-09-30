@@ -2694,6 +2694,7 @@ export function getProcessedData(
   stakingData,
   vestingData,
   aum,
+  aumWithStaking,
   nativeTokenPrice,
   stakedMycSupply,
   mycPrice,
@@ -2706,6 +2707,7 @@ export function getProcessedData(
     !stakingData ||
     !vestingData ||
     !aum ||
+    !aumWithStaking ||
     !nativeTokenPrice ||
     !stakedMycSupply ||
     !mycPrice ||
@@ -2830,6 +2832,8 @@ export function getProcessedData(
   data.totalNativeTokenRewardsUsd = data.feeMycTrackerRewardsUsd.add(data.feeMlpTrackerRewardsUsd);
 
   data.totalRewardsUsd = data.totalEsMycRewardsUsd.add(data.totalNativeTokenRewardsUsd).add(data.totalVesterRewardsUsd);
+
+  data.assetsUnderManagement = aumWithStaking;
 
   return data;
 }

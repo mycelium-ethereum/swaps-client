@@ -34,6 +34,7 @@ import {
   MM_FEE_MULTIPLIER,
   MM_SWAPS_FEE_MULTIPLIER,
   FEE_MULTIPLIER_BASIS_POINTS,
+  ETH_DECIMALS,
 } from "../../Helpers";
 import {
   useTotalMYCInLiquidity,
@@ -45,6 +46,7 @@ import {
   useMarketMakingFeesSince,
   useFeesSince,
   useStakingApr,
+  useTotalStaked,
 } from "../../Api";
 
 import { getContract } from "../../Addresses";
@@ -205,6 +207,7 @@ export default function DashboardV2() {
   // const ethPrice = formatAmount(ethToken.maxPrice, USD_DECIMALS, 2, false);
 
   const stakingApr = useStakingApr(mycPrice, ethPrice);
+  const totalStakedMyc = useTotalStaked();
 
   let { mainnet: totalMYCInLiquidityMainnet, arbitrum: totalMYCInLiquidityArbitrum } = useTotalMYCInLiquidity(
     chainId,
@@ -323,30 +326,41 @@ export default function DashboardV2() {
       />
     );
   };
+  const equaliseValue = (item) => {
+    return item.div(expandDecimals(1, ETH_DECIMALS)).toNumber();
+  };
 
-  // TODO change this to MYC liquidity
-  // let stakedPercent = 0;
-  // if (circulatingMYCSupply && !circulatingMYCSupply.isZero() && !totalStakedMyc.isZero()) {
-  // stakedPercent = totalStakedMyc.mul(100).div(circulatingMYCSupply).toNumber();
-  // }
+  const formatPercentage = (value) => {
+    return parseFloat((value * 100).toFixed(2));
+  };
+
+  let stakedPercent = 0;
+  if (circulatingMYCSupply && !circulatingMYCSupply.isZero() && totalStakedMyc) {
+    stakedPercent = totalStakedMyc.toNumber() / equaliseValue(circulatingMYCSupply);
+    stakedPercent = formatPercentage(stakedPercent);
+  }
 
   let arbitrumLiquidityPercent = 0;
   if (circulatingMYCSupply && !circulatingMYCSupply.isZero() && totalMYCInLiquidityArbitrum) {
-    arbitrumLiquidityPercent = totalMYCInLiquidityArbitrum.mul(100).div(circulatingMYCSupply).toNumber();
+    arbitrumLiquidityPercent = equaliseValue(totalMYCInLiquidityArbitrum) / equaliseValue(circulatingMYCSupply);
+    arbitrumLiquidityPercent = formatPercentage(arbitrumLiquidityPercent);
   }
 
   let mainnetLiquidityPercent = 0;
   if (circulatingMYCSupply && !circulatingMYCSupply.isZero() && totalMYCInLiquidityMainnet) {
-    mainnetLiquidityPercent = totalMYCInLiquidityMainnet.mul(100).div(circulatingMYCSupply).toNumber();
+    mainnetLiquidityPercent = equaliseValue(totalMYCInLiquidityMainnet) / equaliseValue(circulatingMYCSupply);
+    mainnetLiquidityPercent = formatPercentage(mainnetLiquidityPercent);
   }
 
-  let notStakedPercent = 100 - arbitrumLiquidityPercent - mainnetLiquidityPercent; // - stakedPercent;
+  let notStakedPercent = parseFloat(
+    (100 - arbitrumLiquidityPercent - mainnetLiquidityPercent - stakedPercent).toFixed(2)
+  );
   let mycDistributionData = [
-    // {
-    // name: "staked",
-    // value: stakedPercent,
-    // color: "#4353fa",
-    // },
+    {
+      name: "staked",
+      value: stakedPercent,
+      color: "#4353fa",
+    },
     {
       name: "in Arbitrum liquidity",
       value: arbitrumLiquidityPercent,
