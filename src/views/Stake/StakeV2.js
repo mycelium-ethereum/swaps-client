@@ -819,164 +819,166 @@ export default function StakeV2({ setPendingTxns, connectWallet, trackAction, sa
               </div>
               {earnMsg && <div className="Page-description">{earnMsg}</div>}
             </div>
-            <StakeV2Styled.CardTitle className="App-card-title">
-              <img src={mlp40Icon} alt="mlp40Icon" />
-              MLP ({chainName})
-            </StakeV2Styled.CardTitle>
-            <MlpPriceChart
-              chainId={chainId}
-              mlpPrice={processedData.mlpPrice}
-            />
-            <StakeV2Styled.MlpInfo>
-              <StakeV2Styled.RewardsBanner>
-                <StakeV2Styled.RewardsBannerRow>
-                  <StakeV2Styled.RewardsBannerText large>Statistics</StakeV2Styled.RewardsBannerText>
-                </StakeV2Styled.RewardsBannerRow>
-                <StakeV2Styled.RewardsBannerRow>
-                  <div className="App-card-row">
-                    <div className="label">Total APR</div>
-                    <div>
-                      <Tooltip
-                        handle={`${formatKeyAmount(processedData, "mlpAprTotal", 2, 2, true)}%`}
-                        position="right-bottom"
-                        renderContent={() => {
-                          return (
-                            <>
-                              <div className="Tooltip-row">
-                                <span className="label">
-                                  {nativeTokenSymbol} ({wrappedTokenSymbol}) APR
-                                </span>
-                                <span>{formatKeyAmount(processedData, "mlpAprForNativeToken", 2, 2, true)}%</span>
-                              </div>
-                              <div className="Tooltip-row">
-                                <span className="label">esMYC APR</span>
-                                <span>{formatKeyAmount(processedData, "mlpAprForEsMyc", 2, 2, true)}%</span>
-                              </div>
-                              <div className="Tooltip-row">
-                                <span className="label">Market Making APR</span>
-                                <span>{formatKeyAmount(processedData, "mmApr", 2, 2, true)}%</span>
-                              </div>
-                            </>
-                          );
-                        }}
-                      />
+            <StakeV2Styled.Card>
+              <StakeV2Styled.CardTitle className="App-card-title" borderBottom>
+                <img src={mlp40Icon} alt="mlp40Icon" />
+                MLP ({chainName})
+              </StakeV2Styled.CardTitle>
+              <MlpPriceChart
+                chainId={chainId}
+                mlpPrice={processedData.mlpPrice}
+              />
+              <StakeV2Styled.MlpInfo>
+                <StakeV2Styled.RewardsBanner>
+                  <StakeV2Styled.RewardsBannerRow>
+                    <StakeV2Styled.RewardsBannerText large>Statistics</StakeV2Styled.RewardsBannerText>
+                  </StakeV2Styled.RewardsBannerRow>
+                  <StakeV2Styled.RewardsBannerRow>
+                    <div className="App-card-row">
+                      <div className="label">Total APR</div>
+                      <div>
+                        <Tooltip
+                          handle={`${formatKeyAmount(processedData, "mlpAprTotal", 2, 2, true)}%`}
+                          position="right-bottom"
+                          renderContent={() => {
+                            return (
+                              <>
+                                <div className="Tooltip-row">
+                                  <span className="label">
+                                    {nativeTokenSymbol} ({wrappedTokenSymbol}) APR
+                                  </span>
+                                  <span>{formatKeyAmount(processedData, "mlpAprForNativeToken", 2, 2, true)}%</span>
+                                </div>
+                                <div className="Tooltip-row">
+                                  <span className="label">esMYC APR</span>
+                                  <span>{formatKeyAmount(processedData, "mlpAprForEsMyc", 2, 2, true)}%</span>
+                                </div>
+                                <div className="Tooltip-row">
+                                  <span className="label">Market Making APR</span>
+                                  <span>{formatKeyAmount(processedData, "mmApr", 2, 2, true)}%</span>
+                                </div>
+                              </>
+                            );
+                          }}
+                        />
+                      </div>
                     </div>
-                  </div>
-                </StakeV2Styled.RewardsBannerRow>
-                <StakeV2Styled.RewardsBannerRow>
-                  <div className="App-card-row">
-                    <div className="label">Price</div>
-                    <div>${formatKeyAmount(processedData, "mlpPrice", USD_DECIMALS, 3, true)}</div>
-                  </div>
-                  <div className="App-card-row">
-                    <div className="label">Wallet</div>
-                    <div>
-                      {formatKeyAmount(processedData, "mlpBalance", MLP_DECIMALS, 2, true)} MLP ($
-                      {formatKeyAmount(processedData, "mlpBalanceUsd", USD_DECIMALS, 2, true)})
+                  </StakeV2Styled.RewardsBannerRow>
+                  <StakeV2Styled.RewardsBannerRow>
+                    <div className="App-card-row">
+                      <div className="label">Price</div>
+                      <div>${formatKeyAmount(processedData, "mlpPrice", USD_DECIMALS, 3, true)}</div>
                     </div>
-                  </div>
-                  <div className="App-card-row">
-                    <div className="label">Staked</div>
-                    <div>
-                      {formatKeyAmount(processedData, "mlpBalance", MLP_DECIMALS, 2, true)} MLP ($
-                      {formatKeyAmount(processedData, "mlpBalanceUsd", USD_DECIMALS, 2, true)})
+                    <div className="App-card-row">
+                      <div className="label">Wallet</div>
+                      <div>
+                        {formatKeyAmount(processedData, "mlpBalance", MLP_DECIMALS, 2, true)} MLP ($
+                        {formatKeyAmount(processedData, "mlpBalanceUsd", USD_DECIMALS, 2, true)})
+                      </div>
                     </div>
-                  </div>
-                </StakeV2Styled.RewardsBannerRow>
-                <StakeV2Styled.RewardsBannerRow>
-                  <div className="App-card-row">
-                    <div className="label">Total Staked</div>
-                    <div>
-                      {formatKeyAmount(processedData, "mlpSupply", 18, 2, true)} MLP ($
-                      {formatKeyAmount(processedData, "mlpSupplyUsd", USD_DECIMALS, 2, true)})
+                    <div className="App-card-row">
+                      <div className="label">Staked</div>
+                      <div>
+                        {formatKeyAmount(processedData, "mlpBalance", MLP_DECIMALS, 2, true)} MLP ($
+                        {formatKeyAmount(processedData, "mlpBalanceUsd", USD_DECIMALS, 2, true)})
+                      </div>
                     </div>
-                  </div>
-                  <div className="App-card-row">
-                    <div className="label">Total Supply</div>
-                    <div>
-                      {formatKeyAmount(processedData, "mlpSupply", 18, 2, true)} MLP ($
-                      {formatKeyAmount(processedData, "mlpSupplyUsd", USD_DECIMALS, 2, true)})
+                  </StakeV2Styled.RewardsBannerRow>
+                  <StakeV2Styled.RewardsBannerRow>
+                    <div className="App-card-row">
+                      <div className="label">Total Staked</div>
+                      <div>
+                        {formatKeyAmount(processedData, "mlpSupply", 18, 2, true)} MLP ($
+                        {formatKeyAmount(processedData, "mlpSupplyUsd", USD_DECIMALS, 2, true)})
+                      </div>
                     </div>
-                  </div>
-                </StakeV2Styled.RewardsBannerRow>
-                <StakeV2Styled.Buttons>
-                    <Link className="App-button-option App-card-option" to="/buy_mlp">
-                      Buy MLP
-                    </Link>
-                    <Link className="App-button-option App-card-option" to="/buy_mlp#redeem">
-                      Sell MLP
-                    </Link>
-                </StakeV2Styled.Buttons>
-              </StakeV2Styled.RewardsBanner>
-              <StakeV2Styled.RewardsBanner>
-                <StakeV2Styled.RewardsBannerRow>
-                  <StakeV2Styled.RewardsBannerText large>Rewards</StakeV2Styled.RewardsBannerText>
-                </StakeV2Styled.RewardsBannerRow>
-                <StakeV2Styled.RewardsBannerRow>
-                  <div className="App-card-row">
-                    <div className="label">{nativeTokenSymbol} Rewards</div>
-                    <div>
+                    <div className="App-card-row">
+                      <div className="label">Total Supply</div>
+                      <div>
+                        {formatKeyAmount(processedData, "mlpSupply", 18, 2, true)} MLP ($
+                        {formatKeyAmount(processedData, "mlpSupplyUsd", USD_DECIMALS, 2, true)})
+                      </div>
+                    </div>
+                  </StakeV2Styled.RewardsBannerRow>
+                  <StakeV2Styled.Buttons>
+                      <Link className="App-button-option App-card-option" to="/buy_mlp">
+                        Buy MLP
+                      </Link>
+                      <Link className="App-button-option App-card-option" to="/buy_mlp#redeem">
+                        Sell MLP
+                      </Link>
+                  </StakeV2Styled.Buttons>
+                </StakeV2Styled.RewardsBanner>
+                <StakeV2Styled.RewardsBanner>
+                  <StakeV2Styled.RewardsBannerRow>
+                    <StakeV2Styled.RewardsBannerText large>Rewards</StakeV2Styled.RewardsBannerText>
+                  </StakeV2Styled.RewardsBannerRow>
+                  <StakeV2Styled.RewardsBannerRow>
+                    <div className="App-card-row">
+                      <div className="label">{nativeTokenSymbol} Rewards</div>
+                      <div>
+                        <StakeV2Styled.RewardsBannerTextWrap>
+                          <StakeV2Styled.RewardsBannerText large>
+                            {formatKeyAmount(processedData, "feeMlpTrackerRewards", 18, 4)} {nativeTokenSymbol}
+                          </StakeV2Styled.RewardsBannerText>{" "}
+                          <StakeV2Styled.RewardsBannerText secondary>
+                            ($
+                            {formatKeyAmount(processedData, "feeMlpTrackerRewardsUsd", USD_DECIMALS, 2, true)})
+                          </StakeV2Styled.RewardsBannerText>
+                        </StakeV2Styled.RewardsBannerTextWrap>
+                      </div>
+                    </div>
+                    <div className="App-card-row">
+                      <div className="label">esMYC Rewards</div>
                       <StakeV2Styled.RewardsBannerTextWrap>
                         <StakeV2Styled.RewardsBannerText large>
-                          {formatKeyAmount(processedData, "feeMlpTrackerRewards", 18, 4)} {nativeTokenSymbol}
+                          {formatKeyAmount(processedData, "stakedMlpTrackerRewards", 18, 4)} esMYC
                         </StakeV2Styled.RewardsBannerText>{" "}
                         <StakeV2Styled.RewardsBannerText secondary>
                           ($
-                          {formatKeyAmount(processedData, "feeMlpTrackerRewardsUsd", USD_DECIMALS, 2, true)})
+                          {formatKeyAmount(processedData, "stakedMlpTrackerRewardsUsd", USD_DECIMALS, 2, true)})
                         </StakeV2Styled.RewardsBannerText>
                       </StakeV2Styled.RewardsBannerTextWrap>
                     </div>
-                  </div>
-                  <div className="App-card-row">
-                    <div className="label">esMYC Rewards</div>
-                    <StakeV2Styled.RewardsBannerTextWrap>
-                      <StakeV2Styled.RewardsBannerText large>
-                        {formatKeyAmount(processedData, "stakedMlpTrackerRewards", 18, 4)} esMYC
-                      </StakeV2Styled.RewardsBannerText>{" "}
-                      <StakeV2Styled.RewardsBannerText secondary>
-                        ($
-                        {formatKeyAmount(processedData, "stakedMlpTrackerRewardsUsd", USD_DECIMALS, 2, true)})
-                      </StakeV2Styled.RewardsBannerText>
-                    </StakeV2Styled.RewardsBannerTextWrap>
-                  </div>
-                  <div className="App-card-row">
-                    <div className="label">Market Making Rewards</div>
-                    <StakeV2Styled.RewardsBannerTextWrap>
-                      <StakeV2Styled.RewardsBannerText large>
-                        <Tooltip
-                          handle={`${formatAmount(userSpreadCaptureEth, ETH_DECIMALS, 4, true, '0.00')} ${nativeTokenSymbol}`}
-                          position="right-bottom"
-                          renderContent={() =>
-                            "Market Making rewards are sourced from the spread of the traded markets and is realised by MLP holders through the appreciation of the MLP token."
-                          }
-                        />
-                      </StakeV2Styled.RewardsBannerText>{" "}
-                      <StakeV2Styled.RewardsBannerText secondary>
-                        ($
-                        {formatAmount(userSpreadCapture, USD_DECIMALS, 2, true, '0.00')})
-                      </StakeV2Styled.RewardsBannerText>
-                    </StakeV2Styled.RewardsBannerTextWrap>
-                  </div>
-                </StakeV2Styled.RewardsBannerRow>
-              <StakeV2Styled.Buttons>
-                  {active && (
-                    <button className="App-button-option App-card-option" onClick={() => showMlpClaimModal()}>
-                      Claim
-                    </button>
-                  )}
-                  {active && (
-                    <button className="App-button-option App-card-option" onClick={() => showMlpCompoundModal()}>
-                      Compound
-                    </button>
-                  )}
-                  {!active && (
-                    <button className="App-button-option App-card-option" onClick={() => connectWallet()}>
-                      Connect Wallet
-                    </button>
-                  )}
-              </StakeV2Styled.Buttons>
-              </StakeV2Styled.RewardsBanner>
-            </StakeV2Styled.MlpInfo>
+                    <div className="App-card-row">
+                      <div className="label">Market Making Rewards</div>
+                      <StakeV2Styled.RewardsBannerTextWrap>
+                        <StakeV2Styled.RewardsBannerText large>
+                          <Tooltip
+                            handle={`${formatAmount(userSpreadCaptureEth, ETH_DECIMALS, 4, true, '0.00')} ${nativeTokenSymbol}`}
+                            position="right-bottom"
+                            renderContent={() =>
+                              "Market Making rewards are sourced from the spread of the traded markets and is realised by MLP holders through the appreciation of the MLP token."
+                            }
+                          />
+                        </StakeV2Styled.RewardsBannerText>{" "}
+                        <StakeV2Styled.RewardsBannerText secondary>
+                          ($
+                          {formatAmount(userSpreadCapture, USD_DECIMALS, 2, true, '0.00')})
+                        </StakeV2Styled.RewardsBannerText>
+                      </StakeV2Styled.RewardsBannerTextWrap>
+                    </div>
+                  </StakeV2Styled.RewardsBannerRow>
+                <StakeV2Styled.Buttons>
+                    {active && (
+                      <button className="App-button-option App-card-option" onClick={() => showMlpClaimModal()}>
+                        Claim
+                      </button>
+                    )}
+                    {active && (
+                      <button className="App-button-option App-card-option" onClick={() => showMlpCompoundModal()}>
+                        Compound
+                      </button>
+                    )}
+                    {!active && (
+                      <button className="App-button-option App-card-option" onClick={() => connectWallet()}>
+                        Connect Wallet
+                      </button>
+                    )}
+                </StakeV2Styled.Buttons>
+                </StakeV2Styled.RewardsBanner>
+              </StakeV2Styled.MlpInfo>
+            </StakeV2Styled.Card>
           </StakeV2Styled.StakeV2Card>
           <StakeV2Styled.StakeV2Card>
             <div className="Page-title-section">
@@ -995,114 +997,116 @@ export default function StakeV2({ setPendingTxns, connectWallet, trackAction, sa
                 before using the vaults.
               </div>
             </div>
-            <StakeV2Styled.CardTitle className="App-card-title">
-              <img src={myc40Icon} alt="myc40Icon" />
-              esMYC Vault
-            </StakeV2Styled.CardTitle>
-            <StakeV2Styled.VestingInfo>
-              <StakeV2Styled.StakedTokens>
-                <StakeV2Styled.RewardsBannerText secondary large>Staked Tokens</StakeV2Styled.RewardsBannerText>
-                <div>
-                  <StakeV2Styled.RewardsBannerTextWrap>
-                    <StakeV2Styled.RewardsBannerText large inline>
-                      {formatKeyAmount(vestingData, "mlpVesterVestedAmount", 18, 4, true)} esMYC
-                    </StakeV2Styled.RewardsBannerText>{" "}
-                    <StakeV2Styled.RewardsBannerText inline>
-                      ($
-                      {formatKeyAmount(processedData, "mlpVesterVestedAmountUsd", USD_DECIMALS, 2, true)})
-                    </StakeV2Styled.RewardsBannerText>
-                  </StakeV2Styled.RewardsBannerTextWrap>
-                </div>
-              </StakeV2Styled.StakedTokens>
-              <StakeV2Styled.StakingBannerRow>
-                <div className="App-card-row">
-                  <div className="label">Reserved for Vesting</div>
+            <StakeV2Styled.Card>
+              <StakeV2Styled.CardTitle className="App-card-title">
+                <img src={myc40Icon} alt="myc40Icon" />
+                esMYC Vault
+              </StakeV2Styled.CardTitle>
+              <StakeV2Styled.VestingInfo>
+                <StakeV2Styled.StakedTokens>
+                  <StakeV2Styled.RewardsBannerText secondary large>Staked Tokens</StakeV2Styled.RewardsBannerText>
                   <div>
-                    {formatKeyAmount(vestingData, "mlpVesterPairAmount", 18, 2, true)} /{" "}
-                    {formatAmount(totalRewardTokens, 18, 2, true)}
+                    <StakeV2Styled.RewardsBannerTextWrap>
+                      <StakeV2Styled.RewardsBannerText large inline>
+                        {formatKeyAmount(vestingData, "mlpVesterVestedAmount", 18, 4, true)} esMYC
+                      </StakeV2Styled.RewardsBannerText>{" "}
+                      <StakeV2Styled.RewardsBannerText inline>
+                        ($
+                        {formatKeyAmount(processedData, "mlpVesterVestedAmountUsd", USD_DECIMALS, 2, true)})
+                      </StakeV2Styled.RewardsBannerText>
+                    </StakeV2Styled.RewardsBannerTextWrap>
                   </div>
-                </div>
-                <div className="App-card-row">
-                  <div className="label">Vesting Status</div>
-                  <div>
-                    <Tooltip
-                      handle={`${formatKeyAmount(vestingData, "mlpVesterClaimSum", 18, 4, true)} / ${formatKeyAmount(
-                        vestingData,
-                        "mlpVesterVestedAmount",
-                        18,
-                        4,
-                        true
-                      )}`}
-                      position="right-bottom"
-                      renderContent={() => {
-                        return (
-                          <>
-                            {formatKeyAmount(vestingData, "mlpVesterClaimSum", 18, 4, true)} tokens have been converted
-                            to MYC from the&nbsp;
-                            {formatKeyAmount(vestingData, "mlpVesterVestedAmount", 18, 4, true)} esMYC deposited for
-                            vesting.
-                          </>
-                        );
-                      }}
-                    />
+                </StakeV2Styled.StakedTokens>
+                <StakeV2Styled.StakingBannerRow>
+                  <div className="App-card-row">
+                    <div className="label">Reserved for Vesting</div>
+                    <div>
+                      {formatKeyAmount(vestingData, "mlpVesterPairAmount", 18, 2, true)} /{" "}
+                      {formatAmount(totalRewardTokens, 18, 2, true)}
+                    </div>
                   </div>
-                </div>
-                <div className="App-card-row">
-                  <div className="label">Claimable</div>
-                  <div>
-                    <Tooltip
-                      handle={`${formatKeyAmount(vestingData, "mlpVesterClaimable", 18, 4, true)} MYC`}
-                      position="right-bottom"
-                      renderContent={() =>
-                        `${formatKeyAmount(
+                  <div className="App-card-row">
+                    <div className="label">Vesting Status</div>
+                    <div>
+                      <Tooltip
+                        handle={`${formatKeyAmount(vestingData, "mlpVesterClaimSum", 18, 4, true)} / ${formatKeyAmount(
                           vestingData,
-                          "mlpVesterClaimable",
+                          "mlpVesterVestedAmount",
                           18,
                           4,
                           true
-                        )} MYC tokens can be claimed, use the options under the Earn section to claim them.`
-                      }
-                    />
+                        )}`}
+                        position="right-bottom"
+                        renderContent={() => {
+                          return (
+                            <>
+                              {formatKeyAmount(vestingData, "mlpVesterClaimSum", 18, 4, true)} tokens have been converted
+                              to MYC from the&nbsp;
+                              {formatKeyAmount(vestingData, "mlpVesterVestedAmount", 18, 4, true)} esMYC deposited for
+                              vesting.
+                            </>
+                          );
+                        }}
+                      />
+                    </div>
                   </div>
-                </div>
-                <StakeV2Styled.Buttons>
-                  {!active && (
-                    <button className="App-button-option App-card-option" onClick={() => connectWallet()}>
-                      Connect Wallet
-                    </button>
-                  )}
-                  {active && (
-                    <button className="App-button-option App-card-option" onClick={() => showMycVesterDepositModal()}>
-                      Deposit
-                    </button>
-                  )}
-                  {active && (
-                    <button className="App-button-option App-card-option" onClick={() => showMycVesterWithdrawModal()}>
-                      Withdraw
-                    </button>
-                  )}
-                </StakeV2Styled.Buttons>
-              </StakeV2Styled.StakingBannerRow>
-              <StakeV2Styled.StakingBannerRow borderTop>
-                <StakeV2Styled.RewardsBannerText large title>
-                  MYC Staking
-                </StakeV2Styled.RewardsBannerText>
-                <StakeV2Styled.RewardsBannerText secondary title>
-                  Stake MYC to receive interest in ETH
-                </StakeV2Styled.RewardsBannerText>
-                {stakingApr && (
                   <div className="App-card-row">
-                    <div className="label">Staking APR</div>
-                    <div>{stakingApr}%</div>
+                    <div className="label">Claimable</div>
+                    <div>
+                      <Tooltip
+                        handle={`${formatKeyAmount(vestingData, "mlpVesterClaimable", 18, 4, true)} MYC`}
+                        position="right-bottom"
+                        renderContent={() =>
+                          `${formatKeyAmount(
+                            vestingData,
+                            "mlpVesterClaimable",
+                            18,
+                            4,
+                            true
+                          )} MYC tokens can be claimed, use the options under the Earn section to claim them.`
+                        }
+                      />
+                    </div>
                   </div>
-                )}
-                <StakeV2Styled.Buttons>
-                  <a href="https://lend.mycelium.xyz" target="_blank" rel="noopener noreferrer">
-                    <button className="App-button-option App-card-option">MYC Staking</button>
-                  </a>
-                </StakeV2Styled.Buttons>
-              </StakeV2Styled.StakingBannerRow>
-            </StakeV2Styled.VestingInfo>
+                  <StakeV2Styled.Buttons>
+                    {!active && (
+                      <button className="App-button-option App-card-option" onClick={() => connectWallet()}>
+                        Connect Wallet
+                      </button>
+                    )}
+                    {active && (
+                      <button className="App-button-option App-card-option" onClick={() => showMycVesterDepositModal()}>
+                        Deposit
+                      </button>
+                    )}
+                    {active && (
+                      <button className="App-button-option App-card-option" onClick={() => showMycVesterWithdrawModal()}>
+                        Withdraw
+                      </button>
+                    )}
+                  </StakeV2Styled.Buttons>
+                </StakeV2Styled.StakingBannerRow>
+                <StakeV2Styled.StakingBannerRow borderTop>
+                  <StakeV2Styled.RewardsBannerText large title>
+                    MYC Staking
+                  </StakeV2Styled.RewardsBannerText>
+                  <StakeV2Styled.RewardsBannerText secondary title>
+                    Stake MYC to receive interest in ETH
+                  </StakeV2Styled.RewardsBannerText>
+                  {stakingApr && (
+                    <div className="App-card-row">
+                      <div className="label">Staking APR</div>
+                      <div>{stakingApr}%</div>
+                    </div>
+                  )}
+                  <StakeV2Styled.Buttons>
+                    <a href="https://lend.mycelium.xyz" target="_blank" rel="noopener noreferrer">
+                      <button className="App-button-option App-card-option">MYC Staking</button>
+                    </a>
+                  </StakeV2Styled.Buttons>
+                </StakeV2Styled.StakingBannerRow>
+              </StakeV2Styled.VestingInfo>
+            </StakeV2Styled.Card>
           </StakeV2Styled.StakeV2Card>
         </StakeV2Styled.StakeV2Cards>
       </StakeV2Styled.StakeV2Content>

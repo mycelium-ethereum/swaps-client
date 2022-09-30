@@ -35,12 +35,16 @@ export const StakeV2Card = styled.div`
   }
 `
 
+export const Card = styled.div`
+  border: 1px solid var(--cell-stroke);
+  border-radius: 4px;
+`
+
 export const CardTitle = styled.div`
   padding: 0.75rem 1rem;
   font-size: 1rem;
   margin-bottom: 0;
-  border: 1px solid var(--action-stroke);
-  border-bottom: none;
+  border-bottom: ${({ borderBottom }) => borderBottom ? '1px solid var(--cell-stroke)' : ''};
 
   gap: 8px;
   justify-content: start;
@@ -53,8 +57,6 @@ export const CardTitle = styled.div`
 export const MlpInfo = styled.div`
   display: grid;
   grid-template-columns: 1.25fr 1fr;
-  border: 1px solid var(--cell-stroke);
-  border-top: none;
 
   @media (max-width: ${sm}) {
     grid-template-columns: 1fr;
@@ -62,8 +64,6 @@ export const MlpInfo = styled.div`
 `
 
 export const VestingInfo = styled.div`
-  border: 1px solid var(--cell-stroke);
-  border-top: none;
   color: var(--text-primary);
   font-size: 16px;
 `
@@ -75,8 +75,6 @@ export const StakedTokens = styled.div`
   justify-content: space-between;
   padding: 1rem;
 `
-
-
 
 export const RewardsBanner = styled.div`
   background: var(--cell-gradient);
