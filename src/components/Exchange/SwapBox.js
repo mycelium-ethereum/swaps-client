@@ -62,6 +62,7 @@ import {
   NETWORK_NAME,
   getSpread,
   getUserTokenBalances,
+  preventStrangeNumberInputs
 } from "../../Helpers";
 import { getConstant } from "../../Constants";
 import * as Api from "../../Api";
@@ -181,16 +182,6 @@ export default function SwapBox(props) {
   const isShort = swapOption === SHORT;
   const isSwap = swapOption === SWAP;
 
-  const getLeaderboardLink = () => {
-    if (chainId === ARBITRUM) {
-      return "https://www.gmx.house/arbitrum/leaderboard";
-    }
-    if (chainId === AVALANCHE) {
-      return "https://www.gmx.house/avalanche/leaderboard";
-    }
-    return "https://www.gmx.house";
-  };
-
   function getTokenLabel() {
     switch (true) {
       case isLong:
@@ -203,6 +194,7 @@ export default function SwapBox(props) {
         return "";
     }
   }
+
   const [leverageOption, setLeverageOption] = useLocalStorageSerializeKey(
     [chainId, "Exchange-swap-leverage-option"],
     "2"
@@ -1699,7 +1691,7 @@ export default function SwapBox(props) {
     feeBps = feeBasisPoints;
   }
 
-  const leverageMarks = { 
+  const leverageMarks = {
     2: "2x",
     5: "5x",
     10: "10x",
@@ -1848,12 +1840,6 @@ export default function SwapBox(props) {
       trackAction && trackAction(actionName, traits);
     } catch (err) {
       console.error(`Unable to track ${actionName} event`, err);
-    }
-  };
-
-  const preventStrangeNumberInputs = (e) => {
-    if (["e", "E", "+", "-"].includes(e.key)) {
-      e.preventDefault();
     }
   };
 

@@ -54,7 +54,6 @@ import {
   ARBITRUM_TESTNET,
   PLACEHOLDER_ACCOUNT,
   getDefaultArbitrumRpcUrl,
-  shareToTwitter,
 } from "./Helpers";
 import ReaderV2 from "./abis/ReaderV2.json";
 
@@ -69,6 +68,7 @@ import BuyMlp from "./views/BuyMlp/BuyMlp";
 import SellMlp from "./views/SellMlp/SellMlp";
 import Rewards from "./views/Rewards/Rewards";
 import Referrals from "./views/Referrals/Referrals";
+import Bridge from "./views/Bridge/Bridge";
 // import NftWallet from "./views/NftWallet/NftWallet";
 // import BeginAccountTransfer from "./views/BeginAccountTransfer/BeginAccountTransfer";
 // import CompleteAccountTransfer from "./views/CompleteAccountTransfer/CompleteAccountTransfer";
@@ -98,9 +98,6 @@ import logoImg from "./img/logo_MYC.svg";
 import logoSmallImg from "./img/logo_MYC_small.svg";
 import poolsSmallImg from "./img/myc_pools_short.svg";
 import connectWalletImg from "./img/ic_wallet_24.svg";
-import ethMergeHeader from "./img/eth-merge-modal-header.png";
-import ethMergeHeadermesh from "./img/eth-merge-modal-header-mesh.png";
-import twitterIcon from "./img/twitter-icon.svg";
 
 import metamaskImg from "./img/metamask.png";
 import coinbaseImg from "./img/coinbaseWallet.png";
@@ -958,6 +955,28 @@ function FullApp() {
             </Route>
             <Route exact path="/referrals">
               <Referrals
+                connectWallet={connectWallet}
+                trackPageWithTraits={trackPageWithTraits}
+                trackAction={trackAction}
+                analytics={analytics}
+                infoTokens={infoTokens}
+                pendingTxns={pendingTxns}
+                setPendingTxns={setPendingTxns}
+              />
+            </Route>
+            <Route exact path="/referrals">
+              <Referrals
+                connectWallet={connectWallet}
+                trackPageWithTraits={trackPageWithTraits}
+                trackAction={trackAction}
+                analytics={analytics}
+                infoTokens={infoTokens}
+                pendingTxns={pendingTxns}
+                setPendingTxns={setPendingTxns}
+              />
+            </Route>
+            <Route exact path="/bridge">
+              <Bridge
                 connectWallet={connectWallet}
                 trackPageWithTraits={trackPageWithTraits}
                 trackAction={trackAction}
