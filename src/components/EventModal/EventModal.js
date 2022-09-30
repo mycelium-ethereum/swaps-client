@@ -1,8 +1,8 @@
 import React, { useEffect } from 'react';
 import { shareToTwitter } from "../../Helpers";
 import * as Styled from './EventModal.styles';
-import ethMergeHeader from "../../img/eth-merge-modal-header.png";
-import ethMergeHeadermesh from "../../img/eth-merge-modal-header-mesh.png";
+import ethMergeHeader from "../../img/event-modal-header.png";
+import ethMergeHeadermesh from "../../img/event-modal-header-mesh.png";
 import twitterIcon from "../../img/twitter-icon.svg";
 import {Link} from 'react-router-dom';
 
@@ -30,7 +30,7 @@ export default function EventModal ({ isModalVisible, setEventModalVisible, twit
     const hasSeenEventModal = window.localStorage.getItem(eventKey);
     if (!hasSeenEventModal) {
       setEventModalVisible(true);
-      // window.localStorage.setItem(eventKey, "true");
+      window.localStorage.setItem(eventKey, "true");
     }
   }, []);
 
