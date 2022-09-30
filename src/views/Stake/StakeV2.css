@@ -105,6 +105,13 @@
   background-size: cover;
 }
 
+@media (max-width: 424px) {
+  .StakeModal .Modal-content {
+    margin-right: 1rem;
+    margin-left: 1rem;
+  }
+}
+
 @media (max-width: 900px) {
   .StakeV2-total-rewards-card {
     grid-row: 4;
