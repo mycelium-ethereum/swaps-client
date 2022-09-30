@@ -111,6 +111,10 @@ export const RewardsBannerRow = styled.div`
 
 export const StakingBannerRow = styled(RewardsBannerRow)`
   padding: 1rem;
+
+  &:last-child {
+    border-bottom: none;
+  }
 `
 
 export const RewardsBannerTextWrap = styled.div`
@@ -179,7 +183,3 @@ export const SpreadCaptureDescription = styled.div`
   margin-top: 0.5rem;
   margin-bottom: 0.5rem;
 `
-
-
-
-
