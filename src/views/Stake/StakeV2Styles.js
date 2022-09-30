@@ -80,6 +80,7 @@ export const RewardsBanner = styled.div`
   background: var(--cell-gradient);
   font-size: 16px;
   padding: 0 1rem;
+  padding-bottom: 1rem;
   color: var(--text-primary);
   &:first-child { 
     border-right: 1px solid var(--cell-stroke);
