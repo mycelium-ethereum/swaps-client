@@ -413,80 +413,6 @@
 .Connect-wallet-modal .Modal-content .divider {
   display: none;
 }
-.Eth-merge-modal .Modal-content {
-  max-width: 424px;
-  width: 100%;
-  overflow: unset;
-}
-.Eth-merge-modal .Modal-body {
-  padding-top: 120px;
-  text-align: center;
-}
-
-.Eth-merge-modal .Modal-content .divider {
-  display: none;
-}
-.Eth-merge-modal .Eth-merge-modal-header {
-  position: absolute;
-  top: 0;
-  left: 0;
-  height: 157px;
-  width: 100%;
-  background-color: var(--background-primary);
-  border-top-right-radius: 8px;
-  border-top-left-radius: 8px;
-  border-bottom: 0;
-}
-
-.Eth-merge-modal .Eth-merge-modal-graphic,
-.Eth-merge-modal .Eth-merge-modal-mesh {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-}
-
-.Eth-merge-modal .Eth-merge-modal-graphic {
-  height: 296px;
-  z-index: 1;
-}
-
-.Eth-merge-modal .Eth-merge-modal-title small {
-  display: block;
-  font-size: 24px;
-  line-height: 36px;
-  font-weight: 600;
-}
-.Eth-merge-modal .Eth-merge-modal-title h2 {
-  font-size: 36px;
-  line-height: 48px;
-  font-weight: 600;
-  margin: 0 0 16px;
-}
-.Eth-merge-modal .Modal-body .Eth-merge-modal-divider {
-  border-color: var(--cell-stroke);
-  margin: 0 0 16px;
-}
-
-.Eth-merge-modal .Button-content {
-  display: grid;
-  row-gap: 16px;
-}
-.Eth-merge-modal .Button-content span {
-  font-weight: 300;
-}
-.Eth-merge-modal .Button-content button {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 4px;
-  height: 44px;
-  margin: 0;
-}
-.Eth-merge-modal .Button-content button img {
-  margin-left: 13px;
-}
 
 button.App-connect-wallet {
   cursor: pointer;
@@ -1560,19 +1486,6 @@ button.App-button {
   }
   .App-header-container-right {
     display: none;
-  }
-  .Eth-merge-modal .Modal-content {
-    max-width: calc(100% - 32px);
-  }
-  .Eth-merge-modal .Eth-merge-modal-title small {
-    display: block;
-    font-size: 20px;
-    line-height: 30px;
-    font-weight: 600;
-  }
-  .Eth-merge-modal .Eth-merge-modal-title h2 {
-    font-size: 30px;
-    line-height: 40px;
   }
 }
 
