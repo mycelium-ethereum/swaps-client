@@ -34,6 +34,12 @@ const TIMEFRAME = {
   "1d": "30D",
 };
 
+const DEFAULT_COLOURS = {
+  main: "#737375",
+  up: "#4fe021",
+  down: "#FF5621",
+};
+
 export default function ExchangeAdvancedTVChart(props) {
   const { chartToken, priceData, period } = props;
 
@@ -96,25 +102,28 @@ export default function ExchangeAdvancedTVChart(props) {
         "paneProperties.legendProperties.showSeriesTitle": false,
 
         "mainSeriesProperties.candleStyle.drawBorder": false,
-        "mainSeriesProperties.candleStyle.wickColor": "#737375",
-        "mainSeriesProperties.candleStyle.upColor": "#4fe021",
-        "mainSeriesProperties.candleStyle.wickUpColor": "#4fe021",
-        "mainSeriesProperties.candleStyle.downColor": "#FF5621",
-        "mainSeriesProperties.candleStyle.wickDownColor": "#FF5621",
+        "mainSeriesProperties.candleStyle.wickColor": DEFAULT_COLOURS.main,
+        "mainSeriesProperties.candleStyle.upColor": DEFAULT_COLOURS.up,
+        "mainSeriesProperties.candleStyle.wickUpColor": DEFAULT_COLOURS.up,
+        "mainSeriesProperties.candleStyle.downColor": DEFAULT_COLOURS.down,
+        "mainSeriesProperties.candleStyle.wickDownColor": DEFAULT_COLOURS.down,
+        "mainSeriesProperties.candleStyle.borderColor": DEFAULT_COLOURS.main,
+        "mainSeriesProperties.candleStyle.borderUpColor": DEFAULT_COLOURS.up,
+        "mainSeriesProperties.candleStyle.borderDownColor": DEFAULT_COLOURS.down,
 
-        "mainSeriesProperties.hollowCandleStyle.borderColor": "#737375",
-        "mainSeriesProperties.hollowCandleStyle.borderUpColor": "#4fe021",
-        "mainSeriesProperties.hollowCandleStyle.borderDownColor": "#FF5621",
-        "mainSeriesProperties.hollowCandleStyle.wickColor": "#737375",
-        "mainSeriesProperties.hollowCandleStyle.wickUpColor": "#4fe021",
-        "mainSeriesProperties.hollowCandleStyle.wickDownColor": "#FF5621",
+        "mainSeriesProperties.hollowCandleStyle.borderColor": DEFAULT_COLOURS.main,
+        "mainSeriesProperties.hollowCandleStyle.borderUpColor": DEFAULT_COLOURS.up,
+        "mainSeriesProperties.hollowCandleStyle.borderDownColor": DEFAULT_COLOURS.down,
+        "mainSeriesProperties.hollowCandleStyle.wickColor": DEFAULT_COLOURS.main,
+        "mainSeriesProperties.hollowCandleStyle.wickUpColor": DEFAULT_COLOURS.up,
+        "mainSeriesProperties.hollowCandleStyle.wickDownColor": DEFAULT_COLOURS.down,
         "mainSeriesProperties.hollowCandleStyle.drawBody": false,
 
-        "mainSeriesProperties.barStyle.upColor": "#4fe021",
-        "mainSeriesProperties.barStyle.downColor": "#FF5621",
+        "mainSeriesProperties.barStyle.upColor": DEFAULT_COLOURS.up,
+        "mainSeriesProperties.barStyle.downColor": DEFAULT_COLOURS.down,
 
-        "mainSeriesProperties.baselineStyle.topLineColor": "#4fe021",
-        "mainSeriesProperties.baselineStyle.bottomLineColor": "#FF5621",
+        "mainSeriesProperties.baselineStyle.topLineColor": DEFAULT_COLOURS.up,
+        "mainSeriesProperties.baselineStyle.bottomLineColor": DEFAULT_COLOURS.down,
       },
       loading_screen: {
         backgroundColor: "#000a00 !important",
