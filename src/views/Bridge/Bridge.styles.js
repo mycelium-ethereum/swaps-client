@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import Modal from "../../components/Modal/Modal";
 
 export const StyledBridgePage = styled.div`
   height: 100%;
@@ -7,10 +8,12 @@ export const StyledBridgePage = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
+  padding: 40px 20px;
 `;
 
 export const BridgeTable = styled.div`
-  width: 538px;
+  max-width: 538px;
+  width: 100%;
   padding: 16px;
   background-color: var(--background-primary);
   border-radius: 8px;
@@ -29,9 +32,19 @@ export const Header = styled.div`
   width: 100%;
 `;
 
-export const SettingsIcon = styled.img`
-  width: 20px;
-  height: 20px;
+export const SettingsButton = styled.button`
+  background-color: transparent;
+  border: 0;
+  > img {
+    width: 20px;
+    height: 20px;
+  }
+`;
+
+export const SettingsModal = styled(Modal)`
+  .Modal-content {
+    height: 300px;
+  }
 `;
 
 export const Label = styled.div`
@@ -73,6 +86,36 @@ export const TokenBox = styled.div`
   border: 1px solid var(--action-active);
   width: 100%;
   margin-bottom: 16px;
+  .TokenSelector-box {
+    font-size: 24px;
+    font-weight: 600;
+    line-height: 36px;
+  }
+`;
+export const TokenButton = styled.button`
+  display: flex;
+  align-items: center;
+  background-color: transparent;
+  border: 0;
+
+  .token-icon {
+    width: 30px;
+    height: 30px;
+    margin-right: 8px;
+  }
+
+  .token-name {
+    font-weight: 600;
+    font-size: 24px;
+    line-height: 36px;
+    margin-right: 12px;
+    color: white;
+  }
+
+  .chevron-down {
+    width: 19px;
+    height: 19px;
+  }
 `;
 
 export const AmountInput = styled.input`
@@ -90,4 +133,31 @@ export const AmountInput = styled.input`
 export const Divider = styled.hr`
   border-color: var(--action-active);
   margin: 16px 0;
+`;
+
+export const Subtitle = styled.span`
+  font-size: 14px;
+  white-space: nowrap;
+  &.grey {
+    color: var(--text-secondary);
+    white-space: pre-wrap;
+  }
+  &.orange {
+    color: var(--alert-active);
+  }
+`;
+
+export const InfoRow = styled(FlexRowFull)`
+  align-items: flex-start;
+  margin-bottom: 8px;
+`;
+
+export const TotalText = styled.span`
+  font-size: 16px;
+  font-weight: bold;
+  margin-bottom: 8px;
+
+  &.grey {
+    color: var(--text-secondary);
+  }
 `;

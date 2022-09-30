@@ -86,6 +86,8 @@ body,
 
   --danger: #191203;
   --danger-active: #ff5621;
+
+  --alert-active: #ff931e;
 }
 
 a {
