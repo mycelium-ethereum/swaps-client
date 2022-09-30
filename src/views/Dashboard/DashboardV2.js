@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { Link } from "react-router-dom";
 import { useWeb3React } from "@web3-react/core";
 import useSWR from "swr";
@@ -204,10 +204,6 @@ export default function DashboardV2() {
 
   const ethToken = infoTokens[ADDRESS_ZERO];
   const ethPrice = ethToken.maxPrice;
-  // const ethPrice = formatAmount(ethToken.maxPrice, USD_DECIMALS, 2, false);
-
-  const stakingApr = useStakingApr(mycPrice, ethPrice);
-  const totalStakedMyc = useTotalStaked();
 
   let { mainnet: totalMYCInLiquidityMainnet, arbitrum: totalMYCInLiquidityArbitrum } = useTotalMYCInLiquidity(
     chainId,
@@ -240,6 +236,16 @@ export default function DashboardV2() {
         : expandDecimals(1, USD_DECIMALS);
     mlpMarketCap = mlpPrice.mul(mlpSupply).div(expandDecimals(1, MLP_DECIMALS));
   }
+
+  const stakingApr = useStakingApr(mycPrice, ethPrice);
+  const totalStakedMyc = useTotalStaked();
+
+  const stakingTvl = useMemo(() => {
+    if (!mycPrice || !totalStakedMyc) return bigNumberify(0);
+    return mycPrice.mul(totalStakedMyc);
+  }, [mycPrice, totalStakedMyc]);
+
+  const tvl = aum.add(stakingTvl);
 
   let adjustedUsdgSupply = bigNumberify(0);
 
@@ -479,7 +485,7 @@ export default function DashboardV2() {
               <div className="App-card-title">Overview</div>
               <div className="App-card-divider"></div>
               <div className="App-card-content">
-                {/*<div className="App-card-row">
+                <div className="App-card-row">
                   <div className="label">AUM</div>
                   <div>
                     <TooltipComponent
@@ -489,7 +495,7 @@ export default function DashboardV2() {
                     />
                   </div>
                 </div>
-                */}
+
                 <div className="App-card-row">
                   <div className="label">MLP Pool</div>
                   <div>

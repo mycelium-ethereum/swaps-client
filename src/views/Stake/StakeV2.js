@@ -696,20 +696,10 @@ export default function StakeV2({ setPendingTxns, connectWallet, trackAction }) 
   const { mycPrice } = useMYCPrice(chainId, { arbitrum: chainId === ARBITRUM ? library : undefined }, active);
 
   const { total: mycSupply } = useTotalMYCSupply();
-  const totalMycStaked = useTotalStaked();
-
-  const stakingTvl = useMemo(() => {
-    if (!mycPrice || !totalMycStaked) return bigNumberify(0);
-    return mycPrice.mul(totalMycStaked);
-  }, [mycPrice, totalMycStaked]);
 
   let aum;
-  let aumWithStaking;
   if (aums && aums.length > 0) {
     aum = aums[0].add(aums[1]).div(2);
-  }
-  if (stakingTvl && aum) {
-    aumWithStaking = aum.add(stakingTvl);
   }
 
   const { balanceData, supplyData } = getBalanceAndSupplyData(walletBalances);
@@ -724,7 +714,6 @@ export default function StakeV2({ setPendingTxns, connectWallet, trackAction }) 
     stakingData,
     vestingData,
     aum,
-    aumWithStaking,
     nativeTokenPrice,
     stakedMycSupply,
     mycPrice,
