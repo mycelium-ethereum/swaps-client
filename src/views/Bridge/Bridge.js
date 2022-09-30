@@ -193,6 +193,8 @@ export default function Bridge(props) {
     },
   ];
 
+  console.log(fromToken);
+
   return (
     <>
       <SEO
@@ -222,7 +224,7 @@ export default function Bridge(props) {
               <img className="chevron-down" src={chevronDownIcon} alt="Chevron down" />
             </Styles.TokenButton>
             <Styles.Divider />
-            <Styles.Label>Balance: {formatAmount(fromBalance, toToken.decimals, 4, true)}</Styles.Label>
+            <Styles.Label>Balance: {formatAmount(fromBalance, fromToken.decimals, 4, true)}</Styles.Label>
             <Styles.FlexRowFull>
               <Styles.AmountInput
                 type="number"
