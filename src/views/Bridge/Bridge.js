@@ -13,6 +13,8 @@ import {
   parseValue,
   approveTokens,
   getTokenInfo,
+  bigNumberify,
+  formatAmount,
 } from "../../Helpers";
 import TokenSelector from "../../components/Exchange/TokenSelector";
 import { getTokens, getToken, getWhitelistedTokens, getTokenBySymbol } from "../../data/Tokens";
@@ -96,6 +98,8 @@ export default function Bridge(props) {
   const whitelistedTokens = getWhitelistedTokens(chainId);
   const toTokens = whitelistedTokens.filter((token) => !token.isStable && !token.isWrapped);
   const fromTokens = getTokens(chainId);
+  const fromTokenInfo = getTokenInfo(infoTokens, fromTokenAddress);
+  const fromBalance = fromTokenInfo ? fromTokenInfo.balance : bigNumberify(0);
 
   const switchTokensAndNetwork = () => {
     const tempFromToken = fromTokenAddress;
@@ -218,6 +222,7 @@ export default function Bridge(props) {
               <img className="chevron-down" src={chevronDownIcon} alt="Chevron down" />
             </Styles.TokenButton>
             <Styles.Divider />
+            <Styles.Label>Balance: {formatAmount(fromBalance, toToken.decimals, 4, true)}</Styles.Label>
             <Styles.FlexRowFull>
               <Styles.AmountInput
                 type="number"
@@ -255,7 +260,6 @@ export default function Bridge(props) {
               <img className="chevron-down" src={chevronDownIcon} alt="Chevron down" />
             </Styles.TokenButton>
             <Styles.Divider />
-            <Styles.Label>Balance: 0.00</Styles.Label>
             <Styles.FlexRowFull>
               <Styles.AmountInput
                 type="number"
