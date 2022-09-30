@@ -3078,3 +3078,9 @@ export function getTierIdDisplay(tierId) {
 export function shareToTwitter(text) {
   window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`, "_blank");
 }
+
+export function preventStrangeNumberInputs(e) {
+  if (["e", "E", "+", "-"].includes(e.key)) {
+    e.preventDefault();
+  }
+}
