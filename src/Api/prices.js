@@ -301,3 +301,4 @@ function getStablePriceData(period) {
   }
   return priceData;
 }
+
