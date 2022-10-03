@@ -202,7 +202,7 @@ export function useUserSpreadCapture(chainId, account, mlpBalance, ethPrice) {
       if (res.data.cumulativeSpreadCapture && res.data.userSpreadCapture) {
         let cumulativeRewardsPerToken = bigNumberify(res.data.cumulativeSpreadCapture.cumulativeRewardsPerToken)
         let lastCumulativeRewardsPerToken = bigNumberify(res.data.userSpreadCapture.lastCumulativeRewardsPerToken)
-        setSpreadCapturePerToken(cumulativeRewardsPerToken.sub(lastCumulativeRewardsPerToken));
+        setSpreadCapturePerToken(cumulativeRewardsPerToken.sub(lastCumulativeRewardsPerToken))
       }
     }).catch(console.warn);
   }, [chainId, account]);
