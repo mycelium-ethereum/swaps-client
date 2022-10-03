@@ -557,7 +557,7 @@ export default function PositionsList(props) {
                         trackAction("Button clicked", { buttonName: "Edit Position" });
                         editPosition(position);
                       }}
-                      disabled={position.size.eq(0)}
+                      disabled={position.size.eq(0) || position.hasPendingChanges}
                     >
                       Edit
                     </button>
@@ -569,7 +569,7 @@ export default function PositionsList(props) {
                         trackAction("Button clicked", { buttonName: "Close Position" });
                         sellPosition(position);
                       }}
-                      disabled={position.size.eq(0)}
+                      disabled={position.size.eq(0) || position.hasPendingChanges}
                     >
                       Close
                     </button>
