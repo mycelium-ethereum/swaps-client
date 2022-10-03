@@ -245,7 +245,7 @@ export default function DashboardV2() {
     return mycPrice.mul(totalStakedMyc);
   }, [mycPrice, totalStakedMyc]);
 
-  const tvl = aum.add(stakingTvl);
+  const tvl = aum?.add(stakingTvl);
 
   let adjustedUsdgSupply = bigNumberify(0);
 
