@@ -213,7 +213,7 @@ export function useUserSpreadCapture(chainId, account, mlpBalance, ethPrice) {
       userSpreadCapture = ethers.BigNumber.from(0);
       userSpreadCaptureEth = ethers.BigNumber.from(0);
     } else {
-      userSpreadCapture = (spreadCapturePerToken.mul(mlpBalance)).div(expandDecimals(1, 18)).div(expandDecimals(1, FEE_MULTIPLIER_BASIS_POINTS));
+      userSpreadCapture = (spreadCapturePerToken.mul(mlpBalance)).div(expandDecimals(1, 18));
       userSpreadCaptureEth = (userSpreadCapture.mul(expandDecimals(1, 18))).div(ethPrice);
     }
   }
