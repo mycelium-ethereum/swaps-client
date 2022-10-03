@@ -67,6 +67,7 @@ body,
   --action-hover: #003000;
   --action-stroke: #003000;
   --action-shadow: 0 0 4px 6px rgba(9, 130, 0, 0.1);
+  --action-gradient: linear-gradient(267.64deg, rgba(0, 48, 0, 0.5) -84.72%, rgba(0, 48, 0, 0) 144.55%);
 
   --cell-gradient: linear-gradient(180deg, rgba(5, 67, 1, 0.2) 0%, rgba(5, 67, 1, 0) 65.01%);
   --cell-hover: #03100e;

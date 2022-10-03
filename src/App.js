@@ -54,12 +54,11 @@ import {
   ARBITRUM_TESTNET,
   PLACEHOLDER_ACCOUNT,
   getDefaultArbitrumRpcUrl,
-  shareToTwitter,
 } from "./Helpers";
 import ReaderV2 from "./abis/ReaderV2.json";
 
 import Dashboard from "./views/Dashboard/Dashboard";
-import Stake from "./views/Stake/Stake";
+import Stake from "./views/Stake/StakeV2";
 import { Exchange } from "./views/Exchange/Exchange";
 import Actions from "./views/Actions/Actions";
 import OrdersOverview from "./views/OrdersOverview/OrdersOverview";
@@ -98,9 +97,6 @@ import logoImg from "./img/logo_MYC.svg";
 import logoSmallImg from "./img/logo_MYC_small.svg";
 import poolsSmallImg from "./img/myc_pools_short.svg";
 import connectWalletImg from "./img/ic_wallet_24.svg";
-import ethMergeHeader from "./img/eth-merge-modal-header.png";
-import ethMergeHeadermesh from "./img/eth-merge-modal-header-mesh.png";
-import twitterIcon from "./img/twitter-icon.svg";
 
 import metamaskImg from "./img/metamask.png";
 import coinbaseImg from "./img/coinbaseWallet.png";
@@ -122,6 +118,7 @@ import PageNotFound from "./views/PageNotFound/PageNotFound";
 import useSWR from "swr";
 import LinkDropdown from "./components/Navigation/LinkDropdown/LinkDropdown";
 import Sidebar from "./components/Navigation/Sidebar/Sidebar";
+import EventModal from "./components/EventModal/EventModal";
 
 if ("ethereum" in window) {
   window.ethereum.autoRefreshOnNetworkChange = false;
@@ -490,7 +487,7 @@ function FullApp() {
   };
 
   const [walletModalVisible, setWalletModalVisible] = useState();
-  const [mergeModalVisible, setMergeModalVisible] = useState(false);
+  const [isEventModalVisible, setEventModalVisible] = useState(false);
   const connectWallet = () => setWalletModalVisible(true);
 
   const [isDrawerVisible, setIsDrawerVisible] = useState(undefined);
@@ -743,14 +740,6 @@ function FullApp() {
     [chainId, active]
   );
 
-  useEffect(() => {
-    const hasSeenEthMergeModal = window.localStorage.getItem("ethMergeModalSeen");
-    if (!hasSeenEthMergeModal) {
-      setMergeModalVisible(true);
-      window.localStorage.setItem("ethMergeModalSeen", "true");
-    }
-  }, []);
-
   return (
     <>
       <div
@@ -927,7 +916,15 @@ function FullApp() {
               <Dashboard />
             </Route>
             <Route exact path="/earn">
-              <Stake setPendingTxns={setPendingTxns} connectWallet={connectWallet} trackAction={trackAction} />
+              <Stake
+                setPendingTxns={setPendingTxns}
+                connectWallet={connectWallet}
+                trackAction={trackAction}
+                trackPageWithTraits={trackPageWithTraits}
+                analytics={analytics}
+                infoTokens={infoTokens}
+                savedSlippageAmount={savedSlippageAmount}
+              />
             </Route>
             <Route exact path="/buy_mlp">
               <BuyMlp
@@ -1005,7 +1002,6 @@ function FullApp() {
         <Sidebar sidebarVisible={sidebarVisible} setSidebarVisible={setSidebarVisible} />
         {/* <Footer /> */}
       </div>
-
       <ToastContainer
         limit={3}
         transition={Zoom}
@@ -1016,6 +1012,12 @@ function FullApp() {
         closeOnClick={false}
         draggable={false}
         pauseOnHover
+      />
+      <EventModal
+        isModalVisible={isEventModalVisible}
+        setEventModalVisible={setEventModalVisible}
+        eventKey={'new-earn-page'}
+        continueLink={'/earn'}
       />
       <EventToastContainer />
       <Modal
@@ -1223,11 +1225,6 @@ function PreviewApp() {
               </AnimatePresence>
             </div>
           </header>
-          <Switch>
-            <Route exact path="/earn">
-              <Stake />
-            </Route>
-          </Switch>
         </div>
       </div>
     </>

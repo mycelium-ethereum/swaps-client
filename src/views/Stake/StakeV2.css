@@ -1,3 +1,7 @@
+.App {
+  background-image: var(--background-primary)!important;
+}
+
 .StakeV2 {
   padding-left: 1rem;
   padding-right: 1rem;
@@ -9,6 +13,11 @@
   padding-left: 0;
   min-height: 75px;
   margin-bottom: 1rem;
+}
+
+.StakeModal .Modal-content {
+  width: 100%;
+  max-width: 424px;
 }
 
 .StakeModal .Fee-update-modal-content {
@@ -38,6 +47,7 @@
 
 .StakeV2-buy-myc-modal .Modal-content {
   max-width: 30rem;
+  min-width: 424px;
 }
 
 .StakeV2-address-input input {
@@ -72,36 +82,37 @@
   background: rgba(255, 255, 255, 0.7);
 }
 
-.StakeV2-cards {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  grid-gap: 1rem;
+.Spread-capture-swap > .TokenSelector-box-symbol {
+  margin-left: 0.5rem;
+  display: none;
 }
 
-.StakeV2-cards .App-card-title {
-  gap: 8px;
-  justify-content: start;
+.Mlp-price-chart.ExchangeChart.tv {
+  height: 20rem;
 }
 
-.StakeV2-myc-card .App-card-row a.label {
-  color: var(--text-secondary);
+.Mlp-price-chart.ExchangeChart.tv .ExchangeChart-bottom-stats {
+  margin-left: 0;
 }
 
-.StakeV2-cards .App-card-row .label {
-  color: var(--text-secondary);
+.Mlp-price-chart.ExchangeChart.tv > .ExchangeChart-bottom {
+  top: 0;
+  border-radius: 0px;
+  border: none;
+  left: 2px;
+  bottom: 0;
+  background: url(../../img/background_mesh.png);
+  background-size: cover;
 }
 
-.StakeV2-content {
-  margin-left: auto;
-  margin-right: auto;
-  width: 100%;
+@media (max-width: 424px) {
+  .StakeModal .Modal-content {
+    margin-right: 1rem;
+    margin-left: 1rem;
+  }
 }
 
 @media (max-width: 900px) {
-  .StakeV2-cards {
-    grid-template-columns: 1fr;
-  }
-
   .StakeV2-total-rewards-card {
     grid-row: 4;
   }

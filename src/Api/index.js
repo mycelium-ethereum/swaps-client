@@ -38,11 +38,11 @@ import {
   MM_FEE_MULTIPLIER,
   FEE_MULTIPLIER_BASIS_POINTS,
   BASIS_POINTS_DIVISOR,
+  USD_DECIMALS,
+  ETH_DECIMALS,
   MM_SWAPS_FEE_MULTIPLIER,
   FORTNIGHTS_IN_YEAR,
-  ETH_DECIMALS,
-  limitDecimals,
-  USD_DECIMALS,
+  useLocalStorageSerializeKey,
 } from "../Helpers";
 import { getTokens, getTokenBySymbol, getWhitelistedTokens } from "../data/Tokens";
 
@@ -175,6 +175,61 @@ export function useMarketMakingFeesSince(chainId, from, to, stableTokens) {
   }, [setRes, query, chainId, from]);
 
   return res;
+}
+
+export function useUserSpreadCapture(chainId, account, mlpBalance, ethPrice) {
+  const [spreadCapturePerToken, setSpreadCapturePerToken] = useState();
+
+  const [hasRecentlyClaimed, setHasRecentlyClaimed] = useLocalStorageSerializeKey(
+    [chainId, "Recently-claimed-spread-capture"],
+    true
+  );
+
+  // if claimed in the last 5 minutes then zero out rewards
+  const shouldZeroSpreadCapture = useMemo(() => Number(hasRecentlyClaimed) + (60 * 5 * 1000) > Date.now(), [hasRecentlyClaimed])
+
+  useEffect(() => {
+    const query = gql(`{
+      cumulativeSpreadCapture(id: "total") {
+        cumulativeRewardsPerToken
+      },
+      userSpreadCapture(id: "${account?.toLowerCase() ?? ""}") {
+        id
+        lastCumulativeRewardsPerToken
+      }
+    }`);
+    getMycGraphClient(chainId).query({ query }).then((res) => {
+      if (res.data.cumulativeSpreadCapture && res.data.userSpreadCapture) {
+        let cumulativeRewardsPerToken = bigNumberify(res.data.cumulativeSpreadCapture.cumulativeRewardsPerToken)
+        let lastCumulativeRewardsPerToken = bigNumberify(res.data.userSpreadCapture.lastCumulativeRewardsPerToken)
+        // temp solution while subgraph syncs. When sync is finished cumulativeRewardsPerToken will be less than this number
+        // and wont need to div
+        const max = ethers.BigNumber.from('315255520175473564824434069742961');
+        if (cumulativeRewardsPerToken.gte(max)) {
+          setSpreadCapturePerToken((cumulativeRewardsPerToken.sub(lastCumulativeRewardsPerToken)).div(expandDecimals(1, FEE_MULTIPLIER_BASIS_POINTS)));
+        } else {
+          setSpreadCapturePerToken(cumulativeRewardsPerToken.sub(lastCumulativeRewardsPerToken))
+        }
+      }
+    }).catch(console.warn);
+  }, [chainId, account]);
+
+  let userSpreadCapture, userSpreadCaptureEth;
+  if (spreadCapturePerToken && mlpBalance && ethPrice) {
+    if (shouldZeroSpreadCapture) {
+      userSpreadCapture = ethers.BigNumber.from(0);
+      userSpreadCaptureEth = ethers.BigNumber.from(0);
+    } else {
+      userSpreadCapture = (spreadCapturePerToken.mul(mlpBalance)).div(expandDecimals(1, 18));
+      userSpreadCaptureEth = (userSpreadCapture.mul(expandDecimals(1, 18))).div(ethPrice);
+    }
+  }
+
+  return ({
+    userSpreadCapture,
+    userSpreadCaptureEth,
+    setHasRecentlyClaimed
+  })
 }
 
 export const useMarketMakingApr = (chainId, mlpSupplyUsd) => {
@@ -1363,4 +1418,133 @@ export async function callContract(chainId, contract, method, params, opts) {
     helperToast.error(failMsg);
     throw e;
   }
+}
+
+export function useMlpPrices(chainId, currentMlpPrice) {
+  const query = gql(`{
+    mlpStats(
+      first: 1000,
+      orderBy: id,
+      orderDirection: asc,
+      where: { period: daily }
+    ) {
+      id
+      aumInUsdg
+      mlpSupply
+      distributedUsd
+      distributedEth
+    },
+    feeStats (
+      first: 1000,
+      orderBy: id,
+      orderDirection: asc,
+      where: { period: daily }
+    ) {
+      id
+      margin
+      marginAndLiquidation
+      swap
+      liquidation
+      mint
+      burn
+    }
+  }`);
+
+  const [data, setData] = useState();
+
+  useEffect(() => {
+    getMycGraphClient(chainId).query({ query }).then(setData).catch(console.warn);
+  }, [setData, query, chainId]);
+
+  let cumulativeDistributedUsdPerMlp = 0;
+  let cumulativeDistributedEthPerMlp = 0;
+  const mlpChartData = useMemo(() => {
+    if (!data) {
+      return null;
+    }
+
+    let prevMlpSupply;
+    let prevAum;
+
+    const feeStatsById = data.data.feeStats.reduce((o, stat) => ({
+      ...o,
+      [stat.id]: ethers.BigNumber.from(stat.marginAndLiquidation)
+        .add(stat.swap)
+        .add(stat.mint)
+        .add(stat.burn)
+    }), {})
+
+    let cumulativeFees = ethers.BigNumber.from(0);
+    let ret = data.data.mlpStats
+      .filter((item) => item.id % 86400 === 0)
+      .reduce((memo, item, i) => {
+        const last = memo[memo.length - 1];
+
+        const aum = Number(item.aumInUsdg) / 1e18;
+        const mlpSupply = Number(item.mlpSupply) / 1e18;
+
+        const distributedUsd = Number(item.distributedUsd) / 1e30;
+        const distributedUsdPerMlp = distributedUsd / mlpSupply || 0;
+        cumulativeDistributedUsdPerMlp += distributedUsdPerMlp;
+
+        const distributedEth = Number(item.distributedEth) / 1e18;
+        const distributedEthPerMlp = distributedEth / mlpSupply || 0;
+        cumulativeDistributedEthPerMlp += distributedEthPerMlp;
+
+        const feeStat = feeStatsById[item.id] ?? ethers.BigNumber.from(0);
+        cumulativeFees = cumulativeFees.add(feeStat)
+        const totalFees = parseFloat(ethers.utils.formatUnits(cumulativeFees, USD_DECIMALS))
+
+        const mlpPrice = aum / mlpSupply;
+        const mlpPriceWithFees = (totalFees + aum) / mlpSupply;
+
+        const timestamp = parseInt(item.id);
+
+        const newItem = {
+          time: timestamp,
+          aum,
+          mlpSupply,
+          value: mlpPrice,
+          mlpPriceWithFees: mlpPriceWithFees,
+          cumulativeDistributedEthPerMlp,
+          cumulativeDistributedUsdPerMlp,
+          distributedUsdPerMlp,
+          distributedEthPerMlp,
+        };
+        if (i === data.data.mlpStats.length - 1 && currentMlpPrice) {
+          newItem.mlpPriceWithFees = Number.isNaN(mlpPrice) ? parseFloat(ethers.utils.formatUnits(currentMlpPrice, USD_DECIMALS)) : mlpPriceWithFees;
+          newItem.value = parseFloat(ethers.utils.formatUnits(currentMlpPrice, USD_DECIMALS));
+        }
+
+        if (last && last.timestamp === timestamp) {
+          memo[memo.length - 1] = newItem;
+        } else {
+          memo.push(newItem);
+        }
+        return memo;
+      }, [])
+      .map((item) => {
+        let { mlpSupply, aum } = item;
+        if (!mlpSupply) {
+          mlpSupply = prevMlpSupply;
+        }
+        if (!aum) {
+          aum = prevAum;
+        }
+        item.mlpSupplyChange = prevMlpSupply
+          ? ((mlpSupply - prevMlpSupply) / prevMlpSupply) * 100
+          : 0;
+        if (item.mlpSupplyChange > 1000) item.mlpSupplyChange = 0;
+        item.aumChange = prevAum ? ((aum - prevAum) / prevAum) * 100 : 0;
+        if (item.aumChange > 1000) item.aumChange = 0;
+        prevMlpSupply = mlpSupply;
+        prevAum = aum;
+        return item;
+      });
+
+    // ret = fillNa(ret);
+    return ret;
+  }, [data, currentMlpPrice]);
+
+  return mlpChartData;
 }
