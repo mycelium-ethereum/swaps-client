@@ -340,10 +340,18 @@ export default function PositionsList(props) {
                   </div>
                   <div className="App-card-divider"></div>
                   <div className="App-card-options">
-                    <button className="App-button-option App-card-option" onClick={() => editPosition(position)}>
+                    <button
+                      className="App-button-option App-card-option"
+                      onClick={() => editPosition(position)}
+                      disabled={position.size.eq(0) || position.hasPendingChanges}
+                    >
                       Edit
                     </button>
-                    <button className="App-button-option App-card-option" onClick={() => sellPosition(position)}>
+                    <button
+                      className="App-button-option App-card-option"
+                      onClick={() => sellPosition(position)}
+                      disabled={position.size.eq(0) || position.hasPendingChanges}
+                    >
                       Close
                     </button>
                   </div>
