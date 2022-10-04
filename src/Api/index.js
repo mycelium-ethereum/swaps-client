@@ -190,7 +190,7 @@ export function useUserSpreadCapture(chainId, account, mlpBalance, ethPrice) {
 
   useEffect(() => {
     const query = gql(`{
-      cumulativeSpreadCapture(id: "total") {
+      spreadCapture(id: "total") {
         cumulativeRewardsPerToken
       },
       userSpreadCapture(id: "${account?.toLowerCase() ?? ""}") {
@@ -199,17 +199,10 @@ export function useUserSpreadCapture(chainId, account, mlpBalance, ethPrice) {
       }
     }`);
     getMycGraphClient(chainId).query({ query }).then((res) => {
-      if (res.data.cumulativeSpreadCapture && res.data.userSpreadCapture) {
-        let cumulativeRewardsPerToken = bigNumberify(res.data.cumulativeSpreadCapture.cumulativeRewardsPerToken)
+      if (res.data.spreadCapture && res.data.userSpreadCapture) {
+        let cumulativeRewardsPerToken = bigNumberify(res.data.spreadCapture.cumulativeRewardsPerToken)
         let lastCumulativeRewardsPerToken = bigNumberify(res.data.userSpreadCapture.lastCumulativeRewardsPerToken)
-        // temp solution while subgraph syncs. When sync is finished cumulativeRewardsPerToken will be less than this number
-        // and wont need to div
-        const max = ethers.BigNumber.from('315255520175473564824434069742961');
-        if (cumulativeRewardsPerToken.gte(max)) {
-          setSpreadCapturePerToken((cumulativeRewardsPerToken.sub(lastCumulativeRewardsPerToken)).div(expandDecimals(1, FEE_MULTIPLIER_BASIS_POINTS)));
-        } else {
-          setSpreadCapturePerToken(cumulativeRewardsPerToken.sub(lastCumulativeRewardsPerToken))
-        }
+        setSpreadCapturePerToken(cumulativeRewardsPerToken.sub(lastCumulativeRewardsPerToken))
       }
     }).catch(console.warn);
   }, [chainId, account]);
