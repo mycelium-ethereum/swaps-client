@@ -1291,7 +1291,6 @@ export function useStakingApr(mycPrice, ethPrice) {
 
   useEffect(() => {
     if (mycAssetsInStaking && pendingMycDepositsInStaking && ethPrice && mycPrice) {
-      // Format prices
       const mycDeposited = mycAssetsInStaking.add(pendingMycDepositsInStaking).div(expandDecimals(1, ETH_DECIMALS));
 
       let ethDistributed = ethers.utils.parseEther("34.5807416");
@@ -1305,6 +1304,36 @@ export function useStakingApr(mycPrice, ethPrice) {
   }, [mycAssetsInStaking, pendingMycDepositsInStaking, ethPrice, mycPrice]);
 
   return stakingApr;
+}
+
+export function useTotalStaked() {
+  const [totalStakedMyc, setTotalStakedMyc] = useState(null);
+
+  const { data: mycAssetsInStaking } = useSWR(
+    [`DashboardV2:mycInStaking:${ARBITRUM}`, ARBITRUM, getContract(ARBITRUM, "LentMYC"), "totalAssets"],
+    {
+      fetcher: fetcher(undefined, LentMyc),
+    }
+  );
+
+  const { data: pendingMycDepositsInStaking } = useSWR(
+    [`DashboardV2:pendingMycInStaking:${ARBITRUM}`, ARBITRUM, getContract(ARBITRUM, "LentMYC"), "pendingDeposits"],
+    {
+      fetcher: fetcher(undefined, LentMyc),
+    }
+  );
+
+  useEffect(() => {
+    if (mycAssetsInStaking && pendingMycDepositsInStaking && !totalStakedMyc) {
+      const mycDeposited = mycAssetsInStaking.add(pendingMycDepositsInStaking).div(expandDecimals(1, ETH_DECIMALS));
+
+      if (!totalStakedMyc) {
+        setTotalStakedMyc(mycDeposited);
+      }
+    }
+  }, [mycAssetsInStaking, pendingMycDepositsInStaking, totalStakedMyc]);
+
+  return totalStakedMyc;
 }
 
 export async function callContract(chainId, contract, method, params, opts) {

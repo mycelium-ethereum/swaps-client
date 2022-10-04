@@ -38,7 +38,14 @@ import {
   getPageTitle,
   ETH_DECIMALS,
 } from "../../Helpers";
-import { callContract, useMarketMakingApr, useMYCPrice, useStakingApr, useTotalMYCSupply, useUserSpreadCapture } from "../../Api";
+import {
+  callContract,
+  useMarketMakingApr,
+  useMYCPrice,
+  useStakingApr,
+  useTotalMYCSupply,
+  useUserSpreadCapture,
+} from "../../Api";
 import { getConstant } from "../../Constants";
 
 import useSWR from "swr";
@@ -73,7 +80,7 @@ function CompoundModal(props) {
     setHasRecentlyClaimed,
     vesterAddress,
     stakedMlpTrackerAddress,
-    esMycAddress
+    esMycAddress,
   } = props;
   const [isCompounding, setIsCompounding] = useState(false);
   const [isDepositing, setIsDepositing] = useState(false);
@@ -120,7 +127,7 @@ function CompoundModal(props) {
       return "Compounding...";
     }
     if (isDepositing) {
-      return "Depositing..."
+      return "Depositing...";
     }
     return "Compound";
   };
@@ -163,11 +170,11 @@ function CompoundModal(props) {
     )
       .then(async (res) => {
         if (shouldBuyMlpWithEth) {
-          setHasRecentlyClaimed(Date.now())
+          setHasRecentlyClaimed(Date.now());
         }
         if (shouldClaimEsMyc) {
-          await res.wait()
-          depositEsMyc()
+          await res.wait();
+          depositEsMyc();
         } else {
           setIsVisible(false);
         }
@@ -195,17 +202,15 @@ function CompoundModal(props) {
       .finally(() => {
         setIsDepositing(false);
       });
-  }
+  };
 
   return (
     <div className="StakeModal">
       <Modal isVisible={isVisible} setIsVisible={setIsVisible} label="Compound Rewards">
         <div className="CompoundModal-menu">
           <StakeV2Styled.ModalRow>
-            <StakeV2Styled.ModalRowHeader>
-              Claim Vested MYC 
-            </StakeV2Styled.ModalRowHeader>
-            {shouldClaimMyc &&
+            <StakeV2Styled.ModalRowHeader>Claim Vested MYC</StakeV2Styled.ModalRowHeader>
+            {shouldClaimMyc && (
               <>
                 <StakeV2Styled.ModalRowText large inline>
                   {formatKeyAmount(processedData, "mlpVesterRewards", 18, 4)} MYC
@@ -214,14 +219,12 @@ function CompoundModal(props) {
                   (${formatKeyAmount(processedData, "mlpVesterRewardsUsd", USD_DECIMALS, 4)})
                 </StakeV2Styled.ModalRowText>
               </>
-            }
+            )}
             <Toggle isChecked={shouldClaimMyc} handleToggle={setShouldClaimMyc} />
           </StakeV2Styled.ModalRow>
           <StakeV2Styled.ModalRow>
-            <StakeV2Styled.ModalRowHeader>
-              Claim and vest esMYC Rewards
-            </StakeV2Styled.ModalRowHeader>
-            {shouldClaimEsMyc &&
+            <StakeV2Styled.ModalRowHeader>Claim and vest esMYC Rewards</StakeV2Styled.ModalRowHeader>
+            {shouldClaimEsMyc && (
               <>
                 <StakeV2Styled.ModalRowText inline large>
                   {formatKeyAmount(processedData, "stakedMlpTrackerRewards", 18, 4)} esMYC
@@ -231,14 +234,12 @@ function CompoundModal(props) {
                   {formatKeyAmount(processedData, "stakedMlpTrackerRewardsUsd", USD_DECIMALS, 2, true)})
                 </StakeV2Styled.ModalRowText>
               </>
-            }
+            )}
             <Toggle isChecked={shouldClaimEsMyc} handleToggle={setShouldClaimEsMyc} />
           </StakeV2Styled.ModalRow>
           <StakeV2Styled.ModalRow>
-            <StakeV2Styled.ModalRowHeader>
-              Buy MLP with {wrappedTokenSymbol} Rewards
-            </StakeV2Styled.ModalRowHeader>
-            {shouldBuyMlpWithEth && 
+            <StakeV2Styled.ModalRowHeader>Buy MLP with {wrappedTokenSymbol} Rewards</StakeV2Styled.ModalRowHeader>
+            {shouldBuyMlpWithEth && (
               <>
                 <StakeV2Styled.ModalRowText large inline>
                   {formatKeyAmount(processedData, "feeMlpTrackerRewards", 18, 4)} {nativeTokenSymbol} (
@@ -249,7 +250,7 @@ function CompoundModal(props) {
                   {formatKeyAmount(processedData, "feeMlpTrackerRewardsUsd", USD_DECIMALS, 2, true)})
                 </StakeV2Styled.ModalRowText>
               </>
-            }
+            )}
             <Toggle isChecked={shouldBuyMlpWithEth} handleToggle={setShouldBuyMlpWithEth} />
           </StakeV2Styled.ModalRow>
         </div>
@@ -469,7 +470,15 @@ function VesterWithdrawModal(props) {
   );
 }
 
-export default function StakeV2({ setPendingTxns, connectWallet, trackAction, savedSlippageAmount, infoTokens, trackPageWithTraits, analytics }) {
+export default function StakeV2({
+  setPendingTxns,
+  connectWallet,
+  trackAction,
+  savedSlippageAmount,
+  infoTokens,
+  trackPageWithTraits,
+  analytics,
+}) {
   const { active, library, account } = useWeb3React();
   const { chainId } = useChainId();
 
@@ -640,7 +649,12 @@ export default function StakeV2({ setPendingTxns, connectWallet, trackAction, sa
 
   const stakingApr = useStakingApr(mycPrice, nativeTokenPrice);
 
-  let { userSpreadCapture, userSpreadCaptureEth, setHasRecentlyClaimed } = useUserSpreadCapture(chainId, account, processedData?.mlpBalance, nativeTokenPrice)
+  let { userSpreadCapture, userSpreadCaptureEth, setHasRecentlyClaimed } = useUserSpreadCapture(
+    chainId,
+    account,
+    processedData?.mlpBalance,
+    nativeTokenPrice
+  );
   const mmApr = useMarketMakingApr(chainId, processedData.mlpSupplyUsd);
   if (mmApr) {
     processedData.mmApr = mmApr;
@@ -661,7 +675,8 @@ export default function StakeV2({ setPendingTxns, connectWallet, trackAction, sa
   if (totalRewardTokensAndMlp && totalRewardTokensAndMlp.gt(0)) {
     earnMsg = (
       <div>
-        You are earning {nativeTokenSymbol} rewards with {formatKeyAmount(processedData, "mlpBalance", MLP_DECIMALS, 2, true)} MLP tokens.
+        You are earning {nativeTokenSymbol} rewards with{" "}
+        {formatKeyAmount(processedData, "mlpBalance", MLP_DECIMALS, 2, true)} MLP tokens.
       </div>
     );
   }
@@ -824,10 +839,7 @@ export default function StakeV2({ setPendingTxns, connectWallet, trackAction, sa
                 <img src={mlp40Icon} alt="mlp40Icon" />
                 MLP ({chainName})
               </StakeV2Styled.CardTitle>
-              <MlpPriceChart
-                chainId={chainId}
-                mlpPrice={processedData.mlpPrice}
-              />
+              <MlpPriceChart chainId={chainId} mlpPrice={processedData.mlpPrice} />
               <StakeV2Styled.MlpInfo>
                 <StakeV2Styled.RewardsBanner>
                   <StakeV2Styled.RewardsBannerRow>
@@ -901,12 +913,12 @@ export default function StakeV2({ setPendingTxns, connectWallet, trackAction, sa
                     </div>
                   </StakeV2Styled.RewardsBannerRow>
                   <StakeV2Styled.Buttons>
-                      <Link className="App-button-option App-card-option" to="/buy_mlp">
-                        Buy MLP
-                      </Link>
-                      <Link className="App-button-option App-card-option" to="/buy_mlp#redeem">
-                        Sell MLP
-                      </Link>
+                    <Link className="App-button-option App-card-option" to="/buy_mlp">
+                      Buy MLP
+                    </Link>
+                    <Link className="App-button-option App-card-option" to="/buy_mlp#redeem">
+                      Sell MLP
+                    </Link>
                   </StakeV2Styled.Buttons>
                 </StakeV2Styled.RewardsBanner>
                 <StakeV2Styled.RewardsBanner>
@@ -945,7 +957,13 @@ export default function StakeV2({ setPendingTxns, connectWallet, trackAction, sa
                       <StakeV2Styled.RewardsBannerTextWrap>
                         <StakeV2Styled.RewardsBannerText large>
                           <Tooltip
-                            handle={`${formatAmount(userSpreadCaptureEth, ETH_DECIMALS, 4, true, '0.00')} ${nativeTokenSymbol}`}
+                            handle={`${formatAmount(
+                              userSpreadCaptureEth,
+                              ETH_DECIMALS,
+                              4,
+                              true,
+                              "0.00"
+                            )} ${nativeTokenSymbol}`}
                             position="right-bottom"
                             renderContent={() =>
                               "Market Making rewards are sourced from the spread of the traded markets and is realised by MLP holders through the appreciation of the MLP token."
@@ -954,12 +972,12 @@ export default function StakeV2({ setPendingTxns, connectWallet, trackAction, sa
                         </StakeV2Styled.RewardsBannerText>{" "}
                         <StakeV2Styled.RewardsBannerText secondary>
                           ($
-                          {formatAmount(userSpreadCapture, USD_DECIMALS, 2, true, '0.00')})
+                          {formatAmount(userSpreadCapture, USD_DECIMALS, 2, true, "0.00")})
                         </StakeV2Styled.RewardsBannerText>
                       </StakeV2Styled.RewardsBannerTextWrap>
                     </div>
                   </StakeV2Styled.RewardsBannerRow>
-                <StakeV2Styled.Buttons>
+                  <StakeV2Styled.Buttons>
                     {active && (
                       <button className="App-button-option App-card-option" onClick={() => showMlpClaimModal()}>
                         Claim
@@ -975,7 +993,7 @@ export default function StakeV2({ setPendingTxns, connectWallet, trackAction, sa
                         Connect Wallet
                       </button>
                     )}
-                </StakeV2Styled.Buttons>
+                  </StakeV2Styled.Buttons>
                 </StakeV2Styled.RewardsBanner>
               </StakeV2Styled.MlpInfo>
             </StakeV2Styled.Card>
@@ -1004,7 +1022,9 @@ export default function StakeV2({ setPendingTxns, connectWallet, trackAction, sa
               </StakeV2Styled.CardTitle>
               <StakeV2Styled.VestingInfo>
                 <StakeV2Styled.StakedTokens>
-                  <StakeV2Styled.RewardsBannerText secondary large>Staked Tokens</StakeV2Styled.RewardsBannerText>
+                  <StakeV2Styled.RewardsBannerText secondary large>
+                    Staked Tokens
+                  </StakeV2Styled.RewardsBannerText>
                   <div>
                     <StakeV2Styled.RewardsBannerTextWrap>
                       <StakeV2Styled.RewardsBannerText large inline>
@@ -1040,8 +1060,8 @@ export default function StakeV2({ setPendingTxns, connectWallet, trackAction, sa
                         renderContent={() => {
                           return (
                             <>
-                              {formatKeyAmount(vestingData, "mlpVesterClaimSum", 18, 4, true)} tokens have been converted
-                              to MYC from the&nbsp;
+                              {formatKeyAmount(vestingData, "mlpVesterClaimSum", 18, 4, true)} tokens have been
+                              converted to MYC from the&nbsp;
                               {formatKeyAmount(vestingData, "mlpVesterVestedAmount", 18, 4, true)} esMYC deposited for
                               vesting.
                             </>
@@ -1080,7 +1100,10 @@ export default function StakeV2({ setPendingTxns, connectWallet, trackAction, sa
                       </button>
                     )}
                     {active && (
-                      <button className="App-button-option App-card-option" onClick={() => showMycVesterWithdrawModal()}>
+                      <button
+                        className="App-button-option App-card-option"
+                        onClick={() => showMycVesterWithdrawModal()}
+                      >
                         Withdraw
                       </button>
                     )}
