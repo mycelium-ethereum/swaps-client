@@ -1,12 +1,12 @@
 :root {
-  --tv-color-platform-background: #003000 !important;
-  --tv-color-pane-background: #000a00 !important;
+  --tv-color-platform-background: #003000;
+  --tv-color-pane-background: #000a00;
   --tv-color-pane-background-secondary: #003000;
-  --tv-color-toolbar-button-background-expanded: #098200 !important;
+  --tv-color-toolbar-button-background-expanded: #098200;
   --tv-color-toolbar-button-background-hover: #003000;
   --tv-color-toolbar-button-background-secondary-hover: #098200;
   --tv-color-toolbar-button-background-expanded: white;
-  --tv-color-toolbar-button-text: #8b968c !important;
+  --tv-color-toolbar-button-text: #8b968c;
   --tv-color-toolbar-button-text-hover: white;
   --tv-color-toolbar-button-text-active: white;
   --tv-color-toolbar-button-text-active-hover: white;
@@ -17,8 +17,25 @@
   --ui-lib-intent-highlight-color: #098200;
   --tv-list-item-button-background-hover-color: #098200;
 }
+
+.color-brand-xRobF0EE.variant-secondary-xRobF0EE {
+  --ui-lib-button-default-color-bg: transparent!important;
+}
+
+.color-brand-xRobF0EE {
+  --ui-lib-button-default-color-border: #098200!important;
+  --ui-lib-button-default-color-content: #fff!important;
+  --ui-lib-button-default-color-bg: #098200!important;
+  --ui-lib-button-default-color-border: #098200!important;
+}
+
+.tab-DggvOZTm:hover {
+    background-color: #098200!important;
+}
+
 button[class*="actionButton"] {
   background-color: #098200 !important;
+  border-color: red!important;
   color: white !important;
   border: 0 !important;
 }
@@ -63,6 +80,18 @@ div[data-value] {
 }
 .tv-floating-toolbar span[class*="icon"] {
   color: #8b968c !important;
+}
+
+.active-DggvOZTm {
+  background-color: #098200!important;
+}
+
+.wrapper-2eXD4rIf .input-2eXD4rIf:checked+.box-2eXD4rIf {
+  background-color: #098200!important;
+  border-color: #098200!important;
+}
+.wrapper-2eXD4rIf .box-2eXD4rIf:before {
+  border-color: #098200!important;
 }
 
 span[class*="close"]:hover {
@@ -110,8 +139,11 @@ span[class*="themesButtonText"] {
 }
 
 div[class*="disabled"],
-tr[class*="disabled"] {
+tr[class*="disabled"],
+span[class*="disabled"] {
   background-color: transparent !important;
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 /* Chart save input */
@@ -120,10 +152,22 @@ span[class*="intent-primary"] {
   border: 1px solid #098200 !important;
   --ui-lib-intent-color: #098200 !important;
   --ui-lib-intent-highlight-color: #098200 !important;
+  --ui-lib-control-default-slot-color: #fff !important;
+  color: var(--ui-lib-control-default-slot-color)!important;
   outline: none !important;
 }
-span[class*="container"] input {
-  color: white;
+
+div[class*="colorPickerWrap"],
+span[class*="shadow"] {
+  border-color: #098200 !important;
+}
+
+div[class*="opacitySliderGradient"] {
+  background-image: linear-gradient(90deg, transparent, rgb(9, 130, 0))!important;
+}
+
+div[class*="opacityPointerWrap"] {
+  color: #098200 !important;
 }
 
 div[data-name="legend"],
