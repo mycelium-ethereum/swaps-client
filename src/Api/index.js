@@ -190,7 +190,7 @@ export function useUserSpreadCapture(chainId, account, mlpBalance, ethPrice) {
 
   useEffect(() => {
     const query = gql(`{
-      cumulativeSpreadCapture(id: "total") {
+      spreadCapture(id: "total") {
         cumulativeRewardsPerToken
       },
       userSpreadCapture(id: "${account?.toLowerCase() ?? ""}") {
@@ -199,8 +199,8 @@ export function useUserSpreadCapture(chainId, account, mlpBalance, ethPrice) {
       }
     }`);
     getMycGraphClient(chainId).query({ query }).then((res) => {
-      if (res.data.cumulativeSpreadCapture && res.data.userSpreadCapture) {
-        let cumulativeRewardsPerToken = bigNumberify(res.data.cumulativeSpreadCapture.cumulativeRewardsPerToken)
+      if (res.data.spreadCapture && res.data.userSpreadCapture) {
+        let cumulativeRewardsPerToken = bigNumberify(res.data.spreadCapture.cumulativeRewardsPerToken)
         let lastCumulativeRewardsPerToken = bigNumberify(res.data.userSpreadCapture.lastCumulativeRewardsPerToken)
         setSpreadCapturePerToken(cumulativeRewardsPerToken.sub(lastCumulativeRewardsPerToken))
       }
