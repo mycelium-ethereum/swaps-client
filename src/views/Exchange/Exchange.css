@@ -236,7 +236,6 @@
 
 .ExchangeChart {
   position: relative;
-  height: 32rem;
 }
 
 .ExchangeChart-main-price {
@@ -884,6 +883,69 @@ table.Exchange-list-small td {
   height: 5rem;
 }
 
+/* LIGHTWEIGHT CHART */
+.ExchangeChart-border {
+  border: 1px solid var(--cell-stroke);
+  border-radius: 4px;
+  overflow: hidden;
+}
+.LightweightChart-container {
+  position: relative;
+  /* max-width: 798px; */
+}
+.LightweightChart {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+
+  width: 100%;
+  height: 100%;
+}
+.LightweightChart + .CandleStats {
+  position: absolute;
+  left: -15px;
+  top: 10px;
+}
+
+/* ADVANCED CHART */
+.ExchangeChart-top-controls {
+  display: flex;
+  margin: 16px 0;
+  justify-content: space-between;
+}
+.ChartContainer {
+  position: relative;
+  flex-grow: 1;
+}
+.LightweightChart-container,
+.ChartContainer .Chart {
+  height: 426px;
+}
+.ChartContainer .Overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  background-color: var(--background-primary);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+}
+.ChartContainer .Overlay svg {
+  width: 60px;
+  height: 60px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+.ChartContainer .Overlay.active {
+  pointer-events: auto;
+  opacity: 1;
+}
 @media (max-width: 1640px) {
   .App-box.large,
   .Exchange-list.large {
@@ -896,12 +958,12 @@ table.Exchange-list-small td {
 }
 
 @media (max-width: 1500px) {
-  .Exchange-swap-box {
-    width: 25rem;
-  }
 }
 
-@media (max-width: 1100px) {
+@media (max-width: 1160px) {
+  .LightweightChart + .CandleStats {
+    left: 20px;
+  }
   .Exchange-swap-box {
     width: auto;
   }
@@ -933,9 +995,15 @@ table.Exchange-list-small td {
   .Exchange-swap-placeholder {
     display: none;
   }
+  .LightweightChart-container .ChartContainer .Chart {
+    height: 318px;
+  }
 
-  .ExchangeChart {
-    height: 25rem;
+  .ExchangeChart.AdvancedTv .ExchangeChart-bottom-controls {
+    width: 38.75px;
+  }
+  .ExchangeChart.AdvancedTv .ExchangeChart-bottom-controls:hover {
+    width: 193.75px;
   }
 
   .Exchange-content {
@@ -1032,5 +1100,30 @@ table.Exchange-list-small td {
 
   .Exchange.page-layout .footer {
     padding: 1rem;
+  }
+}
+@media (max-width: 480px) {
+  .ExchangeChart-top-controls {
+    flex-direction: column;
+  }
+  .ExchangeChart-top-controls,
+  .Tab.block {
+    margin-bottom: 16px;
+  }
+}
+
+@media (max-width: 370px) {
+  .ExchangeChart-top-inner div:not(:first-child),
+  .ExchangeChart-top-inner div:not(:first-child) div {
+    font-size: 10px;
+  }
+  .ExchangeChart.AdvancedTv .ExchangeChart-top {
+    display: flex;
+    align-items: center;
+  }
+  .ExchangeChart-top-inner {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
   }
 }
