@@ -91,7 +91,7 @@ export default function ExchangeAdvancedTVChart(props) {
       overrides: {
         "paneProperties.backgroundType": "solid",
         "paneProperties.background": "#000a00",
-        "scalesProperties.lineColor": "#8b968c",
+        "scalesProperties.lineColor": "rgba(42, 46, 57, 0.14)",
         "scalesProperties.textColor": "#fff",
         "scalesProperties.backgroundColor": "#000a00",
         "paneProperties.backgroundGradientStartColor": "#000a00",
