@@ -246,6 +246,8 @@ export default function Rewards(props) {
     const buffer = 60 * 60 * 2 * 1000; // 2 hours
     if (currentRewardRound && currentRewardRound.end + buffer > now) {
       setClaimDelay(true);
+    } else {
+      setClaimDelay(false);
     }
   }, [currentRewardRound])
 
