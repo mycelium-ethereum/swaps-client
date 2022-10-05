@@ -64,6 +64,7 @@ export default function Rewards(props) {
   const [pageTracked, setPageTracked] = useState(false);
   const [isClaiming, setIsClaiming] = useState(false);
   const [nextRewards, setNextRewards] = useState();
+  const [claimDelay, setClaimDelay] = useState();
 
   const feeDistributor = getContract(chainId, "FeeDistributor");
   const feeDistributorReader = getContract(chainId, "FeeDistributorReader");
@@ -241,6 +242,14 @@ export default function Rewards(props) {
   };
 
   useEffect(() => {
+    const now = Date.now();
+    const buffer = 60 * 60 * 2 * 1000; // 2 hours
+    if (currentRewardRound && currentRewardRound.end + buffer > now) {
+      setClaimDelay(true);
+    }
+  }, [currentRewardRound])
+
+  useEffect(() => {
     if (!!allRoundsRewardsData) {
       const ends = allRoundsRewardsData.map((round) => Number(round.end));
       const max = Math.max(...ends);
@@ -354,6 +363,7 @@ export default function Rewards(props) {
           nextRewards={nextRewards}
           latestRound={isLatestRound}
           handleClaim={handleClaim}
+          claimDelay={claimDelay}
           isClaiming={isClaiming}
           hasClaimed={hasClaimedRound}
         />
@@ -368,6 +378,7 @@ export default function Rewards(props) {
           connectWallet={connectWallet}
           trackAction={trackAction}
           handleClaim={handleClaim}
+          claimDelay={claimDelay}
           latestRound={isLatestRound}
           isClaiming={isClaiming}
           hasClaimed={hasClaimedRound}
