@@ -51,9 +51,9 @@ import {
   CURRENT_PROVIDER_LOCALSTORAGE_KEY,
   REFERRAL_CODE_KEY,
   REFERRAL_CODE_QUERY_PARAMS,
-  ARBITRUM_TESTNET,
   PLACEHOLDER_ACCOUNT,
   getDefaultArbitrumRpcUrl,
+  ARBITRUM_GOERLI,
 } from "./Helpers";
 import ReaderV2 from "./abis/ReaderV2.json";
 
@@ -144,7 +144,7 @@ function inPreviewMode() {
 
 const arbWsProvider = new ethers.providers.WebSocketProvider(getDefaultArbitrumRpcUrl(true));
 // const arbTestnetWsProvider = new ethers.providers.WebSocketProvider("wss://rinkeby.arbitrum.io/ws");
-const arbTestnetWsProvider = new ethers.providers.JsonRpcProvider("https://rinkeby.arbitrum.io/rpc");
+const arbTestnetWsProvider = new ethers.providers.JsonRpcProvider("https://goerli-rollup.arbitrum.io/rpc/");
 const avaxWsProvider = new ethers.providers.JsonRpcProvider("https://api.avax.network/ext/bc/C/rpc");
 
 function getWsProvider(active, chainId) {
@@ -155,7 +155,7 @@ function getWsProvider(active, chainId) {
     return arbWsProvider;
   }
 
-  if (chainId === ARBITRUM_TESTNET) {
+  if (chainId === ARBITRUM_GOERLI) {
     return arbTestnetWsProvider;
   }
 
@@ -1017,8 +1017,8 @@ function FullApp() {
       <EventModal
         isModalVisible={isEventModalVisible}
         setEventModalVisible={setEventModalVisible}
-        eventKey={'new-earn-page'}
-        continueLink={'/earn'}
+        eventKey={"new-earn-page"}
+        continueLink={"/earn"}
       />
       */}
       <EventToastContainer />

@@ -1,6 +1,6 @@
 import { ethers } from "ethers";
 
-import { MAINNET, TESTNET, ARBITRUM_TESTNET, ARBITRUM, AVALANCHE } from "./Helpers";
+import { MAINNET, TESTNET, ARBITRUM, AVALANCHE, ARBITRUM_GOERLI } from "./Helpers";
 
 const { parseEther } = ethers.utils;
 
@@ -21,7 +21,7 @@ const constants = {
     v2: false,
   },
 
-  [ARBITRUM_TESTNET]: {
+  [ARBITRUM_GOERLI]: {
     nativeTokenSymbol: "ETH",
     wrappedTokenSymbol: "WETH",
     defaultCollateralSymbol: "USDC",

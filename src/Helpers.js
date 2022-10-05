@@ -32,7 +32,7 @@ export const MAINNET = 56;
 export const AVALANCHE = 43114;
 export const TESTNET = 97;
 export const ETHEREUM = 1;
-export const ARBITRUM_TESTNET = 421611;
+export const ARBITRUM_GOERLI = 421613;
 export const ARBITRUM = 42161;
 // TODO take it from web3
 export const DEFAULT_CHAIN_ID = ARBITRUM;
@@ -45,7 +45,7 @@ const SELECTED_NETWORK_LOCAL_STORAGE_KEY = "SELECTED_NETWORK";
 const CHAIN_NAMES_MAP = {
   [MAINNET]: "BSC",
   [TESTNET]: "BSC Testnet",
-  [ARBITRUM_TESTNET]: "Testnet",
+  [ARBITRUM_GOERLI]: "Testnet",
   [ARBITRUM]: "Arbitrum",
   [AVALANCHE]: "Avalanche",
 };
@@ -76,7 +76,7 @@ export function getDefaultArbitrumRpcUrl(useWebsocket) {
 
 const ETHEREUM_RPC_PROVIDERS = ["https://cloudflare-eth.com"];
 const ARBITRUM_RPC_PROVIDERS = [getDefaultArbitrumRpcUrl()];
-const ARBITRUM_TESTNET_RPC_PROVIDERS = ["https://rinkeby.arbitrum.io/rpc"];
+const ARBITRUM_GOERLI_RPC_PROVIDERS = ["https://goerli-rollup.arbitrum.io/rpc/"];
 const AVALANCHE_RPC_PROVIDERS = ["https://avax-mainnet.gateway.pokt.network/v1/lb/626f37766c499d003aada23b"];
 export const WALLET_CONNECT_LOCALSTORAGE_KEY = "walletconnect";
 export const WALLET_LINK_LOCALSTORAGE_PREFIX = "-walletlink";
@@ -188,13 +188,13 @@ export const MLP_POOL_COLORS = {
 export const HIGH_SPREAD_THRESHOLD = expandDecimals(1, USD_DECIMALS).div(100); // 1%;
 
 export const ICONLINKS = {
-  421611: {
+  [ARBITRUM_GOERLI]: {
     TCR: {
       coingecko: "https://www.coingecko.com/en/coins/tracer-dao",
-      arbitrum: `https://arbiscan.io/address/${getContract(ARBITRUM_TESTNET, "TCR")}`,
+      arbitrum: `https://arbiscan.io/address/${getContract(ARBITRUM_GOERLI, "TCR")}`,
     },
     MLP: {
-      arbitrum: `https://arbiscan.io/address/${getContract(ARBITRUM_TESTNET, "StakedMlpTracker")}`,
+      arbitrum: `https://arbiscan.io/address/${getContract(ARBITRUM_GOERLI, "StakedMlpTracker")}`,
     },
     MYC: {
       coingecko: "https://www.coingecko.com/en/coins/mycelium",
@@ -302,63 +302,27 @@ export const ICONLINKS = {
       arbitrum: "https://arbiscan.io/address/0x11cDb42B0EB46D95f990BeDD4695A6e3fA034978",
     },
   },
-  43114: {
-    TCR: {
-      coingecko: "https://www.coingecko.com/en/coins/tracer-dao",
-      arbitrum: `https://arbiscan.io/address/${getContract(ARBITRUM_TESTNET, "TCR")}`,
-    },
-    MLP: {
-      arbitrum: `https://arbiscan.io/address/${getContract(ARBITRUM_TESTNET, "StakedMlpTracker")}`,
-    },
-    MYC: {
-      coingecko: "https://www.coingecko.com/en/coins/mycelium",
-      avalanche: "https://snowtrace.io/address/0x62edc0692bd897d2295872a9ffcac5425011c661",
-    },
-    AVAX: {
-      coingecko: "https://www.coingecko.com/en/coins/avalanche",
-    },
-    ETH: {
-      coingecko: "https://www.coingecko.com/en/coins/weth",
-      avalanche: "https://snowtrace.io/address/0x49d5c2bdffac6ce2bfdb6640f4f80f226bc10bab",
-    },
-    BTC: {
-      coingecko: "https://www.coingecko.com/en/coins/wrapped-bitcoin",
-      avalanche: "https://snowtrace.io/address/0x50b7545627a5162f82a992c33b87adc75187b218",
-    },
-    MIM: {
-      coingecko: "https://www.coingecko.com/en/coins/magic-internet-money",
-      avalanche: "https://snowtrace.io/address/0x130966628846bfd36ff31a822705796e8cb8c18d",
-    },
-    "USDC.e": {
-      coingecko: "https://www.coingecko.com/en/coins/usd-coin-avalanche-bridged-usdc-e",
-      avalanche: "https://snowtrace.io/address/0xa7d7079b0fead91f3e65f86e8915cb59c1a4c664",
-    },
-    USDC: {
-      coingecko: "https://www.coingecko.com/en/coins/usd-coin",
-      avalanche: "https://snowtrace.io/address/0xb97ef9ef8734c71904d8002f8b6bc66dd9c48a6e",
-    },
-  },
 };
 
 export const platformTokens = {
-  421611: {
+  [ARBITRUM_GOERLI]: {
     // arbitrum testnet
     TCR: {
       name: "TCR",
       symbol: "TCR",
       decimals: 18,
-      address: getContract(ARBITRUM_TESTNET, "TCR"),
+      address: getContract(ARBITRUM_GOERLI, "TCR"),
       imageUrl: `${window?.location?.origin}/icons/ic_tcr_40.svg`,
     },
     MLP: {
       name: "TCR LP",
       symbol: "MLP",
       decimals: 18,
-      address: getContract(ARBITRUM_TESTNET, "StakedMlpTracker"), // address of fsMLP token because user only holds fsMLP
+      address: getContract(ARBITRUM_GOERLI, "StakedMlpTracker"), // address of fsMLP token because user only holds fsMLP
       imageUrl: `${window?.location?.origin}/icons/ic_mlp_custom.svg`,
     },
   },
-  42161: {
+  [ARBITRUM]: {
     // arbitrum
     TCR: {
       name: "TCR",
@@ -417,13 +381,13 @@ export const networkOptions = [
   },
   {
     label: "Testnet",
-    value: ARBITRUM_TESTNET,
+    value: ARBITRUM_GOERLI,
     icon: "ic_arbitrum_24.svg",
     color: "#264f79",
   },
 ];
 
-const supportedChainIds = [ARBITRUM, ARBITRUM_TESTNET];
+const supportedChainIds = [ARBITRUM, ARBITRUM_GOERLI];
 const injectedConnector = new InjectedConnector({
   supportedChainIds,
 });
@@ -434,7 +398,7 @@ const getWalletConnectConnector = () => {
     rpc: {
       [ETHEREUM]: ETHEREUM_RPC_PROVIDERS[0],
       [ARBITRUM]: ARBITRUM_RPC_PROVIDERS[0],
-      [ARBITRUM_TESTNET]: ARBITRUM_TESTNET_RPC_PROVIDERS[0],
+      [ARBITRUM_GOERLI]: ARBITRUM_GOERLI_RPC_PROVIDERS[0],
     },
     qrcode: true,
     chainId,
@@ -569,7 +533,7 @@ const BASE_TRACER_URL = process.env.REACT_APP_TRACER_API ?? "https://api.tracer.
 export function getTracerServerUrl(chainId, path) {
   if (!chainId) {
     throw new Error("chainId is not supported");
-  } else if (chainId !== ARBITRUM && chainId !== ARBITRUM_TESTNET) {
+  } else if (chainId !== ARBITRUM && chainId !== ARBITRUM_GOERLI) {
     throw new Error("chainId is not supported");
   }
 
@@ -588,7 +552,7 @@ export function getServerBaseUrl(chainId) {
   }
   if (chainId === MAINNET) {
     return "https://gambit-server-staging.uc.r.appspot.com";
-  } else if (chainId === ARBITRUM_TESTNET) {
+  } else if (chainId === ARBITRUM_GOERLI) {
     // return "https://gambit-l2.as.r.appspot.com";
     return "https://gmx-server-mainnet.uw.r.appspot.com";
   } else if (chainId === ARBITRUM) {
@@ -1452,7 +1416,7 @@ const RPC_PROVIDERS = {
   [ETHEREUM]: ETHEREUM_RPC_PROVIDERS,
   [MAINNET]: BSC_RPC_PROVIDERS,
   [ARBITRUM]: ARBITRUM_RPC_PROVIDERS,
-  [ARBITRUM_TESTNET]: ARBITRUM_TESTNET_RPC_PROVIDERS,
+  [ARBITRUM_GOERLI]: ARBITRUM_GOERLI_RPC_PROVIDERS,
   [AVALANCHE]: AVALANCHE_RPC_PROVIDERS,
 };
 
@@ -2136,8 +2100,8 @@ export function getExplorerUrl(chainId) {
     return "https://bscscan.com/";
   } else if (chainId === TESTNET) {
     return "https://testnet.bscscan.com/";
-  } else if (chainId === ARBITRUM_TESTNET) {
-    return "https://testnet.arbiscan.io/";
+  } else if (chainId === ARBITRUM_GOERLI) {
+    return "https://goerli-rollup-explorer.arbitrum.io/";
   } else if (chainId === ARBITRUM) {
     return "https://arbiscan.io/";
   } else if (chainId === AVALANCHE) {
@@ -2323,16 +2287,16 @@ const NETWORK_METADATA = {
     rpcUrls: ["https://data-seed-prebsc-1-s1.binance.org:8545/"],
     blockExplorerUrls: ["https://testnet.bscscan.com/"],
   },
-  [ARBITRUM_TESTNET]: {
-    chainId: "0x" + ARBITRUM_TESTNET.toString(16),
-    chainName: "Arbitrum Testnet",
+  [ARBITRUM_GOERLI]: {
+    chainId: "0x" + ARBITRUM_GOERLI.toString(16),
+    chainName: "Arbitrum Goerli",
     nativeCurrency: {
       name: "ETH",
       symbol: "ETH",
       decimals: 18,
     },
-    rpcUrls: ARBITRUM_TESTNET_RPC_PROVIDERS,
-    blockExplorerUrls: [getExplorerUrl(ARBITRUM_TESTNET)],
+    rpcUrls: ARBITRUM_GOERLI_RPC_PROVIDERS,
+    blockExplorerUrls: [getExplorerUrl(ARBITRUM_GOERLI)],
   },
   [ARBITRUM]: {
     chainId: "0x" + ARBITRUM.toString(16),
@@ -2905,7 +2869,7 @@ export function formatTitleCase(string, isLowerCase = false) {
 
 export const NETWORK_NAME = {
   [ARBITRUM]: "Arbitrum",
-  [ARBITRUM_TESTNET]: "Testnet",
+  [ARBITRUM_GOERLI]: "Testnet",
 };
 
 export function getSpread(fromTokenInfo, toTokenInfo, isLong, nativeTokenAddress) {
@@ -3080,19 +3044,16 @@ export function shareToTwitter(text) {
   window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`, "_blank");
 }
 
-export function calcMarketMakingFees (data) {
+export function calcMarketMakingFees(data) {
   if (!data) {
-    return 0
+    return 0;
   }
   const mmFees = ethers.BigNumber.from(0)
-      .add(MM_SWAPS_FEE_MULTIPLIER.mul(data.swap))
-      .add(MM_FEE_MULTIPLIER.mul(data.mint))
-      .add(MM_FEE_MULTIPLIER.mul(data.burn))
-      .add(MM_FEE_MULTIPLIER.mul(data.margin))
-      .add(MM_FEE_MULTIPLIER.mul(data.liquidation));
+    .add(MM_SWAPS_FEE_MULTIPLIER.mul(data.swap))
+    .add(MM_FEE_MULTIPLIER.mul(data.mint))
+    .add(MM_FEE_MULTIPLIER.mul(data.burn))
+    .add(MM_FEE_MULTIPLIER.mul(data.margin))
+    .add(MM_FEE_MULTIPLIER.mul(data.liquidation));
 
-  return mmFees.div(expandDecimals(1, FEE_MULTIPLIER_BASIS_POINTS))
+  return mmFees.div(expandDecimals(1, FEE_MULTIPLIER_BASIS_POINTS));
 }
-
-
-
