@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo, useCallback } from "react";
 import cx from "classnames";
-import { widget } from "../../../charting_library";
+import { widget } from "@mycelium-swaps-interface/charting_library";
 import { generateDataFeed, supportedResolutions } from "../../../Api/TradingView";
 
 const getLanguageFromURL = () => {
@@ -76,7 +76,7 @@ export default function ExchangeAdvancedTVChart(props) {
       datafeed: dataFeed,
       interval: advancedChartPeriod,
       container: "tv_chart_container",
-      library_path: process.env.NODE_ENV === "production" ? "/charting_library/" : "../../charting_library/",
+      library_path: "/charting_library/",
       locale: getLanguageFromURL() || "en",
       disabled_features: [
         "header_symbol_search",
