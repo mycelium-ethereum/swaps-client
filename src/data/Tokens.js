@@ -118,12 +118,12 @@ const TOKENS = {
       isStable: true,
     },
   ],
-  421611: [
+  421613: [
     {
       name: "Bitcoin (WBTC)",
       symbol: "BTC",
       decimals: 18,
-      address: "0x5360425C5dd9a3B3a41F619515F9318caA34CfC9",
+      address: "0x4CC823834038c92CFA66C40C7806959529A3D782",
       isShortable: true,
     },
     {
@@ -134,42 +134,48 @@ const TOKENS = {
       isShortable: true,
       isNative: true,
     },
-    // https://github.com/OffchainLabs/arbitrum/blob/950c2f91b2e951cd3764394e0a73eac3797aecf3/packages/arb-ts/src/lib/networks.ts#L65
     {
       name: "Wrapped Ethereum",
       symbol: "WETH",
       decimals: 18,
-      address: "0xB47e6A5f8b33b3F17603C83a0535A9dcD7E32681",
+      address: "0x08466D6683d2A39E3597500c1F17b792555FCAB9",
       isWrapped: true,
       baseSymbol: "ETH",
     },
     {
-      name: "Custom Test Token",
-      symbol: "CTM",
+      name: "DAI",
+      symbol: "DAI",
       decimals: 18,
-      address: "0xac8d4844133fa049a06ce306ade49bf6fbd9c56b",
+      address: "0xE5919a1E8Eabc4E819a485A6115b6606E912620F",
       isStable: false,
     },
     {
-      name: "Testnet stable coin",
+      name: "PP USD",
       symbol: "PPUSD",
       decimals: 18,
-      address: "0x9e062eee2c0Ab96e1E1c8cE38bF14bA3fa0a35F6",
+      address: "0xd02C071f5ac809795a22ba50dFB91000929b75BE",
       isStable: true,
     },
     {
       name: "USD Coin",
       symbol: "USDC",
       decimals: 18,
-      address: "0x887c2Ae4f5b9dB3435F92125016BABE9Da06Cf37",
+      address: "0x263f90bcA00A6E987334D55501Bd8C0D081CeE62",
       isStable: true,
     },
     {
       name: "Tether",
       symbol: "USDT",
       decimals: 18,
-      address: "0x24c3f7437a9ad0c10744857260a9FAD82bBEa634",
+      address: "0x43B552A6A5B97f120788A8751547D5D953eFBBcA",
       isStable: true,
+    },
+    {
+      name: "Link",
+      symbol: "LINK",
+      decimals: 18,
+      address: "0x6E7155bde03E582e9920421Adf14E10C15dBe890",
+      isShortable: true,
     },
   ],
   42161: [
@@ -379,7 +385,7 @@ const ADDITIONAL_TOKENS = {
   ],
 };
 
-const CHAIN_IDS = [56, 97, 42161, 421611, 43114];
+const CHAIN_IDS = [56, 97, 42161, 421613, 43114];
 
 const TOKENS_MAP = {};
 const TOKENS_BY_SYMBOL_MAP = {};
