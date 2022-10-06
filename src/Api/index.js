@@ -1293,7 +1293,7 @@ export function useStakingApr(mycPrice, ethPrice) {
     if (mycAssetsInStaking && pendingMycDepositsInStaking && ethPrice && mycPrice) {
       const mycDeposited = mycAssetsInStaking.add(pendingMycDepositsInStaking).div(expandDecimals(1, ETH_DECIMALS));
 
-      let ethDistributed = ethers.utils.parseEther("34.5807416");
+      let ethDistributed = ethers.utils.parseEther("10.75744956");
       let mycUSDValue = mycDeposited.mul(mycPrice);
       let ethUSDValue = ethDistributed.mul(ethPrice);
 
