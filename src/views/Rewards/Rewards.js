@@ -244,7 +244,7 @@ export default function Rewards(props) {
   useEffect(() => {
     const now = Date.now();
     const buffer = 60 * 60 * 2 * 1000; // 2 hours
-    if (currentRewardRound && currentRewardRound.end + buffer > now) {
+    if (currentRewardRound && Number(currentRewardRound.end) + buffer > now) {
       setClaimDelay(true);
     } else {
       setClaimDelay(false);
