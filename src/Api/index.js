@@ -560,10 +560,10 @@ export function useTrades(chainId, account) {
   let trades = [];
   if (Array.isArray(data)) {
     trades = data.map((datum) => ({
-      id: datum.dataValues.id.toString(),
+      id: datum.id.toString(),
       data: {
-        ...datum.dataValues,
-        params: JSON.stringify(datum.dataValues.params),
+        ...datum,
+        params: JSON.stringify(datum.params),
       },
     }));
   }
