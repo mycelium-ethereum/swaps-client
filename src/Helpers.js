@@ -347,30 +347,6 @@ export const platformTokens = {
       imageUrl: `${window?.location?.origin}/icons/ic_mlp_custom.svg`,
     },
   },
-  43114: {
-    // avalanche
-    TCR: {
-      name: "TCR",
-      symbol: "TCR",
-      decimals: 18,
-      address: getContract(ARBITRUM, "TCR"),
-      imageUrl: `${window?.location?.origin}/icons/ic_tcr_40.svg`,
-    },
-    MLP: {
-      name: "MYC LP",
-      symbol: "MLP",
-      decimals: 18,
-      address: getContract(ARBITRUM, "StakedMlpTracker"), // address of fsMLP token because user only holds fsMLP
-      imageUrl: `${window?.location?.origin}/icons/ic_mlp_custom.svg`,
-    },
-    MYC: {
-      name: "MYC",
-      symbol: "MYC",
-      decimals: 18,
-      address: getContract(AVALANCHE, "MYC"),
-      imageUrl: `${window?.location?.origin}/icons/ic_myc_custom.svg`,
-    },
-  },
 };
 
 export const networkOptions = [

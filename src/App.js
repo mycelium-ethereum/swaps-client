@@ -15,7 +15,6 @@ import { getTokens, getWhitelistedTokens } from "./data/Tokens";
 
 import {
   ARBITRUM,
-  AVALANCHE,
   DEFAULT_SLIPPAGE_AMOUNT,
   SLIPPAGE_BPS_KEY,
   IS_PNL_IN_LEVERAGE_KEY,
@@ -145,7 +144,6 @@ function inPreviewMode() {
 const arbWsProvider = new ethers.providers.WebSocketProvider(getDefaultArbitrumRpcUrl(true));
 // const arbTestnetWsProvider = new ethers.providers.WebSocketProvider("wss://rinkeby.arbitrum.io/ws");
 const arbTestnetWsProvider = new ethers.providers.JsonRpcProvider("https://goerli-rollup.arbitrum.io/rpc/");
-const avaxWsProvider = new ethers.providers.JsonRpcProvider("https://api.avax.network/ext/bc/C/rpc");
 
 function getWsProvider(active, chainId) {
   if (!active) {
@@ -157,10 +155,6 @@ function getWsProvider(active, chainId) {
 
   if (chainId === ARBITRUM_GOERLI) {
     return arbTestnetWsProvider;
-  }
-
-  if (chainId === AVALANCHE) {
-    return avaxWsProvider;
   }
 }
 

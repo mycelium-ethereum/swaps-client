@@ -1,22 +1,14 @@
 import { ethers } from "ethers";
 
-import { MAINNET, TESTNET, ARBITRUM, AVALANCHE, ARBITRUM_GOERLI } from "./Helpers";
+import { MAINNET, TESTNET, ARBITRUM, ARBITRUM_GOERLI } from "./Helpers";
 
 const { parseEther } = ethers.utils;
 
 const constants = {
   [MAINNET]: {
-    nativeTokenSymbol: "BNB",
-    defaultCollateralSymbol: "BUSD",
+    nativeTokenSymbol: "ETH",
+    defaultCollateralSymbol: "WETH",
     defaultFlagOrdersEnabled: false,
-    positionReaderPropsLength: 8,
-    v2: false,
-  },
-
-  [TESTNET]: {
-    nativeTokenSymbol: "BNB",
-    defaultCollateralSymbol: "BUSD",
-    defaultFlagOrdersEnabled: true,
     positionReaderPropsLength: 8,
     v2: false,
   },
@@ -47,20 +39,6 @@ const constants = {
     INCREASE_ORDER_EXECUTION_GAS_FEE: parseEther("0.0003"),
     // contract requires that execution fee be strictly greater than instead of gte
     DECREASE_ORDER_EXECUTION_GAS_FEE: parseEther("0.000300001"),
-  },
-
-  [AVALANCHE]: {
-    nativeTokenSymbol: "AVAX",
-    wrappedTokenSymbol: "WAVAX",
-    defaultCollateralSymbol: "MIM",
-    defaultFlagOrdersEnabled: true,
-    positionReaderPropsLength: 9,
-    v2: true,
-
-    SWAP_ORDER_EXECUTION_GAS_FEE: parseEther("0.01"),
-    INCREASE_ORDER_EXECUTION_GAS_FEE: parseEther("0.01"),
-    // contract requires that execution fee be strictly greater than instead of gte
-    DECREASE_ORDER_EXECUTION_GAS_FEE: parseEther("0.0100001"),
   },
 };
 
