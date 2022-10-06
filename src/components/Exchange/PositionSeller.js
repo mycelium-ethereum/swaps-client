@@ -129,7 +129,7 @@ export default function PositionSeller(props) {
     fetcher: fetcher(library, PositionRouter),
   });
 
-  const orderOptions = [MARKET, <ComingSoonTooltip position="right-bottom" handle={orderOptionLabels[STOP]} />];
+  const orderOptions = [MARKET, STOP];
 
   let [orderOption, setOrderOption] = useState(MARKET);
 

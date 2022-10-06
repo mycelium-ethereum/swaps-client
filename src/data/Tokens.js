@@ -182,6 +182,7 @@ const TOKENS = {
       symbol: "TEST",
       decimals: 18,
       address: "0xf76A36092f52Ea0ad1dFdDB5aced4e9f414524F2",
+      isShortable: true,
     },
   ],
   42161: [
