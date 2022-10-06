@@ -29,12 +29,12 @@ import {
   MLP_POOL_COLORS,
   DEFAULT_MAX_USDG_AMOUNT,
   getPageTitle,
-  ARBITRUM_TESTNET,
   getTracerServerUrl,
   MM_FEE_MULTIPLIER,
   MM_SWAPS_FEE_MULTIPLIER,
   FEE_MULTIPLIER_BASIS_POINTS,
   ETH_DECIMALS,
+  ARBITRUM_GOERLI,
 } from "../../Helpers";
 import {
   useTotalMYCInLiquidity,
@@ -466,7 +466,7 @@ export default function DashboardV2() {
           <div className="section-title-content">
             <div className="Page-title">
               Stats {chainId === AVALANCHE && <img src={avalanche24Icon} alt="avalanche24Icon" />}
-              {(chainId === ARBITRUM || chainId === ARBITRUM_TESTNET) && (
+              {(chainId === ARBITRUM || chainId === ARBITRUM_GOERLI) && (
                 <img src={arbitrum24Icon} alt="arbitrum24Icon" />
               )}
             </div>

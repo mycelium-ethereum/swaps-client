@@ -19,7 +19,6 @@ import { getConstant } from "../Constants";
 import {
   ARBITRUM,
   AVALANCHE,
-  ARBITRUM_TESTNET,
   ETHEREUM,
   bigNumberify,
   getExplorerUrl,
@@ -43,6 +42,7 @@ import {
   MM_SWAPS_FEE_MULTIPLIER,
   FORTNIGHTS_IN_YEAR,
   useLocalStorageSerializeKey,
+  ARBITRUM_GOERLI,
 } from "../Helpers";
 import { getTokens, getTokenBySymbol, getWhitelistedTokens } from "../data/Tokens";
 
@@ -55,7 +55,7 @@ const { AddressZero } = ethers.constants;
 function getMycGraphClient(chainId) {
   if (chainId === ARBITRUM) {
     return arbitrumGraphClient;
-  } else if (chainId === ARBITRUM_TESTNET) {
+  } else if (chainId === ARBITRUM_GOERLI) {
     return arbitrumTestnetGraphClient;
   }
   throw new Error(`Unsupported chain ${chainId}`);

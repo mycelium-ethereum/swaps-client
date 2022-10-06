@@ -2,7 +2,16 @@ import { ethers } from "ethers";
 import { gql } from "@apollo/client";
 import { useState, useEffect } from "react";
 
-import { ARBITRUM, MAX_REFERRAL_CODE_LENGTH, bigNumberify, isAddressZero, helperToast, getProvider, fetcher, ARBITRUM_TESTNET } from "../Helpers";
+import {
+  ARBITRUM,
+  MAX_REFERRAL_CODE_LENGTH,
+  bigNumberify,
+  isAddressZero,
+  helperToast,
+  getProvider,
+  fetcher,
+  ARBITRUM_GOERLI,
+} from "../Helpers";
 import { arbitrumReferralsGraphClient, arbitrumTestnetReferralsGraphClient } from "./common";
 import { getContract } from "../Addresses";
 
@@ -15,7 +24,7 @@ const ACTIVE_CHAINS = [ARBITRUM];
 function getGraphClient(chainId) {
   if (chainId === ARBITRUM) {
     return arbitrumReferralsGraphClient;
-  } else if (chainId === ARBITRUM_TESTNET) {
+  } else if (chainId === ARBITRUM_GOERLI) {
     return arbitrumTestnetReferralsGraphClient;
   }
   throw new Error(`Unsupported chain ${chainId}`);
@@ -99,7 +108,6 @@ export async function getReferralCodeTakenStatus(account, referralCode, chainId)
   return { status: "none", info: referralCodeTakenInfo };
 }
 
-
 async function getCodeOwnersData(network, account, codes) {
   const referralCodeOwnerQuery = (referralCode) =>
     gql(
@@ -160,7 +168,6 @@ export function useUserCodesOnAllChain(account) {
           return acc;
         }, {}),
       });
-
     }
 
     main();
