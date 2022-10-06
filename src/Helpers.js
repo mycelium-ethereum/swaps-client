@@ -183,6 +183,7 @@ export const MLP_POOL_COLORS = {
   FXS: "#3B3B3B",
   BAL: "#1B1B1B",
   CRV: "#CF0301",
+  TEST: "#994443",
 };
 
 export const HIGH_SPREAD_THRESHOLD = expandDecimals(1, USD_DECIMALS).div(100); // 1%;
@@ -220,10 +221,10 @@ export const ICONLINKS = {
       arbitrum: "https://arbiscan.io/address/0xff970a61a04b1ca14834a43f5de4533ebddb5cc8",
     },
     PPUSD: {
-      arbitrum: "https://testnet.arbiscan.io/address/0x9e062eee2c0Ab96e1E1c8cE38bF14bA3fa0a35F6",
+      arbitrum: "https://goerli-rollup-explorer.arbitrum.io/address/0x9e062eee2c0Ab96e1E1c8cE38bF14bA3fa0a35F6",
     },
-    CTM: {
-      arbitrum: "https://testnet.arbiscan.io/address/0xac8d4844133fa049a06ce306ade49bf6fbd9c56b",
+    TEST: {
+      arbitrum: "https://goerli-rollup-explorer.arbitrum.io/address/0xf76A36092f52Ea0ad1dFdDB5aced4e9f414524F2",
     },
     USDT: {
       coingecko: "https://www.coingecko.com/en/coins/tether",
