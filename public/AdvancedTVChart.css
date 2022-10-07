@@ -32,6 +32,10 @@
   background-color: #003000 !important;
 }
 
+[data-role="search"] {
+  color: white !important;
+}
+
 /* [class*="tab"]:hover {
   background-color: #098200 !important;
 } */
