@@ -1013,12 +1013,14 @@ function FullApp() {
         draggable={false}
         pauseOnHover
       />
+      {/*
       <EventModal
         isModalVisible={isEventModalVisible}
         setEventModalVisible={setEventModalVisible}
         eventKey={'new-earn-page'}
         continueLink={'/earn'}
       />
+      */}
       <EventToastContainer />
       <Modal
         className="Connect-wallet-modal"
