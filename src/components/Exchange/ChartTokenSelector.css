@@ -14,6 +14,10 @@
   white-space: nowrap;
 }
 
+.chart-token-menu {
+  z-index: 2;
+}
+
 .chart-token-menu-items.menu-items {
   width: 158px;
   top: 60px;
