@@ -18,24 +18,27 @@
   --tv-list-item-button-background-hover-color: #098200;
 }
 
-.color-brand-xRobF0EE.variant-secondary-xRobF0EE {
-  --ui-lib-button-default-color-bg: transparent!important;
+[class*="variant-secondary"] {
+  --ui-lib-button-default-color-bg: transparent !important;
 }
 
-.color-brand-xRobF0EE {
-  --ui-lib-button-default-color-border: #098200!important;
-  --ui-lib-button-default-color-content: #fff!important;
-  --ui-lib-button-default-color-bg: #098200!important;
-  --ui-lib-button-default-color-border: #098200!important;
+[class*="color-brand"] {
+  --ui-lib-button-default-color-border: #003000 !important;
+  --ui-lib-button-default-color-content: #fff !important;
+  --ui-lib-button-default-color-bg: #003000 !important;
 }
 
-.tab-DggvOZTm:hover {
-    background-color: #098200!important;
+[class*="isOpened"]:before {
+  background-color: #003000 !important;
 }
+
+/* [class*="tab"]:hover {
+  background-color: #098200 !important;
+} */
 
 button[class*="actionButton"] {
   background-color: #098200 !important;
-  border-color: red!important;
+  border-color: red !important;
   color: white !important;
   border: 0 !important;
 }
@@ -83,15 +86,15 @@ div[data-value] {
 }
 
 .active-DggvOZTm {
-  background-color: #098200!important;
+  background-color: #098200 !important;
 }
 
-.wrapper-2eXD4rIf .input-2eXD4rIf:checked+.box-2eXD4rIf {
-  background-color: #098200!important;
-  border-color: #098200!important;
+.wrapper-2eXD4rIf .input-2eXD4rIf:checked + .box-2eXD4rIf {
+  background-color: #098200 !important;
+  border-color: #098200 !important;
 }
 .wrapper-2eXD4rIf .box-2eXD4rIf:before {
-  border-color: #098200!important;
+  border-color: #098200 !important;
 }
 
 span[class*="close"]:hover {
@@ -153,7 +156,7 @@ span[class*="intent-primary"] {
   --ui-lib-intent-color: #098200 !important;
   --ui-lib-intent-highlight-color: #098200 !important;
   --ui-lib-control-default-slot-color: #fff !important;
-  color: var(--ui-lib-control-default-slot-color)!important;
+  color: var(--ui-lib-control-default-slot-color) !important;
   outline: none !important;
 }
 
@@ -163,7 +166,7 @@ span[class*="shadow"] {
 }
 
 div[class*="opacitySliderGradient"] {
-  background-image: linear-gradient(90deg, transparent, rgb(9, 130, 0))!important;
+  background-image: linear-gradient(90deg, transparent, rgb(9, 130, 0)) !important;
 }
 
 div[class*="opacityPointerWrap"] {
