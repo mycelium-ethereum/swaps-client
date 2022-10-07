@@ -559,13 +559,25 @@ export function useTrades(chainId, account) {
   // Convert the response to match expected format
   let trades = [];
   if (Array.isArray(data)) {
-    trades = data.map((datum) => ({
-      id: datum.dataValues.id.toString(),
-      data: {
-        ...datum.dataValues,
-        params: JSON.stringify(datum.dataValues.params),
-      },
-    }));
+    trades = data.map((datum) => {
+      if (datum.dataValues) {
+        return ({
+          id: datum.dataValues.id.toString(),
+          data: {
+            ...datum.dataValues,
+            params: JSON.stringify(datum.dataValues.params),
+          },
+        })
+      } else {
+        return ({
+          id: datum.id,
+          data: {
+            ...datum,
+            params: JSON.stringify(datum.params)
+          }
+        })
+      }
+    });
   }
 
   if (trades) {
