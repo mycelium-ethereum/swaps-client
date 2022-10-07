@@ -56,7 +56,7 @@ import {
 } from "./Helpers";
 import ReaderV2 from "./abis/ReaderV2.json";
 
-import Dashboard from "./views/Dashboard/Dashboard";
+import Dashboard from "./views/Dashboard/DashboardV2";
 import Stake from "./views/Stake/StakeV2";
 import { Exchange } from "./views/Exchange/Exchange";
 import Actions from "./views/Actions/Actions";

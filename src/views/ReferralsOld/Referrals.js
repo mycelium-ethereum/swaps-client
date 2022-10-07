@@ -22,12 +22,14 @@ import {
   REFERRAL_CODE_KEY,
   useLocalStorageSerializeKey,
   ARBITRUM,
-  AVALANCHE,
   useDebounce,
   isAddressZero,
   getTierIdDisplay,
 } from "../../Helpers";
 import { decodeReferralCode, encodeReferralCode, useReferralsData } from "../../Api/referrals";
+
+// this is just temporary to stop build errors if I need to look at this code
+const AVALANCHE = 420;
 
 import "./Referrals.css";
 import {

@@ -29,7 +29,6 @@ export const UI_VERSION = "1.3";
 export const PLACEHOLDER_ACCOUNT = ethers.Wallet.createRandom().address;
 
 export const MAINNET = 56;
-export const AVALANCHE = 43114;
 export const TESTNET = 97;
 export const ETHEREUM = 1;
 export const ARBITRUM_GOERLI = 421613;
@@ -47,16 +46,13 @@ const CHAIN_NAMES_MAP = {
   [TESTNET]: "BSC Testnet",
   [ARBITRUM_GOERLI]: "Testnet",
   [ARBITRUM]: "Arbitrum",
-  [AVALANCHE]: "Avalanche",
 };
 
 const GAS_PRICE_ADJUSTMENT_MAP = {
   [ARBITRUM]: "0",
-  [AVALANCHE]: "3000000000", // 3 gwei
 };
 
 const MAX_GAS_PRICE_MAP = {
-  [AVALANCHE]: "200000000000", // 200 gwei
 };
 
 const alchemyWhitelistedDomains = ["swaps.mycelium.xyz"];
@@ -77,7 +73,6 @@ export function getDefaultArbitrumRpcUrl(useWebsocket) {
 const ETHEREUM_RPC_PROVIDERS = ["https://cloudflare-eth.com"];
 const ARBITRUM_RPC_PROVIDERS = [getDefaultArbitrumRpcUrl()];
 const ARBITRUM_GOERLI_RPC_PROVIDERS = ["https://goerli-rollup.arbitrum.io/rpc/"];
-const AVALANCHE_RPC_PROVIDERS = ["https://avax-mainnet.gateway.pokt.network/v1/lb/626f37766c499d003aada23b"];
 export const WALLET_CONNECT_LOCALSTORAGE_KEY = "walletconnect";
 export const WALLET_LINK_LOCALSTORAGE_PREFIX = "-walletlink";
 export const SHOULD_EAGER_CONNECT_LOCALSTORAGE_KEY = "eagerconnect";
@@ -177,7 +172,6 @@ export const MLP_POOL_COLORS = {
   FRAX: "#000",
   DAI: "#FAC044",
   UNI: "#E9167C",
-  AVAX: "#E84142",
   LINK: "#3256D6",
   CTM: "#F8B500",
   FXS: "#3B3B3B",
@@ -534,8 +528,6 @@ export function getServerBaseUrl(chainId) {
     return "https://gmx-server-mainnet.uw.r.appspot.com";
   } else if (chainId === ARBITRUM) {
     return "https://gmx-server-mainnet.uw.r.appspot.com";
-  } else if (chainId === AVALANCHE) {
-    return "https://gmx-avax-server.uc.r.appspot.com";
   }
   return "https://gmx-server-mainnet.uw.r.appspot.com";
 }
@@ -1394,12 +1386,10 @@ const RPC_PROVIDERS = {
   [MAINNET]: BSC_RPC_PROVIDERS,
   [ARBITRUM]: ARBITRUM_RPC_PROVIDERS,
   [ARBITRUM_GOERLI]: ARBITRUM_GOERLI_RPC_PROVIDERS,
-  [AVALANCHE]: AVALANCHE_RPC_PROVIDERS,
 };
 
 const FALLBACK_PROVIDERS = {
   [ARBITRUM]: ["https://arb-mainnet.g.alchemy.com/v2/SKz5SvTuqIVjE38XsFsy0McZbgfFPOng"],
-  [AVALANCHE]: ["https://avax-mainnet.gateway.pokt.network/v1/lb/626f37766c499d003aada23b"],
 };
 
 export function shortenAddress(address, length) {
@@ -2081,8 +2071,6 @@ export function getExplorerUrl(chainId) {
     return "https://goerli-rollup-explorer.arbitrum.io/";
   } else if (chainId === ARBITRUM) {
     return "https://arbiscan.io/";
-  } else if (chainId === AVALANCHE) {
-    return "https://snowtrace.io/";
   }
   return "https://etherscan.io/";
 }
@@ -2285,18 +2273,7 @@ const NETWORK_METADATA = {
     },
     rpcUrls: ARBITRUM_RPC_PROVIDERS,
     blockExplorerUrls: [getExplorerUrl(ARBITRUM)],
-  },
-  [AVALANCHE]: {
-    chainId: "0x" + AVALANCHE.toString(16),
-    chainName: "Avalanche",
-    nativeCurrency: {
-      name: "AVAX",
-      symbol: "AVAX",
-      decimals: 18,
-    },
-    rpcUrls: AVALANCHE_RPC_PROVIDERS,
-    blockExplorerUrls: [getExplorerUrl(AVALANCHE)],
-  },
+  }
 };
 
 export const addBscNetwork = async () => {

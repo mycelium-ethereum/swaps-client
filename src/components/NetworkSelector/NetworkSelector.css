@@ -67,11 +67,6 @@
   border: 1px solid #4275a8;
 }
 
-.Selector-option.Avalanche:hover {
-  background: #1f213e !important;
-  border: 1px solid #e84142;
-}
-
 .Selector-option .selected-icon {
   position: absolute;
   width: 8px;
@@ -82,10 +77,6 @@
 
 .Selector-option.Arbitrum .selected-icon {
   background-color: #4275a8;
-}
-
-.Selector-option.Avalanche .selected-icon {
-  background-color: #e84142;
 }
 
 .selected-icon {
@@ -139,14 +130,6 @@
 }
 .react-select__option:active {
   background: var(--action-active) !important;
-}
-.react-select__option.avalanche:active {
-  background: var(--action-active) !important;
-}
-.react-select__option.avalanche:hover {
-  border: 1px solid #e84142;
-  border-radius: 4px;
-  color: #eee;
 }
 .react-select__indicator {
   border-radius: 4px;

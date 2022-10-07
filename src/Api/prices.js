@@ -19,7 +19,6 @@ const FEED_ID_MAP = {
   CRV_USD: "0x5ea974a35c37e42dfb91004cfe2b8aab9210f772",
   BAL_USD: "0xa022ce3aea73cbeb245fcead10e3c001551c0dd4",
   SUSHI_USD: "0x7213536a36094cd8a768a5e45203ec286cba2d74",
-  AVAX_USD: "0x0fc3657899693648bba4dbd2d8b33b82e875105d",
   AAVE_USD: "0xe3f0dede4b499c07e12475087ab1a084b5f93bc0",
   YFI_USD: "0x8a4d74003870064d41d4f84940550911fbfccf04",
   SPELL_USD: "0x8640b23468815902e011948f3ab173e1e83f9879",
@@ -65,7 +64,7 @@ function fillGaps(prices, periodSeconds) {
 }
 
 async function getChartPricesFromStats(_chainId, symbol, period) {
-  if (["WBTC", "WETH", "WAVAX"].includes(symbol)) {
+  if (["WBTC", "WETH"].includes(symbol)) {
     symbol = symbol.substr(1);
   }
   const hostname = "https://swaps-stats-kltusqhvaa-uw.a.run.app/";
@@ -169,8 +168,8 @@ function getCandlesFromPrices(prices, period) {
   }));
 }
 
-function getChainlinkChartPricesFromGraph(tokenSymbol, period) {
-  if (["WBTC", "WETH", "WAVAX"].includes(tokenSymbol)) {
+async function getChainlinkChartPricesFromGraph(tokenSymbol, period) {
+  if (["WBTC", "WETH"].includes(tokenSymbol)) {
     tokenSymbol = tokenSymbol.substr(1);
   }
   const marketName = tokenSymbol + "_USD";

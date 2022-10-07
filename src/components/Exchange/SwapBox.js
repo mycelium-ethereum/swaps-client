@@ -3,7 +3,6 @@ import React, { useState, useEffect, useMemo, useCallback } from "react";
 import Tooltip from "../Tooltip/Tooltip";
 import Modal from "../Modal/Modal";
 
-import cx from "classnames";
 import useSWR from "swr";
 import { ethers } from "ethers";
 
@@ -14,8 +13,6 @@ import {
   helperToast,
   formatAmount,
   bigNumberify,
-  ARBITRUM,
-  AVALANCHE,
   USD_DECIMALS,
   USDG_DECIMALS,
   LONG,
@@ -180,16 +177,6 @@ export default function SwapBox(props) {
   const isLong = swapOption === LONG;
   const isShort = swapOption === SHORT;
   const isSwap = swapOption === SWAP;
-
-  const getLeaderboardLink = () => {
-    if (chainId === ARBITRUM) {
-      return "https://www.gmx.house/arbitrum/leaderboard";
-    }
-    if (chainId === AVALANCHE) {
-      return "https://www.gmx.house/avalanche/leaderboard";
-    }
-    return "https://www.gmx.house";
-  };
 
   function getTokenLabel() {
     switch (true) {
