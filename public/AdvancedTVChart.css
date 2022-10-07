@@ -36,9 +36,9 @@
   color: white !important;
 }
 
-/* [class*="tab"]:hover {
+[data-name][class*="tab"]:hover {
   background-color: #098200 !important;
-} */
+}
 
 button[class*="actionButton"] {
   background-color: #098200 !important;
