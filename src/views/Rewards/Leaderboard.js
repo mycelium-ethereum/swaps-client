@@ -69,6 +69,7 @@ function TableRow({
   positionReward,
   degenReward,
   handleClaim,
+  claimDelay,
   userRow,
   rewardAmountUsd,
   latestRound,
@@ -122,7 +123,7 @@ function TableRow({
             "highlight-current": userRow,
           })}
         >
-          {userRow && !totalReward.eq(0) && !latestRound && hasLoaded && !hasClaimed && (
+          {userRow && !totalReward.eq(0) && !latestRound && hasLoaded && !hasClaimed && !claimDelay && (
             <ClaimButton
               disabled={isClaiming}
               onClick={handleClaim}
@@ -153,6 +154,7 @@ export default function Leaderboard(props) {
     handleClaim,
     latestRound,
     isClaiming,
+    claimDelay,
     hasClaimed
   } = props;
 
@@ -174,6 +176,7 @@ export default function Leaderboard(props) {
               rewardAmountUsd={userRoundData.rewardAmountUsd}
               userRow={true}
               handleClaim={handleClaim}
+              claimDelay={claimDelay}
               latestRound={latestRound}
               isClaiming={isClaiming}
               hasClaimed={hasClaimed}
@@ -238,6 +241,7 @@ export default function Leaderboard(props) {
                       degenReward={degenReward}
                       rewardAmountUsd={rewardAmountUsd}
                       handleClaim={handleClaim}
+                      claimDelay={claimDelay}
                       userRow={isUserRow}
                       latestRound={latestRound}
                       isClaiming={isClaiming}
