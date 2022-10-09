@@ -119,14 +119,8 @@ async function getChartPricesFromStats(_chainId, symbol, period) {
 
   prices = prices.map(({ t, o: open, c: close, h: high, l: low }, i) => {
     if (i !== 0) {
-      // low is higher than previous high
-      if (low > prices[i-1].h) {
-        low = Math.min(prices[i - 1].h, prices[i-1].c);
-      }
-      // high is lower than previous low
-      if (high < prices[i-1].l) {
-        high = Math.min(prices[i - 1].l, prices[i-1].c);
-      }
+      // set open to close
+      open = prices[i-1].c;
     }
     return {
       time: t + timezoneOffset,
