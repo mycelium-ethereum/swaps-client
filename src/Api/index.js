@@ -559,13 +559,25 @@ export function useTrades(chainId, account) {
   // Convert the response to match expected format
   let trades = [];
   if (Array.isArray(data)) {
-    trades = data.map((datum) => ({
-      id: datum.dataValues.id.toString(),
-      data: {
-        ...datum.dataValues,
-        params: JSON.stringify(datum.dataValues.params),
-      },
-    }));
+    trades = data.map((datum) => {
+      if (datum.dataValues) {
+        return ({
+          id: datum.dataValues.id.toString(),
+          data: {
+            ...datum.dataValues,
+            params: JSON.stringify(datum.dataValues.params),
+          },
+        })
+      } else {
+        return ({
+          id: datum.id,
+          data: {
+            ...datum,
+            params: JSON.stringify(datum.params)
+          }
+        })
+      }
+    });
   }
 
   if (trades) {
@@ -1293,7 +1305,7 @@ export function useStakingApr(mycPrice, ethPrice) {
     if (mycAssetsInStaking && pendingMycDepositsInStaking && ethPrice && mycPrice) {
       const mycDeposited = mycAssetsInStaking.add(pendingMycDepositsInStaking).div(expandDecimals(1, ETH_DECIMALS));
 
-      let ethDistributed = ethers.utils.parseEther("34.5807416");
+      let ethDistributed = ethers.utils.parseEther("10.75744956");
       let mycUSDValue = mycDeposited.mul(mycPrice);
       let ethUSDValue = ethDistributed.mul(ethPrice);
 

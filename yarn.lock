@@ -2676,6 +2676,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@mycelium-swaps-interface/charting_library@file:./public/charting_library/::locator=mycelium-swaps-interface%40workspace%3A.":
+  version: 0.0.0
+  resolution: "@mycelium-swaps-interface/charting_library@file:./public/charting_library/#./public/charting_library/::hash=417396&locator=mycelium-swaps-interface%40workspace%3A."
+  checksum: ea135e1d987abe1579dae4b7e83763f7daa968489f0977b6cd91ebc219e5027f04d6a781ca21479455027b479db0370590540851da4917efa1092c8284cb05e0
+  languageName: node
+  linkType: hard
+
 "@nodelib/fs.scandir@npm:2.1.5":
   version: 2.1.5
   resolution: "@nodelib/fs.scandir@npm:2.1.5"
@@ -13632,6 +13639,7 @@ __metadata:
     "@ethersproject/providers": ^5.0.23
     "@ethersproject/units": ^5.0.10
     "@headlessui/react": dev
+    "@mycelium-swaps-interface/charting_library": ./public/charting_library/
     "@segment/analytics-next": ^1.41.0
     "@testing-library/jest-dom": ^5.11.4
     "@testing-library/react": ^11.1.0

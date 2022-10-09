@@ -123,7 +123,7 @@ function TableRow({
             "highlight-current": userRow,
           })}
         >
-          {userRow && !totalReward.eq(0) && !latestRound && hasLoaded && !hasClaimed && !claimDelay (
+          {userRow && !totalReward.eq(0) && !latestRound && hasLoaded && !hasClaimed && !claimDelay && (
             <ClaimButton
               disabled={isClaiming}
               onClick={handleClaim}
