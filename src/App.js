@@ -14,17 +14,19 @@ import { useAnalytics } from "./segmentAnalytics";
 import { getTokens, getWhitelistedTokens } from "./data/Tokens";
 
 import {
-  SLIPPAGE_BPS_KEY
+  SLIPPAGE_BPS_KEY,
+  IS_PNL_IN_LEVERAGE_KEY,
+  SHOW_PNL_AFTER_FEES_KEY,
+  SHOULD_SHOW_POSITION_LINES_KEY,
+  REFERRAL_CODE_KEY,
+  REFERRAL_CODE_QUERY_PARAMS,
 } from './config/localstorage';
 
 import {
   ARBITRUM,
   AVALANCHE,
   DEFAULT_SLIPPAGE_AMOUNT,
-  IS_PNL_IN_LEVERAGE_KEY,
-  SHOW_PNL_AFTER_FEES_KEY,
   BASIS_POINTS_DIVISOR,
-  SHOULD_SHOW_POSITION_LINES_KEY,
   fetcher,
   clearWalletConnectData,
   switchNetwork,
@@ -52,8 +54,6 @@ import {
   networkOptions,
   SHOULD_EAGER_CONNECT_LOCALSTORAGE_KEY,
   CURRENT_PROVIDER_LOCALSTORAGE_KEY,
-  REFERRAL_CODE_KEY,
-  REFERRAL_CODE_QUERY_PARAMS,
   ARBITRUM_TESTNET,
   PLACEHOLDER_ACCOUNT,
   getDefaultArbitrumRpcUrl,

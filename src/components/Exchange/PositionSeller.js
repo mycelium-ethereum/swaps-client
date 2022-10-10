@@ -6,7 +6,8 @@ import cx from "classnames";
 import { BsArrowRight } from "react-icons/bs";
 
 import {
-  CLOSE_POSITION_RECEIVE_TOKEN_KEY
+  CLOSE_POSITION_RECEIVE_TOKEN_KEY,
+  SLIPPAGE_BPS_KEY
 } from '../../config/localstorage';
 
 import {
@@ -18,7 +19,6 @@ import {
   DUST_USD,
   BASIS_POINTS_DIVISOR,
   USDG_ADDRESS,
-  SLIPPAGE_BPS_KEY,
   TRIGGER_PREFIX_BELOW,
   TRIGGER_PREFIX_ABOVE,
   MIN_PROFIT_TIME,

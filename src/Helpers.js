@@ -20,6 +20,7 @@ import OrderBook from "./abis/OrderBook.json";
 import { getWhitelistedTokens, isValidToken } from "./data/Tokens";
 import ComingSoonTooltip from "./components/Tooltip/ComingSoon";
 import { isAddress } from "ethers/lib/utils";
+import { REFERRAL_CODE_QUERY_PARAMS } from "./config/localstorage";
 
 const { AddressZero } = ethers.constants;
 
@@ -134,13 +135,6 @@ export const SWAP_OPTIONS = [LONG, SHORT, SWAP];
 export const DEFAULT_SLIPPAGE_AMOUNT = 30;
 export const DEFAULT_HIGHER_SLIPPAGE_AMOUNT = 100;
 
-export const SLIPPAGE_BPS_KEY = "Exchange-swap-slippage-basis-points-v3";
-export const IS_PNL_IN_LEVERAGE_KEY = "Exchange-swap-is-pnl-in-leverage";
-export const SHOW_PNL_AFTER_FEES_KEY = "Exchange-swap-show-pnl-after-fees";
-export const SHOULD_SHOW_POSITION_LINES_KEY = "Exchange-swap-should-show-position-lines";
-export const REFERRAL_CODE_KEY = "MYC-referralCode";
-export const REFERRAL_CODE_QUERY_PARAMS = "ref";
-export const REFERRALS_SELECTED_TAB_KEY = "Referrals-selected-tab";
 export const MAX_REFERRAL_CODE_LENGTH = 20;
 export const REFERRAL_CODE_REGEX = /^\w+$/; // only number, string and underscore is allowed
 export const TIER_REBATE_INFO = {
