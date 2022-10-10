@@ -20,7 +20,13 @@ import OrderBook from "./abis/OrderBook.json";
 import { getWhitelistedTokens, isValidToken } from "./data/Tokens";
 import ComingSoonTooltip from "./components/Tooltip/ComingSoon";
 import { isAddress } from "ethers/lib/utils";
-import { REFERRAL_CODE_QUERY_PARAMS } from "./config/localstorage";
+import { 
+  REFERRAL_CODE_QUERY_PARAMS,
+  CURRENT_PROVIDER_LOCALSTORAGE_KEY,
+  WALLET_CONNECT_LOCALSTORAGE_KEY,
+  WALLET_LINK_LOCALSTORAGE_PREFIX,
+  SHOULD_EAGER_CONNECT_LOCALSTORAGE_KEY
+} from "./config/localstorage";
 
 const { AddressZero } = ethers.constants;
 
@@ -79,10 +85,6 @@ const ETHEREUM_RPC_PROVIDERS = ["https://cloudflare-eth.com"];
 const ARBITRUM_RPC_PROVIDERS = [getDefaultArbitrumRpcUrl()];
 const ARBITRUM_TESTNET_RPC_PROVIDERS = ["https://rinkeby.arbitrum.io/rpc"];
 const AVALANCHE_RPC_PROVIDERS = ["https://avax-mainnet.gateway.pokt.network/v1/lb/626f37766c499d003aada23b"];
-export const WALLET_CONNECT_LOCALSTORAGE_KEY = "walletconnect";
-export const WALLET_LINK_LOCALSTORAGE_PREFIX = "-walletlink";
-export const SHOULD_EAGER_CONNECT_LOCALSTORAGE_KEY = "eagerconnect";
-export const CURRENT_PROVIDER_LOCALSTORAGE_KEY = "currentprovider";
 
 export function getChainName(chainId) {
   return CHAIN_NAMES_MAP[chainId];

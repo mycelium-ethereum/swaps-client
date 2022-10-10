@@ -1,3 +1,8 @@
+export const WALLET_CONNECT_LOCALSTORAGE_KEY = "walletconnect";
+export const WALLET_LINK_LOCALSTORAGE_PREFIX = "-walletlink";
+export const SHOULD_EAGER_CONNECT_LOCALSTORAGE_KEY = "eagerconnect";
+export const CURRENT_PROVIDER_LOCALSTORAGE_KEY = "currentprovider";
+
 export const SLIPPAGE_BPS_KEY = "Exchange-swap-slippage-basis-points-v3";
 export const CLOSE_POSITION_RECEIVE_TOKEN_KEY = "Close-position-receive-token";
 export const IS_PNL_IN_LEVERAGE_KEY = "Exchange-swap-is-pnl-in-leverage";
