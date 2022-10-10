@@ -390,7 +390,6 @@ export default function PositionSeller(props) {
       convertedAmount = fromAmount.mul(expandDecimals(1, collateralToken.decimals)).div(collateralToken.maxPrice);
       convertedAmountFormatted = formatAmount(convertedAmount, collateralToken.decimals, 4, true);
     }
-    console.log('convert', convertedAmount, convertedAmountFormatted);
 
     totalFees = totalFees.add(positionFee || bigNumberify(0)).add(fundingFee || bigNumberify(0));
 
@@ -420,7 +419,6 @@ export default function PositionSeller(props) {
         totalTokenWeights,
         true
       );
-      // console.log("feebasis", chainId, convertedAmount, collateralToken.address, receiveToken.address, infoTokens);
 
       if (feeBasisPoints) {
         swapFee = receiveAmount.mul(feeBasisPoints).div(BASIS_POINTS_DIVISOR);
@@ -924,8 +922,6 @@ export default function PositionSeller(props) {
       console.error(`Unable to track ${eventName} event`, err);
     }
   };
-
-  console.log(convertedReceiveAmount.toString());
 
   return (
     <div className="PositionEditor">
