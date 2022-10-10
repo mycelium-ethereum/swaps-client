@@ -117,7 +117,12 @@ async function getChartPricesFromStats(_chainId, symbol, period) {
     );
   }
 
-  prices = prices.map(({ t, o: open, c: close, h: high, l: low }) => {
+  prices = prices.map(({ t, o: open, c: close, h: high, l: low }, i) => {
+    if (i !== 0) {
+      // set open to close
+      // prices are sorted in timestamp ascending order
+      open = prices[i-1].c;
+    }
     return {
       time: t + timezoneOffset,
       open,
