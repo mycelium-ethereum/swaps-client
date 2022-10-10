@@ -1006,6 +1006,97 @@ export default function PositionSeller(props) {
           {renderMinProfitWarning()}
           {shouldShowExistingOrderWarning && renderExistingOrderWarning()}
           <div className="PositionEditor-info-box">
+            <div className="Exchange-info-row PositionSeller-receive-row bottom-line">
+              <div className="Exchange-info-label">
+                Receive
+              </div>
+
+              {!isSwapAllowed && receiveToken && (
+                <div className="align-right PositionSelector-selected-receive-token">
+                  {formatAmount(convertedReceiveAmount, receiveToken.decimals, 4, true)}&nbsp;{receiveToken.symbol} ($
+                  {formatAmount(receiveAmount, USD_DECIMALS, 2, true)})
+                </div>
+              )}
+
+              {isSwapAllowed && receiveToken && (
+                <div className="align-right">
+                  <TokenSelector
+                    // Scroll lock lead to side effects
+                    // if it applied on modal inside another modal
+                    disableBodyScrollLock={true}
+                    className={cx("PositionSeller-token-selector", {
+                      warning: isNotEnoughReceiveTokenLiquidity || isCollateralPoolCapacityExceeded,
+                    })}
+                    label={"Receive"}
+                    showBalances={false}
+                    chainId={chainId}
+                    tokenAddress={receiveToken.address}
+                    onSelectToken={(token) => {
+                      setSwapToToken(token);
+                      setSavedReceiveTokenAddress(token.address);
+                    }}
+                    tokens={toTokens}
+                    getTokenState={(tokenOptionInfo) => {
+                      if (!shouldSwap(collateralToken, tokenOptionInfo)) {
+                        return;
+                      }
+
+                      const convertedTokenAmount = getTokenAmountFromUsd(
+                        infoTokens,
+                        tokenOptionInfo.address,
+                        receiveAmount
+                      );
+
+                      const isNotEnoughLiquidity =
+                        tokenOptionInfo.availableAmount.lt(convertedTokenAmount) ||
+                        tokenOptionInfo.bufferAmount.gt(tokenOptionInfo.poolAmount.sub(convertedTokenAmount));
+
+                      if (isNotEnoughLiquidity) {
+                        const { maxIn, maxOut, maxInUsd, maxOutUsd } = getSwapLimits(
+                          infoTokens,
+                          collateralToken.address,
+                          tokenOptionInfo.address
+                        );
+
+                        const collateralInfo = getTokenInfo(infoTokens, collateralToken.address);
+
+                        return {
+                          disabled: true,
+                          message: (
+                            <div>
+                              Insufficient Available Liquidity to swap to {tokenOptionInfo.symbol}:
+                              <br />
+                              <br />
+                              <TooltipRow
+                                label={`Max ${collateralInfo.symbol} in`}
+                                value={[
+                                  `${formatAmount(maxIn, collateralInfo.decimals, 0, true)} ${collateralInfo.symbol}`,
+                                  `($${formatAmount(maxInUsd, USD_DECIMALS, 0, true)})`,
+                                ]}
+                              />
+                              <br />
+                              <br />
+                              Max {tokenOptionInfo.symbol} out:{" "}
+                              {formatAmount(maxOut, tokenOptionInfo.decimals, 2, true)} {tokenOptionInfo.symbol}
+                              <br />
+                              (${formatAmount(maxOutUsd, USD_DECIMALS, 2, true)})
+                            </div>
+                          ),
+                        };
+                      }
+                    }}
+                    infoTokens={infoTokens}
+                    showTokenImgInDropdown={true}
+                    selectedTokenLabel={
+                      <span className="PositionSelector-selected-receive-token">
+                        {formatAmount(convertedReceiveAmount, receiveToken.decimals, 4, true)}&nbsp;
+                        {receiveToken.symbol} (${formatAmount(receiveAmount, USD_DECIMALS, 2, true)})
+                      </span>
+                    }
+                  />
+                </div>
+              )}
+            </div>
             {hasPendingProfit && orderOption !== STOP && (
               <div className="PositionEditor-accept-profit-warning">
                 <Checkbox isChecked={isProfitWarningAccepted} setIsChecked={setIsProfitWarningAccepted}>
@@ -1211,97 +1302,6 @@ export default function PositionSeller(props) {
                   )}
                 />
               </div>
-            </div>
-            <div className="Exchange-info-row PositionSeller-receive-row top-line">
-              <div className="Exchange-info-label">
-                Receive
-              </div>
-
-              {!isSwapAllowed && receiveToken && (
-                <div className="align-right PositionSelector-selected-receive-token">
-                  {formatAmount(convertedReceiveAmount, receiveToken.decimals, 4, true)}&nbsp;{receiveToken.symbol} ($
-                  {formatAmount(receiveAmount, USD_DECIMALS, 2, true)})
-                </div>
-              )}
-
-              {isSwapAllowed && receiveToken && (
-                <div className="align-right">
-                  <TokenSelector
-                    // Scroll lock lead to side effects
-                    // if it applied on modal inside another modal
-                    disableBodyScrollLock={true}
-                    className={cx("PositionSeller-token-selector", {
-                      warning: isNotEnoughReceiveTokenLiquidity || isCollateralPoolCapacityExceeded,
-                    })}
-                    label={"Receive"}
-                    showBalances={false}
-                    chainId={chainId}
-                    tokenAddress={receiveToken.address}
-                    onSelectToken={(token) => {
-                      setSwapToToken(token);
-                      setSavedReceiveTokenAddress(token.address);
-                    }}
-                    tokens={toTokens}
-                    getTokenState={(tokenOptionInfo) => {
-                      if (!shouldSwap(collateralToken, tokenOptionInfo)) {
-                        return;
-                      }
-
-                      const convertedTokenAmount = getTokenAmountFromUsd(
-                        infoTokens,
-                        tokenOptionInfo.address,
-                        receiveAmount
-                      );
-
-                      const isNotEnoughLiquidity =
-                        tokenOptionInfo.availableAmount.lt(convertedTokenAmount) ||
-                        tokenOptionInfo.bufferAmount.gt(tokenOptionInfo.poolAmount.sub(convertedTokenAmount));
-
-                      if (isNotEnoughLiquidity) {
-                        const { maxIn, maxOut, maxInUsd, maxOutUsd } = getSwapLimits(
-                          infoTokens,
-                          collateralToken.address,
-                          tokenOptionInfo.address
-                        );
-
-                        const collateralInfo = getTokenInfo(infoTokens, collateralToken.address);
-
-                        return {
-                          disabled: true,
-                          message: (
-                            <div>
-                              Insufficient Available Liquidity to swap to {tokenOptionInfo.symbol}:
-                              <br />
-                              <br />
-                              <TooltipRow
-                                label={`Max ${collateralInfo.symbol} in`}
-                                value={[
-                                  `${formatAmount(maxIn, collateralInfo.decimals, 0, true)} ${collateralInfo.symbol}`,
-                                  `($${formatAmount(maxInUsd, USD_DECIMALS, 0, true)})`,
-                                ]}
-                              />
-                              <br />
-                              <br />
-                              Max {tokenOptionInfo.symbol} out:{" "}
-                              {formatAmount(maxOut, tokenOptionInfo.decimals, 2, true)} {tokenOptionInfo.symbol}
-                              <br />
-                              (${formatAmount(maxOutUsd, USD_DECIMALS, 2, true)})
-                            </div>
-                          ),
-                        };
-                      }
-                    }}
-                    infoTokens={infoTokens}
-                    showTokenImgInDropdown={true}
-                    selectedTokenLabel={
-                      <span className="PositionSelector-selected-receive-token">
-                        {formatAmount(convertedReceiveAmount, receiveToken.decimals, 4, true)}&nbsp;
-                        {receiveToken.symbol} (${formatAmount(receiveAmount, USD_DECIMALS, 2, true)})
-                      </span>
-                    }
-                  />
-                </div>
-              )}
             </div>
           </div>
           <div className="Exchange-swap-button-container">
