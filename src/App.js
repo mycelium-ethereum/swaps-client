@@ -14,10 +14,13 @@ import { useAnalytics } from "./segmentAnalytics";
 import { getTokens, getWhitelistedTokens } from "./data/Tokens";
 
 import {
+  SLIPPAGE_BPS_KEY
+} from './config/localstorage';
+
+import {
   ARBITRUM,
   AVALANCHE,
   DEFAULT_SLIPPAGE_AMOUNT,
-  SLIPPAGE_BPS_KEY,
   IS_PNL_IN_LEVERAGE_KEY,
   SHOW_PNL_AFTER_FEES_KEY,
   BASIS_POINTS_DIVISOR,
