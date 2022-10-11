@@ -1293,7 +1293,7 @@ export default function PositionSeller(props) {
                       <br />
 
                       <div className="PositionSeller-fee-item">
-                        <a href="https://gmxio.gitbook.io/gmx/trading#fees" target="_blank" rel="noopener noreferrer">
+                        <a href="https://swaps.docs.mycelium.xyz/protocol-design/trading/fees" target="_blank" rel="noopener noreferrer">
                           More Info
                         </a>{" "}
                         about fees.
