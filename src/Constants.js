@@ -1,6 +1,6 @@
 import { ethers } from "ethers";
 
-import { ARBITRUM, AVALANCHE, ARBITRUM_GOERLI } from "./Helpers";
+import { ARBITRUM, ARBITRUM_GOERLI } from "./Helpers";
 
 const { parseEther } = ethers.utils;
 
@@ -31,20 +31,6 @@ const constants = {
     INCREASE_ORDER_EXECUTION_GAS_FEE: parseEther("0.0003"),
     // contract requires that execution fee be strictly greater than instead of gte
     DECREASE_ORDER_EXECUTION_GAS_FEE: parseEther("0.000300001"),
-  },
-
-  [AVALANCHE]: {
-    nativeTokenSymbol: "AVAX",
-    wrappedTokenSymbol: "WAVAX",
-    defaultCollateralSymbol: "MIM",
-    defaultFlagOrdersEnabled: true,
-    positionReaderPropsLength: 9,
-    v2: true,
-
-    SWAP_ORDER_EXECUTION_GAS_FEE: parseEther("0.01"),
-    INCREASE_ORDER_EXECUTION_GAS_FEE: parseEther("0.01"),
-    // contract requires that execution fee be strictly greater than instead of gte
-    DECREASE_ORDER_EXECUTION_GAS_FEE: parseEther("0.0100001"),
   },
 };
 

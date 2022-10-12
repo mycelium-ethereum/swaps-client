@@ -846,6 +846,8 @@ export const Exchange = forwardRef((props, ref) => {
             orders={orders}
             showPnlAfterFees={savedShowPnlAfterFees}
             trackAction={trackAction}
+            usdgSupply={usdgSupply}
+            totalTokenWeights={totalTokenWeights}
           />
         )}
         {listSection === "Orders" && (

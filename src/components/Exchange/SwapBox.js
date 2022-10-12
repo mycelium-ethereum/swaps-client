@@ -3,7 +3,6 @@ import React, { useState, useEffect, useMemo, useCallback } from "react";
 import Tooltip from "../Tooltip/Tooltip";
 import Modal from "../Modal/Modal";
 
-import cx from "classnames";
 import useSWR from "swr";
 import { ethers } from "ethers";
 
@@ -14,8 +13,6 @@ import {
   helperToast,
   formatAmount,
   bigNumberify,
-  ARBITRUM,
-  AVALANCHE,
   USD_DECIMALS,
   USDG_DECIMALS,
   LONG,
@@ -57,7 +54,6 @@ import {
   calculatePositionDelta,
   replaceNativeTokenAddress,
   adjustForDecimals,
-  REFERRAL_CODE_KEY,
   isHashZero,
   NETWORK_NAME,
   getSpread,
@@ -84,6 +80,7 @@ import shortImg from "../../img/short.svg";
 import swapImg from "../../img/swap.svg";
 import { useUserReferralCode } from "../../Api/referrals";
 import { LeverageInput } from "./LeverageInput";
+import { REFERRAL_CODE_KEY } from "../../config/localstorage";
 
 const SWAP_ICONS = {
   [LONG]: longImg,
@@ -180,16 +177,6 @@ export default function SwapBox(props) {
   const isLong = swapOption === LONG;
   const isShort = swapOption === SHORT;
   const isSwap = swapOption === SWAP;
-
-  const getLeaderboardLink = () => {
-    if (chainId === ARBITRUM) {
-      return "https://www.gmx.house/arbitrum/leaderboard";
-    }
-    if (chainId === AVALANCHE) {
-      return "https://www.gmx.house/avalanche/leaderboard";
-    }
-    return "https://www.gmx.house";
-  };
 
   function getTokenLabel() {
     switch (true) {
@@ -1698,16 +1685,6 @@ export default function SwapBox(props) {
     }
     feeBps = feeBasisPoints;
   }
-
-  const leverageMarks = { 
-    2: "2x",
-    5: "5x",
-    10: "10x",
-    15: "15x",
-    20: "20x",
-    25: "25x",
-    30: "30x",
-  };
 
   if (!fromToken || !toToken) {
     return null;

@@ -65,7 +65,7 @@ function fillGaps(prices, periodSeconds) {
 }
 
 async function getChartPricesFromStats(_chainId, symbol, period) {
-  if (["WBTC", "WETH", "WAVAX"].includes(symbol)) {
+  if (["WBTC", "WETH"].includes(symbol)) {
     symbol = symbol.substr(1);
   }
   const hostname = "https://swaps-stats-kltusqhvaa-uw.a.run.app/";
@@ -175,7 +175,7 @@ function getCandlesFromPrices(prices, period) {
 }
 
 function getChainlinkChartPricesFromGraph(tokenSymbol, period) {
-  if (["WBTC", "WETH", "WAVAX"].includes(tokenSymbol)) {
+  if (["WBTC", "WETH"].includes(tokenSymbol)) {
     tokenSymbol = tokenSymbol.substr(1);
   }
   const marketName = tokenSymbol + "_USD";

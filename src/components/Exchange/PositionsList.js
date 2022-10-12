@@ -85,6 +85,8 @@ export default function PositionsList(props) {
     showPnlAfterFees,
     setMarket,
     trackAction,
+    usdgSupply,
+    totalTokenWeights,
   } = props;
 
   const [positionToEditKey, setPositionToEditKey] = useState(undefined);
@@ -177,6 +179,8 @@ export default function PositionsList(props) {
           isHigherSlippageAllowed={isHigherSlippageAllowed}
           setIsHigherSlippageAllowed={setIsHigherSlippageAllowed}
           trackAction={trackAction}
+          usdgSupply={usdgSupply}
+          totalTokenWeights={totalTokenWeights}
         />
       )}
       {positions && (

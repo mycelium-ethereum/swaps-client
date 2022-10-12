@@ -58,10 +58,8 @@ import "./DashboardV2.css";
 
 import mycToken from "../../img/ic_myc.svg";
 import mlp40Icon from "../../img/ic_mlp_40.svg";
-import avalanche16Icon from "../../img/ic_avalanche_16.svg";
 import arbitrum16Icon from "../../img/ic_arbitrum_16.svg";
 import arbitrum24Icon from "../../img/ic_arbitrum_24.svg";
-import avalanche24Icon from "../../img/ic_avalanche_24.svg";
 
 import AssetDropdown from "./AssetDropdown";
 import SEO from "../../components/Common/SEO";
@@ -640,8 +638,6 @@ export default function DashboardV2() {
                             renderContent={() => (
                               <>
                                 Staked on Arbitrum: {formatAmount(arbitrumStakedMyc, MYC_DECIMALS, 0, true)} MYC
-                                <br />
-                                Staked on Avalanche: {formatAmount(avaxStakedMyc, MYC_DECIMALS, 0, true)} MYC
                               </>
                             )}
                           />

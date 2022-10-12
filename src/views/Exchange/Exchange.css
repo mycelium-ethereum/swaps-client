@@ -519,6 +519,12 @@ table.Exchange-list th {
   padding-top: 1rem;
 }
 
+.Exchange-info-row.bottom-line {
+  border-bottom: 1px solid var(--cell-stroke);
+  margin-bottom: 1rem;
+  padding-bottom: 1rem;
+}
+
 .Exchange-info-label-button {
   cursor: pointer;
 }
