@@ -47,7 +47,6 @@ const CHAIN_NAMES_MAP = {
   [TESTNET]: "BSC Testnet",
   [ARBITRUM_GOERLI]: "Testnet",
   [ARBITRUM]: "Arbitrum",
-  [AVALANCHE]: "Avalanche",
 };
 
 const GAS_PRICE_ADJUSTMENT_MAP = {
