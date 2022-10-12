@@ -25,7 +25,6 @@ import {
   MLP_DECIMALS,
   BASIS_POINTS_DIVISOR,
   ARBITRUM,
-  AVALANCHE,
   MLP_POOL_COLORS,
   DEFAULT_MAX_USDG_AMOUNT,
   getPageTitle,
@@ -465,8 +464,7 @@ export default function DashboardV2() {
         <div className="section-title-block">
           <div className="section-title-content">
             <div className="Page-title">
-              Stats {chainId === AVALANCHE && <img src={avalanche24Icon} alt="avalanche24Icon" />}
-              {(chainId === ARBITRUM || chainId === ARBITRUM_GOERLI) && (
+              Stats {(chainId === ARBITRUM || chainId === ARBITRUM_GOERLI) && (
                 <img src={arbitrum24Icon} alt="arbitrum24Icon" />
               )}
             </div>
@@ -569,8 +567,7 @@ export default function DashboardV2() {
           </div>
           <div className="Tab-title-section">
             <div className="Page-title">
-              Tokens {chainId === AVALANCHE && <img src={avalanche24Icon} alt="avalanche24Icon" />}
-              {chainId === ARBITRUM && <img src={arbitrum24Icon} alt="arbitrum24Icon" />}
+              Tokens {chainId === ARBITRUM && <img src={arbitrum24Icon} alt="arbitrum24Icon" />}
             </div>
             <div className="Page-description">Platform and MLP index tokens.</div>
           </div>
@@ -816,8 +813,7 @@ export default function DashboardV2() {
             </div>
             <div className="token-table-wrapper App-card">
               <div className="App-card-title">
-                MLP Index Composition {chainId === AVALANCHE && <img src={avalanche16Icon} alt="avalanche16Icon" />}
-                {chainId === ARBITRUM && <img src={arbitrum16Icon} alt="arbitrum16Icon" />}
+                MLP Index Composition {chainId === ARBITRUM && <img src={arbitrum16Icon} alt="arbitrum16Icon" />}
               </div>
               <div className="App-card-divider"></div>
               <table className="token-table">

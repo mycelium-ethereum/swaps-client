@@ -28,9 +28,6 @@ export const UI_VERSION = "1.3";
 // use a random placeholder account instead of the zero address as the zero address might have tokens
 export const PLACEHOLDER_ACCOUNT = ethers.Wallet.createRandom().address;
 
-export const MAINNET = 56;
-export const AVALANCHE = 43114;
-export const TESTNET = 97;
 export const ETHEREUM = 1;
 export const ARBITRUM_GOERLI = 421613;
 export const ARBITRUM = 42161;
@@ -43,24 +40,27 @@ export const MIN_PROFIT_TIME = 0;
 const SELECTED_NETWORK_LOCAL_STORAGE_KEY = "SELECTED_NETWORK";
 
 const CHAIN_NAMES_MAP = {
-  [MAINNET]: "BSC",
-  [TESTNET]: "BSC Testnet",
   [ARBITRUM_GOERLI]: "Testnet",
   [ARBITRUM]: "Arbitrum",
-  [AVALANCHE]: "Avalanche",
 };
 
 const GAS_PRICE_ADJUSTMENT_MAP = {
   [ARBITRUM]: "0",
-  [AVALANCHE]: "3000000000", // 3 gwei
 };
 
 const MAX_GAS_PRICE_MAP = {
-  [AVALANCHE]: "200000000000", // 200 gwei
 };
 
-const alchemyWhitelistedDomains = ["swaps.mycelium.xyz"];
+const alchemyWhitelistedDomains = [
+  "swaps.mycelium.xyz"
+];
 
+export function getFallbackArbitrumRpcUrl(useWebsocket) {
+  if (useWebsocket) {
+    return "wss://arb1.arbitrum.io/ws";
+  }
+  return "https://arb1.arbitrum.io/rpc";
+}
 export function getDefaultArbitrumRpcUrl(useWebsocket) {
   if (alchemyWhitelistedDomains.includes(window.location.host)) {
     if (useWebsocket) {
@@ -68,16 +68,28 @@ export function getDefaultArbitrumRpcUrl(useWebsocket) {
     }
     return "https://arb-mainnet.g.alchemy.com/v2/SKz5SvTuqIVjE38XsFsy0McZbgfFPOng";
   }
+  return  getFallbackArbitrumRpcUrl(useWebsocket)
+}
+
+export function getFallbackArbitrumGoerliRpcUrl(useWebsocket) {
   if (useWebsocket) {
-    return "wss://arb1.arbitrum.io/ws";
+    return "https://goerli-rollup.arbitrum.io/rpc";
   }
-  return "https://arb1.arbitrum.io/rpc";
+  return "https://goerli-rollup.arbitrum.io/rpc";
+}
+export function getDefaultArbitrumGoerliRpcUrl(useWebsocket) {
+  if (alchemyWhitelistedDomains.includes(window.location.host)) {
+    if (useWebsocket) {
+      return "wss://arb-goerli.g.alchemy.com/v2/sI8AlA8NGlqAZR_28jfPm9JPQQqmsN4U";
+    }
+    return "https://arb-goerli.g.alchemy.com/v2/sI8AlA8NGlqAZR_28jfPm9JPQQqmsN4U";
+  }
+  return getFallbackArbitrumGoerliRpcUrl(useWebsocket);
 }
 
 const ETHEREUM_RPC_PROVIDERS = ["https://cloudflare-eth.com"];
 const ARBITRUM_RPC_PROVIDERS = [getDefaultArbitrumRpcUrl()];
-const ARBITRUM_GOERLI_RPC_PROVIDERS = ["https://goerli-rollup.arbitrum.io/rpc/"];
-const AVALANCHE_RPC_PROVIDERS = ["https://avax-mainnet.gateway.pokt.network/v1/lb/626f37766c499d003aada23b"];
+const ARBITRUM_GOERLI_RPC_PROVIDERS = [getDefaultArbitrumGoerliRpcUrl()];
 export const WALLET_CONNECT_LOCALSTORAGE_KEY = "walletconnect";
 export const WALLET_LINK_LOCALSTORAGE_PREFIX = "-walletlink";
 export const SHOULD_EAGER_CONNECT_LOCALSTORAGE_KEY = "eagerconnect";
@@ -347,30 +359,6 @@ export const platformTokens = {
       imageUrl: `${window?.location?.origin}/icons/ic_mlp_custom.svg`,
     },
   },
-  43114: {
-    // avalanche
-    TCR: {
-      name: "TCR",
-      symbol: "TCR",
-      decimals: 18,
-      address: getContract(ARBITRUM, "TCR"),
-      imageUrl: `${window?.location?.origin}/icons/ic_tcr_40.svg`,
-    },
-    MLP: {
-      name: "MYC LP",
-      symbol: "MLP",
-      decimals: 18,
-      address: getContract(ARBITRUM, "StakedMlpTracker"), // address of fsMLP token because user only holds fsMLP
-      imageUrl: `${window?.location?.origin}/icons/ic_mlp_custom.svg`,
-    },
-    MYC: {
-      name: "MYC",
-      symbol: "MYC",
-      decimals: 18,
-      address: getContract(AVALANCHE, "MYC"),
-      imageUrl: `${window?.location?.origin}/icons/ic_myc_custom.svg`,
-    },
-  },
 };
 
 export const networkOptions = [
@@ -551,15 +539,11 @@ export function getServerBaseUrl(chainId) {
       return fromLocalStorage;
     }
   }
-  if (chainId === MAINNET) {
-    return "https://gambit-server-staging.uc.r.appspot.com";
-  } else if (chainId === ARBITRUM_GOERLI) {
+  if (chainId === ARBITRUM_GOERLI) {
     // return "https://gambit-l2.as.r.appspot.com";
     return "https://gmx-server-mainnet.uw.r.appspot.com";
   } else if (chainId === ARBITRUM) {
     return "https://gmx-server-mainnet.uw.r.appspot.com";
-  } else if (chainId === AVALANCHE) {
-    return "https://gmx-avax-server.uc.r.appspot.com";
   }
   return "https://gmx-server-mainnet.uw.r.appspot.com";
 }
@@ -1386,44 +1370,15 @@ export function getSwapFeeBasisPoints(isStable) {
   return isStable ? STABLE_SWAP_FEE_BASIS_POINTS : SWAP_FEE_BASIS_POINTS;
 }
 
-// BSC TESTNET
-// const RPC_PROVIDERS = [
-//   "https://data-seed-prebsc-1-s1.binance.org:8545",
-//   "https://data-seed-prebsc-2-s1.binance.org:8545",
-//   "https://data-seed-prebsc-1-s2.binance.org:8545",
-//   "https://data-seed-prebsc-2-s2.binance.org:8545",
-//   "https://data-seed-prebsc-1-s3.binance.org:8545",
-//   "https://data-seed-prebsc-2-s3.binance.org:8545"
-// ]
-
-// BSC MAINNET
-export const BSC_RPC_PROVIDERS = [
-  "https://bsc-dataseed.binance.org",
-  "https://bsc-dataseed1.defibit.io",
-  "https://bsc-dataseed1.ninicoin.io",
-  "https://bsc-dataseed2.defibit.io",
-  "https://bsc-dataseed3.defibit.io",
-  "https://bsc-dataseed4.defibit.io",
-  "https://bsc-dataseed2.ninicoin.io",
-  "https://bsc-dataseed3.ninicoin.io",
-  "https://bsc-dataseed4.ninicoin.io",
-  "https://bsc-dataseed1.binance.org",
-  "https://bsc-dataseed2.binance.org",
-  "https://bsc-dataseed3.binance.org",
-  "https://bsc-dataseed4.binance.org",
-];
-
 const RPC_PROVIDERS = {
   [ETHEREUM]: ETHEREUM_RPC_PROVIDERS,
-  [MAINNET]: BSC_RPC_PROVIDERS,
   [ARBITRUM]: ARBITRUM_RPC_PROVIDERS,
   [ARBITRUM_GOERLI]: ARBITRUM_GOERLI_RPC_PROVIDERS,
-  [AVALANCHE]: AVALANCHE_RPC_PROVIDERS,
 };
 
 const FALLBACK_PROVIDERS = {
-  [ARBITRUM]: ["https://arb-mainnet.g.alchemy.com/v2/SKz5SvTuqIVjE38XsFsy0McZbgfFPOng"],
-  [AVALANCHE]: ["https://avax-mainnet.gateway.pokt.network/v1/lb/626f37766c499d003aada23b"],
+  [ARBITRUM]: [getFallbackArbitrumRpcUrl()],
+  [ARBITRUM_GOERLI]: [getFallbackArbitrumGoerliRpcUrl()],
 };
 
 export function shortenAddress(address, length) {
@@ -2097,16 +2052,10 @@ export function getExplorerUrl(chainId) {
     return "https://ropsten.etherscan.io/";
   } else if (chainId === 42) {
     return "https://kovan.etherscan.io/";
-  } else if (chainId === MAINNET) {
-    return "https://bscscan.com/";
-  } else if (chainId === TESTNET) {
-    return "https://testnet.bscscan.com/";
   } else if (chainId === ARBITRUM_GOERLI) {
     return "https://goerli-rollup-explorer.arbitrum.io/";
   } else if (chainId === ARBITRUM) {
     return "https://arbiscan.io/";
-  } else if (chainId === AVALANCHE) {
-    return "https://snowtrace.io/";
   }
   return "https://etherscan.io/";
 }
@@ -2266,28 +2215,6 @@ export const getTokenInfo = (infoTokens, tokenAddress, replaceNative, nativeToke
 };
 
 const NETWORK_METADATA = {
-  [MAINNET]: {
-    chainId: "0x" + MAINNET.toString(16),
-    chainName: "BSC",
-    nativeCurrency: {
-      name: "BNB",
-      symbol: "BNB",
-      decimals: 18,
-    },
-    rpcUrls: BSC_RPC_PROVIDERS,
-    blockExplorerUrls: ["https://bscscan.com"],
-  },
-  [TESTNET]: {
-    chainId: "0x" + TESTNET.toString(16),
-    chainName: "BSC Testnet",
-    nativeCurrency: {
-      name: "BNB",
-      symbol: "BNB",
-      decimals: 18,
-    },
-    rpcUrls: ["https://data-seed-prebsc-1-s1.binance.org:8545/"],
-    blockExplorerUrls: ["https://testnet.bscscan.com/"],
-  },
   [ARBITRUM_GOERLI]: {
     chainId: "0x" + ARBITRUM_GOERLI.toString(16),
     chainName: "Arbitrum Goerli",
@@ -2310,21 +2237,6 @@ const NETWORK_METADATA = {
     rpcUrls: ARBITRUM_RPC_PROVIDERS,
     blockExplorerUrls: [getExplorerUrl(ARBITRUM)],
   },
-  [AVALANCHE]: {
-    chainId: "0x" + AVALANCHE.toString(16),
-    chainName: "Avalanche",
-    nativeCurrency: {
-      name: "AVAX",
-      symbol: "AVAX",
-      decimals: 18,
-    },
-    rpcUrls: AVALANCHE_RPC_PROVIDERS,
-    blockExplorerUrls: [getExplorerUrl(AVALANCHE)],
-  },
-};
-
-export const addBscNetwork = async () => {
-  return addNetwork(NETWORK_METADATA[MAINNET]);
 };
 
 export const addNetwork = async (metadata) => {

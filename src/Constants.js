@@ -1,26 +1,10 @@
 import { ethers } from "ethers";
 
-import { MAINNET, TESTNET, ARBITRUM, AVALANCHE, ARBITRUM_GOERLI } from "./Helpers";
+import { ARBITRUM, AVALANCHE, ARBITRUM_GOERLI } from "./Helpers";
 
 const { parseEther } = ethers.utils;
 
 const constants = {
-  [MAINNET]: {
-    nativeTokenSymbol: "BNB",
-    defaultCollateralSymbol: "BUSD",
-    defaultFlagOrdersEnabled: false,
-    positionReaderPropsLength: 8,
-    v2: false,
-  },
-
-  [TESTNET]: {
-    nativeTokenSymbol: "BNB",
-    defaultCollateralSymbol: "BUSD",
-    defaultFlagOrdersEnabled: true,
-    positionReaderPropsLength: 8,
-    v2: false,
-  },
-
   [ARBITRUM_GOERLI]: {
     nativeTokenSymbol: "ETH",
     wrappedTokenSymbol: "WETH",

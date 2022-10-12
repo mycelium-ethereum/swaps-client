@@ -18,7 +18,6 @@ import { getContract } from "../Addresses";
 import { getConstant } from "../Constants";
 import {
   ARBITRUM,
-  AVALANCHE,
   ETHEREUM,
   bigNumberify,
   getExplorerUrl,
@@ -629,40 +628,6 @@ export function useTrades(chainId, account) {
   return { trades, updateTrades };
 }
 
-export function useStakedMycSupply(library, active) {
-  const mycAddressArb = getContract(ARBITRUM, "MYC");
-  const stakedMycTrackerAddressArb = getContract(ARBITRUM, "StakedMycTracker");
-
-  const { data: arbData, mutate: arbMutate } = useSWR(
-    [`StakeV2:stakedMycSupply:${active}`, ARBITRUM, mycAddressArb, "balanceOf", stakedMycTrackerAddressArb],
-    {
-      fetcher: fetcher(library, Token),
-    }
-  );
-
-  const mycAddressAvax = getContract(AVALANCHE, "MYC");
-  const stakedMycTrackerAddressAvax = getContract(AVALANCHE, "StakedMycTracker");
-
-  const { data: avaxData, mutate: avaxMutate } = useSWR(
-    [`StakeV2:stakedMycSupply:${active}`, AVALANCHE, mycAddressAvax, "balanceOf", stakedMycTrackerAddressAvax],
-    {
-      fetcher: fetcher(undefined, Token),
-    }
-  );
-
-  let data;
-  if (arbData && avaxData) {
-    data = arbData.add(avaxData);
-  }
-
-  const mutate = () => {
-    arbMutate();
-    avaxMutate();
-  };
-
-  return { data, mutate };
-}
-
 export function useHasOutdatedUi() {
   return { data: false };
 }
@@ -707,53 +672,6 @@ export function useTotalMYCSupply() {
   return {
     total: mycSupply ? bigNumberify(ethers.utils.parseUnits(mycSupply, 18)) : undefined,
     circulating: circulatingMycSupply ? bigNumberify(ethers.utils.parseUnits(circulatingMycSupply, 18)) : undefined,
-    mutate,
-  };
-}
-
-export function useTotalMycStaked() {
-  const stakedMycTrackerAddressArbitrum = getContract(ARBITRUM, "StakedMycTracker");
-  const stakedMycTrackerAddressAvax = getContract(AVALANCHE, "StakedMycTracker");
-  let totalStakedMyc = useRef(bigNumberify(0));
-  const { data: stakedMycSupplyArbitrum, mutate: updateStakedMycSupplyArbitrum } = useSWR(
-    [
-      `StakeV2:stakedMycSupply:${ARBITRUM}`,
-      ARBITRUM,
-      getContract(ARBITRUM, "MYC"),
-      "balanceOf",
-      stakedMycTrackerAddressArbitrum,
-    ],
-    {
-      fetcher: fetcher(undefined, Token),
-    }
-  );
-  const { data: stakedMycSupplyAvax, mutate: updateStakedMycSupplyAvax } = useSWR(
-    [
-      `StakeV2:stakedMycSupply:${AVALANCHE}`,
-      AVALANCHE,
-      getContract(AVALANCHE, "MYC"),
-      "balanceOf",
-      stakedMycTrackerAddressAvax,
-    ],
-    {
-      fetcher: fetcher(undefined, Token),
-    }
-  );
-
-  const mutate = useCallback(() => {
-    updateStakedMycSupplyArbitrum();
-    updateStakedMycSupplyAvax();
-  }, [updateStakedMycSupplyArbitrum, updateStakedMycSupplyAvax]);
-
-  if (stakedMycSupplyArbitrum && stakedMycSupplyAvax) {
-    let total = bigNumberify(stakedMycSupplyArbitrum).add(stakedMycSupplyAvax);
-    totalStakedMyc.current = total;
-  }
-
-  return {
-    avax: stakedMycSupplyAvax,
-    arbitrum: stakedMycSupplyArbitrum,
-    total: totalStakedMyc.current,
     mutate,
   };
 }
