@@ -11,6 +11,7 @@ import { Switch, Route, NavLink } from "react-router-dom";
 
 import { ThemeProvider } from "@tracer-protocol/tracer-ui";
 import { useSegmentAnalytics } from "./segmentAnalytics";
+import { useGoogleAnalytics } from "./googleAnalytics";
 import { getTokens, getWhitelistedTokens } from "./data/Tokens";
 
 import {
@@ -391,6 +392,7 @@ function AppHeaderUser({
 function FullApp() {
   const [sidebarVisible, setSidebarVisible] = useState(false);
   const [loggedInTracked, setLoggedInTracked] = useState(false);
+  useGoogleAnalytics();
   const { trackLogin, trackPageWithTraits, trackAction, analytics } = useSegmentAnalytics();
 
   const exchangeRef = useRef();
