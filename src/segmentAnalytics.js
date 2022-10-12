@@ -24,7 +24,7 @@ const IGNORE_IP_CONTEXT = {
   },
 };
 
-export const useAnalytics = () => {
+export const useSegmentAnalytics = () => {
   const { account } = useWeb3React();
   const location = useLocation();
   const [analytics, setAnalytics] = useState(undefined);

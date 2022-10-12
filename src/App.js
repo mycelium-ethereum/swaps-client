@@ -10,7 +10,7 @@ import { Web3Provider } from "@ethersproject/providers";
 import { Switch, Route, NavLink } from "react-router-dom";
 
 import { ThemeProvider } from "@tracer-protocol/tracer-ui";
-import { useAnalytics } from "./segmentAnalytics";
+import { useSegmentAnalytics } from "./segmentAnalytics";
 import { getTokens, getWhitelistedTokens } from "./data/Tokens";
 
 import {
@@ -22,7 +22,7 @@ import {
   REFERRAL_CODE_QUERY_PARAMS,
   SHOULD_EAGER_CONNECT_LOCALSTORAGE_KEY,
   CURRENT_PROVIDER_LOCALSTORAGE_KEY,
-} from './config/localstorage';
+} from "./config/localstorage";
 
 import {
   ARBITRUM,
@@ -391,7 +391,7 @@ function AppHeaderUser({
 function FullApp() {
   const [sidebarVisible, setSidebarVisible] = useState(false);
   const [loggedInTracked, setLoggedInTracked] = useState(false);
-  const { trackLogin, trackPageWithTraits, trackAction, analytics } = useAnalytics();
+  const { trackLogin, trackPageWithTraits, trackAction, analytics } = useSegmentAnalytics();
 
   const exchangeRef = useRef();
   const { connector, library, deactivate, activate, active, account } = useWeb3React();
