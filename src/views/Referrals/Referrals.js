@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from "react";
 
-import { ETH_DECIMALS, expandDecimals, fetcher, getPageTitle, useChainId, useENS, REFERRALS_SELECTED_TAB_KEY, isHashZero, useLocalStorageSerializeKey, REFERRAL_CODE_KEY, bigNumberify, getTracerServerUrl, formatTimeTill, getTokenInfo } from "../../Helpers";
+import { ETH_DECIMALS, expandDecimals, fetcher, getPageTitle, useChainId, useENS, isHashZero, useLocalStorageSerializeKey, bigNumberify, getTracerServerUrl, formatTimeTill, getTokenInfo } from "../../Helpers";
 import { useWeb3React } from "@web3-react/core";
 import * as Styles from "./Referrals.styles";
 import CreateCodeModal from "./CreateCodeModal";
@@ -19,6 +19,7 @@ import { ethers } from "ethers";
 
 import FeeDistributorReader from "../../abis/FeeDistributorReader.json";
 import { getContract } from "../../Addresses";
+import { REFERRALS_SELECTED_TAB_KEY, REFERRAL_CODE_KEY } from "../../config/localstorage";
 
 const REFERRAL_DATA_MAX_TIME = 60000 * 5; // 5 minutes
 export function isRecentReferralCodeNotExpired(referralCodeInfo) {

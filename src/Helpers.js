@@ -20,6 +20,13 @@ import OrderBook from "./abis/OrderBook.json";
 import { getWhitelistedTokens, isValidToken } from "./data/Tokens";
 import ComingSoonTooltip from "./components/Tooltip/ComingSoon";
 import { isAddress } from "ethers/lib/utils";
+import { 
+  REFERRAL_CODE_QUERY_PARAMS,
+  CURRENT_PROVIDER_LOCALSTORAGE_KEY,
+  WALLET_CONNECT_LOCALSTORAGE_KEY,
+  WALLET_LINK_LOCALSTORAGE_PREFIX,
+  SHOULD_EAGER_CONNECT_LOCALSTORAGE_KEY
+} from "./config/localstorage";
 
 const { AddressZero } = ethers.constants;
 
@@ -78,10 +85,6 @@ const ETHEREUM_RPC_PROVIDERS = ["https://cloudflare-eth.com"];
 const ARBITRUM_RPC_PROVIDERS = [getDefaultArbitrumRpcUrl()];
 const ARBITRUM_TESTNET_RPC_PROVIDERS = ["https://rinkeby.arbitrum.io/rpc"];
 const AVALANCHE_RPC_PROVIDERS = ["https://avax-mainnet.gateway.pokt.network/v1/lb/626f37766c499d003aada23b"];
-export const WALLET_CONNECT_LOCALSTORAGE_KEY = "walletconnect";
-export const WALLET_LINK_LOCALSTORAGE_PREFIX = "-walletlink";
-export const SHOULD_EAGER_CONNECT_LOCALSTORAGE_KEY = "eagerconnect";
-export const CURRENT_PROVIDER_LOCALSTORAGE_KEY = "currentprovider";
 
 export function getChainName(chainId) {
   return CHAIN_NAMES_MAP[chainId];
@@ -134,13 +137,6 @@ export const SWAP_OPTIONS = [LONG, SHORT, SWAP];
 export const DEFAULT_SLIPPAGE_AMOUNT = 30;
 export const DEFAULT_HIGHER_SLIPPAGE_AMOUNT = 100;
 
-export const SLIPPAGE_BPS_KEY = "Exchange-swap-slippage-basis-points-v3";
-export const IS_PNL_IN_LEVERAGE_KEY = "Exchange-swap-is-pnl-in-leverage";
-export const SHOW_PNL_AFTER_FEES_KEY = "Exchange-swap-show-pnl-after-fees";
-export const SHOULD_SHOW_POSITION_LINES_KEY = "Exchange-swap-should-show-position-lines";
-export const REFERRAL_CODE_KEY = "MYC-referralCode";
-export const REFERRAL_CODE_QUERY_PARAMS = "ref";
-export const REFERRALS_SELECTED_TAB_KEY = "Referrals-selected-tab";
 export const MAX_REFERRAL_CODE_LENGTH = 20;
 export const REFERRAL_CODE_REGEX = /^\w+$/; // only number, string and underscore is allowed
 export const TIER_REBATE_INFO = {

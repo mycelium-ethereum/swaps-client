@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { AnalyticsBrowser } from "@segment/analytics-next";
 import { useLocation } from "react-router-dom";
-import { NETWORK_NAME, CURRENT_PROVIDER_LOCALSTORAGE_KEY, hasUserConsented } from "./Helpers";
+import { NETWORK_NAME, hasUserConsented } from "./Helpers";
 import { useWeb3React } from "@web3-react/core";
 import platform from "platform";
 import {
@@ -13,6 +13,7 @@ import {
   getUrlParameters,
   getWindowFeatures,
 } from "./Helpers";
+import { CURRENT_PROVIDER_LOCALSTORAGE_KEY } from "./config/localstorage";
 
 const writeKey = process.env.REACT_APP_SEGMENT_WRITE_KEY;
 const customTrackPages = ["/", "/buy_mlp", "/rewards"]; //These pages are tracked through trackPageWithTraits() separately
