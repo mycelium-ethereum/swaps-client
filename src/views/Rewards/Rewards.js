@@ -70,12 +70,14 @@ export default function Rewards(props) {
   const feeDistributorReader = getContract(chainId, "FeeDistributorReader");
 
   // Fetch all round data from server
-  const { data: allRoundsRewardsData, error: failedFetchingRewards } = useSWR(
+  const { data: allRoundsRewardsData_, error: failedFetchingRewards } = useSWR(
     [getTracerServerUrl(chainId, "/tradingRewards")],
     {
       fetcher: (...args) => fetch(...args).then((res) => res.json()),
     }
   );
+
+  const allRoundsRewardsData = Array.isArray(allRoundsRewardsData_) ? allRoundsRewardsData_ : undefined;
 
   // Fetch only the latest round's data from server
   const { data: currentRewardRound, error: failedFetchingRoundRewards } = useSWR(

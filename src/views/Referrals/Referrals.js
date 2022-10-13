@@ -82,9 +82,11 @@ export default function Referral(props) {
   const feeDistributorReader = getContract(chainId, "FeeDistributorReader");
 
   // Fetch all week data from server
-  const { data: allRoundsRewardsData, error: failedFetchingRewards } = useSWR([getTracerServerUrl(chainId, "/referralRewards")], {
+  const { data: allRoundsRewardsData_, error: failedFetchingRewards } = useSWR([getTracerServerUrl(chainId, "/referralRewards")], {
     fetcher: (...args) => fetch(...args).then((res) => res.json()),
   });
+
+  const allRoundsRewardsData = Array.isArray(allRoundsRewardsData_) ? allRoundsRewardsData_ : undefined;
 
   // Fetch only the latest week's data from server
   const { data: currentRewardRound, error: failedFetchingRoundRewards } = useSWR(

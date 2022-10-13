@@ -56,8 +56,8 @@ const CONTRACTS = {
     ReferralReader: "0x27ec154C4D6e496027FBED863aC7a0186942Cc09",
 
     // TODO: Change these once deployed
-    // FeeDistributor: "0x057B99E0112A0D9fDA7503bDc8b6995fA2ff997D",
-    // FeeDistributorReader: "0x55ce0A81b697f1eff846e8a56D3f303A5BE490b1",
+    FeeDistributor: "0x057B99E0112A0D9fDA7503bDc8b6995fA2ff997D",
+    FeeDistributorReader: "0x55ce0A81b697f1eff846e8a56D3f303A5BE490b1",
   },
   42161: {
     // arbitrum mainnet
