@@ -6,15 +6,12 @@ import { createChart } from "krasulya-lightweight-charts";
 import {
   USD_DECIMALS,
   SWAP,
-  CHART_PERIODS,
   formatAmount,
   formatDateTime,
-  useLocalStorageSerializeKey,
 } from "../../Helpers";
 import { useMlpPrices } from "../../Api";
 
 import { getTokens } from "../../data/Tokens";
-import { ethers } from "ethers";
 
 const timezoneOffset = -new Date().getTimezoneOffset() * 60;
 
@@ -49,8 +46,6 @@ export function getChartToken(swapOption, fromToken, toToken, chainId) {
 
   return toToken;
 }
-
-const DEFAULT_PERIOD = "4h";
 
 const getSeriesOptions = () => ({
   // https://github.com/tradingview/lightweight-charts/blob/master/docs/area-series.md
@@ -136,11 +131,6 @@ export default function MlpPriceChart(props) {
   const [currentChart, setCurrentChart] = useState();
   const [currentSeries, setCurrentSeries] = useState();
 
-  let [period, setPeriod] = useLocalStorageSerializeKey([chainId, "Chart-period"], DEFAULT_PERIOD);
-  if (!(period in CHART_PERIODS)) {
-    period = DEFAULT_PERIOD;
-  }
-
   const [hoveredPoint, setHoveredPoint] = useState();
 
   const ref = useRef(null);
@@ -152,7 +142,7 @@ export default function MlpPriceChart(props) {
 
   const scaleChart = useCallback(() => {
     currentChart.timeScale().fitContent();
-  }, [currentChart, period]);
+  }, [currentChart]);
 
   const onCrosshairMove = useCallback(
     (evt) => {

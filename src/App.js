@@ -14,13 +14,21 @@ import { useAnalytics } from "./segmentAnalytics";
 import { getTokens, getWhitelistedTokens } from "./data/Tokens";
 
 import {
-  ARBITRUM,
-  DEFAULT_SLIPPAGE_AMOUNT,
   SLIPPAGE_BPS_KEY,
   IS_PNL_IN_LEVERAGE_KEY,
   SHOW_PNL_AFTER_FEES_KEY,
-  BASIS_POINTS_DIVISOR,
   SHOULD_SHOW_POSITION_LINES_KEY,
+  REFERRAL_CODE_KEY,
+  REFERRAL_CODE_QUERY_PARAMS,
+  SHOULD_EAGER_CONNECT_LOCALSTORAGE_KEY,
+  CURRENT_PROVIDER_LOCALSTORAGE_KEY,
+} from './config/localstorage';
+
+import {
+  ARBITRUM,
+  ARBITRUM_GOERLI,
+  DEFAULT_SLIPPAGE_AMOUNT,
+  BASIS_POINTS_DIVISOR,
   fetcher,
   clearWalletConnectData,
   switchNetwork,
@@ -46,17 +54,12 @@ import {
   hasChangedAccount,
   setCurrentAccount,
   networkOptions,
-  SHOULD_EAGER_CONNECT_LOCALSTORAGE_KEY,
-  CURRENT_PROVIDER_LOCALSTORAGE_KEY,
-  REFERRAL_CODE_KEY,
-  REFERRAL_CODE_QUERY_PARAMS,
   PLACEHOLDER_ACCOUNT,
   getDefaultArbitrumRpcUrl,
-  ARBITRUM_GOERLI,
 } from "./Helpers";
 import ReaderV2 from "./abis/ReaderV2.json";
 
-import Dashboard from "./views/Dashboard/Dashboard";
+import Dashboard from "./views/Dashboard/DashboardV2";
 import Stake from "./views/Stake/StakeV2";
 import { Exchange } from "./views/Exchange/Exchange";
 import Actions from "./views/Actions/Actions";
@@ -142,7 +145,6 @@ function inPreviewMode() {
 }
 
 const arbWsProvider = new ethers.providers.WebSocketProvider(getDefaultArbitrumRpcUrl(true));
-// const arbTestnetWsProvider = new ethers.providers.WebSocketProvider("wss://rinkeby.arbitrum.io/ws");
 const arbTestnetWsProvider = new ethers.providers.JsonRpcProvider("https://goerli-rollup.arbitrum.io/rpc/");
 
 function getWsProvider(active, chainId) {
@@ -1007,12 +1009,14 @@ function FullApp() {
         draggable={false}
         pauseOnHover
       />
+      {/*
       <EventModal
         isModalVisible={isEventModalVisible}
         setEventModalVisible={setEventModalVisible}
         eventKey={"new-earn-page"}
         continueLink={"/earn"}
       />
+      */}
       <EventToastContainer />
       <Modal
         className="Connect-wallet-modal"

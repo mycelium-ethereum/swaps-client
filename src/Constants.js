@@ -1,18 +1,10 @@
 import { ethers } from "ethers";
 
-import { MAINNET, TESTNET, ARBITRUM, ARBITRUM_GOERLI } from "./Helpers";
+import { ARBITRUM, ARBITRUM_GOERLI } from "./Helpers";
 
 const { parseEther } = ethers.utils;
 
 const constants = {
-  [MAINNET]: {
-    nativeTokenSymbol: "ETH",
-    defaultCollateralSymbol: "WETH",
-    defaultFlagOrdersEnabled: false,
-    positionReaderPropsLength: 8,
-    v2: false,
-  },
-
   [ARBITRUM_GOERLI]: {
     nativeTokenSymbol: "ETH",
     wrappedTokenSymbol: "WETH",

@@ -58,8 +58,8 @@ const CONTRACTS = {
     ReferralReader: "0x27ec154C4D6e496027FBED863aC7a0186942Cc09",
 
     // TODO: Change these once deployed
-    // FeeDistributor: "0x057B99E0112A0D9fDA7503bDc8b6995fA2ff997D",
-    // FeeDistributorReader: "0x55ce0A81b697f1eff846e8a56D3f303A5BE490b1",
+    FeeDistributor: "0x057B99E0112A0D9fDA7503bDc8b6995fA2ff997D",
+    FeeDistributorReader: "0x55ce0A81b697f1eff846e8a56D3f303A5BE490b1",
   },
   42161: {
     // arbitrum mainnet
@@ -122,10 +122,3 @@ export function getContract(chainId, name) {
   }
   return CONTRACTS[chainId][name];
 }
-
-export const XGMT_EXCLUDED_ACCOUNTS = [
-  "0x330eef6b9b1ea6edd620c825c9919dc8b611d5d5",
-  "0xd9b1c23411adbb984b1c4be515fafc47a12898b2",
-  "0xa633158288520807f91ccc98aa58e0ea43acb400",
-  "0xffd0a93b4362052a336a7b22494f1b77018dd34b",
-];
