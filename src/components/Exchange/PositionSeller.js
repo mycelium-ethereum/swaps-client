@@ -18,7 +18,6 @@ import {
   USD_DECIMALS,
   DUST_USD,
   BASIS_POINTS_DIVISOR,
-  USDG_ADDRESS,
   TRIGGER_PREFIX_BELOW,
   TRIGGER_PREFIX_ABOVE,
   MIN_PROFIT_TIME,
@@ -128,27 +127,6 @@ function getSwapLimits(infoTokens, fromTokenAddress, toTokenAddress) {
     maxOut,
     maxOutUsd,
   };
-}
-
-function getTokenAmount(usdAmount, tokenAddress, max, infoTokens) {
-  if (!usdAmount) {
-    return;
-  }
-  if (tokenAddress === USDG_ADDRESS) {
-    return usdAmount.mul(expandDecimals(1, 18)).div(PRECISION);
-  }
-  const info = getTokenInfo(infoTokens, tokenAddress);
-  if (!info) {
-    return;
-  }
-  if (max && !info.maxPrice) {
-    return;
-  }
-  if (!max && !info.minPrice) {
-    return;
-  }
-
-  return usdAmount.mul(expandDecimals(1, info.decimals)).div(max ? info.minPrice : info.maxPrice);
 }
 
 export default function PositionSeller(props) {
@@ -840,18 +818,6 @@ export default function PositionSeller(props) {
         </div>
       );
     }
-  }
-
-  const DECREASE_ORDER_EXECUTION_GAS_FEE = getConstant(chainId, "DECREASE_ORDER_EXECUTION_GAS_FEE");
-  function renderExecutionFee() {
-    if (orderOption !== STOP) {
-      return null;
-    }
-    return (
-      <ExchangeInfoRow label="Execution Fees">
-        {formatAmount(DECREASE_ORDER_EXECUTION_GAS_FEE, 18, 4)} {nativeTokenSymbol}
-      </ExchangeInfoRow>
-    );
   }
 
   const profitPrice = getProfitPrice(orderOption === MARKET ? position.markPrice : triggerPriceUsd, position);

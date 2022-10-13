@@ -18,8 +18,6 @@ import { getContract } from "../Addresses";
 import { getConstant } from "../Constants";
 import {
   ARBITRUM,
-  AVALANCHE,
-  ARBITRUM_TESTNET,
   ETHEREUM,
   bigNumberify,
   getExplorerUrl,
@@ -43,6 +41,7 @@ import {
   MM_SWAPS_FEE_MULTIPLIER,
   FORTNIGHTS_IN_YEAR,
   useLocalStorageSerializeKey,
+  ARBITRUM_GOERLI,
 } from "../Helpers";
 import { getTokens, getTokenBySymbol, getWhitelistedTokens } from "../data/Tokens";
 
@@ -55,7 +54,7 @@ const { AddressZero } = ethers.constants;
 function getMycGraphClient(chainId) {
   if (chainId === ARBITRUM) {
     return arbitrumGraphClient;
-  } else if (chainId === ARBITRUM_TESTNET) {
+  } else if (chainId === ARBITRUM_GOERLI) {
     return arbitrumTestnetGraphClient;
   }
   throw new Error(`Unsupported chain ${chainId}`);
@@ -186,7 +185,10 @@ export function useUserSpreadCapture(chainId, account, mlpBalance, ethPrice) {
   );
 
   // if claimed in the last 5 minutes then zero out rewards
-  const shouldZeroSpreadCapture = useMemo(() => Number(hasRecentlyClaimed) + (60 * 5 * 1000) > Date.now(), [hasRecentlyClaimed])
+  const shouldZeroSpreadCapture = useMemo(
+    () => Number(hasRecentlyClaimed) + 60 * 5 * 1000 > Date.now(),
+    [hasRecentlyClaimed]
+  );
 
   useEffect(() => {
     const query = gql(`{
@@ -198,13 +200,16 @@ export function useUserSpreadCapture(chainId, account, mlpBalance, ethPrice) {
         lastCumulativeRewardsPerToken
       }
     }`);
-    getMycGraphClient(chainId).query({ query }).then((res) => {
-      if (res.data.spreadCapture && res.data.userSpreadCapture) {
-        let cumulativeRewardsPerToken = bigNumberify(res.data.spreadCapture.cumulativeRewardsPerToken)
-        let lastCumulativeRewardsPerToken = bigNumberify(res.data.userSpreadCapture.lastCumulativeRewardsPerToken)
-        setSpreadCapturePerToken(cumulativeRewardsPerToken.sub(lastCumulativeRewardsPerToken))
-      }
-    }).catch(console.warn);
+    getMycGraphClient(chainId)
+      .query({ query })
+      .then((res) => {
+        if (res.data.spreadCapture && res.data.userSpreadCapture) {
+          let cumulativeRewardsPerToken = bigNumberify(res.data.spreadCapture.cumulativeRewardsPerToken);
+          let lastCumulativeRewardsPerToken = bigNumberify(res.data.userSpreadCapture.lastCumulativeRewardsPerToken);
+          setSpreadCapturePerToken(cumulativeRewardsPerToken.sub(lastCumulativeRewardsPerToken));
+        }
+      })
+      .catch(console.warn);
   }, [chainId, account]);
 
   let userSpreadCapture, userSpreadCaptureEth;
@@ -213,16 +218,16 @@ export function useUserSpreadCapture(chainId, account, mlpBalance, ethPrice) {
       userSpreadCapture = ethers.BigNumber.from(0);
       userSpreadCaptureEth = ethers.BigNumber.from(0);
     } else {
-      userSpreadCapture = (spreadCapturePerToken.mul(mlpBalance)).div(expandDecimals(1, 18));
-      userSpreadCaptureEth = (userSpreadCapture.mul(expandDecimals(1, 18))).div(ethPrice);
+      userSpreadCapture = spreadCapturePerToken.mul(mlpBalance).div(expandDecimals(1, 18));
+      userSpreadCaptureEth = userSpreadCapture.mul(expandDecimals(1, 18)).div(ethPrice);
     }
   }
 
-  return ({
+  return {
     userSpreadCapture,
     userSpreadCaptureEth,
-    setHasRecentlyClaimed
-  })
+    setHasRecentlyClaimed,
+  };
 }
 
 export const useMarketMakingApr = (chainId, mlpSupplyUsd) => {
@@ -623,40 +628,6 @@ export function useTrades(chainId, account) {
   return { trades, updateTrades };
 }
 
-export function useStakedMycSupply(library, active) {
-  const mycAddressArb = getContract(ARBITRUM, "MYC");
-  const stakedMycTrackerAddressArb = getContract(ARBITRUM, "StakedMycTracker");
-
-  const { data: arbData, mutate: arbMutate } = useSWR(
-    [`StakeV2:stakedMycSupply:${active}`, ARBITRUM, mycAddressArb, "balanceOf", stakedMycTrackerAddressArb],
-    {
-      fetcher: fetcher(library, Token),
-    }
-  );
-
-  const mycAddressAvax = getContract(AVALANCHE, "MYC");
-  const stakedMycTrackerAddressAvax = getContract(AVALANCHE, "StakedMycTracker");
-
-  const { data: avaxData, mutate: avaxMutate } = useSWR(
-    [`StakeV2:stakedMycSupply:${active}`, AVALANCHE, mycAddressAvax, "balanceOf", stakedMycTrackerAddressAvax],
-    {
-      fetcher: fetcher(undefined, Token),
-    }
-  );
-
-  let data;
-  if (arbData && avaxData) {
-    data = arbData.add(avaxData);
-  }
-
-  const mutate = () => {
-    arbMutate();
-    avaxMutate();
-  };
-
-  return { data, mutate };
-}
-
 export function useHasOutdatedUi() {
   return { data: false };
 }
@@ -701,53 +672,6 @@ export function useTotalMYCSupply() {
   return {
     total: mycSupply ? bigNumberify(ethers.utils.parseUnits(mycSupply, 18)) : undefined,
     circulating: circulatingMycSupply ? bigNumberify(ethers.utils.parseUnits(circulatingMycSupply, 18)) : undefined,
-    mutate,
-  };
-}
-
-export function useTotalMycStaked() {
-  const stakedMycTrackerAddressArbitrum = getContract(ARBITRUM, "StakedMycTracker");
-  const stakedMycTrackerAddressAvax = getContract(AVALANCHE, "StakedMycTracker");
-  let totalStakedMyc = useRef(bigNumberify(0));
-  const { data: stakedMycSupplyArbitrum, mutate: updateStakedMycSupplyArbitrum } = useSWR(
-    [
-      `StakeV2:stakedMycSupply:${ARBITRUM}`,
-      ARBITRUM,
-      getContract(ARBITRUM, "MYC"),
-      "balanceOf",
-      stakedMycTrackerAddressArbitrum,
-    ],
-    {
-      fetcher: fetcher(undefined, Token),
-    }
-  );
-  const { data: stakedMycSupplyAvax, mutate: updateStakedMycSupplyAvax } = useSWR(
-    [
-      `StakeV2:stakedMycSupply:${AVALANCHE}`,
-      AVALANCHE,
-      getContract(AVALANCHE, "MYC"),
-      "balanceOf",
-      stakedMycTrackerAddressAvax,
-    ],
-    {
-      fetcher: fetcher(undefined, Token),
-    }
-  );
-
-  const mutate = useCallback(() => {
-    updateStakedMycSupplyArbitrum();
-    updateStakedMycSupplyAvax();
-  }, [updateStakedMycSupplyArbitrum, updateStakedMycSupplyAvax]);
-
-  if (stakedMycSupplyArbitrum && stakedMycSupplyAvax) {
-    let total = bigNumberify(stakedMycSupplyArbitrum).add(stakedMycSupplyAvax);
-    totalStakedMyc.current = total;
-  }
-
-  return {
-    avax: stakedMycSupplyAvax,
-    arbitrum: stakedMycSupplyArbitrum,
-    total: totalStakedMyc.current,
     mutate,
   };
 }
@@ -1471,13 +1395,13 @@ export function useMlpPrices(chainId, currentMlpPrice) {
     let prevMlpSupply;
     let prevAum;
 
-    const feeStatsById = data.data.feeStats.reduce((o, stat) => ({
-      ...o,
-      [stat.id]: ethers.BigNumber.from(stat.marginAndLiquidation)
-        .add(stat.swap)
-        .add(stat.mint)
-        .add(stat.burn)
-    }), {})
+    const feeStatsById = data.data.feeStats.reduce(
+      (o, stat) => ({
+        ...o,
+        [stat.id]: ethers.BigNumber.from(stat.marginAndLiquidation).add(stat.swap).add(stat.mint).add(stat.burn),
+      }),
+      {}
+    );
 
     let cumulativeFees = ethers.BigNumber.from(0);
     let ret = data.data.mlpStats
@@ -1497,8 +1421,8 @@ export function useMlpPrices(chainId, currentMlpPrice) {
         cumulativeDistributedEthPerMlp += distributedEthPerMlp;
 
         const feeStat = feeStatsById[item.id] ?? ethers.BigNumber.from(0);
-        cumulativeFees = cumulativeFees.add(feeStat)
-        const totalFees = parseFloat(ethers.utils.formatUnits(cumulativeFees, USD_DECIMALS))
+        cumulativeFees = cumulativeFees.add(feeStat);
+        const totalFees = parseFloat(ethers.utils.formatUnits(cumulativeFees, USD_DECIMALS));
 
         const mlpPrice = aum / mlpSupply;
         const mlpPriceWithFees = (totalFees + aum) / mlpSupply;
@@ -1517,7 +1441,9 @@ export function useMlpPrices(chainId, currentMlpPrice) {
           distributedEthPerMlp,
         };
         if (i === data.data.mlpStats.length - 1 && currentMlpPrice) {
-          newItem.mlpPriceWithFees = Number.isNaN(mlpPrice) ? parseFloat(ethers.utils.formatUnits(currentMlpPrice, USD_DECIMALS)) : mlpPriceWithFees;
+          newItem.mlpPriceWithFees = Number.isNaN(mlpPrice)
+            ? parseFloat(ethers.utils.formatUnits(currentMlpPrice, USD_DECIMALS))
+            : mlpPriceWithFees;
           newItem.value = parseFloat(ethers.utils.formatUnits(currentMlpPrice, USD_DECIMALS));
         }
 
@@ -1536,9 +1462,7 @@ export function useMlpPrices(chainId, currentMlpPrice) {
         if (!aum) {
           aum = prevAum;
         }
-        item.mlpSupplyChange = prevMlpSupply
-          ? ((mlpSupply - prevMlpSupply) / prevMlpSupply) * 100
-          : 0;
+        item.mlpSupplyChange = prevMlpSupply ? ((mlpSupply - prevMlpSupply) / prevMlpSupply) * 100 : 0;
         if (item.mlpSupplyChange > 1000) item.mlpSupplyChange = 0;
         item.aumChange = prevAum ? ((aum - prevAum) / prevAum) * 100 : 0;
         if (item.aumChange > 1000) item.aumChange = 0;

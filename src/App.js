@@ -26,7 +26,7 @@ import {
 
 import {
   ARBITRUM,
-  AVALANCHE,
+  ARBITRUM_GOERLI,
   DEFAULT_SLIPPAGE_AMOUNT,
   BASIS_POINTS_DIVISOR,
   fetcher,
@@ -54,13 +54,13 @@ import {
   hasChangedAccount,
   setCurrentAccount,
   networkOptions,
-  ARBITRUM_TESTNET,
   PLACEHOLDER_ACCOUNT,
   getDefaultArbitrumRpcUrl,
+  getDefaultArbitrumGoerliRpcUrl,
 } from "./Helpers";
 import ReaderV2 from "./abis/ReaderV2.json";
 
-import Dashboard from "./views/Dashboard/Dashboard";
+import Dashboard from "./views/Dashboard/DashboardV2";
 import Stake from "./views/Stake/StakeV2";
 import { Exchange } from "./views/Exchange/Exchange";
 import Actions from "./views/Actions/Actions";
@@ -146,9 +146,7 @@ function inPreviewMode() {
 }
 
 const arbWsProvider = new ethers.providers.WebSocketProvider(getDefaultArbitrumRpcUrl(true));
-// const arbTestnetWsProvider = new ethers.providers.WebSocketProvider("wss://rinkeby.arbitrum.io/ws");
-const arbTestnetWsProvider = new ethers.providers.JsonRpcProvider("https://rinkeby.arbitrum.io/rpc");
-const avaxWsProvider = new ethers.providers.JsonRpcProvider("https://api.avax.network/ext/bc/C/rpc");
+const arbTestnetWsProvider = new ethers.providers.JsonRpcProvider("https://goerli-rollup.arbitrum.io/rpc/");
 
 function getWsProvider(active, chainId) {
   if (!active) {
@@ -158,12 +156,8 @@ function getWsProvider(active, chainId) {
     return arbWsProvider;
   }
 
-  if (chainId === ARBITRUM_TESTNET) {
+  if (chainId === ARBITRUM_GOERLI) {
     return arbTestnetWsProvider;
-  }
-
-  if (chainId === AVALANCHE) {
-    return avaxWsProvider;
   }
 }
 
@@ -1020,8 +1014,8 @@ function FullApp() {
       <EventModal
         isModalVisible={isEventModalVisible}
         setEventModalVisible={setEventModalVisible}
-        eventKey={'new-earn-page'}
-        continueLink={'/earn'}
+        eventKey={"new-earn-page"}
+        continueLink={"/earn"}
       />
       */}
       <EventToastContainer />
