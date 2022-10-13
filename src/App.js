@@ -146,8 +146,7 @@ function inPreviewMode() {
 }
 
 const arbWsProvider = new ethers.providers.WebSocketProvider(getDefaultArbitrumRpcUrl(true));
-// const arbTestnetWsProvider = new ethers.providers.JsonRpcProvider("https://goerli-rollup.arbitrum.io/rpc/");
-const arbTestnetWsProvider = new ethers.providers.WebSocketProvider(getDefaultArbitrumGoerliRpcUrl(true))
+const arbTestnetWsProvider = new ethers.providers.JsonRpcProvider("https://goerli-rollup.arbitrum.io/rpc/");
 
 function getWsProvider(active, chainId) {
   if (!active) {
