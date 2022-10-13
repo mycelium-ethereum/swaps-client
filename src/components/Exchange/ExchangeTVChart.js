@@ -12,6 +12,8 @@ import {
   formatDateTime,
   usePrevious,
   getLiquidationPrice,
+  BASIS_POINTS_DIVISOR,
+  bigNumberify,
 } from "../../Helpers";
 
 import { getTokens, getToken } from "../../data/Tokens";
@@ -127,6 +129,7 @@ export default function ExchangeTVChart(props) {
     period,
     priceData,
     updatePriceData,
+    currentAveragePrice
   } = props;
   const [currentChart, setCurrentChart] = useState();
   const [currentSeries, setCurrentSeries] = useState();
@@ -253,6 +256,34 @@ export default function ExchangeTVChart(props) {
       }
     }
   }, [priceData, currentSeries, chartInited, scaleChart]);
+
+  useEffect(() => {
+    const lines = [];
+    if (currentSeries && currentAveragePrice && chartToken) {
+      const spreadBasisPoints = (chartToken.maxPrice.sub(chartToken.minPrice)).mul(BASIS_POINTS_DIVISOR).div(chartToken.maxPrice).div(2);
+      const minPrice_ = currentAveragePrice.mul(bigNumberify(BASIS_POINTS_DIVISOR).sub(spreadBasisPoints)).div(BASIS_POINTS_DIVISOR);
+      const maxPrice_ = currentAveragePrice.mul(bigNumberify(BASIS_POINTS_DIVISOR).add(spreadBasisPoints)).div(BASIS_POINTS_DIVISOR);
+
+      const minPrice = parseFloat(formatAmount(minPrice_, USD_DECIMALS, 3))
+      const maxPrice = parseFloat(formatAmount(maxPrice_, USD_DECIMALS, 3))
+
+      lines.push(
+        currentSeries.createPriceLine({
+          price: minPrice,
+          color: "#FF5621CC",
+          title: "Bid".padEnd(PRICE_LINE_TEXT_WIDTH, " "),
+        }),
+        currentSeries.createPriceLine({
+          price: maxPrice,
+          color: "#4FE021CC",
+          title: "Ask".padEnd(PRICE_LINE_TEXT_WIDTH, " "),
+        }),
+      )
+    }
+    return () => {
+      lines.forEach((line) => currentSeries.removePriceLine(line));
+    };
+  }, [currentSeries, chainId, currentAveragePrice, chartToken]);
 
   useEffect(() => {
     const lines = [];
