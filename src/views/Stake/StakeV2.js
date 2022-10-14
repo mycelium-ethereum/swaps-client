@@ -62,6 +62,7 @@ import SEO from "../../components/Common/SEO";
 import ClaimModal from "./ClaimModal";
 import Toggle from "../../components/Toggle/Toggle";
 import MlpPriceChart from "./MlpPriceChart";
+import FeeUpdateModal from "../../components/Modal/FeeUpdateModal";
 
 function CompoundModal(props) {
   const {
@@ -742,6 +743,7 @@ export default function StakeV2({
 
   return (
     <div className="StakeV2 Page page-layout default-container">
+      <FeeUpdateModal />
       <VesterDepositModal
         isVisible={isVesterDepositModalVisible}
         setIsVisible={setIsVesterDepositModalVisible}

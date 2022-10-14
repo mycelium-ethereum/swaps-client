@@ -1244,6 +1244,21 @@ button.App-button {
   width: 100%;
 }
 
+.Fee-update-modal-content {
+  width: 600px;
+}
+.Fee-update-modal-content ul li:last-child {
+  padding-bottom: 0;
+}
+
+.Fee-update-modal-content .Exchange-swap-button-container {
+  margin-top: 16px;
+}
+.FeeModal .Modal-content {
+  width: 100%;
+  max-width: 424px;
+}
+
 @media (max-width: 1380px) {
   .App-header-user-link.Trade-btn {
     display: block;
@@ -1387,6 +1402,13 @@ button.App-button {
   }
   .App-header-menu-icon-block {
     margin-left: 16px;
+  }
+  .FeeModal.Fee-update-modal .Modal-content {
+    width: calc(100% - 32px);
+    max-width: 600px;
+  }
+  .FeeModal .Fee-update-modal-content {
+    width: auto;
   }
 }
 
