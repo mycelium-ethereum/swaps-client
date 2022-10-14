@@ -352,7 +352,7 @@ export default function TradeHistory(props) {
           "UpdateDecreaseOrder",
         ].includes(tradeData.action)
       ) {
-        const order = deserialize(params.order);
+        const order = params;
         const indexToken = getTokenInfo(infoTokens, order.indexToken);
         if (!indexToken) {
           return defaultMsg;
