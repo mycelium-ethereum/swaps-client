@@ -25,6 +25,7 @@ export default function FeeUpdateModal() {
       isVisible={isFeeUpdateModalVisible}
       setIsVisible={setIsFeeUpdateModalVisible}
       label="Fee Distribution Update"
+      className="FeeModal"
     >
       <div className="Fee-update-modal-content">
         <div>
