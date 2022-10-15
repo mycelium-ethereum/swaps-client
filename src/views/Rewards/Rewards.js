@@ -28,6 +28,7 @@ import FeeDistributor from "../../abis/FeeDistributor.json";
 import FeeDistributorReader from "../../abis/FeeDistributorReader.json";
 import ViewSwitch from "../../components/ViewSwitch/ViewSwitch";
 import { RoundDropdown } from "../../components/RewardsRoundSelect/RewardsRoundSelect";
+import FeeUpdateModal from "../../components/Modal/FeeUpdateModal";
 
 const PersonalHeader = () => (
   <div className="Page-title-section mt-0">
@@ -251,7 +252,7 @@ export default function Rewards(props) {
     } else {
       setClaimDelay(false);
     }
-  }, [currentRewardRound])
+  }, [currentRewardRound]);
 
   useEffect(() => {
     if (!!allRoundsRewardsData) {
@@ -299,7 +300,7 @@ export default function Rewards(props) {
     }
     if (error) {
       setIsClaiming(true);
-      return
+      return;
     }
     const contract = new ethers.Contract(feeDistributor, FeeDistributor.abi, library.getSigner());
     callContract(
@@ -330,6 +331,7 @@ export default function Rewards(props) {
 
   return (
     <>
+      <FeeUpdateModal />
       <SEO
         title={getPageTitle("Rewards")}
         description="Claim fees earned via being in the top 50% of traders on Mycelium Perpetual Swaps."

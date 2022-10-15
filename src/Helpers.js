@@ -121,12 +121,12 @@ export const MLP_DECIMALS = 18;
 export const MYC_DECIMALS = 18;
 export const DEFAULT_MAX_USDG_AMOUNT = expandDecimals(200 * 1000 * 1000, 18);
 
-export const TAX_BASIS_POINTS = 50;
+export const TAX_BASIS_POINTS = 40;
 export const STABLE_TAX_BASIS_POINTS = 2;
 export const MINT_BURN_FEE_BASIS_POINTS = 18;
-export const SWAP_FEE_BASIS_POINTS = 30;
+export const SWAP_FEE_BASIS_POINTS = 20;
 export const STABLE_SWAP_FEE_BASIS_POINTS = 3;
-export const MARGIN_FEE_BASIS_POINTS = 3;
+export const MARGIN_FEE_BASIS_POINTS = 9;
 
 export const LIQUIDATION_FEE = expandDecimals(5, USD_DECIMALS);
 
@@ -171,8 +171,8 @@ export const MIN_PROFIT_BIPS = 0;
 // USD tokens per interval given by kurtis
 export const MM_TOKENS_PER_INTERVAL = ethers.utils.parseUnits("0.1859475633", USD_DECIMALS);
 export const FEE_MULTIPLIER_BASIS_POINTS = 4;
-export const MM_FEE_MULTIPLIER = ethers.utils.parseUnits("0.0006", FEE_MULTIPLIER_BASIS_POINTS);
-export const MM_SWAPS_FEE_MULTIPLIER = ethers.utils.parseUnits("0.0012", FEE_MULTIPLIER_BASIS_POINTS);
+export const MM_FEE_MULTIPLIER = bigNumberify(6);
+export const MM_SWAPS_FEE_MULTIPLIER = bigNumberify(12)
 
 export const MLP_POOL_COLORS = {
   ETH: "#6062a6",
