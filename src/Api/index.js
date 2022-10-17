@@ -567,21 +567,21 @@ export function useTrades(chainId, account) {
   if (Array.isArray(data)) {
     trades = data.map((datum) => {
       if (datum.dataValues) {
-        return ({
+        return {
           id: datum.dataValues.id.toString(),
           data: {
             ...datum.dataValues,
             params: JSON.stringify(datum.dataValues.params),
           },
-        })
+        };
       } else {
-        return ({
+        return {
           id: datum.id,
           data: {
             ...datum,
-            params: JSON.stringify(datum.params)
-          }
-        })
+            params: JSON.stringify(datum.params),
+          },
+        };
       }
     });
   }
@@ -1020,7 +1020,6 @@ export async function createIncreaseOrder(
   const shouldWrap = fromETH;
   const triggerAboveThreshold = !isLong;
   const executionFee = getConstant(chainId, "INCREASE_ORDER_EXECUTION_GAS_FEE");
-  console.log("executionFee", executionFee.toString());
 
   const params = [
     path,
