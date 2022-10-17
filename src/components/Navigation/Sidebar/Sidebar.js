@@ -12,6 +12,13 @@ import {
   CopyrightYear,
   LegalMenu,
   FixedContainer,
+  EventBox,
+  EventHeader,
+  EventContent,
+  EventGraphic,
+  ViewNowButton,
+  EventDescription,
+  EventTitle,
 } from "./Sidebar.styles";
 
 import { ReactComponent as TradeIcon } from "../../../img/nav/trade.svg";
@@ -29,6 +36,7 @@ import { ReactComponent as TwitterIcon } from "../../../img/nav/twitter.svg";
 import { ReactComponent as DiscordIcon } from "../../../img/nav/discord.svg";
 import { ReactComponent as PullTabSvg } from "../../../img/nav/pull-tab.svg";
 // import { ReactComponent as TranslateIcon } from "../../../img/nav/translate.svg";
+import graphic from "../../../img/nav/event-graphic.png";
 
 import logoImg from "../../../img/logo_MYC.svg";
 
@@ -96,11 +104,11 @@ export default function Sidebar({ sidebarVisible, setSidebarVisible }) {
   }, []);
 
   return (
-    <FixedContainer visible={sidebarVisible}>
+    <FixedContainer>
       <PullTab visible={sidebarVisible} onClick={() => setSidebarVisible(!sidebarVisible)}>
         <PullTabSvg />
       </PullTab>
-      <SideMenu>
+      <SideMenu visible={sidebarVisible}>
         <MenuContainer>
           <div>
             <Logo visible={sidebarVisible}>
@@ -123,14 +131,29 @@ export default function Sidebar({ sidebarVisible, setSidebarVisible }) {
               </MenuItem>
             </NavMenu>
           </div>
-          <NavMenu>
-            <MenuItem yellow>
-              <a href="https://analytics.mycelium.xyz" target="_blank" rel="noopener noreferrer">
-                <AnalyticsIcon /> Analytics
-              </a>
-            </MenuItem>
-          </NavMenu>
           <div>
+            <NavMenu noPadding>
+              <MenuItem yellow>
+                <a href="https://analytics.mycelium.xyz" target="_blank" rel="noopener noreferrer">
+                  <AnalyticsIcon /> Analytics
+                </a>
+              </MenuItem>
+            </NavMenu>
+            <EventBox>
+              <EventHeader>WHAT'S HAPPENING THIS WEEK</EventHeader>
+              <EventContent>
+                <EventGraphic src={graphic} />
+                <EventTitle>Driving volume to drive rewards</EventTitle>
+                <EventDescription>Transparent, Cheap Perpetual Swap Trading Costs</EventDescription>
+                <a
+                  href="https://mycelium.xyz/blog/mycelium-s-fee-update-driving-volume-to-drive-rewards"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <ViewNowButton>View Now</ViewNowButton>
+                </a>
+              </EventContent>
+            </EventBox>
             <BottomMenuItem>
               <a
                 href="https://swaps.docs.mycelium.xyz/perpetual-swaps/mycelium-perpetual-swaps"
