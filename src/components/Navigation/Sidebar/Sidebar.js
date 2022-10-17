@@ -1,66 +1,86 @@
+import { useEffect, useRef } from "react";
+import { NavLink } from "react-router-dom";
 import {
   SideMenu,
   Logo,
   NavMenu,
   MenuItem,
-  SocialLinksMenu,
+  BottomMenuItem,
   PullTab,
+  SocialLinksMenu,
+  CopyrightYear,
   LegalMenu,
-  ExternalLinkIcon,
 } from "./Sidebar.styles";
-import { NavLink } from "react-router-dom";
-import {
-  FaChartLine,
-  FaArrowUp,
-  FaShoppingCart,
-  FaAward,
-  FaBook,
-  FaCoins,
-  FaFile,
-  FaLayerGroup,
-  FaChartBar,
-  FaSync,
-  FaFileInvoiceDollar,
-} from "react-icons/fa";
+
+import { ReactComponent as TradeIcon } from "../../../img/nav/trade.svg";
+import { ReactComponent as DashboardIcon } from "../../../img/nav/dashboard.svg";
+import { ReactComponent as EarnIcon } from "../../../img/nav/earn.svg";
+import { ReactComponent as BuyIcon } from "../../../img/nav/buy.svg";
+import { ReactComponent as RewardsIcon } from "../../../img/nav/rewards.svg";
+import { ReactComponent as ReferralsIcon } from "../../../img/nav/referrals.svg";
+import { ReactComponent as MycStakingIcon } from "../../../img/nav/myc-staking.svg";
+import { ReactComponent as LeaderboardIcon } from "../../../img/nav/trading-leaderboard.svg";
+import { ReactComponent as AnalyticsIcon } from "../../../img/nav/analytics.svg";
+import { ReactComponent as DocsIcon } from "../../../img/nav/docs.svg";
+import { ReactComponent as GithubIcon } from "../../../img/nav/github.svg";
+import { ReactComponent as TwitterIcon } from "../../../img/nav/twitter.svg";
+import { ReactComponent as DiscordIcon } from "../../../img/nav/discord.svg";
+// import { ReactComponent as TranslateIcon } from "../../../img/nav/translate.svg";
 
 import logoImg from "../../../img/logo_MYC.svg";
 import gitbookIcon from "../../../img/gitbook.svg";
 import twitterIcon from "../../../img/twitter.svg";
 import githubIcon from "../../../img/github.svg";
 import arrowLeftIcon from "../../../img/arrow-left.svg";
-import discordIcon from "../../../img/discord.svg";
-import externalLinkIcon from "../../../img/external-link.svg";
 
-const navLinks = [
+const navTopLinks = [
   {
     name: "Trade",
     path: "/",
-    icon: FaCoins,
+    icon: TradeIcon,
   },
   {
     name: "Dashboard",
     path: "/dashboard",
-    icon: FaChartLine,
+    icon: DashboardIcon,
   },
   {
     name: "Earn",
     path: "/earn",
-    icon: FaArrowUp,
+    icon: EarnIcon,
   },
   {
     name: "Buy",
     path: "/buy_mlp",
-    icon: FaShoppingCart,
+    icon: BuyIcon,
   },
   {
     name: "Rewards",
     path: "/rewards",
-    icon: FaAward,
+    icon: RewardsIcon,
   },
   {
     name: "Referrals",
     path: "/referrals",
-    icon: FaSync,
+    icon: ReferralsIcon,
+  },
+  // {
+  //   name: "MYC Staking",
+  //   path: "https://stake.mycelium.xyz",
+  //   icon: MycStakingIcon,
+  // },
+];
+
+const navMiddleLinks = [
+  {
+    name: "Trading Leaderboard",
+    path: "/leaderboard",
+    icon: LeaderboardIcon,
+  },
+  {
+    name: "Analytics",
+    path: "https://analytics.mycelium.xyz",
+    icon: AnalyticsIcon,
   },
 ];
 
@@ -68,51 +88,54 @@ const legalLinks = [
   {
     name: "Privacy Policy",
     path: "https://mycelium.xyz/privacy-policy",
-    icon: FaLayerGroup,
   },
   {
     name: "Terms of Use",
     path: "https://mycelium.xyz/terms-of-use",
-    icon: FaFile,
   },
 ];
+
 const socialLinks = [
-  {
-    name: "GitBook",
-    path: "https://swaps.docs.mycelium.xyz/",
-    icon: gitbookIcon,
-  },
   {
     name: "Twitter",
     path: "https://twitter.com/mycelium_xyz",
-    icon: twitterIcon,
+    icon: TwitterIcon,
   },
   {
     name: "Github",
     path: "https://github.com/mycelium-ethereum",
-    icon: githubIcon,
+    icon: GithubIcon,
   },
   {
     name: "Discord",
     path: "https://discord.gg/mycelium-xyz",
-    icon: discordIcon,
+    icon: DiscordIcon,
   },
 ];
 
 export default function Sidebar({ sidebarVisible, setSidebarVisible }) {
+  const yearRef = useRef(null);
+
+  const setYear = () => {
+    const year = new Date().getFullYear();
+    yearRef.current.innerHTML = `&copy; ${year} Mycelium`;
+  };
+
+  useEffect(() => {
+    setYear();
+  }, []);
+
   return (
     <SideMenu visible={sidebarVisible}>
-      <PullTab visible={sidebarVisible} onClick={() => setSidebarVisible(!sidebarVisible)}>
-        <img src={arrowLeftIcon} alt="Close" />
-      </PullTab>
-      <Logo>
-        <NavLink exact className="App-header-link-main" to="/">
-          <img src={logoImg} alt="Tracer Logo" />
-        </NavLink>
-      </Logo>
+      <PullTab visible={sidebarVisible} onClick={() => setSidebarVisible(!sidebarVisible)} />
       <div>
+        <Logo>
+          <NavLink exact className="App-header-link-main" to="/">
+            <img src={logoImg} alt="Perpetual Swaps Logo" />
+          </NavLink>
+        </Logo>
         <NavMenu>
-          {navLinks.map((item) => (
+          {navTopLinks.map((item) => (
             <MenuItem key={item.name}>
               <NavLink activeClassName="active" exact className="App-header-link-main" to={item.path}>
                 <item.icon /> {item.name}
@@ -121,43 +144,52 @@ export default function Sidebar({ sidebarVisible, setSidebarVisible }) {
           ))}
           <MenuItem>
             <a href="https://stake.mycelium.xyz" target="_blank" rel="noopener noreferrer">
-              <FaFileInvoiceDollar /> MYC Staking <ExternalLinkIcon src={externalLinkIcon} />
+              <MycStakingIcon /> MYC Staking
             </a>
           </MenuItem>
         </NavMenu>
-        <LegalMenu>
-          <MenuItem>
-            <a href="https://analytics.mycelium.xyz" target="_blank" rel="noopener noreferrer">
-              <FaChartBar /> Analytics <ExternalLinkIcon src={externalLinkIcon} />
-            </a>
-          </MenuItem>
-          <MenuItem>
-            <a
-              href="https://swaps.docs.mycelium.xyz/perpetual-swaps/mycelium-perpetual-swaps"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <FaBook /> Docs <ExternalLinkIcon src={externalLinkIcon} />
-            </a>
-          </MenuItem>
-          {legalLinks.map((item) => (
-            <MenuItem key={item.name}>
-              <a href={item.path} target="_blank" rel="noopener noreferrer">
-                <item.icon /> {item.name} <ExternalLinkIcon src={externalLinkIcon} />
-              </a>
-            </MenuItem>
-          ))}
-        </LegalMenu>
       </div>
-      <SocialLinksMenu>
-        {socialLinks.map((item) => (
-          <MenuItem key={item.name}>
+      <NavMenu>
+        {/* {navMiddleLinks.map((item) => (
+            <MenuItem key={item.name} yellow>
+              <NavLink activeClassName="active" exact className="App-header-link-main" to={item.path}>
+                <item.icon /> {item.name}
+              </NavLink>
+            </MenuItem>
+          ))} */}
+        <MenuItem yellow>
+          <a href="https://analytics.mycelium.xyz" target="_blank" rel="noopener noreferrer">
+            <AnalyticsIcon /> Analytics
+          </a>
+        </MenuItem>
+      </NavMenu>
+      <div>
+        <BottomMenuItem>
+          <a
+            href="https://swaps.docs.mycelium.xyz/perpetual-swaps/mycelium-perpetual-swaps"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <DocsIcon /> Docs
+          </a>
+        </BottomMenuItem>
+        <SocialLinksMenu>
+          {socialLinks.map((item) => (
             <a href={item.path} target="_blank" rel="noopener noreferrer">
-              <img src={item.icon} alt={item.name} />
+              <item.icon title={item.name} />
             </a>
-          </MenuItem>
-        ))}
-      </SocialLinksMenu>
+          ))}
+        </SocialLinksMenu>
+        <LegalMenu>
+          <a href="https://mycelium.xyz/privacy-policy" target="_blank" rel="noopener noreferrer">
+            Privacy Policy
+          </a>
+          <a href="https://mycelium.xyz/terms-of-use" target="_blank" rel="noopener noreferrer">
+            Terms of Use
+          </a>
+        </LegalMenu>
+        <CopyrightYear ref={yearRef} />
+      </div>
     </SideMenu>
   );
 }
