@@ -120,13 +120,13 @@ export default function Sidebar({ sidebarVisible, setSidebarVisible }) {
               {navTopLinks.map((item) => (
                 <MenuItem key={item.name}>
                   <NavLink activeClassName="active" exact className="App-header-link-main" to={item.path}>
-                    <item.icon /> {item.name}
+                    <item.icon /> <span>{item.name}</span>
                   </NavLink>
                 </MenuItem>
               ))}
               <MenuItem>
                 <a href="https://stake.mycelium.xyz" target="_blank" rel="noopener noreferrer">
-                  <MycStakingIcon /> MYC Staking
+                  <MycStakingIcon /> <span>MYC Staking</span>
                 </a>
               </MenuItem>
             </NavMenu>
@@ -135,7 +135,7 @@ export default function Sidebar({ sidebarVisible, setSidebarVisible }) {
             <NavMenu noPadding>
               <MenuItem yellow>
                 <a href="https://analytics.mycelium.xyz" target="_blank" rel="noopener noreferrer">
-                  <AnalyticsIcon /> Analytics
+                  <AnalyticsIcon /> <span>Analytics</span>
                 </a>
               </MenuItem>
             </NavMenu>

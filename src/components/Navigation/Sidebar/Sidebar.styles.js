@@ -139,7 +139,6 @@ export const MenuItem = styled.li(
       background: linear-gradient(244.65deg, #098200 -3.32%, rgba(9, 130, 0, 0) 128.23%);
       opacity: 0;
       transition: opacity 0.3s ease;
-      z-index: -1;
     }
     &.active,
     &:hover {
@@ -150,7 +149,13 @@ export const MenuItem = styled.li(
       opacity: 1;
     }
     svg {
+      position: relative;
+      z-index: 1;
       margin-right: 8px;
+    }
+    span {
+      position: relative;
+      z-index: 1;
     }
   }
   `
