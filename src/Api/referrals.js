@@ -176,6 +176,39 @@ export function useUserCodesOnAllChain(account) {
   return data;
 }
 
+export async function getCodeByAccount(account) {
+  const query = gql(
+    `{
+      referralCodes (
+      first: 1000,
+      where: {
+        owner: "${(account || "").toLowerCase()}"
+      }) {
+      code
+      }
+    }`
+  );
+
+  const [arbitrumCodes] = await Promise.all(
+    ACTIVE_CHAINS.map((chainId) =>
+      getGraphClient(chainId)
+        .query({ query })
+        .then(({ data }) => {
+          return data.referralCodes.map((c) => c.code);
+        })
+    )
+  );
+  const codeOwnersOnArbitrum = await getCodeOwnersData(ARBITRUM, account, arbitrumCodes);
+  const data = {
+    [ARBITRUM]: codeOwnersOnArbitrum.reduce((acc, cv) => {
+      acc[cv.code] = cv;
+      return acc;
+    }, {}),
+  };
+
+  return data;
+}
+
 export function useUserReferralCode(library, chainId, account) {
   const referralStorageAddress = getContract(chainId, "ReferralStorage");
   const { data: userReferralCode, mutate: mutateUserReferralCode } = useSWR(

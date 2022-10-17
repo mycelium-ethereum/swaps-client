@@ -20,12 +20,12 @@ import OrderBook from "./abis/OrderBook.json";
 import { getWhitelistedTokens, isValidToken } from "./data/Tokens";
 import ComingSoonTooltip from "./components/Tooltip/ComingSoon";
 import { isAddress } from "ethers/lib/utils";
-import { 
+import {
   REFERRAL_CODE_QUERY_PARAMS,
   CURRENT_PROVIDER_LOCALSTORAGE_KEY,
   WALLET_CONNECT_LOCALSTORAGE_KEY,
   WALLET_LINK_LOCALSTORAGE_PREFIX,
-  SHOULD_EAGER_CONNECT_LOCALSTORAGE_KEY
+  SHOULD_EAGER_CONNECT_LOCALSTORAGE_KEY,
 } from "./config/localstorage";
 
 const { AddressZero } = ethers.constants;
@@ -55,12 +55,9 @@ const GAS_PRICE_ADJUSTMENT_MAP = {
   [ARBITRUM]: "0",
 };
 
-const MAX_GAS_PRICE_MAP = {
-};
+const MAX_GAS_PRICE_MAP = {};
 
-const alchemyWhitelistedDomains = [
-  "swaps.mycelium.xyz"
-];
+const alchemyWhitelistedDomains = ["swaps.mycelium.xyz"];
 
 export function getFallbackArbitrumRpcUrl(useWebsocket) {
   if (useWebsocket) {
@@ -75,7 +72,7 @@ export function getDefaultArbitrumRpcUrl(useWebsocket) {
     }
     return "https://arb-mainnet.g.alchemy.com/v2/SKz5SvTuqIVjE38XsFsy0McZbgfFPOng";
   }
-  return  getFallbackArbitrumRpcUrl(useWebsocket)
+  return getFallbackArbitrumRpcUrl(useWebsocket);
 }
 
 export function getFallbackArbitrumGoerliRpcUrl(useWebsocket) {
@@ -172,7 +169,7 @@ export const MIN_PROFIT_BIPS = 0;
 export const MM_TOKENS_PER_INTERVAL = ethers.utils.parseUnits("0.1859475633", USD_DECIMALS);
 export const FEE_MULTIPLIER_BASIS_POINTS = 4;
 export const MM_FEE_MULTIPLIER = bigNumberify(6);
-export const MM_SWAPS_FEE_MULTIPLIER = bigNumberify(12)
+export const MM_SWAPS_FEE_MULTIPLIER = bigNumberify(12);
 
 export const MLP_POOL_COLORS = {
   ETH: "#6062a6",
@@ -2965,3 +2962,9 @@ export function calcMarketMakingFees(data) {
 
   return mmFees.div(expandDecimals(1, FEE_MULTIPLIER_BASIS_POINTS));
 }
+
+export const numberToOrdinal = (n) => {
+  const s = ["th", "st", "nd", "rd"];
+  const v = n % 100;
+  return n + (s[(v - 20) % 10] || s[v] || s[0]);
+};
