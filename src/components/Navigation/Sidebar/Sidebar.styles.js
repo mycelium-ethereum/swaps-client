@@ -24,6 +24,7 @@ export const SideMenu = styled.aside(
     }
   }
   ${LegalMenu},
+  ${EventBox},
   ${CopyrightYear} {
     opacity: ${props.visible ? "0" : "1"};
   }
@@ -262,6 +263,10 @@ export const ViewNowButton = styled.button`
   border: 1px solid var(--action-active);
   color: white;
   border-radius: 4px;
+  transition: background-color 0.3s ease;
+  &:hover {
+    background-color: var(--action-active);
+  }
 `;
 
 export const EventGraphic = styled.img`
