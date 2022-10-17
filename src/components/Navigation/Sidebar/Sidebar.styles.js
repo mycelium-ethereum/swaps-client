@@ -1,42 +1,55 @@
 import styled from "styled-components";
-import { ReactComponent as PullTabSvg } from "../../../img/nav/pull-tab.svg";
 
-export const SideMenu = styled.aside(
-  (props) => `
-  font-family: "aileron", sans-serif;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  position: fixed;
+export const SideMenu = styled.aside`
+  position: absolute;
   left: 0;
   top: 0;
+  width: 100%;
+  font-family: "aileron", sans-serif;
   background: var(--background-primary);
-  width: 310px;
   height: 100vh;
-  z-index: 999;
   box-shadow: 1px -6px 32px -12px rgba(9, 130, 0, 1);
-  padding: 16px 0;
-  transition: transform 0.5s ease, opacity 0.5s ease;
-  transform: ${props.visible ? "translateX(-262px)" : "translateX(0)"};
   background: linear-gradient(83.12deg, rgba(9, 130, 0, 0.5) -208.54%, rgba(9, 130, 0, 0) 159.09%), rgba(0, 0, 0, 0.9);
   border-right: 1px solid var(--action-active);
+  overflow: hidden;
   @media (max-width: 1380px) {
     opacity: 0;
     pointer-events: none;
     transform: translateX(-310px);
   }
+`;
+
+export const MenuContainer = styled.div`
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 310px;
+  height: 100%;
+  padding: 16px 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+`;
+
+export const Logo = styled.div(
+  (props) => `
+  position: relative;
+  width: ${props.visible ? "20px" : "220px"};
+  overflow: hidden;
+  height: 22px;
+  margin: 0 auto;
+  padding-bottom: 40px;
+  transition: all 0.3s ease;
+  transform: ${props.visible ? "translateX(-132px)" : "translateX(0px)"};
+  img {
+    position: absolute;
+    width: 220px;
+    height: 22px;
+    top: 0;
+    left: 0;
+  }
 `
 );
-
-export const Logo = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding-bottom: 40px;
-  img {
-    width: 280px;
-  }
-`;
 
 export const NavMenu = styled.ul`
   padding: 0;
@@ -47,6 +60,7 @@ export const LegalMenu = styled.div`
   display: flex;
   padding-left: 16px;
   margin-bottom: 20px;
+  transition: opacity 0.3s ease;
   a {
     transition: color 0.3s ease;
     margin-right: 20px;
@@ -58,6 +72,7 @@ export const LegalMenu = styled.div`
     }
   }
 `;
+
 export const BottomMenuItem = styled.div`
   padding-bottom: 0;
   border-bottom: 1px solid var(--action-active);
@@ -132,7 +147,7 @@ export const ExternalLinkIcon = styled.img`
 
 export const SocialLinksMenu = styled.div`
   width: max-content;
-  padding-left: 16px;
+  padding-left: 12px;
   margin-bottom: 20px;
   display: grid;
   grid-gap: 1rem;
@@ -150,17 +165,48 @@ export const SocialLinksMenu = styled.div`
   }
 `;
 
-export const PullTab = styled(PullTabSvg)(
+export const FixedContainer = styled.div(
   (props) => `
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 999;
+  transition: width 0.3s ease, opacity 0.3s ease;
+  width: ${props.visible ? "48px" : "310px"};
+  &:hover {
+    width: 310px;
+    ${Logo} {
+        transform: translateX(0px);
+        width: 220px;
+    }
+    ${LegalMenu},
+    ${CopyrightYear} {
+     opacity: 1;
+    }
+  }
+  ${LegalMenu},
+  ${CopyrightYear} {
+    opacity: ${props.visible ? "0" : "1"};
+  }
+`
+);
+
+export const PullTab = styled.button(
+  (props) => `
+  background: transparent;
+  border: none;
   position: absolute;
   left: 100%;
   top: 30px;
   transition: all 0.3s ease;
-  color: ${props.visible ? "var(--action-active)" : "white"};
-  transform: ${props.visible ? "rotate(180deg) translateX(13px)" : "rotate(0deg) translateX(1px)"};
+  color: var(--action-active);
   cursor: pointer;
+  z-index: 1;
   &:hover {
-    color: var(--action-active);
+    color: white;
+  }
+  > svg {
+    transform: ${props.visible ? "rotate(0deg) translateX(-6px)" : "rotate(180deg) translateX(20px)"};
   }
 `
 );
@@ -170,4 +216,5 @@ export const CopyrightYear = styled.span`
   margin-left: 16px;
   font-size: 14px;
   color: var(--action-active);
+  transition: opacity 0.3s ease;
 `;
