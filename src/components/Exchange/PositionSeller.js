@@ -368,7 +368,7 @@ export default function PositionSeller(props) {
       convertedAmountFormatted = formatAmount(convertedAmount, collateralToken.decimals, 4, true);
     }
 
-    totalFees = totalFees.add(positionFee || bigNumberify(0)).add(fundingFee || bigNumberify(0)).add(executionFeeUsd || bigNumberify(0));
+    totalFees = totalFees.add(positionFee || bigNumberify(0)).add(fundingFee || bigNumberify(0));
 
     receiveAmount = receiveAmount.add(collateralDelta);
 
@@ -406,6 +406,7 @@ export default function PositionSeller(props) {
     }
 
     if (orderOption === STOP) {
+      console.log(receiveAmount.toString(), receiveToken.add);
       convertedReceiveAmount = getTokenAmountFromUsd(infoTokens, receiveToken.address, receiveAmount, {
         overridePrice: triggerPriceUsd,
       });
@@ -1223,7 +1224,7 @@ export default function PositionSeller(props) {
                   className="PositionSeller-fees-tooltip"
                   handle={
                     <div>
-                      {totalFees ? `$${formatAmount(totalFees, USD_DECIMALS, 2, true)}` : "-"}
+                      {totalFees ? `$${formatAmount(totalFees.add(executionFeeUsd), USD_DECIMALS, 2, true)}` : "-"}
                     </div>
                   }
                   renderContent={() => (
