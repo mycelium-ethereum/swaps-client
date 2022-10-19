@@ -1,10 +1,16 @@
 import styled from "styled-components";
-import { ReactComponent as ChevronDownIcon } from "../../img/nav/chevron-down.svg";
+import { FaChevronDown } from "react-icons/fa";
+import { ReactComponent as MycIcon } from "../../img/nav/myc-icon.svg";
 
-export const DropdownContainer = styled.div`
+export const DropdownContainer = styled.div(
+  (props) => `
   position: relative;
   z-index: 3;
-`;
+  @media (min-width: 670px) {
+    display: ${props.isMobile ? "none" : "block"};
+  }
+`
+);
 
 export const DropdownButtonBackground = styled.span`
   position: absolute;
@@ -21,7 +27,7 @@ export const DropdownButton = styled.button(
   (props) => `
   position: relative;
   height: 36px;
-  width: 120px;
+  padding: 0 8px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -33,9 +39,6 @@ export const DropdownButton = styled.button(
   margin-left: 16px;
   border: 1px solid var(--action-active);
   background: linear-gradient(83.12deg, rgba(9, 130, 0, 0.5) -208.54%, rgba(9, 130, 0, 0) 159.09%), rgba(0, 10, 0, 0.6);
-  > svg {
-    margin-left: 8px;
-  }
   &:hover {
     color: white;
   }
@@ -62,13 +65,23 @@ export const ButtonText = styled.span`
   z-index: 2;
 `;
 
-export const ChevronDown = styled(ChevronDownIcon)(
+export const ChevronDown = styled(FaChevronDown)(
   (props) => `
   position: relative;
   z-index: 1;
   min-width: 17px;
   min-height: 13px;
   margin-left: 8px;
+  transition: color 0.3s ease;
+`
+);
+
+export const MyceliumIcon = styled(MycIcon)(
+  (props) => `
+  position: relative;
+  z-index: 1;
+  min-width: 17px;
+  min-height: 17px;
   transition: color 0.3s ease;
 `
 );
@@ -102,6 +115,9 @@ export const DropdownContent = styled.div(
   transform: ${props.dropdownOpen ? "translateY(0)" : "translateY(2px)"};
   opacity: ${props.dropdownOpen ? 1 : 0};
   pointer-events: ${props.dropdownOpen ? "auto" : "none"};
+  @media (max-width: 360px) {
+    right: -48px;
+  }
 `
 );
 

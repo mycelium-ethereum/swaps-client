@@ -1,16 +1,9 @@
-import { useEffect, useRef, useState } from "react";
-import cx from "classnames";
+import { useRef, useState } from "react";
 import * as Styles from "./AppDropdown.styles";
-// import { Button } from "~/components/General/Button";
 import { useOutsideClick } from "../../hooks/useOutsideClick";
-// import { OutgoingLink } from "~/components/General/OutgoingLink";
 import { linkRowContent, socialLinks } from "./presets";
-// import { socialLinks } from "~/constants/socials";
 
-const TABLET_BREAKPOINT = 768;
-// const MOBILE_BREAKPOINT = 640;
-
-export default function AppDropdown() {
+export default function AppDropdown({ isMobile }) {
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
   const handleClose = () => {
@@ -21,21 +14,11 @@ export default function AppDropdown() {
     setDropdownOpen(true);
   };
 
-  const handleResize = () => {
-    if (window.innerWidth < TABLET_BREAKPOINT) setDropdownOpen(false);
-  };
-
   const containerRef = useRef(null);
   useOutsideClick(containerRef, handleClose);
 
-  useEffect(() => {
-    window.addEventListener("resize", handleResize);
-
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
-
   return (
-    <Styles.DropdownContainer ref={containerRef}>
+    <Styles.DropdownContainer ref={containerRef} isMobile={isMobile}>
       <DropdownButton onClick={handleOpen} dropdownOpen={dropdownOpen} />
       <DropdownContent dropdownOpen={dropdownOpen} />
     </Styles.DropdownContainer>
@@ -44,7 +27,7 @@ export default function AppDropdown() {
 
 const DropdownButton = ({ dropdownOpen, onClick }) => (
   <Styles.DropdownButton onClick={onClick} dropdownOpen={dropdownOpen}>
-    <Styles.ButtonText>Trade Now</Styles.ButtonText>
+    <Styles.MyceliumIcon title="Mycelium icon" />
     <Styles.ChevronDown title="Chevron down" />
     <Styles.DropdownButtonBackground />
   </Styles.DropdownButton>

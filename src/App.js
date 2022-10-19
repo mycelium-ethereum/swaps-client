@@ -820,6 +820,7 @@ function FullApp() {
                       </NavLink>
                     </div>
                   )}
+                  <AppDropdown isMobile />
                   {/* Hamburger menu */}
                   <button className="App-header-menu-icon-block" onClick={() => setIsDrawerVisible(!isDrawerVisible)}>
                     <span />
