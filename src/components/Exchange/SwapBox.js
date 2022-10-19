@@ -207,7 +207,7 @@ export default function SwapBox(props) {
 
   const onOrderOptionChange = (option) => {
     // limits disabled
-    if (typeof option === "string" && option !== LIMIT) {
+    if (typeof option === "string") {
       setOrderOption(option);
     }
   };
@@ -1542,6 +1542,11 @@ export default function SwapBox(props) {
         const stableToken = getMostAbundantStableToken(chainId, infoTokens);
         setShortCollateralAddress(stableToken.address);
       }
+    }
+
+    // Limits not enabled for swaps yet
+    if (opt === SWAP && orderOption === LIMIT) {
+      setOrderOption(MARKET);
     }
 
     trackAction &&

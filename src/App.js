@@ -56,7 +56,6 @@ import {
   networkOptions,
   PLACEHOLDER_ACCOUNT,
   getDefaultArbitrumRpcUrl,
-  getDefaultArbitrumGoerliRpcUrl,
 } from "./Helpers";
 import ReaderV2 from "./abis/ReaderV2.json";
 

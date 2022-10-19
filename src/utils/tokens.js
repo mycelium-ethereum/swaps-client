@@ -50,7 +50,14 @@ export function getTokenAmountFromUsd(
     return;
   }
 
-  const price = opts.overridePrice || (opts.max ? info.maxPrice : info.minPrice);
+
+  let price
+  if (info.isStable) {
+    price = expandDecimals(1, 30);
+  } else {
+    price = opts.overridePrice || (opts.max ? info.maxPrice : info.minPrice);
+  }
+
 
   if (!ethers.BigNumber.isBigNumber(price) || price.lte(0)) {
     return;

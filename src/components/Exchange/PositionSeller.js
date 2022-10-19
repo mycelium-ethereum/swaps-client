@@ -61,7 +61,6 @@ import Modal from "../Modal/Modal";
 import ExchangeInfoRow from "./ExchangeInfoRow";
 import Tooltip from "../Tooltip/Tooltip";
 import TooltipRow from "../Tooltip/TooltipRow";
-import ComingSoonTooltip from "../Tooltip/ComingSoon";
 import { getTokens } from "../../data/Tokens";
 import TokenSelector from "./TokenSelector";
 import { getTokenAmountFromUsd, getUsd } from "../../utils/tokens";
@@ -190,7 +189,7 @@ export default function PositionSeller(props) {
     fetcher: fetcher(library, PositionRouter),
   });
 
-  const orderOptions = [MARKET, <ComingSoonTooltip position="right-bottom" handle={orderOptionLabels[STOP]} />];
+  const orderOptions = [MARKET, STOP];
 
   let [orderOption, setOrderOption] = useState(MARKET);
 
@@ -369,7 +368,7 @@ export default function PositionSeller(props) {
       convertedAmountFormatted = formatAmount(convertedAmount, collateralToken.decimals, 4, true);
     }
 
-    totalFees = totalFees.add(positionFee || bigNumberify(0)).add(fundingFee || bigNumberify(0));
+    totalFees = totalFees.add(positionFee || bigNumberify(0)).add(fundingFee || bigNumberify(0)).add(executionFeeUsd || bigNumberify(0));
 
     receiveAmount = receiveAmount.add(collateralDelta);
 
@@ -1224,7 +1223,7 @@ export default function PositionSeller(props) {
                   className="PositionSeller-fees-tooltip"
                   handle={
                     <div>
-                      {totalFees ? `$${formatAmount(totalFees.add(executionFeeUsd), USD_DECIMALS, 2, true)}` : "-"}
+                      {totalFees ? `$${formatAmount(totalFees, USD_DECIMALS, 2, true)}` : "-"}
                     </div>
                   }
                   renderContent={() => (
