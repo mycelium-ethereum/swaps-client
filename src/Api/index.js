@@ -200,6 +200,7 @@ export function useUserSpreadCapture(chainId, account, mlpBalance, ethPrice) {
         lastCumulativeRewardsPerToken
       }
     }`);
+
     getMycGraphClient(chainId)
       .query({ query })
       .then((res) => {
@@ -566,21 +567,21 @@ export function useTrades(chainId, account) {
   if (Array.isArray(data)) {
     trades = data.map((datum) => {
       if (datum.dataValues) {
-        return ({
+        return {
           id: datum.dataValues.id.toString(),
           data: {
             ...datum.dataValues,
             params: JSON.stringify(datum.dataValues.params),
           },
-        })
+        };
       } else {
-        return ({
+        return {
           id: datum.id,
           data: {
             ...datum,
-            params: JSON.stringify(datum.params)
-          }
-        })
+            params: JSON.stringify(datum.params),
+          },
+        };
       }
     });
   }
