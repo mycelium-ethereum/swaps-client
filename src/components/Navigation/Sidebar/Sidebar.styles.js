@@ -11,6 +11,7 @@ export const SideMenu = styled.aside(
   overflow: hidden;
   transition: width 0.3s ease, opacity 0.3s ease;
   width: ${props.visible ? "48px" : "310px"};
+  padding-top: 16px;
   &:hover {
     width: 310px;
     ${Logo} {
@@ -34,10 +35,10 @@ export const SideMenu = styled.aside(
 export const MenuContainer = styled.div`
   position: absolute;
   left: 0;
-  top: 0;
+  top: 76px;
   width: 310px;
-  height: 100%;
-  padding: 16px 0;
+  height: calc(100% - 76px);
+  padding-bottom: 16px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -67,6 +68,7 @@ export const Logo = styled.div(
 
 export const NavMenu = styled.ul(
   (props) => `
+  margin-top: 0;
   padding: 0;
   padding-bottom: ${props.noPadding ? "0px" : "40px"};
 `

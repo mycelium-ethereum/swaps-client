@@ -109,28 +109,26 @@ export default function Sidebar({ sidebarVisible, setSidebarVisible }) {
         <PullTabSvg />
       </PullTab>
       <SideMenu visible={sidebarVisible}>
+        <Logo visible={sidebarVisible}>
+          <NavLink exact className="App-header-link-main" to="/">
+            <img src={logoImg} alt="Perpetual Swaps Logo" />
+          </NavLink>
+        </Logo>
         <MenuContainer>
-          <div>
-            <Logo visible={sidebarVisible}>
-              <NavLink exact className="App-header-link-main" to="/">
-                <img src={logoImg} alt="Perpetual Swaps Logo" />
-              </NavLink>
-            </Logo>
-            <NavMenu>
-              {navTopLinks.map((item) => (
-                <MenuItem key={item.name}>
-                  <NavLink activeClassName="active" exact className="App-header-link-main" to={item.path}>
-                    <item.icon /> <span>{item.name}</span>
-                  </NavLink>
-                </MenuItem>
-              ))}
-              <MenuItem>
-                <a href="https://stake.mycelium.xyz" target="_blank" rel="noopener noreferrer">
-                  <MycStakingIcon /> <span>MYC Staking</span>
-                </a>
+          <NavMenu>
+            {navTopLinks.map((item) => (
+              <MenuItem key={item.name}>
+                <NavLink activeClassName="active" exact className="App-header-link-main" to={item.path}>
+                  <item.icon /> <span>{item.name}</span>
+                </NavLink>
               </MenuItem>
-            </NavMenu>
-          </div>
+            ))}
+            <MenuItem>
+              <a href="https://stake.mycelium.xyz" target="_blank" rel="noopener noreferrer">
+                <MycStakingIcon /> <span>MYC Staking</span>
+              </a>
+            </MenuItem>
+          </NavMenu>
           <div>
             <NavMenu noPadding>
               <MenuItem yellow>
