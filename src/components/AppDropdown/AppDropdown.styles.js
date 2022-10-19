@@ -80,8 +80,7 @@ export const MyceliumIcon = styled(MycIcon)(
   (props) => `
   position: relative;
   z-index: 1;
-  min-width: 17px;
-  min-height: 17px;
+  min-width: 20px;
   transition: color 0.3s ease;
 `
 );
