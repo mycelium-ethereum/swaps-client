@@ -5172,7 +5172,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@uniswap/v3-sdk@npm:^3.3.2":
+"@uniswap/v3-sdk@npm:^3.9.0":
   version: 3.9.0
   resolution: "@uniswap/v3-sdk@npm:3.9.0"
   dependencies:
@@ -13736,7 +13736,8 @@ __metadata:
     "@testing-library/user-event": ^12.1.10
     "@tracer-protocol/tracer-ui": latest
     "@uniswap/sdk-core": ^3.0.1
-    "@uniswap/v3-sdk": ^3.3.2
+    "@uniswap/v3-periphery": 1.4.1
+    "@uniswap/v3-sdk": ^3.9.0
     "@web3-react/core": ^6.1.9
     "@web3-react/injected-connector": ^6.0.7
     "@web3-react/walletconnect-connector": ^6.2.8
