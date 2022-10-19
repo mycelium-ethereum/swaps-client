@@ -149,6 +149,7 @@ export default function SwapBox(props) {
     isPluginApproving,
     isPositionRouterApproving,
     trackAction,
+    setIsLeaderboardVisible,
   } = props;
 
   const [fromValue, setFromValue] = useState("");
@@ -674,7 +675,7 @@ export default function SwapBox(props) {
 
   const getSwapError = () => {
     const gasTokenInfo = getTokenInfo(infoTokens, ethers.constants.AddressZero);
-    if (gasTokenInfo.balance?.eq(0)){
+    if (gasTokenInfo.balance?.eq(0)) {
       return ["Not enough ETH for gas"];
     }
 
@@ -764,7 +765,7 @@ export default function SwapBox(props) {
 
   const getLeverageError = useCallback(() => {
     const gasTokenInfo = getTokenInfo(infoTokens, ethers.constants.AddressZero);
-    if (gasTokenInfo.balance?.eq(0)){
+    if (gasTokenInfo.balance?.eq(0)) {
       return ["Not enough ETH for gas"];
     }
     if (hasOutdatedUi) {
@@ -1197,6 +1198,7 @@ export default function SwapBox(props) {
       .then(async (res) => {})
       .finally(() => {
         setIsSubmitting(false);
+        setIsLeaderboardVisible(true);
       });
   };
 
@@ -1215,6 +1217,7 @@ export default function SwapBox(props) {
       .then(async (res) => {})
       .finally(() => {
         setIsSubmitting(false);
+        setIsLeaderboardVisible(true);
       });
   };
 
@@ -1293,6 +1296,7 @@ export default function SwapBox(props) {
         .finally(() => {
           setIsSubmitting(false);
           setIsPendingConfirmation(false);
+          setIsLeaderboardVisible(true);
         });
       return;
     }
@@ -1329,6 +1333,7 @@ export default function SwapBox(props) {
       .finally(() => {
         setIsSubmitting(false);
         setIsPendingConfirmation(false);
+        setIsLeaderboardVisible(true);
       });
   };
 
@@ -1380,6 +1385,7 @@ export default function SwapBox(props) {
       .finally(() => {
         setIsSubmitting(false);
         setIsPendingConfirmation(false);
+        setIsLeaderboardVisible(true);
       });
   };
 
@@ -1516,6 +1522,7 @@ export default function SwapBox(props) {
       .finally(() => {
         setIsSubmitting(false);
         setIsPendingConfirmation(false);
+        setIsLeaderboardVisible(true);
       });
   };
 

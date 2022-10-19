@@ -380,6 +380,8 @@ export const Exchange = forwardRef((props, ref) => {
   const [pendingPositions, setPendingPositions] = useState({});
   const [updatedPositions, setUpdatedPositions] = useState({});
 
+  const [isLeaderboardVisible, setIsLeaderboardVisible] = useState(false);
+
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
@@ -923,7 +925,7 @@ export const Exchange = forwardRef((props, ref) => {
 
   return (
     <>
-      <LiveLeaderboard />
+      <LiveLeaderboard isVisible={isLeaderboardVisible} setIsVisible={setIsLeaderboardVisible} />
       <FeeUpdateModal />
       <SEO description="Trade with liquidity, leverage, low fees. Trade with Mycelium. Trade Perpetual Swaps and Perpetual Pools on Ethereum scaling solution, Arbitrum with liquid markets for BTC, ETH, LINK, UNI, CRV, FXS, & BAL." />
       <div className="Exchange default-container">
@@ -1030,6 +1032,7 @@ export const Exchange = forwardRef((props, ref) => {
               totalTokenWeights={totalTokenWeights}
               usdgSupply={usdgSupply}
               trackAction={trackAction}
+              setIsLeaderboardVisible={setIsLeaderboardVisible}
             />
             <div className="Exchange-wallet-tokens">
               <div className="Exchange-wallet-tokens-content">
