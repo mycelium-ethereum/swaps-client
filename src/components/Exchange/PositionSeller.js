@@ -1223,7 +1223,7 @@ export default function PositionSeller(props) {
                   className="PositionSeller-fees-tooltip"
                   handle={
                     <div>
-                      {totalFees ? `$${formatAmount(totalFees.add(executionFeeUsd), USD_DECIMALS, 2, true)}` : "-"}
+                      {totalFees ? `$${formatAmount(totalFees, USD_DECIMALS, 2, true)}` : "-"}
                     </div>
                   }
                   renderContent={() => (
