@@ -1,3 +1,5 @@
+import { ARBITRUM_GOERLI } from "./Helpers";
+
 const CONTRACTS = {
   1: {
     UniswapMycEthPool: "0x66dD48889Df1Fc32cBa3aBfA2c453906d527eB2e",
@@ -50,7 +52,7 @@ const CONTRACTS = {
     OrderExecutor: "0x9B12CF1bC134a9eE01DC456fbb13a662C2dcf443",
     OrderBookReader: "0xf2A0764144bEB244cD04356b5b2078E0ef682FF6",
     PositionRouter: "0x2d78AE5147D358d803e6306D96db1AB995a4AAF1",
-    PositionManager: "0x4AA877edC8E19df0FbDe12f35eEf5ec429846Cc7",
+    PositionManager: "0xb65B42c48DB28e13Cd490f72dDDEEe57eD2072f6",
 
     ReferralStorage: "0x956BbBe040A2378B63C21011e3c71978d7B75a56",
     ReferralReader: "0x27ec154C4D6e496027FBED863aC7a0186942Cc09",

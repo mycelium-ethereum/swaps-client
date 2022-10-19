@@ -143,7 +143,7 @@ export const SHORT = "Short";
 export const MARKET = "Market";
 export const LIMIT = "Limit";
 export const STOP = "Stop";
-export const LEVERAGE_ORDER_OPTIONS = [MARKET, <ComingSoonTooltip handle={LIMIT} />];
+export const LEVERAGE_ORDER_OPTIONS = [MARKET, LIMIT];
 export const SWAP_ORDER_OPTIONS = [MARKET, <ComingSoonTooltip handle={LIMIT} />];
 export const SWAP_OPTIONS = [LONG, SHORT, SWAP];
 export const DEFAULT_SLIPPAGE_AMOUNT = 30;
