@@ -5,6 +5,7 @@ import useSWR from "swr";
 import { useWeb3React } from "@web3-react/core";
 import Jazzicon, { jsNumberForAddress } from "react-jazzicon";
 import Davatar from "@davatar/react";
+import { NavLink } from "react-router-dom";
 import {
   getTracerServerUrl,
   useChainId,
@@ -25,7 +26,8 @@ import ReaderV2 from "../../abis/ReaderV2.json";
 import { getUnclaimedFees } from "../Dashboard/DashboardV2";
 
 const ARBISCAN_URL = "https://arbiscan.io/address/";
-const VISIBLE_DURATION = 5000; // 1 week
+const VISIBLE_DURATION = 5000;
+const MIN_PERCENTAGE = 4;
 
 export default function LiveLeaderboard(props) {
   const { isVisible, setIsVisible } = props;
@@ -101,7 +103,7 @@ export default function LiveLeaderboard(props) {
   //   return leaderBoardIndex + 1;
   // }, [account, currentRewardRound]);
 
-  const userPosition = 40;
+  const userPosition = roundData.rewards.length;
 
   const twoAboveTwoBelow = useMemo(() => {
     if (!roundData || !userPosition) {
@@ -166,13 +168,13 @@ export default function LiveLeaderboard(props) {
   }, [isVisible, isCountdownTriggered, setIsVisible]);
 
   return (
-    <LeaderboardContainer isActive={isVisible}>
+    <LeaderboardContainer isActive={true}>
       <LeaderboardHeader>
         <FlexContainer>
           <img src={liveIcon} alt="Live" />
           <span className="green">Live</span> Leaderboard
         </FlexContainer>
-        <CloseButton>
+        <CloseButton onClick={() => setIsVisible(false)}>
           <CloseIcon src={closeIcon} alt="Close" />
         </CloseButton>
       </LeaderboardHeader>
@@ -200,7 +202,9 @@ export default function LiveLeaderboard(props) {
           fivePercentOfFees={fivePercentOfFees}
           differenceBetweenUserAndTopFive={differenceBetweenUserAndTopFive}
         />
-        <ViewLeaderboardButton>View Leaderboard</ViewLeaderboardButton>
+        <ViewLeaderboardButton exact to="/rewards#leaderboard">
+          View Leaderboard
+        </ViewLeaderboardButton>
       </BottomContainer>
     </LeaderboardContainer>
   );
@@ -231,7 +235,7 @@ const TableRow = ({ position, opacity, isUserRow, user_address, volume, ensName 
 const ProgressToTopFive = ({ userPercentage }) => (
   <ProgressBarContainer>
     <ProgressBar />
-    <UserIndicator percent={userPercentage || 0}>
+    <UserIndicator percent={userPercentage || MIN_PERCENTAGE}>
       <PositionIndicator />
       <IndicatorBar />
       <IndicatorLabel>You</IndicatorLabel>
@@ -483,17 +487,19 @@ export const BottomContainer = styled.div`
   justify-content: space-between;
 `;
 
-export const ViewLeaderboardButton = styled.button`
+export const ViewLeaderboardButton = styled(NavLink)`
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 123px;
+  padding: 0 20px;
+  white-space: nowrap;
   height: 40px;
   background-color: var(--action-active);
   border-radius: 4px;
   border: none;
   transition: background-color 0.3s ease;
   color: white;
+  text-decoration: none;
   &:hover {
     background-color: var(--cell-stroke);
   }
