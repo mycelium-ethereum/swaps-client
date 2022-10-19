@@ -5,7 +5,18 @@ import cx from "classnames";
 import "./Tab.css";
 
 export default function Tab(props) {
-  const { options, option, setOption, onChange, type = "block", className, optionLabels, icons, trackAction } = props;
+  const {
+    options,
+    option,
+    setOption,
+    onChange,
+    type = "block",
+    className,
+    optionLabels,
+    icons,
+    trackAction,
+    newItem,
+  } = props;
   const onClick = (opt) => {
     if (setOption) {
       setOption(opt);
@@ -27,6 +38,7 @@ export default function Tab(props) {
           <div
             className={cx("Tab-option", "muted", {
               active: opt === option,
+              "new-item": opt === newItem,
             })}
             onClick={() => onClick(opt)}
             key={opt}
