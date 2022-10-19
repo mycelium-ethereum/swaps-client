@@ -103,9 +103,21 @@ export default function Sidebar({ sidebarVisible, setSidebarVisible }) {
     setYear();
   }, []);
 
+  const openSidebar = () => {
+    setSidebarVisible(true);
+  };
+
+  const closeSidebar = () => {
+    setSidebarVisible(false);
+  };
+
+  const toggleSidebar = () => {
+    setSidebarVisible(!sidebarVisible);
+  };
+
   return (
     <FixedContainer>
-      <PullTab visible={sidebarVisible} onClick={() => setSidebarVisible(!sidebarVisible)}>
+      <PullTab visible={sidebarVisible} onClick={toggleSidebar}>
         <PullTabSvg />
       </PullTab>
       <SideMenu visible={sidebarVisible}>
@@ -114,7 +126,7 @@ export default function Sidebar({ sidebarVisible, setSidebarVisible }) {
             <img src={logoImg} alt="Perpetual Swaps Logo" />
           </NavLink>
         </Logo>
-        <MenuContainer>
+        <MenuContainer onMouseEnter={closeSidebar} onMouseLeave={openSidebar}>
           <NavMenu>
             {navTopLinks.map((item) => (
               <MenuItem key={item.name}>
