@@ -12,7 +12,9 @@
   margin-right: 0.3rem;
   opacity: 0.7;
 }
-
+.Tab-option {
+  position: relative;
+}
 .Tab.block .Tab-option {
   text-align: center;
   padding: 0.5rem;
@@ -21,6 +23,20 @@
   cursor: pointer;
   border-radius: 0px;
   border: 1px solid var(--cell-stroke);
+  transition: all 0.3s ease;
+}
+
+.Tab-option.new-item:before {
+  content: "NEW";
+  position: absolute;
+  bottom: calc(100% - 6px);
+  left: calc(100% - 4px);
+  color: white;
+  font-size: 8px;
+  padding: 2px 4px;
+  /* background-color: white; */
+  background-color: var(--action-active);
+  border-radius: 3px;
   transition: all 0.3s ease;
 }
 

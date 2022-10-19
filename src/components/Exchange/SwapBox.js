@@ -1861,6 +1861,7 @@ export default function SwapBox(props) {
               type="inline"
               option={orderOption}
               onChange={onOrderOptionChange}
+              newItem={LIMIT}
             />
           )}
         </div>
