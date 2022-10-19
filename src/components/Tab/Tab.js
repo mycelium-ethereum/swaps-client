@@ -29,7 +29,6 @@ export default function Tab(props) {
       onChange(opt);
     }
   };
-  console.log(newItem);
 
   return (
     <div className={cx("Tab", type, className)}>

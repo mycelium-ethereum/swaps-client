@@ -22,7 +22,7 @@ import {
   REFERRAL_CODE_QUERY_PARAMS,
   SHOULD_EAGER_CONNECT_LOCALSTORAGE_KEY,
   CURRENT_PROVIDER_LOCALSTORAGE_KEY,
-} from './config/localstorage';
+} from "./config/localstorage";
 
 import {
   ARBITRUM,
@@ -1009,14 +1009,11 @@ function FullApp() {
         draggable={false}
         pauseOnHover
       />
-      {/*
       <EventModal
         isModalVisible={isEventModalVisible}
         setEventModalVisible={setEventModalVisible}
-        eventKey={"new-earn-page"}
-        continueLink={"/earn"}
+        eventKey={"add-limit-orders"}
       />
-      */}
       <EventToastContainer />
       <Modal
         className="Connect-wallet-modal"
