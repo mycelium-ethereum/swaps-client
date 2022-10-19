@@ -52,10 +52,9 @@ export const Logo = styled.div(
   width: ${props.visible ? "20px" : "220px"};
   overflow: hidden;
   height: 22px;
-  margin: 0 auto;
   padding-bottom: 40px;
   transition: all 0.3s ease;
-  transform: ${props.visible ? "translateX(-132px)" : "translateX(0px)"};
+  margin-left: 14px;
   img {
     position: absolute;
     width: 220px;
