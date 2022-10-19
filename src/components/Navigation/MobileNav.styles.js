@@ -15,13 +15,23 @@ export const MobileNavMenu = styled.menu`
   }
 `;
 
+export const FlexContainer = styled.div`
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0 8px;
+  padding: 0 16px;
+  @media (max-width: 370px) {
+    grid-template-columns: 1fr;
+  }
+`;
+
 export const ScrollContainer = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   overflow: hidden;
   height: 100vh;
-  @media (max-height: 810px) {
+  @media (max-height: 957px) {
     overflow-y: auto;
     overflow-x: hidden;
   }
@@ -134,6 +144,7 @@ export const SwitchButton = styled.button`
 
 export const AccountDropdownContainer = styled(ButtonContainer)`
   margin-bottom: 16px;
+  width: 100%;
   button.App-cta.transparent {
     background: unset !important;
     display: flex;
@@ -202,6 +213,7 @@ export const AccountDropdownContainer = styled(ButtonContainer)`
 
 export const NetworkDropdownContainer = styled(ButtonContainer)`
   margin-bottom: 24px;
+  width: 100%;
   .network-label {
     display: block !important;
     font-size: 20px;

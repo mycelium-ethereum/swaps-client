@@ -7,7 +7,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Web3ReactProvider, useWeb3React } from "@web3-react/core";
 import { Web3Provider } from "@ethersproject/providers";
 
-import { Switch, Route, NavLink } from "react-router-dom";
+import { Switch, Route, NavLink, useLocation } from "react-router-dom";
 
 import { ThemeProvider } from "@tracer-protocol/tracer-ui";
 import { useAnalytics } from "./segmentAnalytics";
@@ -22,7 +22,7 @@ import {
   REFERRAL_CODE_QUERY_PARAMS,
   SHOULD_EAGER_CONNECT_LOCALSTORAGE_KEY,
   CURRENT_PROVIDER_LOCALSTORAGE_KEY,
-} from './config/localstorage';
+} from "./config/localstorage";
 
 import {
   ARBITRUM,
@@ -122,6 +122,7 @@ import useSWR from "swr";
 import LinkDropdown from "./components/Navigation/LinkDropdown/LinkDropdown";
 import Sidebar from "./components/Navigation/Sidebar/Sidebar";
 import EventModal from "./components/EventModal/EventModal";
+import AppDropdown from "./components/AppDropdown/AppDropdown";
 
 if ("ethereum" in window) {
   window.ethereum.autoRefreshOnNetworkChange = false;
@@ -287,16 +288,6 @@ function AppHeaderUser({
   if (!active) {
     return (
       <div className="App-header-user">
-        {/* <div className="App-header-user-link">
-          <NavLink exact activeClassName="active" className="default-btn trade-link" to="/">
-            Trade
-          </NavLink>
-        </div> */}
-        <div className="App-header-user-link Trade-btn">
-          <NavLink exact activeClassName="active" className="default-btn trade-link" to="/">
-            Trade
-          </NavLink>
-        </div>
         {showSelector && (
           <NetworkSelector
             options={networkOptions}
@@ -319,18 +310,7 @@ function AppHeaderUser({
         >
           {small ? "Connect" : "Connect Wallet"}
         </ConnectWalletButton>
-        <div className="App-header-user-link Switch-app-btn">
-          <a
-            href="https://pools.mycelium.xyz"
-            rel="noopener noreferrer"
-            target="_blank"
-            onClick={() => trackAction && trackAction("Button clicked", { buttonName: "Switch to Perpetual Pools" })}
-          >
-            <button className="default-btn switch-link">
-              <span>Switch to</span> <img src={poolsSmallImg} alt="Perpetual Pools" />
-            </button>
-          </a>
-        </div>
+        <AppDropdown />
       </div>
     );
   }
@@ -339,11 +319,6 @@ function AppHeaderUser({
 
   return (
     <div className="App-header-user">
-      <div className="App-header-user-link Trade-btn">
-        <NavLink exact activeClassName="active" className="default-btn trade-link" to="/">
-          Trade
-        </NavLink>
-      </div>
       {showSelector && (
         <NetworkSelector
           options={networkOptions}
@@ -367,22 +342,13 @@ function AppHeaderUser({
           trackAction={trackAction}
         />
       </div>
-      <div className="App-header-user-link Switch-app-btn">
-        <a
-          href="https://pools.mycelium.xyz"
-          rel="noopener noreferrer"
-          onClick={() => trackAction && trackAction("Button clicked", { buttonName: "Switch to Perpetual Pools" })}
-        >
-          <button className="default-btn switch-link">
-            <span>Switch to</span> <img src={poolsSmallImg} alt="Perpetual Pools" />
-          </button>
-        </a>
-      </div>
+      <AppDropdown />
     </div>
   );
 }
 
 function FullApp() {
+  const location = useLocation();
   const [sidebarVisible, setSidebarVisible] = useState(false);
   const [loggedInTracked, setLoggedInTracked] = useState(false);
   const { trackLogin, trackPageWithTraits, trackAction, analytics } = useAnalytics();
@@ -847,11 +813,13 @@ function FullApp() {
                       trackAction={trackAction}
                     />
                   </div>
-                  <div className="App-header-user-link Trade-btn-mobile">
-                    <NavLink exact activeClassName="active" className="default-btn trade-link" to="/">
-                      Trade
-                    </NavLink>
-                  </div>
+                  {location?.pathname !== "/" && (
+                    <div className="App-header-user-link Trade-btn-mobile">
+                      <NavLink exact activeClassName="active" className="default-btn trade-link" to="/">
+                        Trade
+                      </NavLink>
+                    </div>
+                  )}
                   {/* Hamburger menu */}
                   <button className="App-header-menu-icon-block" onClick={() => setIsDrawerVisible(!isDrawerVisible)}>
                     <span />
