@@ -1310,6 +1310,7 @@ export async function callContract(chainId, contract, method, params, opts) {
         hash: res.hash,
         message: opts.successMsg || "Transaction completed!",
       };
+
       opts.setPendingTxns((pendingTxns) => [...pendingTxns, pendingTxn]);
     }
     return res;
