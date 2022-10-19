@@ -12,18 +12,18 @@ export const SideMenu = styled.aside(
   transition: width 0.3s ease, opacity 0.3s ease;
   width: ${props.visible ? "48px" : "310px"};
   padding-top: 16px;
-  // &:hover {
-  //   width: 310px;
-  //   ${Logo} {
-  //       transform: translateX(0px);
-  //       width: 220px;
-  //   }
-  //   ${LegalMenu},
-  //   ${EventBox},
-  //   ${CopyrightYear} {
-  //    opacity: 1;
-  //   }
-  // }
+  &:hover {
+    width: 310px;
+    ${Logo} {
+        transform: translateX(0px);
+        width: 220px;
+    }
+    ${LegalMenu},
+    ${EventBox},
+    ${CopyrightYear} {
+     opacity: 1;
+    }
+  }
   ${LegalMenu},
   ${EventBox},
   ${CopyrightYear} {
