@@ -50,7 +50,6 @@ export function getTokenAmountFromUsd(
     return;
   }
 
-
   let price
   if (info.isStable) {
     price = expandDecimals(1, 30);

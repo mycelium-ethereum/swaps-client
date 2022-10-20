@@ -22,7 +22,7 @@ import {
   REFERRAL_CODE_QUERY_PARAMS,
   SHOULD_EAGER_CONNECT_LOCALSTORAGE_KEY,
   CURRENT_PROVIDER_LOCALSTORAGE_KEY,
-} from './config/localstorage';
+} from "./config/localstorage";
 
 import {
   ARBITRUM,
@@ -589,11 +589,18 @@ function FullApp() {
   const [pendingTxns, setPendingTxns] = useState([]);
 
   useEffect(() => {
+    const pendingTxnHashes = {};
     const checkPendingTxns = async () => {
       const updatedPendingTxns = [];
       for (let i = 0; i < pendingTxns.length; i++) {
         const pendingTxn = pendingTxns[i];
+        // because the interval is 2 seconds, if the txn takes longer than 2 seconds there
+        // is potential for the interval event que to trigger multiple success or error notifications
+        if (pendingTxnHashes[pendingTxn.hash]) {
+          continue;
+        }
         const receipt = await library.getTransactionReceipt(pendingTxn.hash);
+        pendingTxnHashes[pendingTxn.hash] = true;
         if (receipt) {
           if (receipt.status === 0) {
             const txUrl = getExplorerUrl(chainId) + "tx/" + pendingTxn.hash;
@@ -1009,14 +1016,11 @@ function FullApp() {
         draggable={false}
         pauseOnHover
       />
-      {/*
       <EventModal
         isModalVisible={isEventModalVisible}
         setEventModalVisible={setEventModalVisible}
-        eventKey={"new-earn-page"}
-        continueLink={"/earn"}
+        eventKey={"add-limit-orders"}
       />
-      */}
       <EventToastContainer />
       <Modal
         className="Connect-wallet-modal"
