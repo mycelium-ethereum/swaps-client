@@ -1537,11 +1537,6 @@ export default function SwapBox(props) {
       }
     }
 
-    // Limits not enabled for swaps yet
-    if (opt === SWAP && orderOption === LIMIT) {
-      setOrderOption(MARKET);
-    }
-
     trackAction &&
       trackAction("Swap option changed", {
         option: opt,
