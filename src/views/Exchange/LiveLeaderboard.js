@@ -112,7 +112,9 @@ export default function LiveLeaderboard(props) {
             );
           })}
       </Styles.LeaderboardBody>
-      <ProgressToTopFive userPercentage={userPercentage === 0 ? MAX_PERCENTAGE : userPercentage} />
+      <ProgressToTopFive
+        userPercentage={userPercentage === 0 && leaderboardData.length === 1 ? MAX_PERCENTAGE : userPercentage}
+      />
       <Styles.BottomContainer>
         {differenceBetweenUserAndTopFive && fivePercentOfFees && (
           <AmountToTopFive
@@ -153,7 +155,7 @@ const TableRow = ({ position, opacity, isUserRow, user_address, volume, ensName 
 const ProgressToTopFive = ({ userPercentage }) => (
   <Styles.ProgressBarContainer>
     <Styles.ProgressBar />
-    <Styles.UserIndicator percent={userPercentage || MIN_PERCENTAGE}>
+    <Styles.UserIndicator percent={userPercentage === 0 ? MIN_PERCENTAGE : userPercentage}>
       <PositionIndicator />
       <Styles.IndicatorBar />
       <Styles.IndicatorLabel>You</Styles.IndicatorLabel>
