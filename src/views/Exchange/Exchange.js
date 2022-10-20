@@ -29,13 +29,14 @@ import {
   useAccountOrders,
   getPageTitle,
   useLocalStorageSerializeKey,
+  getTracerServerUrl,
 } from "../../Helpers";
 import { getConstant } from "../../Constants";
-import { approvePlugin } from "../../Api";
-import { useChartPrices } from "../../Api";
+import { approvePlugin, useMarketMakingFeesSince, useFeesSince, useChartPrices } from "../../Api";
 
 import { getContract } from "../../Addresses";
 import { getTokens, getToken, getWhitelistedTokens, getTokenBySymbol } from "../../data/Tokens";
+import { getFeeHistory, SECONDS_PER_WEEK } from "../../data/Fees";
 
 import Reader from "../../abis/ReaderV2.json";
 import VaultV2 from "../../abis/VaultV2.json";
@@ -57,6 +58,8 @@ import SEO from "../../components/Common/SEO";
 import { ExchangeHeader } from "../../components/Exchange/ExchangeHeader";
 import FeeUpdateModal from "../../components/Modal/FeeUpdateModal";
 import LiveLeaderboard from "./LiveLeaderboard";
+import { getUnclaimedFees } from "../Dashboard/DashboardV2";
+
 const { AddressZero } = ethers.constants;
 
 const PENDING_POSITION_VALID_DURATION = 600 * 1000;
@@ -915,6 +918,58 @@ export const Exchange = forwardRef((props, ref) => {
     setChartToken(tmp);
   }, [swapOption, fromToken, toToken, chainId]);
 
+  const { data: currentRewardRound, error: failedFetchingRoundRewards } = useSWR(
+    [getTracerServerUrl(chainId, "/tradingRewards"), "latest"],
+    {
+      fetcher: (url, round) => fetch(`${url}&round=${round}`).then((res) => res.json()),
+    }
+  );
+  const whitelistedTokenAddresses = whitelistedTokens.map((token) => token.address);
+  const stableTokens = whitelistedTokens.filter((t) => t.isStable);
+
+  const { data: fees } = useSWR([`Dashboard:fees:${active}`, chainId, readerAddress, "getFees", vaultAddress], {
+    fetcher: fetcher(library, Reader, [whitelistedTokenAddresses]),
+  });
+
+  const feeHistory = getFeeHistory(chainId);
+
+  const from = feeHistory[0]?.to;
+  const to = from + SECONDS_PER_WEEK * 2;
+  const currentMMFees = useMarketMakingFeesSince(chainId, from, to, stableTokens);
+  const currentGraphFees = useFeesSince(chainId, from, to);
+  const currentUnclaimedFees = getUnclaimedFees(whitelistedTokenAddresses, infoTokens, fees);
+  let totalCurrentFees, currentFees, fivePercentOfFees;
+  if (currentUnclaimedFees && currentGraphFees) {
+    currentFees = currentUnclaimedFees.gt(currentGraphFees) ? currentUnclaimedFees : currentGraphFees;
+  }
+
+  if (currentFees && currentMMFees) {
+    totalCurrentFees = currentFees.add(currentMMFees);
+    fivePercentOfFees = totalCurrentFees.mul(5).div(100);
+  }
+
+  const [leaderboardData, setLeaderboardData] = useState([]);
+
+  useEffect(() => {
+    if (!currentRewardRound || !!currentRewardRound?.message) {
+      return undefined;
+    }
+    const traders = currentRewardRound.rewards
+      ?.sort((a, b) => b.volume - a.volume)
+      .map((trader) => {
+        const positionReward = ethers.BigNumber.from(trader.reward);
+        const degenReward = ethers.BigNumber.from(trader.degen_reward);
+
+        return {
+          ...trader,
+          totalReward: positionReward.add(degenReward),
+          positionReward,
+          degenReward,
+        };
+      }); // Sort traders by highest to lowest in volume
+    setLeaderboardData(traders);
+  }, [currentRewardRound]);
+
   if (!getToken(chainId, toTokenAddress)) {
     return null;
   }
@@ -923,9 +978,30 @@ export const Exchange = forwardRef((props, ref) => {
     setFromTokenAddress(swapOption, token.address);
   };
 
+  const updateLeaderboardOptimistically = (volumeToAdd) => {
+    const _leaderboardData = [...leaderboardData];
+    const trader = _leaderboardData.find((trader) => trader.trader.toLowerCase() === account.toLowerCase());
+    if (trader) {
+      trader.volume = trader.volume + volumeToAdd;
+    } else {
+      _leaderboardData.push({
+        trader: account,
+        volume: volumeToAdd,
+        reward: 0,
+        degen_reward: 0,
+      });
+    }
+    setLeaderboardData(_leaderboardData);
+  };
+
   return (
     <>
-      <LiveLeaderboard isVisible={isLeaderboardVisible} setIsVisible={setIsLeaderboardVisible} />
+      <LiveLeaderboard
+        leaderboardData={leaderboardData}
+        fivePercentOfFees={fivePercentOfFees}
+        isVisible={isLeaderboardVisible}
+        setIsVisible={setIsLeaderboardVisible}
+      />
       <FeeUpdateModal />
       <SEO description="Trade with liquidity, leverage, low fees. Trade with Mycelium. Trade Perpetual Swaps and Perpetual Pools on Ethereum scaling solution, Arbitrum with liquid markets for BTC, ETH, LINK, UNI, CRV, FXS, & BAL." />
       <div className="Exchange default-container">
@@ -1033,6 +1109,7 @@ export const Exchange = forwardRef((props, ref) => {
               usdgSupply={usdgSupply}
               trackAction={trackAction}
               setIsLeaderboardVisible={setIsLeaderboardVisible}
+              updateLeaderboardOptimistically={updateLeaderboardOptimistically}
             />
             <div className="Exchange-wallet-tokens">
               <div className="Exchange-wallet-tokens-content">

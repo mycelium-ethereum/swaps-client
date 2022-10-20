@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import styled from "styled-components";
 import { ethers } from "ethers";
-import useSWR from "swr";
 import { useWeb3React } from "@web3-react/core";
 import Jazzicon, { jsNumberForAddress } from "react-jazzicon";
 import Davatar from "@davatar/react";
@@ -12,7 +11,6 @@ import {
   useENS,
   truncateMiddleEthAddress,
   formatAmount,
-  fetcher,
   USD_DECIMALS,
 } from "../../Helpers";
 import liveIcon from "../../img/live.svg";
@@ -30,88 +28,32 @@ const VISIBLE_DURATION = 5000;
 const MIN_PERCENTAGE = 4;
 
 export default function LiveLeaderboard(props) {
-  const { isVisible, setIsVisible } = props;
+  const { leaderboardData, fivePercentOfFees, isVisible, setIsVisible } = props;
   const [isCountdownTriggered, setIsCountdownTriggered] = useState(false);
   const { chainId } = useChainId();
   const { active, account, library } = useWeb3React();
   const { ensName } = useENS(account);
-  const { data: currentRewardRound, error: failedFetchingRoundRewards } = useSWR(
-    [getTracerServerUrl(chainId, "/tradingRewards"), "5"],
-    {
-      fetcher: (url, round) => fetch(`${url}&round=${round}`).then((res) => res.json()),
-    }
-  );
-  const whitelistedTokens = getWhitelistedTokens(chainId);
-  const whitelistedTokenAddresses = whitelistedTokens.map((token) => token.address);
-  const stableTokens = whitelistedTokens.filter((t) => t.isStable);
-  const readerAddress = getContract(chainId, "Reader");
-  const vaultAddress = getContract(chainId, "Vault");
-
-  const { data: fees } = useSWR([`Dashboard:fees:${active}`, chainId, readerAddress, "getFees", vaultAddress], {
-    fetcher: fetcher(library, ReaderV2, [whitelistedTokenAddresses]),
-  });
-
-  const feeHistory = getFeeHistory(chainId);
-  const { infoTokens } = useInfoTokens(library, chainId, active, undefined, undefined);
-
-  const from = feeHistory[0]?.to;
-  const to = from + SECONDS_PER_WEEK * 2;
-  const currentMMFees = useMarketMakingFeesSince(chainId, from, to, stableTokens);
-  const currentGraphFees = useFeesSince(chainId, from, to);
-  const currentUnclaimedFees = getUnclaimedFees(whitelistedTokenAddresses, infoTokens, fees);
-  let totalCurrentFees, currentFees, fivePercentOfFees;
-  if (currentUnclaimedFees && currentGraphFees) {
-    currentFees = currentUnclaimedFees.gt(currentGraphFees) ? currentUnclaimedFees : currentGraphFees;
-  }
-
-  if (currentFees && currentMMFees) {
-    totalCurrentFees = currentFees.add(currentMMFees);
-    fivePercentOfFees = totalCurrentFees.mul(5).div(100);
-  }
-
-  const roundData = useMemo(() => {
-    if (!currentRewardRound || !!currentRewardRound?.message) {
-      return undefined;
-    }
-    const rewards = currentRewardRound.rewards
-      ?.sort((a, b) => b.volume - a.volume)
-      .map((trader) => {
-        const positionReward = ethers.BigNumber.from(trader.reward);
-        const degenReward = ethers.BigNumber.from(trader.degen_reward);
-
-        return {
-          ...trader,
-          totalReward: positionReward.add(degenReward),
-          positionReward,
-          degenReward,
-        };
-      }); // Sort traders by highest to lowest in volume
-    return {
-      ...currentRewardRound,
-      rewards,
-    };
-  }, [currentRewardRound]);
 
   // Get volume, position and reward from user round data
   // const userPosition = useMemo(() => {
   //   if (!currentRewardRound) {
   //     return undefined;
   //   }
-  //   const leaderBoardIndex = currentRewardRound.rewards?.findIndex(
+  //   const leaderBoardIndex = currentRewardRound?.findIndex(
   //     (trader) => trader.user_address.toLowerCase() === account?.toLowerCase()
   //   );
   //   return leaderBoardIndex + 1;
   // }, [account, currentRewardRound]);
 
-  const userPosition = roundData.rewards.length;
+  const userPosition = leaderboardData?.length;
 
   const twoAboveTwoBelow = useMemo(() => {
-    if (!roundData || !userPosition) {
+    if (!leaderboardData || !userPosition) {
       return undefined;
     }
     const twoAbove = userPosition + 2;
     const twoBelow = userPosition - 2;
-    const twoAboveTwoBelow = roundData.rewards
+    const twoAboveTwoBelow = leaderboardData
       ?.map((trader, index) => {
         if (index + 1 >= twoBelow && index + 1 <= twoAbove) {
           trader.position = index + 1;
@@ -122,31 +64,31 @@ export default function LiveLeaderboard(props) {
       })
       .filter(Boolean);
     return twoAboveTwoBelow;
-  }, [roundData, userPosition]);
+  }, [leaderboardData, userPosition]);
 
   const userPercentage = useMemo(
-    () => 100 - (userPosition / roundData?.rewards?.length) * 100,
-    [roundData, userPosition]
+    () => 100 - (userPosition / leaderboardData?.length) * 100,
+    [leaderboardData, userPosition]
   );
 
   const lastInTopFive = useMemo(() => {
-    if (!roundData || !userPosition) {
+    if (!leaderboardData || !userPosition) {
       return undefined;
     }
-    const topFiveIndex = Math.floor(userPosition / roundData?.rewards?.length);
-    const topFivePercentUser = roundData.rewards[topFiveIndex];
+    const topFiveIndex = Math.floor(userPosition / leaderboardData?.length);
+    const topFivePercentUser = leaderboardData[topFiveIndex];
     return topFivePercentUser;
-  }, [roundData, userPosition]);
+  }, [leaderboardData, userPosition]);
 
   const differenceBetweenUserAndTopFive = useMemo(() => {
-    if (!roundData || !userPosition || !lastInTopFive) {
+    if (!leaderboardData || !userPosition || !lastInTopFive) {
       return undefined;
     }
     const difference = ethers.BigNumber.from(lastInTopFive.volume).sub(
-      ethers.BigNumber.from(roundData.rewards[userPosition - 1].volume)
+      ethers.BigNumber.from(leaderboardData[userPosition - 1].volume)
     );
     return difference;
-  }, [roundData, userPosition, lastInTopFive]);
+  }, [leaderboardData, userPosition, lastInTopFive]);
 
   const getOpacity = (position) => {
     if (position === userPosition) {
@@ -168,7 +110,7 @@ export default function LiveLeaderboard(props) {
   }, [isVisible, isCountdownTriggered, setIsVisible]);
 
   return (
-    <LeaderboardContainer isActive={true}>
+    <LeaderboardContainer isActive={isVisible}>
       <LeaderboardHeader>
         <FlexContainer>
           <img src={liveIcon} alt="Live" />

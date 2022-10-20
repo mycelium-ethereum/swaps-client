@@ -150,6 +150,7 @@ export default function SwapBox(props) {
     isPositionRouterApproving,
     trackAction,
     setIsLeaderboardVisible,
+    updateLeaderboardOptimistically
   } = props;
 
   const [fromValue, setFromValue] = useState("");
@@ -1199,6 +1200,7 @@ export default function SwapBox(props) {
       .finally(() => {
         setIsSubmitting(false);
         setIsLeaderboardVisible(true);
+        updateLeaderboardOptimistically(fromUsdMin);
       });
   };
 
@@ -1217,7 +1219,6 @@ export default function SwapBox(props) {
       .then(async (res) => {})
       .finally(() => {
         setIsSubmitting(false);
-        setIsLeaderboardVisible(true);
       });
   };
 
@@ -1296,7 +1297,6 @@ export default function SwapBox(props) {
         .finally(() => {
           setIsSubmitting(false);
           setIsPendingConfirmation(false);
-          setIsLeaderboardVisible(true);
         });
       return;
     }
