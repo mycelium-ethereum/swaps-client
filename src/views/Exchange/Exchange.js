@@ -950,6 +950,17 @@ export const Exchange = forwardRef((props, ref) => {
 
   const [leaderboardData, setLeaderboardData] = useState([]);
 
+  // Get volume, position and reward from user round data
+  const userPosition = useMemo(() => {
+    if (!leaderboardData) {
+      return undefined;
+    }
+    const leaderBoardIndex = leaderboardData?.findIndex(
+      (trader) => trader.user_address.toLowerCase() === account?.toLowerCase()
+    );
+    return leaderBoardIndex + 1;
+  }, [account, leaderboardData]);
+
   useEffect(() => {
     if (!currentRewardRound || !!currentRewardRound?.message) {
       return undefined;
@@ -980,12 +991,14 @@ export const Exchange = forwardRef((props, ref) => {
 
   const updateLeaderboardOptimistically = (volumeToAdd) => {
     const _leaderboardData = [...leaderboardData];
-    const trader = _leaderboardData.find((trader) => trader.trader.toLowerCase() === account.toLowerCase());
-    if (trader) {
-      trader.volume = trader.volume + volumeToAdd;
+    const currentUser = _leaderboardData.find(
+      (trader) => trader?.user_address?.toLowerCase() === account?.toLowerCase()
+    );
+    if (currentUser) {
+      currentUser.volume = ethers.BigNumber.from(currentUser.volume).add.ethers.BigNumber.from(volumeToAdd).toString();
     } else {
       _leaderboardData.push({
-        trader: account,
+        user_address: account,
         volume: volumeToAdd,
         reward: 0,
         degen_reward: 0,
@@ -997,6 +1010,7 @@ export const Exchange = forwardRef((props, ref) => {
   return (
     <>
       <LiveLeaderboard
+        userPosition={userPosition}
         leaderboardData={leaderboardData}
         fivePercentOfFees={fivePercentOfFees}
         isVisible={isLeaderboardVisible}

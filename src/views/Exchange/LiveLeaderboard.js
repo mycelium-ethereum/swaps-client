@@ -1,51 +1,25 @@
 import { useEffect, useMemo, useState } from "react";
-import styled from "styled-components";
 import { ethers } from "ethers";
 import { useWeb3React } from "@web3-react/core";
 import Jazzicon, { jsNumberForAddress } from "react-jazzicon";
 import Davatar from "@davatar/react";
-import { NavLink } from "react-router-dom";
-import {
-  getTracerServerUrl,
-  useChainId,
-  useENS,
-  truncateMiddleEthAddress,
-  formatAmount,
-  USD_DECIMALS,
-} from "../../Helpers";
+import { useENS, truncateMiddleEthAddress, formatAmount, USD_DECIMALS } from "../../Helpers";
 import liveIcon from "../../img/live.svg";
 import closeIcon from "../../img/close.svg";
 import { ReactComponent as PositionIndicator } from "../../img/position-indicator.svg";
-import { getFeeHistory, SECONDS_PER_WEEK } from "../../data/Fees";
-import { useMarketMakingFeesSince, useFeesSince, useInfoTokens } from "../../Api";
-import { getWhitelistedTokens } from "../../data/Tokens";
-import { getContract } from "../../Addresses";
-import ReaderV2 from "../../abis/ReaderV2.json";
-import { getUnclaimedFees } from "../Dashboard/DashboardV2";
+import * as Styles from "./LiveLeaderboard.styles";
 
 const ARBISCAN_URL = "https://arbiscan.io/address/";
 const VISIBLE_DURATION = 5000;
 const MIN_PERCENTAGE = 4;
+const MAX_PERCENTAGE = 98;
+let timeout;
 
 export default function LiveLeaderboard(props) {
-  const { leaderboardData, fivePercentOfFees, isVisible, setIsVisible } = props;
+  const { userPosition, leaderboardData, fivePercentOfFees, isVisible, setIsVisible } = props;
   const [isCountdownTriggered, setIsCountdownTriggered] = useState(false);
-  const { chainId } = useChainId();
-  const { active, account, library } = useWeb3React();
+  const { account } = useWeb3React();
   const { ensName } = useENS(account);
-
-  // Get volume, position and reward from user round data
-  // const userPosition = useMemo(() => {
-  //   if (!currentRewardRound) {
-  //     return undefined;
-  //   }
-  //   const leaderBoardIndex = currentRewardRound?.findIndex(
-  //     (trader) => trader.user_address.toLowerCase() === account?.toLowerCase()
-  //   );
-  //   return leaderBoardIndex + 1;
-  // }, [account, currentRewardRound]);
-
-  const userPosition = leaderboardData?.length;
 
   const twoAboveTwoBelow = useMemo(() => {
     if (!leaderboardData || !userPosition) {
@@ -102,7 +76,7 @@ export default function LiveLeaderboard(props) {
 
   useEffect(() => {
     if (isVisible && !isCountdownTriggered) {
-      setTimeout(() => {
+      timeout = setTimeout(() => {
         setIsVisible(false);
         setIsCountdownTriggered(true);
       }, VISIBLE_DURATION);
@@ -110,17 +84,17 @@ export default function LiveLeaderboard(props) {
   }, [isVisible, isCountdownTriggered, setIsVisible]);
 
   return (
-    <LeaderboardContainer isActive={isVisible}>
-      <LeaderboardHeader>
-        <FlexContainer>
+    <Styles.LeaderboardContainer isActive={isVisible && userPosition} onMouseEnter={clearTimeout(timeout)}>
+      <Styles.LeaderboardHeader>
+        <Styles.FlexContainer>
           <img src={liveIcon} alt="Live" />
           <span className="green">Live</span> Leaderboard
-        </FlexContainer>
-        <CloseButton onClick={() => setIsVisible(false)}>
-          <CloseIcon src={closeIcon} alt="Close" />
-        </CloseButton>
-      </LeaderboardHeader>
-      <LeaderboardBody>
+        </Styles.FlexContainer>
+        <Styles.CloseButton onClick={() => setIsVisible(false)}>
+          <Styles.CloseIcon src={closeIcon} alt="Close" />
+        </Styles.CloseButton>
+      </Styles.LeaderboardHeader>
+      <Styles.LeaderboardBody>
         {userPosition &&
           twoAboveTwoBelow?.map(({ user_address, volume, position }, index) => {
             /* const isUserRow = user_address === account; */
@@ -137,312 +111,68 @@ export default function LiveLeaderboard(props) {
               />
             );
           })}
-      </LeaderboardBody>
-      <ProgressToTopFive userPercentage={userPercentage} />
-      <BottomContainer>
-        <AmountToTopFive
-          fivePercentOfFees={fivePercentOfFees}
-          differenceBetweenUserAndTopFive={differenceBetweenUserAndTopFive}
-        />
-        <ViewLeaderboardButton exact to="/rewards#leaderboard">
+      </Styles.LeaderboardBody>
+      <ProgressToTopFive userPercentage={userPercentage === 0 ? MAX_PERCENTAGE : userPercentage} />
+      <Styles.BottomContainer>
+        {differenceBetweenUserAndTopFive && fivePercentOfFees && (
+          <AmountToTopFive
+            fivePercentOfFees={fivePercentOfFees}
+            differenceBetweenUserAndTopFive={differenceBetweenUserAndTopFive}
+          />
+        )}
+        <Styles.ViewLeaderboardButton exact to="/rewards#leaderboard">
           View Leaderboard
-        </ViewLeaderboardButton>
-      </BottomContainer>
-    </LeaderboardContainer>
+        </Styles.ViewLeaderboardButton>
+      </Styles.BottomContainer>
+    </Styles.LeaderboardContainer>
   );
 }
 
 const TableRow = ({ position, opacity, isUserRow, user_address, volume, ensName }) => (
-  <UserRow opacity={opacity} isUser={isUserRow}>
-    <Position>#{position}</Position>
-    <BorderOutline>
-      <UserAddress>
+  <Styles.UserRow opacity={opacity} isUser={isUserRow}>
+    <Styles.Position>#{position}</Styles.Position>
+    <Styles.BorderOutline>
+      <Styles.UserAddress>
         {ensName ? (
           <Davatar size={24} address={user_address} />
         ) : (
           <Jazzicon diameter={24} seed={jsNumberForAddress(user_address)} />
         )}
-        <UserDetails>
+        <Styles.UserDetails>
           <a href={`${ARBISCAN_URL}${user_address}`} rel="noopener noreferrer" target="_blank">
             <span>{truncateMiddleEthAddress(user_address)}</span>
           </a>
           <span>{ensName}</span>
-        </UserDetails>
-      </UserAddress>
-      <Volume>${formatAmount(volume, USD_DECIMALS, 2, true)}</Volume>
-    </BorderOutline>
-  </UserRow>
+        </Styles.UserDetails>
+      </Styles.UserAddress>
+      <Styles.Volume>${formatAmount(volume, USD_DECIMALS, 2, true)}</Styles.Volume>
+    </Styles.BorderOutline>
+  </Styles.UserRow>
 );
 
 const ProgressToTopFive = ({ userPercentage }) => (
-  <ProgressBarContainer>
-    <ProgressBar />
-    <UserIndicator percent={userPercentage || MIN_PERCENTAGE}>
+  <Styles.ProgressBarContainer>
+    <Styles.ProgressBar />
+    <Styles.UserIndicator percent={userPercentage || MIN_PERCENTAGE}>
       <PositionIndicator />
-      <IndicatorBar />
-      <IndicatorLabel>You</IndicatorLabel>
-    </UserIndicator>
-    <FivePercentIndicator>
+      <Styles.IndicatorBar />
+      <Styles.IndicatorLabel>You</Styles.IndicatorLabel>
+    </Styles.UserIndicator>
+    <Styles.FivePercentIndicator>
       <PositionIndicator />
-      <IndicatorBar />
-      <IndicatorLabel>
-        Top <BoldPercentage>5%</BoldPercentage>
-      </IndicatorLabel>
-    </FivePercentIndicator>
-  </ProgressBarContainer>
+      <Styles.IndicatorBar />
+      <Styles.IndicatorLabel>
+        Top <Styles.BoldPercentage>5%</Styles.BoldPercentage>
+      </Styles.IndicatorLabel>
+    </Styles.FivePercentIndicator>
+  </Styles.ProgressBarContainer>
 );
 
 const AmountToTopFive = ({ differenceBetweenUserAndTopFive, fivePercentOfFees }) => (
-  <div>
+  <Styles.AmountText>
     <span>
-      Trade <b>${formatAmount(differenceBetweenUserAndTopFive, USD_DECIMALS, 2, true)}</b>
+      Trade <b>${formatAmount(differenceBetweenUserAndTopFive, USD_DECIMALS, 2, true)}</b> to share in
+      <br /> <b>${formatAmount(fivePercentOfFees, USD_DECIMALS, 2, true)}</b> rewards
     </span>
-    <br />
-    <span>
-      to share in <b>${formatAmount(fivePercentOfFees, USD_DECIMALS, 2, true)}</b> rewards
-    </span>
-  </div>
+  </Styles.AmountText>
 );
-
-export const LeaderboardContainer = styled.div(
-  (props) => `
-  position: fixed;
-  top: 60px;
-  right: 16px;
-  width: 388px;
-  padding: 12px 16px;
-  border-radius: 4px;
-  border: 1px solid var(--cell-stroke);
-  background: linear-gradient(119.04deg, #003100 -3.31%, rgba(0, 49, 0, 0) 76.25%), #000a00;
-  z-index: 998;
-  transition: opacity 0.3s ease;
-  pointer-events: ${props.isActive ? "all" : "none"};
-  opacity: ${props.isActive ? 1 : 0};
-`
-);
-
-export const LeaderboardHeader = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  font-weight: bold;
-  width: 100%;
-  margin-bottom: 8px;
-  .green {
-    color: var(--action-active);
-    display: inline-block;
-    margin-right: 8px;
-  }
-  img {
-    width: 27px;
-    height: 20px;
-    margin-right: 8px;
-  }
-`;
-
-export const LeaderboardBody = styled.div`
-  margin-bottom: 36px;
-  padding-right: 24px;
-`;
-
-export const FlexContainer = styled.div`
-  display: flex;
-  align-items: center;
-  height: 100%;
-`;
-
-export const CloseButton = styled.button`
-  background-color: transparent;
-  border: none;
-`;
-
-export const CloseIcon = styled.img`
-  width: 10px !important;
-  height: 10px !important;
-  margin-right: 0 !important;
-`;
-
-export const UserRow = styled.div(
-  (props) => `
-  display: flex;
-  align-items: center;
-  width: 100%;
-  opacity: ${props.opacity};
-  margin-bottom: 4px;
-  min-height: 40px;
-  filter: ${props.isUser ? "drop-shadow(0px 0px 10px rgba(9, 130, 0, 0.6))" : "none"};
-  background: ${props.isUser ? "linear-gradient(111.31deg, #003000 23.74%, rgba(0, 48, 0, 0) 99.29%)" : "none"};
-  ${Position} {
-    background-color: ${props.isUser ? "var(--action-active)" : "transparent"};
-  }
-  ${Position},
-  ${UserAddress},
-  ${Volume} {
-    font-weight: ${props.isUser ? "bold" : "400"};
-  }
-  ${BorderOutline} {
-    border-color: ${props.isUser ? "var(--action-active)" : "transparent"};
-  }
-  `
-);
-
-export const Position = styled.span`
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 40px;
-  width: 80px;
-  border-top-left-radius: 4px;
-  border-bottom-left-radius: 4px;
-`;
-
-export const UserAddress = styled.span`
-  display: inline-flex;
-  align-items: center;
-  padding: 0 30px 0 16px;
-  height: 100%;
-`;
-
-export const Volume = styled.span`
-  display: inline-flex;
-  align-items: center;
-  padding-right: 5px;
-  height: 100%;
-`;
-
-export const UserDetails = styled.div`
-  margin-left: 8px;
-  a {
-    text-decoration: none;
-  }
-  span {
-    display: block;
-  }
-  span:nth-child(2) {
-    font-size: 12px;
-    line-height: 18px;
-    color: var(--text-secondary);
-  }
-`;
-
-export const BorderOutline = styled.div`
-  display: flex;
-  align-items: center;
-  width: 100%;
-  justify-content: space-between;
-  border-top-right-radius: 4px;
-  border-bottom-right-radius: 4px;
-  border-width: 1px;
-  border-left-width: 0;
-  border-style: solid;
-  height: 40px;
-`;
-
-export const ProgressBarContainer = styled.div`
-  width: calc(100% + 32px);
-  height: 16px;
-  background-color: rgba(0, 48, 0, 0.2);
-  transform: translateX(-16px);
-  margin-bottom: 16px;
-`;
-
-export const ProgressBar = styled.div(
-  (props) => `
-  position: relative;
-  height: 100%;
-  width: ${props.percent}%;
-  background: linear-gradient(90.35deg, rgba(79, 224, 33, 0.2) 5.23%, rgba(79, 224, 33, 0) 208.5%);
-  &:after {
-    content: "";
-    position: absolute;
-    width: 9%;
-    right: 0;
-    height: 100%;
-    background: rgba(255, 255, 255, 0.2);
-  }
-`
-);
-
-export const IndicatorLabel = styled.span`
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  color: black;
-  z-index: 1;
-  font-size: 9px;
-`;
-
-export const IndicatorBar = styled.span`
-  position: absolute;
-  left: 50%;
-  bottom: 0;
-  transform: translateX(-50%);
-  width: 5px;
-  height: 100%;
-`;
-
-export const Indicator = styled.div`
-  display: flex;
-  justify-content: center;
-  text-align: center;
-  position: absolute;
-  bottom: 0;
-  width: 27px;
-  height: 51px;
-`;
-
-export const UserIndicator = styled(Indicator)(
-  (props) => `
-  z-index: 2;
-  bottom: 0;
-  left: calc(${props.percent}% - 16px);
-  color: var(--action-active);
-  ${IndicatorBar} {
-    background-color: var(--action-active);
-  }
-  ${IndicatorLabel} {
-    top: 10px;
-  }
-`
-);
-
-export const FivePercentIndicator = styled(Indicator)`
-  right: 5%;
-  color: white;
-
-  ${IndicatorBar} {
-    background-color: white;
-  }
-  ${IndicatorLabel} {
-    top: 2px;
-  }
-`;
-
-export const BoldPercentage = styled.span`
-  font-weight: bold;
-  font-size: 12px;
-`;
-
-export const BottomContainer = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-`;
-
-export const ViewLeaderboardButton = styled(NavLink)`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0 20px;
-  white-space: nowrap;
-  height: 40px;
-  background-color: var(--action-active);
-  border-radius: 4px;
-  border: none;
-  transition: background-color 0.3s ease;
-  color: white;
-  text-decoration: none;
-  &:hover {
-    background-color: var(--cell-stroke);
-  }
-`;

@@ -150,7 +150,7 @@ export default function SwapBox(props) {
     isPositionRouterApproving,
     trackAction,
     setIsLeaderboardVisible,
-    updateLeaderboardOptimistically
+    updateLeaderboardOptimistically,
   } = props;
 
   const [fromValue, setFromValue] = useState("");
@@ -1199,8 +1199,6 @@ export default function SwapBox(props) {
       .then(async (res) => {})
       .finally(() => {
         setIsSubmitting(false);
-        setIsLeaderboardVisible(true);
-        updateLeaderboardOptimistically(fromUsdMin);
       });
   };
 
@@ -1523,6 +1521,8 @@ export default function SwapBox(props) {
         setIsSubmitting(false);
         setIsPendingConfirmation(false);
         setIsLeaderboardVisible(true);
+        setIsLeaderboardVisible(true);
+        updateLeaderboardOptimistically(fromUsdMin);
       });
   };
 
@@ -1817,7 +1817,7 @@ export default function SwapBox(props) {
         fromCurrencyToken: fromToken.symbol,
         leverage: parseFloat(leverage),
         feesUsd: parseFloat(formatAmount(feesUsd, 4, 4, false)),
-        feesUsdFormatted: parseFloat(formatAmount(feesUsd, 4, 4, false).toFixed(2)),
+        feesUsdFormatted: parseFloat(formatAmount(feesUsd, 4, 4, false)?.toFixed(2)) || undefined,
         [`fees${fromToken.symbol}`]: parseFloat(formatAmount(fees, fromToken.decimals, 4, false)),
         walletAddress: account,
         network: NETWORK_NAME[chainId],
@@ -2294,6 +2294,7 @@ export default function SwapBox(props) {
                       right of the page after connecting your wallet.
                       <br />
                       <br />
+                      ``
                       <a
                         href="https://swaps.docs.mycelium.xyz/quick-start-guide/2.-how-to-trade"
                         target="_blank"
