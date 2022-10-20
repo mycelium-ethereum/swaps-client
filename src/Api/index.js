@@ -1212,33 +1212,76 @@ function ToastifyDebug(props) {
 export function useStakingApr(mycPrice, ethPrice) {
   const [stakingApr, setStakingApr] = useState(null);
 
+  const { data: currentCycle } = useSWR(
+    [`useStakingApr:currentCycle:${ARBITRUM}`, ARBITRUM, getContract(ARBITRUM, "LentMYC"), "cycle"],
+    {
+      fetcher: fetcher(undefined, LentMyc),
+    }
+  );
+
+  const cycle = currentCycle?.toNumber();
+
   const { data: mycAssetsInStaking } = useSWR(
-    [`DashboardV2:mycInStaking:${ARBITRUM}`, ARBITRUM, getContract(ARBITRUM, "LentMYC"), "totalAssets"],
+    cycle
+      ? [`useStakingApr:mycInStaking:${ARBITRUM}`, ARBITRUM, getContract(ARBITRUM, "LentMYC"), "totalAssets"]
+      : null,
     {
       fetcher: fetcher(undefined, LentMyc),
     }
   );
 
   const { data: pendingMycDepositsInStaking } = useSWR(
-    [`DashboardV2:pendingMycInStaking:${ARBITRUM}`, ARBITRUM, getContract(ARBITRUM, "LentMYC"), "pendingDeposits"],
+    cycle
+      ? [`useStakingApr:pendingMycInStaking:${ARBITRUM}`, ARBITRUM, getContract(ARBITRUM, "LentMYC"), "pendingDeposits"]
+      : null,
     {
       fetcher: fetcher(undefined, LentMyc),
     }
   );
 
-  useEffect(() => {
-    if (mycAssetsInStaking && pendingMycDepositsInStaking && ethPrice && mycPrice) {
-      const mycDeposited = mycAssetsInStaking.add(pendingMycDepositsInStaking).div(expandDecimals(1, ETH_DECIMALS));
+  const { data: prev } = useSWR(
+    cycle
+      ? [`useStakingApr:prev:${ARBITRUM}`, ARBITRUM, getContract(ARBITRUM, "LentMYC"), "cycleCumulativeEthRewards"]
+      : null,
+    {
+      fetcher: fetcher(undefined, LentMyc, [cycle - 2]),
+    }
+  );
 
-      let ethDistributed = ethers.utils.parseEther("10.75744956");
-      let mycUSDValue = mycDeposited.mul(mycPrice);
-      let ethUSDValue = ethDistributed.mul(ethPrice);
+  const { data: current } = useSWR(
+    cycle
+      ? [`useStakingApr:current:${ARBITRUM}`, ARBITRUM, getContract(ARBITRUM, "LentMYC"), "cycleCumulativeEthRewards"]
+      : null,
+    {
+      fetcher: fetcher(undefined, LentMyc, [cycle - 1]),
+    }
+  );
+
+  const { data: cycleAssets } = useSWR(
+    cycle
+      ? [`useStakingApr:cycleAssets:${ARBITRUM}`, ARBITRUM, getContract(ARBITRUM, "LentMYC"), "cycleSharesAndAssets"]
+      : null,
+    {
+      fetcher: fetcher(undefined, LentMyc, [cycle - 1]),
+    }
+  );
+
+  useEffect(() => {
+    const values = [mycAssetsInStaking, pendingMycDepositsInStaking, ethPrice, mycPrice, current, prev, cycleAssets];
+    if (values.every(Boolean)) {
+      const cycleEthRewardsPerShare = current.sub(prev);
+      const cycleSupply = cycleAssets[0];
+      const cycleEthRewards = cycleEthRewardsPerShare.mul(cycleSupply).div(ethers.BigNumber.from(10).pow(18));
+      const ethDistributed = cycleEthRewards;
+      const mycDeposited = mycAssetsInStaking.add(pendingMycDepositsInStaking).div(expandDecimals(1, ETH_DECIMALS));
+      const mycUSDValue = mycDeposited.mul(mycPrice);
+      const ethUSDValue = ethDistributed.mul(ethPrice);
 
       const aprPercentageForCycle = ethers.utils.formatUnits(ethUSDValue.div(mycUSDValue));
       const aprPercentageYearly = parseFloat(aprPercentageForCycle) * FORTNIGHTS_IN_YEAR * 100;
       setStakingApr(aprPercentageYearly.toFixed(2));
     }
-  }, [mycAssetsInStaking, pendingMycDepositsInStaking, ethPrice, mycPrice]);
+  }, [mycAssetsInStaking, pendingMycDepositsInStaking, ethPrice, mycPrice, current, prev, cycleAssets]);
 
   return stakingApr;
 }
