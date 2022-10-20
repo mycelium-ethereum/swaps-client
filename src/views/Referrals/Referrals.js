@@ -156,15 +156,17 @@ export default function Referral(props) {
     if (!currentRewardRound) {
       return undefined;
     }
-    const leaderBoardIndex = currentRewardRound.rewards?.findIndex(
-      (trader) => trader.user_address.toLowerCase() === account?.toLowerCase()
-    );
+    // const leaderBoardIndex = currentRewardRound.rewards?.findIndex(
+    //   (trader) => trader.user_address.toLowerCase() === account?.toLowerCase()
+    // );
     let traderData;
     // if (leaderBoardIndex !== undefined && leaderBoardIndex >= 0) {
     //   traderData = currentRewardRound.rewards[leaderBoardIndex];
     // }
     // REMOVE AFTER TESTING
-    traderData = currentRewardRound.rewards[0];
+    if (currentRewardRound?.rewards?.length) {
+      traderData = currentRewardRound?.rewards[0];
+    }
     // trader's data found
     if (traderData) {
       const commissions = bigNumberify(traderData.commissions);
@@ -367,13 +369,17 @@ export default function Referral(props) {
               chainId={chainId}
               active={active}
               connectWallet={connectWallet}
-              trackAction={trackAction}
               userRoundData={userRoundData}
               // tradersTier={tradersTier}
               // referrerTier={referrerTier}
               currentRoundData={currentRewardRound?.rewards}
               referrerTier={1}
               referralCodeInString={referralCodeInString}
+              allRoundsRewardsData={allRoundsRewardsData}
+              setSelectedRound={setSelectedRound}
+              rewardsMessage={rewardsMessage}
+              timeTillRewards={timeTillRewards}
+              trackAction={trackAction}
             />
           )}
           {userRoundData && /* disable for now */ false && (

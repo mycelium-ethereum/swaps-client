@@ -4,7 +4,7 @@ export const RewardsTableContainer = styled.div`
   overflow: hidden;
   border-radius: 4px;
   border: 1px solid var(--action-active);
-  margin-top: 8px;
+  margin-top: 16px;
   margin-bottom: 34px;
 `;
 
@@ -56,9 +56,17 @@ export const LeaderboardTitle = styled.div`
   align-items: center;
   font-weight: bold;
   .green {
+    display: inline-block;
+    margin-right: 4px;
     color: var(--action-active);
   }
   > img {
     margin-right: 8px;
   }
+`;
+
+export const FlexBetweenContainer = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 `;

@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled from "styled-components";
 
 export const RewardsRoundSelect = styled.div`
   display: flex;
@@ -37,8 +37,9 @@ export const RoundSelectButton = styled.button`
   display: flex;
   justify-content: space-between;
   align-items: center;
-
-  width: 342px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  width: 210px;
 
   font-size: 16px;
   line-height: 150%;
@@ -51,7 +52,7 @@ export const RoundSelectButton = styled.button`
   }
   &.App-cta-selected,
   &.App-cta:hover {
-    background-color: var(--cell-hover)!important;
+    background-color: var(--cell-hover) !important;
     border: 1px solid var(--cell-highlight);
   }
 `;
@@ -65,7 +66,7 @@ export const RewardsButton = styled.button`
   font-size: 16px;
 
   &:disabled,
-  &[disabled]{
+  &[disabled] {
     background: var(--cell-unavailable);
     border: 1px solid var(--cell-unavailable-stroke);
     color: rgba(49, 87, 136, 0.2);
