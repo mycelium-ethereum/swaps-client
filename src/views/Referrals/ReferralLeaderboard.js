@@ -1,5 +1,12 @@
 import * as Styles from "./ReferralLeaderboard.styles";
-import { getTierIdDisplay, numberToOrdinal, TIER_DISCOUNT_INFO, USD_DECIMALS, formatAmount } from "../../Helpers";
+import {
+  getTierIdDisplay,
+  numberToOrdinal,
+  TIER_DISCOUNT_INFO,
+  USD_DECIMALS,
+  formatAmount,
+  bigNumberify,
+} from "../../Helpers";
 // import { getCodeByAccount } from "../../Api/referrals";
 import liveIcon from "../../img/live.svg";
 import { RoundDropdown } from "../../components/RewardsRoundSelect/RewardsRoundSelect";
@@ -20,44 +27,18 @@ export default function ReferralLeaderboard(props) {
     active,
     account,
     allRoundsRewardsData,
+    allUsersRoundData,
     setSelectedRound,
     rewardsMessage,
     trackAction,
     timeTillRewards,
     userRoundData,
-    referrerTier,
     referralCodeInString,
     currentRoundData,
   } = props;
-
   return (
-    <div>
-      <span>Your rewards</span>
-      <Styles.RewardsTableContainer>
-        <Styles.RewardsTable>
-          <thead>
-            <tr>
-              {TABLE_HEADINGS.map((heading) => (
-                <Styles.RewardsTableHeading>{heading}</Styles.RewardsTableHeading>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            <Styles.UserRow className="no-border highlight">
-              <Styles.TableCell className="bold">{numberToOrdinal(userRoundData?.position)}</Styles.TableCell>
-              <Styles.TableCell className="bold">{referralCodeInString ?? "Jeff123"}</Styles.TableCell>
-              <Styles.TableCell className="tier">
-                <span>{`Tier ${getTierIdDisplay(referrerTier)}`}</span>{" "}
-                <span>{`${TIER_DISCOUNT_INFO[referrerTier]}% discount`}</span>
-              </Styles.TableCell>
-              <Styles.TableCell>${formatAmount(userRoundData?.volume, USD_DECIMALS, 2, true, "0.00")}</Styles.TableCell>
-              <Styles.TableCell>
-                ${formatAmount(userRoundData?.totalRewardUsd, USD_DECIMALS, 2, true, "0.00")}
-              </Styles.TableCell>
-            </Styles.UserRow>
-          </tbody>
-        </Styles.RewardsTable>
-      </Styles.RewardsTableContainer>
+    <>
+      <UserStatsRow userRoundData={userRoundData} />
       <Styles.FlexBetweenContainer>
         <Styles.LeaderboardTitle>
           <img src={liveIcon} alt="Live" /> <span className="green">Live&nbsp;</span> <span>Referrals Leaderboard</span>
@@ -79,26 +60,53 @@ export default function ReferralLeaderboard(props) {
             </tr>
           </thead>
           <tbody>
-            {currentRoundData?.map((row, index) => {
-              return (
-                <Styles.UserRow key={index}>
-                  <Styles.TableCell>{numberToOrdinal(index + 1)}</Styles.TableCell>
-                  <Styles.TableCell>{decodeReferralCode(row.referral_code)}</Styles.TableCell>
-                  {/* <Styles.TableCell className="tier">
-                    <span>{`Tier ${getTierIdDisplay(row.tier)}`}</span>{" "}
-                    <span>{`${TIER_DISCOUNT_INFO[row.tier]}% discount`}</span>
-                  </Styles.TableCell> */}
-
-                  <Styles.TableCell>${formatAmount(row.volume, USD_DECIMALS, 2, true, "0.00")}</Styles.TableCell>
-                  <Styles.TableCell>
-                    ${formatAmount(row.totalRewardUsd, USD_DECIMALS, 2, true, "0.00")}
-                  </Styles.TableCell>
-                </Styles.UserRow>
-              );
+            {allUsersRoundData?.map((row, index) => {
+              if (row.volume.gt(0)) {
+                return <TableRow key={index} row={row} isUserRow={row?.position === userRoundData?.position} />;
+              } else {
+                return <></>;
+              }
             })}
           </tbody>
         </Styles.RewardsTable>
       </Styles.RewardsTableContainer>
-    </div>
+    </>
   );
 }
+
+const TableRow = ({ row, isUserRow }) => (
+  <Styles.UserRow isUserRow={isUserRow}>
+    <Styles.TableCell>{numberToOrdinal(row.position)}</Styles.TableCell>
+    <Styles.TableCell>{row.referralCode ? decodeReferralCode(row.referralCode) : `-`}</Styles.TableCell>
+    {/* <Styles.TableCell className="tier">
+  <span>{`Tier ${getTierIdDisplay(row.tier)}`}</span>{" "}
+  <span>{`${TIER_DISCOUNT_INFO[row.tier]}% discount`}</span>
+</Styles.TableCell> */}
+    <Styles.TableCell>${formatAmount(row.volume, USD_DECIMALS, 2, true, "0.00")}</Styles.TableCell>
+    <Styles.TableCell>${formatAmount(row.totalRewardUsd, USD_DECIMALS, 2, true, "0.00")}</Styles.TableCell>
+  </Styles.UserRow>
+);
+
+const UserStatsRow = ({ userRoundData, referrerTier }) => (
+  <>
+    <span>Your rewards</span>
+    <Styles.RewardsTableContainer>
+      {userRoundData ? (
+        <Styles.RewardsTable>
+          <thead>
+            <tr>
+              {TABLE_HEADINGS.map((heading) => (
+                <Styles.RewardsTableHeading>{heading}</Styles.RewardsTableHeading>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            <TableRow row={userRoundData} isUserRow />
+          </tbody>
+        </Styles.RewardsTable>
+      ) : (
+        <Styles.NoData>No rewards data available</Styles.NoData>
+      )}
+    </Styles.RewardsTableContainer>
+  </>
+);

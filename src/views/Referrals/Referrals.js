@@ -108,6 +108,9 @@ export default function Referral(props) {
   const feeDistributor = getContract(chainId, "FeeDistributor");
   const feeDistributorReader = getContract(chainId, "FeeDistributorReader");
 
+  const eth = getTokenInfo(infoTokens, ethers.constants.AddressZero);
+  const ethPrice = eth?.maxPrimaryPrice;
+
   // Fetch all week data from server
   const { data: allRoundsRewardsData_, error: failedFetchingRewards } = useSWR(
     [getTracerServerUrl(chainId, "/referralRewards")],
@@ -125,6 +128,29 @@ export default function Referral(props) {
       fetcher: (url, week) => fetch(`${url}&round=${week}`).then((res) => res.json()),
     }
   );
+
+  const allUsersRoundData = useMemo(() => {
+    if (!allRoundsRewardsData || !ethPrice) {
+      return undefined;
+    }
+    return currentRewardRound?.rewards
+      ?.sort((a, b) => b.commissions_volume.toString() - a.commissions_volume.toString())
+      .map((trader, index) => {
+        const commissions = bigNumberify(trader.commissions);
+        const rebates = bigNumberify(trader.rebates);
+
+        return {
+          position: index + 1,
+          address: trader.user_address,
+          volume: bigNumberify(trader.commissions_volume),
+          totalReward: commissions.add(rebates),
+          totalRewardUsd: commissions.add(rebates).mul(ethPrice).div(expandDecimals(1, ETH_DECIMALS)),
+          referralCode: trader.referral_code,
+          commissions,
+          rebates,
+        };
+      });
+  }, [ethPrice, allRoundsRewardsData, currentRewardRound?.rewards]);
 
   const { data: hasClaimed } = useSWR(
     [
@@ -153,50 +179,11 @@ export default function Referral(props) {
 
   // Get volume, position and reward from user week data
   const userRoundData = useMemo(() => {
-    if (!currentRewardRound) {
+    if (!currentRewardRound || !allUsersRoundData) {
       return undefined;
     }
-    // const leaderBoardIndex = currentRewardRound.rewards?.findIndex(
-    //   (trader) => trader.user_address.toLowerCase() === account?.toLowerCase()
-    // );
-    let traderData;
-    // if (leaderBoardIndex !== undefined && leaderBoardIndex >= 0) {
-    //   traderData = currentRewardRound.rewards[leaderBoardIndex];
-    // }
-    // REMOVE AFTER TESTING
-    if (currentRewardRound?.rewards?.length) {
-      traderData = currentRewardRound?.rewards[0];
-    }
-    // trader's data found
-    if (traderData) {
-      const commissions = bigNumberify(traderData.commissions);
-      const rebates = bigNumberify(traderData.rebates);
-
-      return {
-        position: 2,
-        // position: leaderBoardIndex + 1,
-        volume: bigNumberify(traderData.commissions_volume),
-        totalReward: commissions.add(rebates),
-        commissions,
-        rebates,
-      };
-    } else {
-      return {
-        position: 0,
-        volume: bigNumberify(0),
-        totalReward: bigNumberify(0),
-        commissions: bigNumberify(0),
-        rebates: bigNumberify(0),
-      };
-    }
-  }, [account, currentRewardRound]);
-
-  const eth = getTokenInfo(infoTokens, ethers.constants.AddressZero);
-  const ethPrice = eth?.maxPrimaryPrice;
-
-  if (ethPrice && userRoundData?.totalReward) {
-    userRoundData.totalRewardUsd = userRoundData.totalReward?.mul(ethPrice).div(expandDecimals(1, ETH_DECIMALS));
-  }
+    allUsersRoundData.findIndex((trader) => trader.address === account);
+  }, [account, currentRewardRound, allUsersRoundData]);
 
   let referralCodeInString;
   if (userReferralCode && !isHashZero(userReferralCode)) {
@@ -376,6 +363,7 @@ export default function Referral(props) {
               referrerTier={1}
               referralCodeInString={referralCodeInString}
               allRoundsRewardsData={allRoundsRewardsData}
+              allUsersRoundData={allUsersRoundData}
               setSelectedRound={setSelectedRound}
               rewardsMessage={rewardsMessage}
               timeTillRewards={timeTillRewards}

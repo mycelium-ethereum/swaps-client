@@ -70,3 +70,8 @@ export const FlexBetweenContainer = styled.div`
   justify-content: space-between;
   align-items: center;
 `;
+
+export const NoData = styled.div`
+  padding: 64px;
+  text-align: center;
+`;
