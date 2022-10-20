@@ -206,7 +206,7 @@ export default function SwapBox(props) {
 
   const onOrderOptionChange = (option) => {
     // limits disabled
-    if (typeof option === "string" && option !== LIMIT) {
+    if (typeof option === "string") {
       setOrderOption(option);
     }
   };
@@ -674,7 +674,7 @@ export default function SwapBox(props) {
 
   const getSwapError = () => {
     const gasTokenInfo = getTokenInfo(infoTokens, ethers.constants.AddressZero);
-    if (gasTokenInfo.balance?.eq(0)){
+    if (gasTokenInfo.balance?.eq(0)) {
       return ["Not enough ETH for gas"];
     }
 
@@ -764,7 +764,7 @@ export default function SwapBox(props) {
 
   const getLeverageError = useCallback(() => {
     const gasTokenInfo = getTokenInfo(infoTokens, ethers.constants.AddressZero);
-    if (gasTokenInfo.balance?.eq(0)){
+    if (gasTokenInfo.balance?.eq(0)) {
       return ["Not enough ETH for gas"];
     }
     if (hasOutdatedUi) {
@@ -1537,6 +1537,11 @@ export default function SwapBox(props) {
       }
     }
 
+    // Limits not enabled for swaps yet
+    if (opt === SWAP && orderOption === LIMIT) {
+      setOrderOption(MARKET);
+    }
+
     trackAction &&
       trackAction("Swap option changed", {
         option: opt,
@@ -1856,6 +1861,7 @@ export default function SwapBox(props) {
               type="inline"
               option={orderOption}
               onChange={onOrderOptionChange}
+              newItem={LIMIT}
             />
           )}
         </div>

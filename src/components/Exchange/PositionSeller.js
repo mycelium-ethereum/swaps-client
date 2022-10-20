@@ -61,7 +61,6 @@ import Modal from "../Modal/Modal";
 import ExchangeInfoRow from "./ExchangeInfoRow";
 import Tooltip from "../Tooltip/Tooltip";
 import TooltipRow from "../Tooltip/TooltipRow";
-import ComingSoonTooltip from "../Tooltip/ComingSoon";
 import { getTokens } from "../../data/Tokens";
 import TokenSelector from "./TokenSelector";
 import { getTokenAmountFromUsd, getUsd } from "../../utils/tokens";
@@ -190,7 +189,7 @@ export default function PositionSeller(props) {
     fetcher: fetcher(library, PositionRouter),
   });
 
-  const orderOptions = [MARKET, <ComingSoonTooltip position="right-bottom" handle={orderOptionLabels[STOP]} />];
+  const orderOptions = [MARKET, STOP];
 
   let [orderOption, setOrderOption] = useState(MARKET);
 

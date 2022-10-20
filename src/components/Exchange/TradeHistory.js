@@ -322,7 +322,7 @@ export default function TradeHistory(props) {
       }
 
       if (["ExecuteIncreaseOrder", "ExecuteDecreaseOrder"].includes(tradeData.action)) {
-        const order = deserialize(params.order);
+        const order = deserialize(params);
         const indexToken = getTokenInfo(infoTokens, order.indexToken, true, nativeTokenAddress);
         if (!indexToken) {
           return defaultMsg;
@@ -335,9 +335,10 @@ export default function TradeHistory(props) {
           2,
           true
         )}`;
+        const type = tradeData.action === "ExecuteIncreaseOrder" ? "Increase" : "Decrease";
 
         return `
-        Execute Order: ${order.type} ${indexToken.symbol} ${longShortDisplay}
+        Execute Order: ${type} ${indexToken.symbol} ${longShortDisplay}
         ${sizeDeltaDisplay} USD, Price: ${executionPriceDisplay} USD
       `;
       }
@@ -352,7 +353,7 @@ export default function TradeHistory(props) {
           "UpdateDecreaseOrder",
         ].includes(tradeData.action)
       ) {
-        const order = deserialize(params.order);
+        const order = deserialize(params);
         const indexToken = getTokenInfo(infoTokens, order.indexToken);
         if (!indexToken) {
           return defaultMsg;
@@ -372,7 +373,7 @@ export default function TradeHistory(props) {
       }
 
       if (tradeData.action === "ExecuteSwapOrder") {
-        const order = deserialize(params.order);
+        const order = deserialize(params);
         const nativeTokenAddress = getContract(chainId, "NATIVE_TOKEN");
         const fromToken = getTokenInfo(infoTokens, order.path[0] === nativeTokenAddress ? AddressZero : order.path[0]);
         const toToken = getTokenInfo(infoTokens, order.shouldUnwrap ? AddressZero : order.path[order.path.length - 1]);
@@ -387,7 +388,7 @@ export default function TradeHistory(props) {
       }
 
       if (["CreateSwapOrder", "UpdateSwapOrder", "CancelSwapOrder"].includes(tradeData.action)) {
-        const order = deserialize(params.order);
+        const order = deserialize(params);
         const nativeTokenAddress = getContract(chainId, "NATIVE_TOKEN");
         const fromToken = getTokenInfo(infoTokens, order.path[0] === nativeTokenAddress ? AddressZero : order.path[0]);
         const toToken = getTokenInfo(infoTokens, order.shouldUnwrap ? AddressZero : order.path[order.path.length - 1]);
@@ -425,11 +426,13 @@ export default function TradeHistory(props) {
 
   return (
     <div className="TradeHistory">
-      {tradesWithMessages.length === 0 && <div className="Exchange-empty-positions-list-note App-card">No trades yet</div>}
+      {tradesWithMessages.length === 0 && (
+        <div className="Exchange-empty-positions-list-note App-card">No trades yet</div>
+      )}
       {tradesWithMessages.length > 0 &&
         tradesWithMessages.map((trade, index) => {
           const tradeData = trade.data;
-          const txUrl = getExplorerUrl(chainId) + "tx/" + tradeData.tx_hash;
+          const txUrl = getExplorerUrl(chainId) + "tx/" + tradeData.txnHash;
 
           let msg = getMsg(trade);
 
