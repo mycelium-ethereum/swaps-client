@@ -743,7 +743,6 @@ export default function StakeV2({
 
   return (
     <div className="StakeV2 Page page-layout default-container">
-      <FeeUpdateModal />
       <VesterDepositModal
         isVisible={isVesterDepositModalVisible}
         setIsVisible={setIsVesterDepositModalVisible}

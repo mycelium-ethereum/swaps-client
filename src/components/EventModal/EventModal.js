@@ -33,9 +33,22 @@ const EVENTS = {
     ),
     description: <span>Mycelium now supports limit orders for opening and closing leveraged positions!</span>,
   },
+  "disable-limit-orders": {
+    title: (
+      <>
+        <h2>Limit Orders Disabled</h2>
+      </>
+    ),
+    description: (
+      <span>
+        Limit orders are currently disabled. Limits will be live again soon. Your previously set limit orders will need
+        to be updated.
+      </span>
+    ),
+  },
 };
 
-export default function EventModal({ isModalVisible, setEventModalVisible, twitterText, eventKey }) {
+export default function EventModal({ isModalVisible, setEventModalVisible, twitterText, eventKey, hideHeader }) {
   const eventText = EVENTS[eventKey];
 
   useEffect(() => {
@@ -47,11 +60,13 @@ export default function EventModal({ isModalVisible, setEventModalVisible, twitt
   }, [eventKey, setEventModalVisible]);
 
   return (
-    <Styled.EventModal isVisible={isModalVisible} setIsVisible={setEventModalVisible}>
-      <Styled.EventModalHeader>
-        <Styled.EventModalGraphic infront src={ethMergeHeader} alt="Event modal header graphic" />
-        <Styled.EventModalGraphic src={ethMergeHeadermesh} alt="Event modal header mesh" />
-      </Styled.EventModalHeader>
+    <Styled.EventModal isVisible={isModalVisible} setIsVisible={setEventModalVisible} hideHeader={hideHeader}>
+      {hideHeader && (
+        <Styled.EventModalHeader>
+          <Styled.EventModalGraphic infront src={ethMergeHeader} alt="Event modal header graphic" />
+          <Styled.EventModalGraphic src={ethMergeHeadermesh} alt="Event modal header mesh" />
+        </Styled.EventModalHeader>
+      )}
       <Styled.EventModalTitle>{eventText.title}</Styled.EventModalTitle>
       <Styled.EventModalButtonContent className="Button-content">
         {eventText.description}
