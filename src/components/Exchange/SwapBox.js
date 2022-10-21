@@ -1706,7 +1706,10 @@ export default function SwapBox(props) {
     if (orderOption === LIMIT && DISABLED_TOKEN_ADDRESSES.includes(fromTokenAddress)) {
       setFromTokenAddress(swapOption, nativeTokenAddress);
     }
-  }, [fromTokenAddress, nativeTokenAddress, setFromTokenAddress, swapOption, orderOption]);
+    else if (orderOption === LIMIT && DISABLED_TOKEN_ADDRESSES.includes(toTokenAddress)) {
+      setToTokenAddress(swapOption, nativeTokenAddress);
+    }
+  }, [fromTokenAddress, toTokenAddress, nativeTokenAddress, setFromTokenAddress, setToTokenAddress, swapOption, orderOption]);
 
   if (!fromToken || !toToken) {
     return null;
