@@ -26,7 +26,8 @@ export default function TokenSelector(props) {
     showSymbolImage = false,
     showNewCaret = false,
     trackAction,
-    selectedTokenLabel
+    disabledTokens,
+    selectedTokenLabel,
   } = props;
 
   const onSelectToken = (token) => {
@@ -103,14 +104,20 @@ export default function TokenSelector(props) {
             if (balance && info.maxPrice) {
               balanceUsd = balance.mul(info.maxPrice).div(expandDecimals(1, token.decimals));
             }
+            const isDisabled = disabledTokens && disabledTokens.includes(token.symbol);
             return (
               <div
-                className="TokenSelector-token-row"
+                className={cx("TokenSelector-token-row", {
+                  disabled: isDisabled,
+                })}
                 onClick={() => {
-                  onSelectToken(token);
-                  trackAction && trackAction("Button clicked", {
-                    buttonName: `${props.label} Token Selection modal option - ${token.symbol}`,
-                  });
+                  if (!isDisabled) {
+                    onSelectToken(token);
+                    trackAction &&
+                      trackAction("Button clicked", {
+                        buttonName: `${props.label} Token Selection modal option - ${token.symbol}`,
+                      });
+                  }
                 }}
                 key={token.address}
               >
@@ -153,9 +160,10 @@ export default function TokenSelector(props) {
           className="TokenSelector-box"
           onClick={() => {
             setIsModalVisible(true);
-            trackAction && trackAction("Button clicked", {
-              buttonName: `Token selector box`,
-            });
+            trackAction &&
+              trackAction("Button clicked", {
+                buttonName: `Token selector box`,
+              });
           }}
         >
           {tokenInfo.symbol}

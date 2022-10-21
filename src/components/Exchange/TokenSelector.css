@@ -2,7 +2,7 @@
   width: 20rem;
   margin: 0;
   max-height: 100vh;
-  border: 1px solid var(--cell-highlight)!important;
+  border: 1px solid var(--cell-highlight) !important;
 }
 
 .TokenSelector-token-name {
@@ -72,7 +72,36 @@
   padding: 8px;
   margin-bottom: 8px;
 }
-
+.TokenSelector-token-row.disabled {
+  position: relative;
+}
+.TokenSelector-token-row.disabled * {
+  filter: grayscale(100%);
+}
+.TokenSelector-token-row.disabled:before {
+  content: "We have temporarily disabled limit orders for this asset. Check back soon!";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--cell-stroke);
+  opacity: 0;
+  font-size: 12px;
+  text-align: center;
+  transition: opacity 0.3s ease;
+  z-index: 1;
+}
+.TokenSelector-token-row.disabled:hover {
+  background-color: transparent;
+  cursor: not-allowed;
+}
+.TokenSelector-token-row.disabled:hover:before {
+  opacity: 1;
+}
 .TokenSelector-token-row.TokenSelector-token-input-row {
   padding: 0;
 }
@@ -126,5 +155,8 @@
     width: 30px;
     height: 30px;
     margin-right: 0.5rem;
+  }
+  .TokenSelector-token-row.disabled:before {
+    font-size: 10px;
   }
 }

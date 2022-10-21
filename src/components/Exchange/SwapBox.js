@@ -87,6 +87,16 @@ const SWAP_ICONS = {
   [SHORT]: shortImg,
   [SWAP]: swapImg,
 };
+
+const DISABLED_TOKENS = ["LINK", "UNI", "FXS", "BAL", "CRV"];
+const DISABLED_TOKEN_ADDRESSES = [
+  "0xf97f4df75117a78c1A5a0DBb814Af92458539FB4", // LINK
+  "0xFa7F8980b0f1E64A2062791cc3b0871572f1F7f0", // UNI
+  "0x9d2F299715D94d8A7E6F5eaa8E654E8c74a988A7", // FXS
+  "0x040d1EdC9569d4Bab2D15287Dc5A4F10F56a56B8", // BAL
+  "0x11cDb42B0EB46D95f990BeDD4695A6e3fA034978", // CRV
+];
+
 const { AddressZero } = ethers.constants;
 
 function getNextAveragePrice({ size, sizeDelta, hasProfit, delta, nextPrice, isLong }) {
@@ -1691,6 +1701,13 @@ export default function SwapBox(props) {
     feeBps = feeBasisPoints;
   }
 
+  // If fromToken is in disabled tokens, switch fromToken to WETH
+  useEffect(() => {
+    if (orderOption === LIMIT && DISABLED_TOKEN_ADDRESSES.includes(fromTokenAddress)) {
+      setFromTokenAddress(swapOption, nativeTokenAddress);
+    }
+  }, [fromTokenAddress, nativeTokenAddress, setFromTokenAddress, swapOption, orderOption]);
+
   if (!fromToken || !toToken) {
     return null;
   }
@@ -1918,6 +1935,7 @@ export default function SwapBox(props) {
                     showMintingCap={false}
                     showTokenImgInDropdown={true}
                     trackAction={trackAction}
+                    disabledTokens={orderOption === LIMIT ? DISABLED_TOKENS : undefined}
                   />
                 </div>
               </div>
@@ -2018,6 +2036,7 @@ export default function SwapBox(props) {
                   tokens={toTokens}
                   infoTokens={infoTokens}
                   trackAction={trackAction}
+                  disabledTokens={orderOption === LIMIT ? DISABLED_TOKENS : undefined}
                 />
               </div>
             </div>
