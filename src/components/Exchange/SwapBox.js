@@ -1700,16 +1700,25 @@ export default function SwapBox(props) {
     }
     feeBps = feeBasisPoints;
   }
+  const isLongLimitOrder = orderOption === LIMIT && swapOption === LONG;
 
   // If fromToken is in disabled tokens, switch fromToken to WETH
   useEffect(() => {
-    if (orderOption === LIMIT && DISABLED_TOKEN_ADDRESSES.includes(fromTokenAddress)) {
+    if (isLongLimitOrder && DISABLED_TOKEN_ADDRESSES.includes(fromTokenAddress)) {
       setFromTokenAddress(swapOption, nativeTokenAddress);
-    }
-    else if (orderOption === LIMIT && DISABLED_TOKEN_ADDRESSES.includes(toTokenAddress)) {
+    } else if (isLongLimitOrder && DISABLED_TOKEN_ADDRESSES.includes(toTokenAddress)) {
       setToTokenAddress(swapOption, nativeTokenAddress);
     }
-  }, [fromTokenAddress, toTokenAddress, nativeTokenAddress, setFromTokenAddress, setToTokenAddress, swapOption, orderOption]);
+  }, [
+    isLongLimitOrder,
+    fromTokenAddress,
+    toTokenAddress,
+    nativeTokenAddress,
+    setFromTokenAddress,
+    setToTokenAddress,
+    swapOption,
+    orderOption,
+  ]);
 
   if (!fromToken || !toToken) {
     return null;
@@ -1938,7 +1947,7 @@ export default function SwapBox(props) {
                     showMintingCap={false}
                     showTokenImgInDropdown={true}
                     trackAction={trackAction}
-                    disabledTokens={orderOption === LIMIT ? DISABLED_TOKENS : undefined}
+                    disabledTokens={isLongLimitOrder ? DISABLED_TOKENS : undefined}
                   />
                 </div>
               </div>
@@ -2039,7 +2048,7 @@ export default function SwapBox(props) {
                   tokens={toTokens}
                   infoTokens={infoTokens}
                   trackAction={trackAction}
-                  disabledTokens={orderOption === LIMIT ? DISABLED_TOKENS : undefined}
+                  disabledTokens={isLongLimitOrder ? DISABLED_TOKENS : undefined}
                 />
               </div>
             </div>
