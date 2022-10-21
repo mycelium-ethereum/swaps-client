@@ -992,11 +992,11 @@ function FullApp() {
         draggable={false}
         pauseOnHover
       />
-      <EventModal
+      {/* <EventModal
         isModalVisible={isEventModalVisible}
         setEventModalVisible={setEventModalVisible}
         eventKey={"disable-limit-orders"}
-      />
+      /> */}
       <EventToastContainer />
       <Modal
         className="Connect-wallet-modal"
