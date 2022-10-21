@@ -49,6 +49,7 @@ import {
   getNextToAmount,
   adjustForDecimals,
 } from "../../Helpers";
+import LimitDisabledTooltip from "../../components/Tooltip/LimitDisabled";
 
 import "./PositionSeller.css";
 import { getConstant } from "../../Constants";
@@ -128,6 +129,8 @@ function getSwapLimits(infoTokens, fromTokenAddress, toTokenAddress) {
   };
 }
 
+const orderOptions = [MARKET, <LimitDisabledTooltip handle={STOP} position="right-bottom" />];
+
 export default function PositionSeller(props) {
   const {
     active,
@@ -189,7 +192,6 @@ export default function PositionSeller(props) {
     fetcher: fetcher(library, PositionRouter),
   });
 
-  const orderOptions = [MARKET, STOP];
 
   let [orderOption, setOrderOption] = useState(MARKET);
 
