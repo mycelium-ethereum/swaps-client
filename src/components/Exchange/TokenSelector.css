@@ -77,6 +77,7 @@
 }
 .TokenSelector-token-row.disabled * {
   filter: grayscale(100%);
+  opacity: 0.5;
 }
 .TokenSelector-token-row.disabled:before {
   content: "We have temporarily disabled limit orders for this asset. Check back soon!";
