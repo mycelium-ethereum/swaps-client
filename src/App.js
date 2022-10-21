@@ -122,6 +122,7 @@ import LinkDropdown from "./components/Navigation/LinkDropdown/LinkDropdown";
 import Sidebar from "./components/Navigation/Sidebar/Sidebar";
 import EventModal from "./components/EventModal/EventModal";
 import AppDropdown from "./components/AppDropdown/AppDropdown";
+import { Banner, BannerContent } from "./components/Banner/Banner";
 
 if ("ethereum" in window) {
   window.ethereum.autoRefreshOnNetworkChange = false;
@@ -754,6 +755,12 @@ function FullApp() {
             </AnimatePresence>
           )}
           <nav>
+            <Banner>
+              <BannerContent>
+                Limit orders are currently disabled. Limits will be live again soon. Your previously set limit orders
+                will need to be updated.
+              </BannerContent>
+            </Banner>
             <div className="App-header large default-container">
               <div className="App-header-container-left">
                 <Link
@@ -985,11 +992,11 @@ function FullApp() {
         draggable={false}
         pauseOnHover
       />
-      <EventModal
+      {/* <EventModal
         isModalVisible={isEventModalVisible}
         setEventModalVisible={setEventModalVisible}
-        eventKey={"add-limit-orders"}
-      />
+        eventKey={"disable-limit-orders"}
+      /> */}
       <EventToastContainer />
       <Modal
         className="Connect-wallet-modal"

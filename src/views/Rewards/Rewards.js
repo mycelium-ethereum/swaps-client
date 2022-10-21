@@ -331,7 +331,6 @@ export default function Rewards(props) {
 
   return (
     <>
-      <FeeUpdateModal />
       <SEO
         title={getPageTitle("Rewards")}
         description="Claim fees earned via being in the top 50% of traders on Mycelium Perpetual Swaps."

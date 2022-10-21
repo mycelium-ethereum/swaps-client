@@ -1,3 +1,13 @@
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans",
+    "Droid Sans", "Helvetica Neue", sans-serif;
+  -webkit-font-smoothing: subpixel-antialiased;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  min-width: 320px;
+}
+
 .App {
   position: relative;
   overflow: hidden;
@@ -30,7 +40,7 @@
   height: 62px;
   width: 100%;
   z-index: 800;
-  padding-left: 326px;
+  padding-left: 310px;
   transition: all 0.5s ease;
 }
 
