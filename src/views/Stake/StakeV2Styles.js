@@ -7,7 +7,6 @@ export const StakeV2Content = styled.div`
   margin-left: auto;
   margin-right: auto;
   width: 100%;
-
 `
 
 export const StakeV2Cards = styled.div`
