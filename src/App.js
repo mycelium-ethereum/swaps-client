@@ -97,7 +97,7 @@ import "./AppOrder.css";
 
 import logoImg from "./img/logo_MYC.svg";
 import logoSmallImg from "./img/logo_MYC_small.svg";
-import poolsSmallImg from "./img/myc_pools_short.svg";
+// import poolsSmallImg from "./img/myc_pools_short.svg";
 import connectWalletImg from "./img/ic_wallet_24.svg";
 
 import metamaskImg from "./img/metamask.png";
@@ -120,9 +120,9 @@ import PageNotFound from "./views/PageNotFound/PageNotFound";
 import useSWR from "swr";
 import LinkDropdown from "./components/Navigation/LinkDropdown/LinkDropdown";
 import Sidebar from "./components/Navigation/Sidebar/Sidebar";
-import EventModal from "./components/EventModal/EventModal";
+// import EventModal from "./components/EventModal/EventModal";
 import AppDropdown from "./components/AppDropdown/AppDropdown";
-import { Banner, BannerContent } from "./components/Banner/Banner";
+// import { Banner, BannerContent } from "./components/Banner/Banner";
 
 if ("ethereum" in window) {
   window.ethereum.autoRefreshOnNetworkChange = false;
@@ -755,12 +755,6 @@ function FullApp() {
             </AnimatePresence>
           )}
           <nav>
-            <Banner>
-              <BannerContent>
-                Limit orders are currently disabled. Limits will be live again soon. Your previously set limit orders
-                will need to be updated.
-              </BannerContent>
-            </Banner>
             <div className="App-header large default-container">
               <div className="App-header-container-left">
                 <Link
