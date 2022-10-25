@@ -33,20 +33,14 @@ import {
   helperToast,
   getSupplyUrl,
   getTracerServerUrl,
-  MM_FEE_MULTIPLIER,
-  FEE_MULTIPLIER_BASIS_POINTS,
-  BASIS_POINTS_DIVISOR,
   USD_DECIMALS,
   ETH_DECIMALS,
-  MM_SWAPS_FEE_MULTIPLIER,
   FORTNIGHTS_IN_YEAR,
-  useLocalStorageSerializeKey,
   ARBITRUM_GOERLI,
 } from "../Helpers";
 import { getTokens, getTokenBySymbol, getWhitelistedTokens } from "../data/Tokens";
 
 import { nissohGraphClient, arbitrumGraphClient, arbitrumTestnetGraphClient } from "./common";
-import { SECONDS_PER_WEEK } from "../data/Fees";
 export * from "./prices";
 
 const { AddressZero } = ethers.constants;
@@ -112,138 +106,6 @@ export function useFeesSince(chainId, from, to) {
 
   return res;
 }
-
-export function useMarketMakingFeesSince(chainId, from, to, stableTokens) {
-  const [res, setRes] = useState();
-
-  const stableMap = stableTokens.reduce((o, t) => ({ ...o, [t.address.toLowerCase()]: true }), {});
-
-  const query = gql(`{
-    hourlyVolumes (first: 1000, where: { id_gte: ${from}, id_lt: ${to}}) {
-      liquidation
-      mint
-      burn
-      margin
-    },
-    tokensSwapsVolume1: hourlyVolumeByTokens (first: 1000, where: { timestamp_gte: ${from}, timestamp_lt: ${to} }) {
-      swap
-      tokenA
-      tokenB
-    },
-    tokensSwapsVolume2: hourlyVolumeByTokens (first: 1000, skip: 1000, where: { timestamp_gte: ${from}, timestamp_lt: ${to} }) {
-      swap
-      tokenA
-      tokenB
-    },
-  }`);
-
-  useEffect(() => {
-    if (!from) {
-      return;
-    }
-    getMycGraphClient(chainId)
-      .query({ query })
-      .then((res) => {
-        if (res.data.hourlyVolumes) {
-          let mmFees = res.data.hourlyVolumes.reduce(
-            (sum, stat) =>
-              sum
-                .add(MM_FEE_MULTIPLIER.mul(stat.mint))
-                .add(MM_FEE_MULTIPLIER.mul(stat.burn))
-                .add(MM_FEE_MULTIPLIER.mul(stat.margin))
-                .add(MM_FEE_MULTIPLIER.mul(stat.liquidation)),
-            bigNumberify(0)
-          );
-
-          const allSwapsVolume = res.data.tokensSwapsVolume1.concat(res.data.tokensSwapsVolume2);
-          let swapMMFees = allSwapsVolume.reduce((sum, stat) => {
-            const tokenAIsStable = stableMap[stat.tokenA];
-            const tokenBIsStable = stableMap[stat.tokenB];
-            if (tokenAIsStable && tokenBIsStable) {
-              return sum;
-            } else if (!tokenAIsStable && !tokenBIsStable) {
-              return sum.add(MM_SWAPS_FEE_MULTIPLIER.mul(stat.swap));
-            } else {
-              return sum.add(MM_FEE_MULTIPLIER.mul(stat.swap));
-            }
-          }, bigNumberify(0));
-          setRes(mmFees.add(swapMMFees).div(expandDecimals(1, FEE_MULTIPLIER_BASIS_POINTS)));
-        }
-      })
-      .catch(console.warn);
-  }, [setRes, query, chainId, from]);
-
-  return res;
-}
-
-export function useUserSpreadCapture(chainId, account, mlpBalance, ethPrice) {
-  const [spreadCapturePerToken, setSpreadCapturePerToken] = useState();
-
-  const [hasRecentlyClaimed, setHasRecentlyClaimed] = useLocalStorageSerializeKey(
-    [chainId, "Recently-claimed-spread-capture"],
-    true
-  );
-
-  // if claimed in the last 5 minutes then zero out rewards
-  const shouldZeroSpreadCapture = useMemo(
-    () => Number(hasRecentlyClaimed) + 60 * 5 * 1000 > Date.now(),
-    [hasRecentlyClaimed]
-  );
-
-  useEffect(() => {
-    const query = gql(`{
-      spreadCapture(id: "total") {
-        cumulativeRewardsPerToken
-      },
-      userSpreadCapture(id: "${account?.toLowerCase() ?? ""}") {
-        id
-        lastCumulativeRewardsPerToken
-      }
-    }`);
-
-    getMycGraphClient(chainId)
-      .query({ query })
-      .then((res) => {
-        if (res.data.spreadCapture && res.data.userSpreadCapture) {
-          let cumulativeRewardsPerToken = bigNumberify(res.data.spreadCapture.cumulativeRewardsPerToken);
-          let lastCumulativeRewardsPerToken = bigNumberify(res.data.userSpreadCapture.lastCumulativeRewardsPerToken);
-          setSpreadCapturePerToken(cumulativeRewardsPerToken.sub(lastCumulativeRewardsPerToken));
-        }
-      })
-      .catch(console.warn);
-  }, [chainId, account]);
-
-  let userSpreadCapture, userSpreadCaptureEth;
-  if (spreadCapturePerToken && mlpBalance && ethPrice) {
-    if (shouldZeroSpreadCapture) {
-      userSpreadCapture = ethers.BigNumber.from(0);
-      userSpreadCaptureEth = ethers.BigNumber.from(0);
-    } else {
-      userSpreadCapture = spreadCapturePerToken.mul(mlpBalance).div(expandDecimals(1, 18));
-      userSpreadCaptureEth = userSpreadCapture.mul(expandDecimals(1, 18)).div(ethPrice);
-    }
-  }
-
-  return {
-    userSpreadCapture,
-    userSpreadCaptureEth,
-    setHasRecentlyClaimed,
-  };
-}
-
-export const useMarketMakingApr = (chainId, mlpSupplyUsd) => {
-  const whitelistedTokens = getWhitelistedTokens(chainId);
-  const stableTokens = whitelistedTokens.filter((t) => t.isStable);
-
-  const [to] = useState(Math.floor(Date.now() / 1000));
-  const from = to - SECONDS_PER_WEEK;
-  const lastWeeksMMFees = useMarketMakingFeesSince(chainId, from, to, stableTokens);
-
-  if (lastWeeksMMFees && mlpSupplyUsd && mlpSupplyUsd.gt(0)) {
-    let mmAnnualFeesUsd = lastWeeksMMFees.mul(52);
-    return mmAnnualFeesUsd.mul(BASIS_POINTS_DIVISOR).div(mlpSupplyUsd);
-  }
-};
 
 export function useVolume(chainId) {
   const query = gql(`{

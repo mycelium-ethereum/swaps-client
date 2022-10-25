@@ -29,9 +29,6 @@ import {
   DEFAULT_MAX_USDG_AMOUNT,
   getPageTitle,
   getTracerServerUrl,
-  MM_FEE_MULTIPLIER,
-  MM_SWAPS_FEE_MULTIPLIER,
-  FEE_MULTIPLIER_BASIS_POINTS,
   ETH_DECIMALS,
   ARBITRUM_GOERLI,
 } from "../../Helpers";
@@ -41,8 +38,6 @@ import {
   useTotalMYCSupply,
   useInfoTokens,
   useFees,
-  useVolume,
-  useMarketMakingFeesSince,
   useFeesSince,
   useStakingApr,
   useTotalStaked,
@@ -115,7 +110,6 @@ export default function DashboardV2() {
   const whitelistedTokens = getWhitelistedTokens(chainId);
   const whitelistedTokenAddresses = whitelistedTokens.map((token) => token.address);
   const tokenList = whitelistedTokens.filter((t) => !t.isWrapped);
-  const stableTokens = whitelistedTokens.filter((t) => t.isStable);
 
   const readerAddress = getContract(chainId, "Reader");
   const vaultAddress = getContract(chainId, "Vault");
@@ -151,46 +145,25 @@ export default function DashboardV2() {
 
   const { infoTokens } = useInfoTokens(library, chainId, active, undefined, undefined);
 
-  let totalFeesDistributed;
+  let totalFees;
   const allFees = useFees(chainId);
 
   const feeHistory = getFeeHistory(chainId);
 
   const from = feeHistory[0]?.to;
   const to = from + SECONDS_PER_WEEK * 2;
-  const currentMMFees = useMarketMakingFeesSince(chainId, from, to, stableTokens);
   const currentGraphFees = useFeesSince(chainId, from, to);
   const currentUnclaimedFees = getUnclaimedFees(whitelistedTokenAddresses, infoTokens, fees);
-  let totalCurrentFees, currentFees;
+  let totalCurrentFees;
   if (currentUnclaimedFees && currentGraphFees) {
-    currentFees = currentUnclaimedFees.gt(currentGraphFees) ? currentUnclaimedFees : currentGraphFees;
-  }
-
-  if (currentFees && currentMMFees) {
-    totalCurrentFees = currentFees.add(currentMMFees);
+    totalCurrentFees = currentUnclaimedFees.gt(currentGraphFees) ? currentUnclaimedFees : currentGraphFees;
   }
 
   if (allFees) {
-    totalFeesDistributed = bigNumberify(allFees.mint)
+    totalFees = bigNumberify(allFees.mint)
       .add(allFees.burn)
       .add(allFees.marginAndLiquidation)
       .add(allFees.swap);
-  }
-
-  let totalMMFees;
-  const allVolume = useVolume(chainId);
-  if (allVolume) {
-    totalMMFees = MM_FEE_MULTIPLIER.mul(allVolume.mint)
-      .add(MM_FEE_MULTIPLIER.mul(allVolume.burn))
-      .add(MM_FEE_MULTIPLIER.mul(allVolume.margin))
-      .add(MM_FEE_MULTIPLIER.mul(allVolume.liquidation))
-      .add(MM_SWAPS_FEE_MULTIPLIER.mul(allVolume.swap));
-    totalMMFees = totalMMFees.div(expandDecimals(1, FEE_MULTIPLIER_BASIS_POINTS));
-  }
-
-  let totalFees;
-  if (totalFeesDistributed && totalMMFees) {
-    totalFees = totalFeesDistributed.add(totalMMFees);
   }
 
   const { mycPrice, mycPriceFromMainnet, mycPriceFromArbitrum } = useMYCPrice(
@@ -518,18 +491,7 @@ export default function DashboardV2() {
                   <div className="App-card-row">
                     <div className="label">Fees since {formatDate(feeHistory[0].to)}</div>
                     <div>
-                      <TooltipComponent
-                        position="right-bottom"
-                        className="nowrap"
-                        handle={`$${formatAmount(totalCurrentFees, USD_DECIMALS, 2, true)}`}
-                        renderContent={() => (
-                          <>
-                            Distributed Fees: ${formatAmount(currentFees, USD_DECIMALS, 2, true)}
-                            <br />
-                            Spread Capture: ${formatAmount(currentMMFees, USD_DECIMALS, 2, true)}
-                          </>
-                        )}
-                      />
+                      ${formatAmount(totalCurrentFees, USD_DECIMALS, 2, true)}
                     </div>
                   </div>
                 ) : null}
@@ -542,18 +504,7 @@ export default function DashboardV2() {
                 <div className="App-card-row">
                   <div className="label">Total Fees</div>
                   <div>
-                    <TooltipComponent
-                      position="right-bottom"
-                      className="nowrap"
-                      handle={`$${formatAmount(totalFees, USD_DECIMALS, 0, true)}`}
-                      renderContent={() => (
-                        <>
-                          Distributed Fees: ${formatAmount(totalFeesDistributed, USD_DECIMALS, 0, true)}
-                          <br />
-                          Spread Capture: ${formatAmount(totalMMFees, USD_DECIMALS, 0, true)}
-                        </>
-                      )}
-                    />
+                    ${formatAmount(totalFees, USD_DECIMALS, 0, true)}
                   </div>
                 </div>
                 <div className="App-card-row">

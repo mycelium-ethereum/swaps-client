@@ -32,7 +32,7 @@
   padding-bottom: 0;
 }
 
-.StakeV2-buy-myc-modal .Modal-content {
+.StakeV2-buy-myc-modal .Modal-content, .StakeModal .Modal-content {
   max-width: 30rem;
   min-width: 424px;
 }
@@ -96,6 +96,7 @@
   .StakeModal .Modal-content {
     margin-right: 1rem;
     margin-left: 1rem;
+    min-width: calc(100% - 2rem);
   }
 }
 
