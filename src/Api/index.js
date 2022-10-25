@@ -124,7 +124,7 @@ export function useSpreadCaptureVolume(chainId) {
     }
   }`);
 
-  const [res, setRes] = useState(null);
+  const [res, setRes] = useState(undefined);
 
   useEffect(() => {
     getMycGraphClient(chainId).query({ query }).then((res) => {
