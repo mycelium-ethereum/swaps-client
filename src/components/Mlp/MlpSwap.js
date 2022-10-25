@@ -494,7 +494,7 @@ export default function MlpSwap(props) {
     if (isSubmitting) {
       return false;
     }
-    if (isSwapTokenCapReached) {
+    if (isSwapTokenCapReached && isBuying) {
       return false;
     }
 
