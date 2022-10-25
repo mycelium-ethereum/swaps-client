@@ -41,6 +41,8 @@ import {
   useFeesSince,
   useStakingApr,
   useTotalStaked,
+  useVolume,
+  useSpreadCaptureVolume,
 } from "../../Api";
 
 import { getContract } from "../../Addresses";
@@ -145,7 +147,6 @@ export default function DashboardV2() {
 
   const { infoTokens } = useInfoTokens(library, chainId, active, undefined, undefined);
 
-  let totalFees;
   const allFees = useFees(chainId);
 
   const feeHistory = getFeeHistory(chainId);
@@ -159,11 +160,19 @@ export default function DashboardV2() {
     totalCurrentFees = currentUnclaimedFees.gt(currentGraphFees) ? currentUnclaimedFees : currentGraphFees;
   }
 
+  let totalFeesDistributed;
   if (allFees) {
-    totalFees = bigNumberify(allFees.mint)
+    totalFeesDistributed = bigNumberify(allFees.mint)
       .add(allFees.burn)
       .add(allFees.marginAndLiquidation)
       .add(allFees.swap);
+  }
+
+  const totalMMFees = useSpreadCaptureVolume(chainId);
+
+  let totalFees;
+  if (totalFeesDistributed && totalMMFees) {
+    totalFees = totalFeesDistributed.add(totalMMFees);
   }
 
   const { mycPrice, mycPriceFromMainnet, mycPriceFromArbitrum } = useMYCPrice(
@@ -504,7 +513,18 @@ export default function DashboardV2() {
                 <div className="App-card-row">
                   <div className="label">Total Fees</div>
                   <div>
-                    ${formatAmount(totalFees, USD_DECIMALS, 0, true)}
+                    <TooltipComponent
+                      position="right-bottom"
+                      className="nowrap"
+                      handle={`$${formatAmount(totalFees, USD_DECIMALS, 0, true)}`}
+                      renderContent={() => (
+                        <>
+                          Distributed Fees: ${formatAmount(totalFeesDistributed, USD_DECIMALS, 0, true)}
+                          <br />
+                          Spread Capture: ${formatAmount(totalMMFees, USD_DECIMALS, 0, true)}
+                        </>
+                      )}
+                    />
                   </div>
                 </div>
                 <div className="App-card-row">
