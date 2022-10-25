@@ -107,6 +107,41 @@ export function useFeesSince(chainId, from, to) {
   return res;
 }
 
+const FEE_MULTIPLIER_BASIS_POINTS = 4;
+const MM_FEE_MULTIPLIER = bigNumberify(6);
+const MM_SWAPS_FEE_MULTIPLIER = bigNumberify(12);
+
+export function useSpreadCaptureVolume(chainId) {
+  // spread capture turned off
+  const to = 1665792441;
+  const query = gql(`{
+    volumeStats(first: 1000, period: daily, orderBy: id, orderDirection: desc, where: { id_lt: ${to} }) {
+      margin
+      liquidation
+      swap
+      mint
+      burn
+    }
+  }`);
+
+  const [res, setRes] = useState(undefined);
+
+  useEffect(() => {
+    getMycGraphClient(chainId).query({ query }).then((res) => {
+      const totalMMFees = res.data.volumeStats.reduce((sum, stat) => sum
+        .add(MM_FEE_MULTIPLIER.mul(stat.mint))
+        .add(MM_FEE_MULTIPLIER.mul(stat.burn))
+        .add(MM_FEE_MULTIPLIER.mul(stat.margin))
+        .add(MM_FEE_MULTIPLIER.mul(stat.liquidation))
+        .add(MM_SWAPS_FEE_MULTIPLIER.mul(stat.swap))
+      , bigNumberify(0));
+      setRes(totalMMFees.div(expandDecimals(1, FEE_MULTIPLIER_BASIS_POINTS)))
+    }).catch(console.warn);
+  }, [setRes, query, chainId]);
+
+  return res;
+}
+
 export function useVolume(chainId) {
   const query = gql(`{
     volumeStat(id: "total") {
