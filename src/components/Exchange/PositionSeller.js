@@ -128,6 +128,8 @@ function getSwapLimits(infoTokens, fromTokenAddress, toTokenAddress) {
   };
 }
 
+const orderOptions = [MARKET, STOP];
+
 export default function PositionSeller(props) {
   const {
     active,
@@ -189,7 +191,6 @@ export default function PositionSeller(props) {
     fetcher: fetcher(library, PositionRouter),
   });
 
-  const orderOptions = [MARKET, STOP];
 
   let [orderOption, setOrderOption] = useState(MARKET);
 

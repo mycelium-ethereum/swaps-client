@@ -1,5 +1,5 @@
-import styled from 'styled-components';
-import Modal from '../Modal/Modal';
+import styled from "styled-components";
+import Modal from "../Modal/Modal";
 
 export const EventModalHeader = styled.div`
   position: absolute;
@@ -11,8 +11,7 @@ export const EventModalHeader = styled.div`
   border-top-right-radius: 8px;
   border-top-left-radius: 8px;
   border-bottom: 0;
-
-`
+`;
 
 export const EventModalGraphic = styled.img`
   position: absolute;
@@ -21,13 +20,14 @@ export const EventModalGraphic = styled.img`
   width: 100%;
   height: 100%;
 
-  ${({ infront }) => infront ? 
-    `
+  ${({ infront }) =>
+    infront
+      ? `
       height: 296px;
       z-index: 1;
-    ` : ``
-  }
-`
+    `
+      : ``}
+`;
 
 export const EventModalTitle = styled.div`
   margin-bottom: 1rem;
@@ -43,12 +43,12 @@ export const EventModalTitle = styled.div`
     font-weight: 600;
     margin: 0 0 16px;
   }
-`
+`;
 
 export const EventModalDivider = styled.hr`
   border-color: var(--cell-stroke);
   margin: 0 0 16px;
-`
+`;
 
 export const EventModalButtonContent = styled.div`
   display: grid;
@@ -58,7 +58,8 @@ export const EventModalButtonContent = styled.div`
     font-weight: 300;
   }
 
-  a, button {
+  a,
+  button {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -71,16 +72,17 @@ export const EventModalButtonContent = styled.div`
       margin-left: 13px;
     }
   }
-`
+`;
 
-export const EventModal = styled(Modal)`
+export const EventModal = styled(Modal)(
+  (props) => `
   .Modal-content {
     max-width: 424px;
     width: 100%;
     overflow: unset;
   }
   .Modal-body {
-    padding-top: 120px;
+    padding-top: ${props.hideHeader ? "120px" : "0"};
     text-align: center;
   }
   .divider {
@@ -105,3 +107,4 @@ export const EventModal = styled(Modal)`
     }
   }
 `
+);

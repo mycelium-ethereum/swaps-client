@@ -30,7 +30,7 @@
   height: 62px;
   width: 100%;
   z-index: 800;
-  padding-left: 326px;
+  padding-left: 310px;
   transition: all 0.5s ease;
 }
 
@@ -1419,6 +1419,9 @@ button.App-button {
     padding-left: 16px;
     padding-right: 16px;
   }
+  .App {
+    padding-top: 100px;
+  }
 }
 
 @media (max-width: 670px) {
@@ -1513,6 +1516,9 @@ button.App-button {
   }
   .App-header-link-main img.small {
     display: block;
+  }
+  .App {
+    padding-top: 120px;
   }
 }
 

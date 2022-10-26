@@ -39,6 +39,7 @@ body,
 }
 
 :root {
+  --light-green: #b9e500;
   --dark-blue: #17182c;
   --dark-blue-bg: #16182e;
   --dark-blue-accent: #a0a3c4;
