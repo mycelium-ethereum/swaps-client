@@ -802,7 +802,7 @@ function FullApp() {
                     }}
                   >
                     <img src={logoSmallImg} className="small" alt="Mycelium Swaps Logo" />
-                    <img src={logoImg} alt="Mycelium Swaps Logo" />
+                    <img src={logoImg} className="big" alt="Mycelium Swaps Logo" />
                   </Link>
                 </div>
                 <div>

@@ -1428,6 +1428,9 @@ button.App-button {
   .App-header-link-main img.big {
     display: none;
   }
+  .App-header-link-main img.small {
+    display: block;
+  }
   .App-header-menu-icon-block {
     display: flex;
   }
@@ -1460,7 +1463,7 @@ button.App-button {
     height: 1.2rem;
   }
   .App-header-user-link.Trade-btn-mobile {
-    margin-right: 16px;
+    margin-right: 0px;
   }
   .App-header-user-link {
     margin-right: 6px;
