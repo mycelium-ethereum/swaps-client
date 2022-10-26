@@ -114,11 +114,12 @@ export const ClaimedRewards = styled.div`
     width: 100%;
     margin: auto;
   }
-  & span:first-child, & span:last-child {
+  & span:first-child,
+  & span:last-child {
     height: 1px;
     background: var(--cell-stroke);
   }
-`
+`;
 
 export const RewardsData = styled.div`
   margin-top: 1rem;
@@ -168,8 +169,8 @@ export const RewardsTableContainer = styled.div`
 
 export const ScrollContainer = styled.div`
   position: relative;
-  overflow-x: hidden;
-  overflow-y: auto;
+  overflow: auto;
+  width: 100%;
   max-height: 491px;
 `;
 
@@ -309,8 +310,7 @@ export const UserDetails = styled.div`
 
 export const VolumeCell = styled(TableCell)``;
 
-export const RewardCell = styled(TableCell)`
-`;
+export const RewardCell = styled(TableCell)``;
 
 export const ClaimCell = styled(TableCell)`
   padding: 16px;

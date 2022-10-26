@@ -1,16 +1,35 @@
 import styled from "styled-components";
 
-export const RewardsTableContainer = styled.div`
+export const RewardsTableContainer = styled.div(
+  (props) => `
   overflow: hidden;
   border-radius: 4px;
-  border: 1px solid var(--action-active);
   margin-top: 16px;
   margin-bottom: 34px;
-`;
+  border: 1px solid var(--action-active);
+  overflow: auto;
+  &.referrals-table {
+    height: 450px;
+    border: 1px solid var(--cell-stroke);
+    ${RewardsTableHeading} {
+      border-bottom: 1px solid var(--cell-stroke);
+    }
+  }
+`
+);
 
 export const RewardsTable = styled.table`
   width: 100%;
   border-spacing: 0;
+  border-collapse: collapse;
+  thead {
+    position: sticky;
+    top: 0;
+    left: 0;
+    z-index: 2;
+    background-color: var(--background-primary);
+    border-bottom: 1px solid var(--action-active);
+  }
 `;
 
 export const RewardsTableHeading = styled.th`
@@ -18,8 +37,8 @@ export const RewardsTableHeading = styled.th`
   font-size: 12px;
   color: var(--text-secondary);
   text-align: left;
-  border-bottom: 1px solid var(--action-active);
   font-weight: 400;
+  white-space: nowrap;
 `;
 
 export const UserRow = styled.tr`
@@ -48,6 +67,7 @@ export const TableCell = styled.td`
     display: block;
     font-size: 12px;
     color: var(--text-secondary);
+    white-space: nowrap;
   }
 `;
 
@@ -69,6 +89,17 @@ export const FlexBetweenContainer = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
+  @media only screen and (max-width: 640px) {
+    flex-direction: column;
+    align-items: flex-start;
+    ${LeaderboardTitle} {
+      margin-bottom: 16px;
+    }
+    ${LeaderboardTitle} ~ div,
+    .App-cta.transparent {
+      width: 100%;
+    }
+  }
 `;
 
 export const NoData = styled.div`

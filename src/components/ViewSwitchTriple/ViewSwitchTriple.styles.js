@@ -2,7 +2,6 @@ import styled from "styled-components";
 
 export const ViewSwitchContainer = styled.div`
   display: flex;
-  justify-content: space-between;
   margin: 16px 0 24px;
   width: 100%;
 `;
@@ -16,6 +15,11 @@ export const ViewSwitch = styled.div`
   max-width: 569px;
   width: 100%;
   height: 56px;
+  @media only screen and (max-width: 640px) {
+    flex-direction: column;
+    height: auto;
+    max-width: 100%;
+  }
 `;
 
 export const ViewOption = styled.button`
@@ -38,5 +42,13 @@ export const ViewOption = styled.button`
     font-weight: bold;
     color: #fff;
     background-color: var(--action-active);
+  }
+  @media only screen and (max-width: 640px) {
+    border-right: 0;
+    border-top: 1px solid var(--cell-stroke);
+    width: 100%;
+    &:first-of-type {
+      border-top: 0;
+    }
   }
 `;

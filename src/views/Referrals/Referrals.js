@@ -92,6 +92,9 @@ export default function Referral(props) {
   const [selectedRound, setSelectedRound] = useState("latest");
   const [nextRewards, setNextRewards] = useState();
 
+  const eth = getTokenInfo(infoTokens, ethers.constants.AddressZero);
+  const ethPrice = eth?.maxPrimaryPrice;
+
   const switchView = (view) => {
     setCurrentView(view);
     trackAction &&
@@ -135,7 +138,6 @@ export default function Referral(props) {
       .map((trader, index) => {
         const commissions = bigNumberify(trader.commissions);
         const rebates = bigNumberify(trader.rebates);
-
         return {
           position: index + 1,
           address: trader.user_address,
@@ -143,6 +145,9 @@ export default function Referral(props) {
           totalReward: commissions.add(rebates),
           totalRewardUsd: commissions.add(rebates).mul(ethPrice).div(expandDecimals(1, ETH_DECIMALS)),
           referralCode: trader.referral_code,
+          numberOfTrades: trader.number_of_trades,
+          tradersReferred: trader.traders_referred,
+          tier: trader.tier,
           commissions,
           rebates,
         };
@@ -180,9 +185,10 @@ export default function Referral(props) {
       return undefined;
     }
     allUsersRoundData.findIndex((trader) => trader.address === account);
-    const leaderBoardIndex = currentRewardRound.rewards?.findIndex(
-      (trader) => trader.user_address.toLowerCase() === account?.toLowerCase()
-    );
+    // const leaderBoardIndex = currentRewardRound.rewards?.findIndex(
+    //   (trader) => trader.user_address.toLowerCase() === account?.toLowerCase()
+    // );
+    const leaderBoardIndex = 2;
     let traderData;
     if (leaderBoardIndex !== undefined && leaderBoardIndex >= 0) {
       traderData = currentRewardRound.rewards[leaderBoardIndex];
@@ -192,10 +198,16 @@ export default function Referral(props) {
     if (traderData) {
       const commissions = bigNumberify(traderData.commissions);
       const rebates = bigNumberify(traderData.rebates);
-
       return {
+        position: leaderBoardIndex + 1,
+        address: traderData.user_address,
         volume: bigNumberify(traderData.commissions_volume),
         totalReward: commissions.add(rebates),
+        totalRewardUsd: commissions.add(rebates).mul(ethPrice).div(expandDecimals(1, ETH_DECIMALS)),
+        referralCode: traderData.referral_code,
+        numberOfTrades: parseInt(traderData.number_of_trades),
+        tradersReferred: traderData.traders_referred,
+        tier: traderData.tier,
         commissions,
         rebates,
       };
@@ -208,9 +220,6 @@ export default function Referral(props) {
       };
     }
   }, [account, currentRewardRound, allUsersRoundData]);
-
-  const eth = getTokenInfo(infoTokens, ethers.constants.AddressZero);
-  const ethPrice = eth?.maxPrimaryPrice;
 
   if (ethPrice && userRoundData?.totalReward) {
     userRoundData.totalRewardUsd = userRoundData.totalReward?.mul(ethPrice).div(expandDecimals(1, ETH_DECIMALS));

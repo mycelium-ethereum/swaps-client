@@ -1,12 +1,6 @@
+import cx from "classnames";
 import * as Styles from "./ReferralLeaderboard.styles";
-import {
-  getTierIdDisplay,
-  numberToOrdinal,
-  TIER_DISCOUNT_INFO,
-  USD_DECIMALS,
-  formatAmount,
-  bigNumberify,
-} from "../../Helpers";
+import { getTierIdDisplay, numberToOrdinal, TIER_DISCOUNT_INFO, USD_DECIMALS, formatAmount } from "../../Helpers";
 // import { getCodeByAccount } from "../../Api/referrals";
 import liveIcon from "../../img/live.svg";
 import { RoundDropdown } from "../../components/RewardsRoundSelect/RewardsRoundSelect";
@@ -15,9 +9,9 @@ import { decodeReferralCode } from "../../Api/referrals";
 const TABLE_HEADINGS = [
   "Rank",
   "Referral Code",
-  // "Tier",
-  // "Traders Referred",
-  // "Number of Trades",
+  "Tier",
+  "Traders Referred",
+  "Number of Trades",
   "Total Volume Referred (USD)",
   "Rewards (USD)",
 ];
@@ -36,6 +30,8 @@ export default function ReferralLeaderboard(props) {
     referralCodeInString,
     currentRoundData,
   } = props;
+  console.log(allUsersRoundData);
+
   return (
     <>
       <UserStatsRow userRoundData={userRoundData} />
@@ -50,7 +46,7 @@ export default function ReferralLeaderboard(props) {
           trackAction={trackAction}
         />
       </Styles.FlexBetweenContainer>
-      <Styles.RewardsTableContainer>
+      <Styles.RewardsTableContainer className="referrals-table">
         <Styles.RewardsTable>
           <thead>
             <tr>
@@ -62,7 +58,7 @@ export default function ReferralLeaderboard(props) {
           <tbody>
             {allUsersRoundData?.map((row, index) => {
               if (row.volume.gt(0)) {
-                return <TableRow key={index} row={row} isUserRow={row?.position === userRoundData?.position} />;
+                return <TableRow key={index} row={row} isUserRow={row?.position === userRoundData?.position} isTable />;
               } else {
                 return <></>;
               }
@@ -74,14 +70,21 @@ export default function ReferralLeaderboard(props) {
   );
 }
 
-const TableRow = ({ row, isUserRow }) => (
-  <Styles.UserRow isUserRow={isUserRow}>
+const TableRow = ({ row, isUserRow, isTable }) => (
+  <Styles.UserRow
+    isUserRow={isUserRow}
+    className={cx({
+      highlight: isUserRow,
+      "no-border": !isTable,
+    })}
+  >
     <Styles.TableCell>{numberToOrdinal(row.position)}</Styles.TableCell>
     <Styles.TableCell>{row.referralCode ? decodeReferralCode(row.referralCode) : `-`}</Styles.TableCell>
-    {/* <Styles.TableCell className="tier">
-  <span>{`Tier ${getTierIdDisplay(row.tier)}`}</span>{" "}
-  <span>{`${TIER_DISCOUNT_INFO[row.tier]}% discount`}</span>
-</Styles.TableCell> */}
+    <Styles.TableCell className="tier">
+      <span>{`Tier ${getTierIdDisplay(row.tier)}`}</span> <span>{`${TIER_DISCOUNT_INFO[row.tier]}% discount`}</span>
+    </Styles.TableCell>
+    <Styles.TableCell>{row.tradersReferred}</Styles.TableCell>
+    <Styles.TableCell>{row.numberOfTrades}</Styles.TableCell>
     <Styles.TableCell>${formatAmount(row.volume, USD_DECIMALS, 2, true, "0.00")}</Styles.TableCell>
     <Styles.TableCell>${formatAmount(row.totalRewardUsd, USD_DECIMALS, 2, true, "0.00")}</Styles.TableCell>
   </Styles.UserRow>

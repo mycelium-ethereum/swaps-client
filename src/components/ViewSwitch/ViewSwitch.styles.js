@@ -1,11 +1,24 @@
-import styled from 'styled-components';
+import styled from "styled-components";
 
-export const ViewSwitchContainer = styled.div`
+export const ViewSwitchContainer = styled.div(
+  (props) => `
   display: flex;
   justify-content: space-between;
   margin: 16px 0 24px;
   width: 100%;
-`;
+  @media screen and (max-width: 768px) {
+    flex-direction: column;
+    ${ViewSwitch} {
+      margin-bottom: 16px;
+    }
+  }
+  @media screen and (max-width: 640px) {
+    .App-cta.transparent {
+      width: 100%;
+    }
+  }
+`
+);
 
 export const ViewSwitch = styled.div`
   position: relative;
@@ -15,6 +28,9 @@ export const ViewSwitch = styled.div`
   border: 1px solid var(--cell-stroke);
   width: 392px;
   height: 56px;
+  @media screen and (max-width: 640px) {
+    width: 100%;
+  }
 `;
 
 export const ViewOption = styled.button`
@@ -47,4 +63,3 @@ export const SwitchBackdrop = styled.span`
     left: 50%;
   }
 `;
-
