@@ -132,7 +132,7 @@ export const EventModalButtonContent = styled.div`
     border-radius: 4px;
     height: 44px;
     margin: 0;
-    background: var(--action-active);
+    background-color: var(--action-active);
 
     img {
       margin-right: 10px;
@@ -140,6 +140,7 @@ export const EventModalButtonContent = styled.div`
 
     &:hover {
       border-color: transparent;
+      background-color: var(--cell-stroke) !important;
     }
   }
 `;
@@ -195,4 +196,9 @@ export const EventModalCloseButton = styled.img.attrs({ src: closeRoundedIcon })
   cursor: pointer;
   width: 20px;
   height: 20px;
+  transition: opacity 0.3s ease;
+
+  &:hover {
+    opacity: 0.5;
+  }
 `;
