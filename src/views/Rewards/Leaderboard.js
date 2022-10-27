@@ -55,7 +55,7 @@ function TopFiveIndicatorRow() {
   return (
     <TopFiveRow>
       <TopFiveRowCell colSpan={5} className="">
-        <span>Top 5% of traders</span>
+        <span>Top 50% of traders</span>
       </TopFiveRowCell>
     </TopFiveRow>
   );
