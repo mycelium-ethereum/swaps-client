@@ -411,21 +411,14 @@ export default function Referral(props) {
           )}
           {currentView === LEADERBOARD && (
             <ReferralLeaderboard
-              account={account}
-              chainId={chainId}
-              active={active}
               connectWallet={connectWallet}
               userRoundData={userRoundData}
-              // tradersTier={tradersTier}
-              // referrerTier={referrerTier}
               currentRoundData={currentRewardRound?.rewards}
-              referrerTier={1}
               referralCodeInString={referralCodeInString}
               allRoundsRewardsData={allRoundsRewardsData}
               allUsersRoundData={allUsersRoundData}
               setSelectedRound={setSelectedRound}
               rewardsMessage={rewardsMessage}
-              timeTillRewards={timeTillRewards}
               trackAction={trackAction}
             />
           )}

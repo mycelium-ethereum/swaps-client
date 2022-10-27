@@ -17,20 +17,8 @@ const TABLE_HEADINGS = [
 ];
 
 export default function ReferralLeaderboard(props) {
-  const {
-    active,
-    account,
-    allRoundsRewardsData,
-    allUsersRoundData,
-    setSelectedRound,
-    rewardsMessage,
-    trackAction,
-    timeTillRewards,
-    userRoundData,
-    referralCodeInString,
-    currentRoundData,
-  } = props;
-  console.log(allUsersRoundData);
+  const { allRoundsRewardsData, allUsersRoundData, setSelectedRound, rewardsMessage, trackAction, userRoundData } =
+    props;
 
   return (
     <>
@@ -90,11 +78,11 @@ const TableRow = ({ row, isUserRow, isTable }) => (
   </Styles.TableRow>
 );
 
-const UserStatsRow = ({ userRoundData, referrerTier }) => (
+const UserStatsRow = ({ userRoundData }) => (
   <>
     <span>Your rewards</span>
     <Styles.RewardsTableContainer>
-      {userRoundData ? (
+      {userRoundData?.position ? (
         <Styles.RewardsTable>
           <thead>
             <tr>
