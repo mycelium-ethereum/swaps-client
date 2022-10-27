@@ -174,6 +174,9 @@ export const ScrollContainer = styled.div`
   overflow: auto;
   width: 100%;
   max-height: 491px;
+  &::-webkit-scrollbar-track {
+    border-left: 1px solid var(--cell-stroke);
+  }
 `;
 
 export const RewardsTable = styled.table`

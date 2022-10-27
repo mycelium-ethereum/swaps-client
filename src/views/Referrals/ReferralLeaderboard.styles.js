@@ -9,7 +9,7 @@ export const RewardsTableContainer = styled.div(
   border: 1px solid var(--action-active);
   overflow: auto;
   &.referrals-table {
-    height: 450px;
+    max-height: 450px;
     border: 1px solid var(--cell-stroke);
     ${RewardsTableHeading} {
       border-bottom: 1px solid var(--cell-stroke);
@@ -20,6 +20,9 @@ export const RewardsTableContainer = styled.div(
     ${TableRow}.highlight {
       border: 1px solid var(--action-active) !important;
     }
+  }
+  &::-webkit-scrollbar-track {
+    border-left: 1px solid var(--cell-stroke);
   }
 `
 );
