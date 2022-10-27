@@ -16,7 +16,6 @@ export default function TradingCompBanner() {
     const hasDismissedBanner = window.localStorage.getItem("hasDismissedReferralsBanner");
     if (hasDismissedBanner) {
       onClose();
-      document.querySelector(".Exchange")?.classList.remove("ReferralsBannerActive");
     }
   }, []);
 

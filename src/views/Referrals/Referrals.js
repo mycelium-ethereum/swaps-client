@@ -78,6 +78,12 @@ export const COMMISSIONS_HASH = "#commissions";
 export const REBATES_HASH = "#rebates";
 export const LEADERBOARD_HASH = "#leaderboard";
 
+const HASH_BY_VIEW = {
+  [COMMISSIONS]: COMMISSIONS_HASH,
+  [REBATES]: REBATES_HASH,
+  [LEADERBOARD]: LEADERBOARD_HASH,
+};
+
 export default function Referral(props) {
   const location = useLocation();
   const { connectWallet, trackAction, infoTokens } = props;
@@ -103,6 +109,14 @@ export default function Referral(props) {
 
   const switchView = (view) => {
     setCurrentView(view);
+    const hash = HASH_BY_VIEW[view];
+
+    // Update hash
+    if (window.history.pushState) {
+      window.history.pushState(null, null, hash);
+    } else {
+      location.hash = hash;
+    }
     trackAction &&
       trackAction("Button clicked", {
         buttonName: "Referral panel",
@@ -152,7 +166,7 @@ export default function Referral(props) {
           totalRewardUsd: commissions.add(rebates).mul(ethPrice).div(expandDecimals(1, ETH_DECIMALS)),
           referralCode: trader.referral_code,
           numberOfTrades: trader.number_of_trades,
-          tradersReferred: trader.traders_referred,
+          tradersReferred: trader.total_traders_referred,
           tier: trader.tier,
           commissions,
           rebates,
