@@ -14,6 +14,12 @@ export const RewardsTableContainer = styled.div(
     ${RewardsTableHeading} {
       border-bottom: 1px solid var(--cell-stroke);
     }
+    tr {
+      border-top: 1px solid var(--cell-stroke);
+    }
+    ${TableRow}.highlight {
+      border: 1px solid var(--action-active) !important;
+    }
   }
 `
 );
@@ -22,13 +28,15 @@ export const RewardsTable = styled.table`
   width: 100%;
   border-spacing: 0;
   border-collapse: collapse;
+
   thead {
     position: sticky;
     top: 0;
     left: 0;
     z-index: 2;
     background-color: var(--background-primary);
-    border-bottom: 1px solid var(--action-active);
+    transform: translateY(-2px);
+    border-bottom: 1px solid var(--cell-stroke);
   }
 `;
 
@@ -41,7 +49,7 @@ export const RewardsTableHeading = styled.th`
   white-space: nowrap;
 `;
 
-export const UserRow = styled.tr`
+export const TableRow = styled.tr`
   position: relative;
   > td {
     position: relative;
@@ -49,7 +57,7 @@ export const UserRow = styled.tr`
   }
   &.highlight {
     background-image: linear-gradient(111.31deg, #003000 23.74%, rgba(0, 48, 0, 0) 99.29%);
-    border: 1px solid var(--action-active);
+    border-top: 1px solid var(--action-active) !important;
   }
   &.no-border {
     border: 0;

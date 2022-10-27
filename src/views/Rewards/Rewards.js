@@ -179,7 +179,7 @@ export default function Rewards(props) {
       (trader) => trader.user_address.toLowerCase() === account?.toLowerCase()
     );
     let traderData;
-    if (leaderBoardIndex && leaderBoardIndex >= 0) {
+    if (leaderBoardIndex !== undefined && leaderBoardIndex >= 0) {
       traderData = currentRewardRound.rewards[leaderBoardIndex];
     }
     // trader's data found

@@ -17,20 +17,8 @@ const TABLE_HEADINGS = [
 ];
 
 export default function ReferralLeaderboard(props) {
-  const {
-    active,
-    account,
-    allRoundsRewardsData,
-    allUsersRoundData,
-    setSelectedRound,
-    rewardsMessage,
-    trackAction,
-    timeTillRewards,
-    userRoundData,
-    referralCodeInString,
-    currentRoundData,
-  } = props;
-  console.log(allUsersRoundData);
+  const { allRoundsRewardsData, allUsersRoundData, setSelectedRound, rewardsMessage, trackAction, userRoundData } =
+    props;
 
   return (
     <>
@@ -71,7 +59,7 @@ export default function ReferralLeaderboard(props) {
 }
 
 const TableRow = ({ row, isUserRow, isTable }) => (
-  <Styles.UserRow
+  <Styles.TableRow
     isUserRow={isUserRow}
     className={cx({
       highlight: isUserRow,
@@ -87,14 +75,14 @@ const TableRow = ({ row, isUserRow, isTable }) => (
     <Styles.TableCell>{row.numberOfTrades}</Styles.TableCell>
     <Styles.TableCell>${formatAmount(row.volume, USD_DECIMALS, 2, true, "0.00")}</Styles.TableCell>
     <Styles.TableCell>${formatAmount(row.totalRewardUsd, USD_DECIMALS, 2, true, "0.00")}</Styles.TableCell>
-  </Styles.UserRow>
+  </Styles.TableRow>
 );
 
-const UserStatsRow = ({ userRoundData, referrerTier }) => (
+const UserStatsRow = ({ userRoundData }) => (
   <>
     <span>Your rewards</span>
     <Styles.RewardsTableContainer>
-      {userRoundData ? (
+      {userRoundData?.position ? (
         <Styles.RewardsTable>
           <thead>
             <tr>
