@@ -50,7 +50,7 @@ const EVENTS = {
     title: (
       <>
         <h2>
-          The Mycelium Perpetual Swaps Referrals Competition is{" "}
+          Referrals Competition is{" "}
           <Styled.LiveSpanContainer>
             <Styled.LiveIcon /> <Styled.GreenText>Live</Styled.GreenText>
           </Styled.LiveSpanContainer>
@@ -63,7 +63,7 @@ const EVENTS = {
           <b>Share your referral code for the chance to win $20,000 USDC in prizes.</b>
         </p>
         <p>
-          The most creative referral code tweet wins third prize of $2,000 USDC, and must tag{" "}
+          The most creative referral code tweet wins third prize of $3,000 USDC. You must tag{" "}
           <a href="twitter.com/mycelium_xyz" target="_blank" rel="noopener noreferrer" className="inline-link">
             @mycelium_xyz
           </a>{" "}
@@ -116,7 +116,7 @@ export default function EventModal({
           <Styled.EventModalCloseButton onClick={onClose} />
           {event.description}
           {twitterText && (
-            <button className="App-button-option App-card-option" onClick={onClose}>
+            <button className="App-button-option App-card-option" onClick={() => shareToTwitter(twitterText)}>
               <img src={twitterIcon} alt="Twitter" /> {twitterButtonText ? twitterButtonText : "Share on Twitter"}
             </button>
           )}

@@ -27,7 +27,7 @@ import connectWalletImg from "../../img/ic_wallet_24.svg";
 const navLinks = [
   {
     name: "Trade",
-    path: "/trade",
+    path: "/",
   },
   {
     name: "Dashboard",

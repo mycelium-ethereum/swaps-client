@@ -46,8 +46,9 @@
   grid-gap: 1rem;
   padding-top: 3rem;
   color: var(--text-secondary);
+  transition: padding-top 0.3s ease;
 }
-.Exchange-content.ReferralsBannerActive {
+.Exchange.ReferralsBannerActive .Exchange-content {
   padding-top: 4rem;
 }
 
@@ -1084,7 +1085,7 @@ table.Exchange-list-small td {
 
 /* Added padding for Referrals comp */
 @media (max-width: 1000px) {
-  .Exchange-content.ReferralsBannerActive {
+  .Exchange.ReferralsBannerActive .Exchange-content {
     padding-top: 10rem;
   }
 }
@@ -1110,8 +1111,8 @@ table.Exchange-list-small td {
   }
 
   /* Added padding for Referrals comp */
-  .Exchange-content.ReferralsBannerActive {
-    padding-top: 7rem;
+  .Exchange.ReferralsBannerActive .Exchange-content {
+    padding-top: 8rem;
   }
 
   .Exchange-swap-box .TokenSelector .Modal {
