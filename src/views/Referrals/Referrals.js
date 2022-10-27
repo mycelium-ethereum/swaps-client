@@ -35,6 +35,7 @@ import {
 } from "../../Api/referrals";
 import useSWR from "swr";
 import { ethers } from "ethers";
+import { useLocation } from "react-router-dom";
 
 import FeeDistributorReader from "../../abis/FeeDistributorReader.json";
 import { getContract } from "../../Addresses";
@@ -73,7 +74,12 @@ export const COMMISSIONS = "Commissions";
 export const REBATES = "Rebates";
 export const LEADERBOARD = "Commissions Leaderboard";
 
+export const COMMISSIONS_HASH = "#commissions";
+export const REBATES_HASH = "#rebates";
+export const LEADERBOARD_HASH = "#leaderboard";
+
 export default function Referral(props) {
+  const location = useLocation();
   const { connectWallet, trackAction, infoTokens } = props;
   const { active, account, library, chainId: chainIdWithoutLocalStorage, pendingTxns, setPendingTxns } = useWeb3React();
   const { chainId } = useChainId();
@@ -185,10 +191,9 @@ export default function Referral(props) {
       return undefined;
     }
     allUsersRoundData.findIndex((trader) => trader.address === account);
-    // const leaderBoardIndex = currentRewardRound.rewards?.findIndex(
-    //   (trader) => trader.user_address.toLowerCase() === account?.toLowerCase()
-    // );
-    const leaderBoardIndex = 2;
+    const leaderBoardIndex = currentRewardRound.rewards?.findIndex(
+      (trader) => trader.user_address.toLowerCase() === account?.toLowerCase()
+    );
     let traderData;
     if (leaderBoardIndex !== undefined && leaderBoardIndex >= 0) {
       traderData = currentRewardRound.rewards[leaderBoardIndex];
@@ -219,7 +224,7 @@ export default function Referral(props) {
         rebates: bigNumberify(0),
       };
     }
-  }, [account, currentRewardRound, allUsersRoundData]);
+  }, [account, currentRewardRound, allUsersRoundData, ethPrice]);
 
   if (ethPrice && userRoundData?.totalReward) {
     userRoundData.totalRewardUsd = userRoundData.totalReward?.mul(ethPrice).div(expandDecimals(1, ETH_DECIMALS));
@@ -307,6 +312,20 @@ export default function Referral(props) {
     setIsEdit(isEdit);
     setIsEnterCodeModalVisible(true);
   };
+
+  // Change view based on window hash
+  useEffect(() => {
+    const hash = window.location.hash;
+    if (hash === REBATES_HASH) {
+      setCurrentView(REBATES);
+    } else if (hash === COMMISSIONS_HASH) {
+      setCurrentView(COMMISSIONS);
+    } else if (hash === LEADERBOARD_HASH) {
+      setCurrentView(LEADERBOARD);
+    } else {
+      setCurrentView(REBATES);
+    }
+  }, [setCurrentView, location.hash]);
 
   return (
     <>

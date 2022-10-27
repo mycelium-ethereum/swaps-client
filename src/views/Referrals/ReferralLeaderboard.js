@@ -71,7 +71,7 @@ export default function ReferralLeaderboard(props) {
 }
 
 const TableRow = ({ row, isUserRow, isTable }) => (
-  <Styles.UserRow
+  <Styles.TableRow
     isUserRow={isUserRow}
     className={cx({
       highlight: isUserRow,
@@ -87,7 +87,7 @@ const TableRow = ({ row, isUserRow, isTable }) => (
     <Styles.TableCell>{row.numberOfTrades}</Styles.TableCell>
     <Styles.TableCell>${formatAmount(row.volume, USD_DECIMALS, 2, true, "0.00")}</Styles.TableCell>
     <Styles.TableCell>${formatAmount(row.totalRewardUsd, USD_DECIMALS, 2, true, "0.00")}</Styles.TableCell>
-  </Styles.UserRow>
+  </Styles.TableRow>
 );
 
 const UserStatsRow = ({ userRoundData, referrerTier }) => (
