@@ -1,4 +1,14 @@
 import styled from "styled-components";
+import referralsCompPrizes from "../../img/referrals-comp.png";
+
+export const CompetitionRewards = styled.img.attrs({ src: referralsCompPrizes })`
+  width: 100%;
+  margin-bottom: 24px;
+
+  @media only screen and (max-width: 1000px) {
+    display: none;
+  }
+`;
 
 export const RewardsTableContainer = styled.div(
   (props) => `
