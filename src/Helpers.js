@@ -165,12 +165,6 @@ export const TRIGGER_PREFIX_BELOW = "<";
 
 export const MIN_PROFIT_BIPS = 0;
 
-// USD tokens per interval given by kurtis
-export const MM_TOKENS_PER_INTERVAL = ethers.utils.parseUnits("0.1859475633", USD_DECIMALS);
-export const FEE_MULTIPLIER_BASIS_POINTS = 4;
-export const MM_FEE_MULTIPLIER = bigNumberify(6);
-export const MM_SWAPS_FEE_MULTIPLIER = bigNumberify(12);
-
 export const MLP_POOL_COLORS = {
   ETH: "#6062a6",
   BTC: "#F7931A",
@@ -2947,20 +2941,6 @@ export function getTierIdDisplay(tierId) {
 
 export function shareToTwitter(text) {
   window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`, "_blank");
-}
-
-export function calcMarketMakingFees(data) {
-  if (!data) {
-    return 0;
-  }
-  const mmFees = ethers.BigNumber.from(0)
-    .add(MM_SWAPS_FEE_MULTIPLIER.mul(data.swap))
-    .add(MM_FEE_MULTIPLIER.mul(data.mint))
-    .add(MM_FEE_MULTIPLIER.mul(data.burn))
-    .add(MM_FEE_MULTIPLIER.mul(data.margin))
-    .add(MM_FEE_MULTIPLIER.mul(data.liquidation));
-
-  return mmFees.div(expandDecimals(1, FEE_MULTIPLIER_BASIS_POINTS));
 }
 
 export const numberToOrdinal = (n) => {
