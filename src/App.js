@@ -991,7 +991,7 @@ function FullApp() {
         setEventModalVisible={setEventModalVisible}
         eventKey={"referrals-comp"}
         twitterButtonText={"Share your code for a chance to win"}
-        twitterText={`Join the @mycelium_xyz trading fever, use my referral code for a discount on trading fees: [insert code]\nhttps://swaps.mycelium.xyz/referrals`}
+        twitterText={`🍄🍄🍄 @mycelium_xyz IYKYK\n\nUse my code for a discount: [insert code]\nhttps://swaps.mycelium.xyz/referrals`}
       />
       <EventToastContainer />
       <Modal
