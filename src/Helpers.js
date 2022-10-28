@@ -2939,7 +2939,7 @@ export function getCodeError(value) {
 }
 
 export function getTierIdDisplay(tierId) {
-  if (!tierId) {
+  if (tierId === undefined) {
     return "";
   }
   return Number(tierId) + 1;

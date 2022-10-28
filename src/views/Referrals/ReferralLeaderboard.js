@@ -22,7 +22,7 @@ export default function ReferralLeaderboard(props) {
 
   return (
     <>
-      <Styles.CompetitionRewards />
+      {/* <Styles.CompetitionRewards /> */}
       <UserStatsRow userRoundData={userRoundData} />
       <Styles.FlexBetweenContainer>
         <Styles.LeaderboardTitle>
