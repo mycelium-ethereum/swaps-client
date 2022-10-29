@@ -27,7 +27,9 @@ const IGNORE_IP_CONTEXT = {
 };
 
 export const useAnalytics = () => {
-  ReactGA.initialize(GA_ID);
+  if (GA_ID) {
+    ReactGA.initialize(GA_ID);
+  }
   const { account } = useWeb3React();
   const location = useLocation();
   const [analytics, setAnalytics] = useState(undefined);
