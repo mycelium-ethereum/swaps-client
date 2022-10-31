@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import Modal from "../Modal/Modal";
-import referrals20k from "../../img/20k.svg";
+import referrals20k from "../../img/referrals-comp/20k.svg";
 import liveIcon from "../../img/live.svg";
 import closeRoundedIcon from "../../img/close-rounded.png";
 

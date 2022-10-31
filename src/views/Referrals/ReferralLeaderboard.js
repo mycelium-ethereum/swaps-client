@@ -1,10 +1,11 @@
+import { useState } from "react";
 import cx from "classnames";
 import * as Styles from "./ReferralLeaderboard.styles";
 import { getTierIdDisplay, numberToOrdinal, TIER_DISCOUNT_INFO, USD_DECIMALS, formatAmount } from "../../Helpers";
-// import { getCodeByAccount } from "../../Api/referrals";
 import liveIcon from "../../img/live.svg";
 import { RoundDropdown } from "../../components/RewardsRoundSelect/RewardsRoundSelect";
 import { decodeReferralCode } from "../../Api/referrals";
+import { competitionPodiumContent } from "./presets";
 
 const TABLE_HEADINGS = [
   "Rank",
@@ -16,13 +17,50 @@ const TABLE_HEADINGS = [
   "Rewards (USD)",
 ];
 
+const DESKTOP_FIRST_CONTENT_INDEX = 2;
+
 export default function ReferralLeaderboard(props) {
+  const [isPodiumShown, setIsPodiumShown] = useState(true);
   const { allRoundsRewardsData, allUsersRoundData, setSelectedRound, rewardsMessage, trackAction, userRoundData } =
     props;
 
+  const togglePodium = () => {
+    setIsPodiumShown(!isPodiumShown);
+  };
+
   return (
     <>
-      <Styles.CompetitionRewards />
+      <Styles.CompetitionRewardsToggle onClick={togglePodium}>
+        <span>Referral Competition Rewards</span>
+        <Styles.ChevronDown isOpen={isPodiumShown} />
+      </Styles.CompetitionRewardsToggle>
+      <Styles.CompetitionRewardsBanner isOpen={isPodiumShown}>
+        <Styles.PodiumBackground />
+        <Styles.CompetitionRewardsContainer className="desktop">
+          {competitionPodiumContent.map(({ icon, prize, eligibility, className, mobileOnly }) => {
+            if (!mobileOnly)
+              return (
+                <Styles.PodiumItem className={className} key={prize}>
+                  {icon && <img src={icon} alt="podium icon" />}
+                  <h3>{prize}</h3>
+                  {eligibility}
+                </Styles.PodiumItem>
+              );
+          })}
+        </Styles.CompetitionRewardsContainer>
+        <Styles.CompetitionRewardsContainer className="mobile">
+          {competitionPodiumContent.map(({ icon, prize, eligibility, className, desktopOnly }) => {
+            if (!desktopOnly)
+              return (
+                <Styles.PodiumItem className={className} key={prize}>
+                  {icon && <img src={icon} alt="podium icon" />}
+                  <h3>{prize}</h3>
+                  {eligibility}
+                </Styles.PodiumItem>
+              );
+          })}
+        </Styles.CompetitionRewardsContainer>
+      </Styles.CompetitionRewardsBanner>
       <UserStatsRow userRoundData={userRoundData} />
       <Styles.FlexBetweenContainer>
         <Styles.LeaderboardTitle>
