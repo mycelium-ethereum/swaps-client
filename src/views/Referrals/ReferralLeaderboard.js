@@ -17,16 +17,38 @@ const TABLE_HEADINGS = [
   "Rewards (USD)",
 ];
 
-const DESKTOP_FIRST_CONTENT_INDEX = 2;
+const COMPETITION_ROUND = 7;
 
 export default function ReferralLeaderboard(props) {
   const [isPodiumShown, setIsPodiumShown] = useState(true);
-  const { allRoundsRewardsData, allUsersRoundData, setSelectedRound, rewardsMessage, trackAction, userRoundData } =
-    props;
+  const {
+    allRoundsRewardsData,
+    allUsersRoundData,
+    selectedRound,
+    setSelectedRound,
+    rewardsMessage,
+    trackAction,
+    userRoundData,
+  } = props;
 
   const togglePodium = () => {
     setIsPodiumShown(!isPodiumShown);
   };
+
+  const modifiedAllRoundsRewardsData = allRoundsRewardsData?.map((data) => {
+    if (data?.round === COMPETITION_ROUND) {
+      return {
+        ...data,
+        customRoundText: "Competition Round",
+      };
+    } else {
+      return data;
+    }
+  });
+
+  const modifiedRewardsMessage = [COMPETITION_ROUND, "latest"].includes(selectedRound)
+    ? "Competition Round"
+    : rewardsMessage;
 
   return (
     <>
@@ -67,9 +89,9 @@ export default function ReferralLeaderboard(props) {
           <img src={liveIcon} alt="Live" /> <span className="green">Live&nbsp;</span> <span>Referrals Leaderboard</span>
         </Styles.LeaderboardTitle>
         <RoundDropdown
-          allRoundsRewardsData={allRoundsRewardsData}
+          allRoundsRewardsData={modifiedAllRoundsRewardsData}
           setSelectedRound={setSelectedRound}
-          rewardsMessage={rewardsMessage}
+          rewardsMessage={modifiedRewardsMessage}
           trackAction={trackAction}
         />
       </Styles.FlexBetweenContainer>
