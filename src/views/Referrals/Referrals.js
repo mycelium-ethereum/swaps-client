@@ -431,6 +431,7 @@ export default function Referral(props) {
               referralCodeInString={referralCodeInString}
               allRoundsRewardsData={allRoundsRewardsData}
               allUsersRoundData={allUsersRoundData}
+              selectedRound={selectedRound}
               setSelectedRound={setSelectedRound}
               rewardsMessage={rewardsMessage}
               trackAction={trackAction}

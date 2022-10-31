@@ -1,5 +1,6 @@
 import { useEffect, useRef } from "react";
 import { NavLink } from "react-router-dom";
+import { Link } from "react-router-dom";
 import {
   MenuContainer,
   SideMenu,
@@ -141,15 +142,11 @@ export default function Sidebar({ sidebarVisible, setSidebarVisible }) {
               <EventHeader>WHAT'S HAPPENING THIS WEEK</EventHeader>
               <EventContent>
                 <EventGraphic src={graphic} />
-                <EventTitle>Driving volume to drive rewards</EventTitle>
-                <EventDescription>Transparent, Cheap Perpetual Swap Trading Costs</EventDescription>
-                <a
-                  href="https://mycelium.xyz/blog/mycelium-s-fee-update-driving-volume-to-drive-rewards"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
+                <EventTitle>Mycelium Referrals Competition</EventTitle>
+                <EventDescription>Win $20,000 USDC in prizes for sharing the trading spirit.</EventDescription>
+                <Link to="/referrals#leaderboard">
                   <ViewNowButton>View Now</ViewNowButton>
-                </a>
+                </Link>
               </EventContent>
             </EventBox>
             <BottomMenuItem>

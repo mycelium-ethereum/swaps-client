@@ -76,7 +76,9 @@ export function RoundDropdown(props) {
                               });
                           }}
                         >
-                          Round {parseFloat(rewardRound?.round) + 1}
+                          {rewardRound?.customRoundText
+                            ? rewardRound.customRoundText
+                            : `Round ${parseFloat(rewardRound?.round) + 1}`}
                         </div>
                       </Menu.Item>
                     ))}
