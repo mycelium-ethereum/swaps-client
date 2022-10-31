@@ -51,11 +51,11 @@ function RewardsTableWrapper({ className, children }) {
   );
 }
 
-function TopFiveIndicatorRow() {
+function TopIndicatorRow({ percent }) {
   return (
     <TopFiveRow>
       <TopFiveRowCell colSpan={5} className="">
-        <span>Top 5% of traders</span>
+        <span>Top {percent}% of traders</span>
       </TopFiveRowCell>
     </TopFiveRow>
   );
@@ -230,7 +230,7 @@ export default function Leaderboard(props) {
                   const isUserRow = user_address === userAccount;
                   return (
                     <>
-                      {index === middleRow ? <TopFiveIndicatorRow /> : null}
+                      {index === middleRow ? <TopIndicatorRow percent={Math.floor((middleRow / roundData.rewards.length) * 100)}/> : null}
                       <TableRow
                         key={user_address}
                         totalTraders={roundData.rewards.length}
