@@ -55,11 +55,12 @@ function TopFiveIndicatorRow() {
   return (
     <TopFiveRow>
       <TopFiveRowCell colSpan={5} className="">
-        <span>Top 50% of traders</span>
+        <span>Top 5% of traders</span>
       </TopFiveRowCell>
     </TopFiveRow>
   );
 }
+
 function TableRow({
   ensName,
   position,
@@ -122,7 +123,6 @@ function TableRow({
               />
             : `${formatAmount(totalReward, ETH_DECIMALS, 4, true)} WETH`
           }
-
           {rewardAmountUsd && `($${formatAmount(rewardAmountUsd, USD_DECIMALS, 2, true)})`}
         </RewardCell>
         <ClaimCell

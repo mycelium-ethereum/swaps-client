@@ -345,7 +345,7 @@ export default function Referral(props) {
     <>
       <SEO
         title={getPageTitle("Referral")}
-        description="Claim fees earned via being in the top 50% of traders on Mycelium Perpetual Swaps."
+        description="Use a referral code on Mycelium Perpetual Swaps to earn rebates on trading fees."
       />
       <EnterCodeModal
         active={active}
