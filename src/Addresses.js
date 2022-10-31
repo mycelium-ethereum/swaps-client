@@ -60,6 +60,9 @@ const CONTRACTS = {
     // TODO: Change these once deployed
     FeeDistributor: "0x057B99E0112A0D9fDA7503bDc8b6995fA2ff997D",
     FeeDistributorReader: "0x55ce0A81b697f1eff846e8a56D3f303A5BE490b1",
+
+    ReferralsMerkleDistributor: "0x1f28D16CFFC71722cF30E6c8BEd458ca4742f84D",
+    MerkleDistributorReader: "0xC972Fa4F02A24b18e0A4dFd9669Fc449E1831ac2",
   },
   42161: {
     // arbitrum mainnet
