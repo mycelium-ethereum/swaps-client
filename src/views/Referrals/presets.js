@@ -29,7 +29,13 @@ export const competitionPodiumContent = [
     eligibility: (
       <>
         <span>For most creative Tweet sharing referral code</span>
-        <small>(must tag @mycelium_xyz to be eligible)</small>
+        <small>
+          (must tag{" "}
+          <a href="https://twitter.com/mycelium_xyz" target="_blank" rel="noopener noreferrer" className="inline-link">
+            @mycelium_xyz
+          </a>{" "}
+          to be eligible)
+        </small>
       </>
     ),
     className: "third",

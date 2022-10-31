@@ -42,7 +42,7 @@ export const CompetitionRewardsBanner = styled.div(
   margin-bottom: ${props.isOpen ? "24px" : "0px"};
   @media only screen and (max-width: 875px) {
     max-height: ${props.isOpen ? "624px" : "0px"};
-    padding: ${props.isOpen ? "8px" : "0 8px"};
+    padding: 8px;
   }
 `
 );

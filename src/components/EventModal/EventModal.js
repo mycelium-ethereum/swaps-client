@@ -64,7 +64,7 @@ const EVENTS = {
         </p>
         <p>
           The most creative referral code tweet wins third prize of $3,000 USDC. You must tag{" "}
-          <a href="twitter.com/mycelium_xyz" target="_blank" rel="noopener noreferrer" className="inline-link">
+          <a href="https://twitter.com/mycelium_xyz" target="_blank" rel="noopener noreferrer" className="inline-link">
             @mycelium_xyz
           </a>{" "}
           on Twitter to be eligible.
