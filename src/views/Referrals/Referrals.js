@@ -36,7 +36,7 @@ import {
 import useSWR from "swr";
 import { ethers } from "ethers";
 
-import FeeDistributorReader from "../../abis/FeeDistributorReader.json";
+import MerkleDistributorReader from "../../abis/MerkleDistributorReader.json";
 import { getContract } from "../../Addresses";
 import { REFERRALS_SELECTED_TAB_KEY, REFERRAL_CODE_KEY } from "../../config/localstorage";
 
@@ -96,8 +96,8 @@ export default function Referral(props) {
     // TODO handle claim
   }
 
-  const feeDistributor = getContract(chainId, "FeeDistributor");
-  const feeDistributorReader = getContract(chainId, "FeeDistributorReader");
+  const merkleDistributor = getContract(chainId, "ReferralsMerkleDistributor");
+  const merkleDistributorReader = getContract(chainId, "MerkleDistributorReader");
 
   // Fetch all week data from server
   const { data: allRoundsRewardsData_, error: failedFetchingRewards } = useSWR(
@@ -121,14 +121,14 @@ export default function Referral(props) {
     [
       `Rewards:claimed:${active}`,
       chainId,
-      feeDistributorReader,
+      merkleDistributorReader,
       "getUserClaimed",
-      feeDistributor,
+      merkleDistributor,
       account ?? ethers.constants.AddressZero,
       allRoundsRewardsData?.length ?? 1,
     ],
     {
-      fetcher: fetcher(library, FeeDistributorReader),
+      fetcher: fetcher(library, MerkleDistributorReader),
     }
   );
 
