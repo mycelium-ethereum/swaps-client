@@ -67,6 +67,10 @@ div[data-value] {
   /* border-right: 1px solid #098200;
   border-left: 1px solid #098200; */
 }
+/* Remove padding from top left of sidebar */
+div[class*="group-2"] {
+  padding-top: 0;
+}
 div[class*="dialog"] div[data-role="list-item"]:hover {
   background-color: #098200;
 }
