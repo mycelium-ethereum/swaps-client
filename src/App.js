@@ -120,7 +120,7 @@ import PageNotFound from "./views/PageNotFound/PageNotFound";
 import useSWR from "swr";
 import LinkDropdown from "./components/Navigation/LinkDropdown/LinkDropdown";
 import Sidebar from "./components/Navigation/Sidebar/Sidebar";
-// import EventModal from "./components/EventModal/EventModal";
+import EventModal from "./components/EventModal/EventModal";
 import AppDropdown from "./components/AppDropdown/AppDropdown";
 // import { Banner, BannerContent } from "./components/Banner/Banner";
 
@@ -713,7 +713,7 @@ function FullApp() {
   return (
     <>
       <div
-        className={cx("App", {
+        className={cx("App ReferralsBannerActive", {
           "full-width": sidebarVisible,
         })}
       >
@@ -802,7 +802,7 @@ function FullApp() {
                     }}
                   >
                     <img src={logoSmallImg} className="small" alt="Mycelium Swaps Logo" />
-                    <img src={logoImg} alt="Mycelium Swaps Logo" />
+                    <img src={logoImg} className="big" alt="Mycelium Swaps Logo" />
                   </Link>
                 </div>
                 <div>
@@ -986,11 +986,13 @@ function FullApp() {
         draggable={false}
         pauseOnHover
       />
-      {/* <EventModal
+      <EventModal
         isModalVisible={isEventModalVisible}
         setEventModalVisible={setEventModalVisible}
-        eventKey={"disable-limit-orders"}
-      /> */}
+        eventKey={"referrals-comp"}
+        twitterButtonText={"Share your code for a chance to win"}
+        twitterText={`🍄🍄🍄 @mycelium_xyz IYKYK\n\nUse my code for a discount: [insert code]\nhttps://swaps.mycelium.xyz/referrals`}
+      />
       <EventToastContainer />
       <Modal
         className="Connect-wallet-modal"

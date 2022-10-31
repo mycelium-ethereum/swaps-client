@@ -185,12 +185,16 @@ export const ReferralData = styled.div`
 export const StyledReferralPage = styled.div`
   align-items: center;
   padding-top: 3rem;
+  max-width: 1000px;
   ${ReferralData}, ${AccountBanner}, .Page-title-section {
     width: 100%;
   }
 
   .Page-title-section:first-child {
     padding-left: 0;
+  }
+  @media (max-width: 700px) {
+    padding-top: 0;
   }
 `;
 
@@ -274,7 +278,8 @@ export const TableContainer = styled.div`
 export const CodesTable = styled.table`
   margin: 0 auto;
   width: 100%;
-  td:first-child, th:first-child {
+  td:first-child,
+  th:first-child {
     padding-left: 0;
   }
   min-width: 750px;

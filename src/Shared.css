@@ -54,6 +54,8 @@ body,
   --short-active: #dd463a;
   --long-active: #3ee028;
 
+  --darkest-green: #001100;
+
   --background-primary: #000a00;
   --background-secondary: rgba(0, 9, 0, 0.2);
   --background-navigation: linear-gradient(83.12deg, rgba(9, 130, 0, 0.5) -208.54%, rgba(9, 130, 0, 0) 159.09%);

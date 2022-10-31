@@ -56,7 +56,10 @@ export const DropdownButton = styled.button(
   @media (max-width: 1380px) {
     height: 36px;
   }
-`
+  @media (max-width: 450px) {
+    margin-left: 8px;
+  }
+  `
 );
 
 export const ButtonText = styled.span`

@@ -13,6 +13,12 @@
 .App.full-width {
   padding-left: 0px;
 }
+.App .trading-comp-banner {
+  width: calc(100% - 306px);
+}
+.App.full-width .trading-comp-banner {
+  width: 100%;
+}
 
 .App-header-backdrop {
   position: fixed;
@@ -1365,6 +1371,10 @@ button.App-button {
   .App nav {
     padding-left: 0;
   }
+  .App.full-width .trading-comp-banner,
+  .App .trading-comp-banner {
+    width: 100%;
+  }
   .App-header a.App-header-link-main,
   .App-header .App-header-link-main {
     display: flex;
@@ -1420,13 +1430,16 @@ button.App-button {
     padding-right: 16px;
   }
   .App {
-    padding-top: 100px;
+    padding-top: 80px;
   }
 }
 
 @media (max-width: 670px) {
   .App-header-link-main img.big {
     display: none;
+  }
+  .App-header-link-main img.small {
+    display: block;
   }
   .App-header-menu-icon-block {
     display: flex;
@@ -1460,7 +1473,7 @@ button.App-button {
     height: 1.2rem;
   }
   .App-header-user-link.Trade-btn-mobile {
-    margin-right: 16px;
+    margin-right: 0px;
   }
   .App-header-user-link {
     margin-right: 6px;
@@ -1518,7 +1531,7 @@ button.App-button {
     display: block;
   }
   .App {
-    padding-top: 120px;
+    padding-top: 80px;
   }
 }
 

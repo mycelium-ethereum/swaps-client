@@ -20,7 +20,7 @@ import CreateCodeModal from "./CreateCodeModal";
 import EnterCodeModal from "./EnterCodeModal";
 
 import SEO from "../../components/Common/SEO";
-import ViewSwitch from "../../components/ViewSwitch/ViewSwitch";
+import ViewSwitchTriple from "../../components/ViewSwitchTriple/ViewSwitchTriple";
 import TraderRebateStats from "./TraderRebateStats";
 import ReferralRewards from "./ReferralRewards";
 import AccountBanner from "./AccountBanner";
@@ -35,10 +35,12 @@ import {
 } from "../../Api/referrals";
 import useSWR from "swr";
 import { ethers } from "ethers";
+import { useLocation } from "react-router-dom";
 
 import FeeDistributorReader from "../../abis/FeeDistributorReader.json";
 import { getContract } from "../../Addresses";
 import { REFERRALS_SELECTED_TAB_KEY, REFERRAL_CODE_KEY } from "../../config/localstorage";
+import ReferralLeaderboard from "./ReferralLeaderboard";
 
 const REFERRAL_DATA_MAX_TIME = 60000 * 5; // 5 minutes
 export function isRecentReferralCodeNotExpired(referralCodeInfo) {
@@ -61,10 +63,29 @@ const CommissionsHeader = () => (
   </div>
 );
 
+const LeaderboardHeader = () => (
+  <div className="Page-title-section mt-0">
+    <div className="Page-title">Commissions Leaderboard</div>
+    <div className="Page-description">Distribute a referral code and earn commissions on referred volume.</div>
+  </div>
+);
+
 export const COMMISSIONS = "Commissions";
 export const REBATES = "Rebates";
+export const LEADERBOARD = "Commissions Leaderboard";
+
+export const COMMISSIONS_HASH = "#commissions";
+export const REBATES_HASH = "#rebates";
+export const LEADERBOARD_HASH = "#leaderboard";
+
+const HASH_BY_VIEW = {
+  [COMMISSIONS]: COMMISSIONS_HASH,
+  [REBATES]: REBATES_HASH,
+  [LEADERBOARD]: LEADERBOARD_HASH,
+};
 
 export default function Referral(props) {
+  const location = useLocation();
   const { connectWallet, trackAction, infoTokens } = props;
   const { active, account, library, chainId: chainIdWithoutLocalStorage, pendingTxns, setPendingTxns } = useWeb3React();
   const { chainId } = useChainId();
@@ -83,12 +104,23 @@ export default function Referral(props) {
   const [selectedRound, setSelectedRound] = useState("latest");
   const [nextRewards, setNextRewards] = useState();
 
-  const switchView = () => {
-    setCurrentView(currentView === COMMISSIONS ? REBATES : COMMISSIONS);
+  const eth = getTokenInfo(infoTokens, ethers.constants.AddressZero);
+  const ethPrice = eth?.maxPrimaryPrice;
+
+  const switchView = (view) => {
+    setCurrentView(view);
+    const hash = HASH_BY_VIEW[view];
+
+    // Update hash
+    if (window.history.pushState) {
+      window.history.pushState(null, null, hash);
+    } else {
+      location.hash = hash;
+    }
     trackAction &&
       trackAction("Button clicked", {
         buttonName: "Referral panel",
-        view: currentView === "Commissions" ? "Rebates" : "Commissions",
+        view: view,
       });
   };
 
@@ -117,6 +149,31 @@ export default function Referral(props) {
     }
   );
 
+  const allUsersRoundData = useMemo(() => {
+    if (!allRoundsRewardsData || !ethPrice) {
+      return undefined;
+    }
+    return currentRewardRound?.rewards
+      ?.sort((a, b) => b.commissions_volume.toString() - a.commissions_volume.toString())
+      .map((trader, index) => {
+        const commissions = bigNumberify(trader.commissions);
+        const rebates = bigNumberify(trader.rebates);
+        return {
+          position: index + 1,
+          address: trader.user_address,
+          volume: bigNumberify(trader.commissions_volume),
+          totalReward: commissions,
+          totalRewardUsd: commissions.mul(ethPrice).div(expandDecimals(1, ETH_DECIMALS)),
+          referralCode: trader.referral_code,
+          numberOfTrades: trader.number_of_trades,
+          tradersReferred: trader.total_traders_referred,
+          tier: trader.tier,
+          commissions,
+          rebates,
+        };
+      });
+  }, [ethPrice, allRoundsRewardsData, currentRewardRound?.rewards]);
+
   const { data: hasClaimed } = useSWR(
     [
       `Rewards:claimed:${active}`,
@@ -144,9 +201,10 @@ export default function Referral(props) {
 
   // Get volume, position and reward from user week data
   const userRoundData = useMemo(() => {
-    if (!currentRewardRound) {
+    if (!currentRewardRound || !allUsersRoundData) {
       return undefined;
     }
+    allUsersRoundData.findIndex((trader) => trader.address === account);
     const leaderBoardIndex = currentRewardRound.rewards?.findIndex(
       (trader) => trader.user_address.toLowerCase() === account?.toLowerCase()
     );
@@ -159,10 +217,16 @@ export default function Referral(props) {
     if (traderData) {
       const commissions = bigNumberify(traderData.commissions);
       const rebates = bigNumberify(traderData.rebates);
-
       return {
+        position: leaderBoardIndex + 1,
+        address: traderData.user_address,
         volume: bigNumberify(traderData.commissions_volume),
         totalReward: commissions.add(rebates),
+        totalRewardUsd: commissions.add(rebates).mul(ethPrice).div(expandDecimals(1, ETH_DECIMALS)),
+        referralCode: traderData.referral_code,
+        numberOfTrades: parseInt(traderData.number_of_trades),
+        tradersReferred: traderData.traders_referred,
+        tier: traderData.tier,
         commissions,
         rebates,
       };
@@ -174,10 +238,7 @@ export default function Referral(props) {
         rebates: bigNumberify(0),
       };
     }
-  }, [account, currentRewardRound]);
-
-  const eth = getTokenInfo(infoTokens, ethers.constants.AddressZero);
-  const ethPrice = eth?.maxPrimaryPrice;
+  }, [account, currentRewardRound, allUsersRoundData, ethPrice]);
 
   if (ethPrice && userRoundData?.totalReward) {
     userRoundData.totalRewardUsd = userRoundData.totalReward?.mul(ethPrice).div(expandDecimals(1, ETH_DECIMALS));
@@ -266,19 +327,25 @@ export default function Referral(props) {
     setIsEnterCodeModalVisible(true);
   };
 
+  // Change view based on window hash
   useEffect(() => {
-    let socket = new WebSocket("wss://www.gmx.house/api-ws");
-
-    socket.onmessage = function (event) {
-      console.log(`[message] Data received from server: ${event.data}`);
-    };
-  }, []);
+    const hash = window.location.hash;
+    if (hash === REBATES_HASH) {
+      setCurrentView(REBATES);
+    } else if (hash === COMMISSIONS_HASH) {
+      setCurrentView(COMMISSIONS);
+    } else if (hash === LEADERBOARD_HASH) {
+      setCurrentView(LEADERBOARD);
+    } else {
+      setCurrentView(REBATES);
+    }
+  }, [setCurrentView, location.hash]);
 
   return (
     <>
       <SEO
         title={getPageTitle("Referral")}
-        description="Claim fees earned via being in the top 50% of traders on Mycelium Perpetual Swaps."
+        description="Use a referral code on Mycelium Perpetual Swaps to earn rebates on trading fees."
       />
       <EnterCodeModal
         active={active}
@@ -309,25 +376,32 @@ export default function Referral(props) {
           {
             [REBATES]: <RebatesHeader />,
             [COMMISSIONS]: <CommissionsHeader />,
+            [LEADERBOARD]: <LeaderboardHeader />,
           }[currentView]
         }
-        <ViewSwitch switchView={switchView} currentView={currentView} views={[REBATES, COMMISSIONS]} />
+        <ViewSwitchTriple
+          switchView={switchView}
+          currentView={currentView}
+          views={[REBATES, COMMISSIONS, LEADERBOARD]}
+        />
         <Styles.PersonalReferralContainer>
-          <AccountBanner
-            active={active}
-            account={account}
-            ensName={ensName}
-            currentView={currentView}
-            // Rebates
-            tradersTier={tradersTier}
-            tradersRebates={tradersRebates}
-            tradersVolume={tradersVolume}
-            referralCodeInString={referralCodeInString}
-            // Commissions
-            referrerTier={referrerTier}
-            referrerRebates={referrerRebates}
-            referrerVolume={referrerVolume}
-          />
+          {currentView !== LEADERBOARD && (
+            <AccountBanner
+              active={active}
+              account={account}
+              ensName={ensName}
+              currentView={currentView}
+              // Rebates
+              tradersTier={tradersTier}
+              tradersRebates={tradersRebates}
+              tradersVolume={tradersVolume}
+              referralCodeInString={referralCodeInString}
+              // Commissions
+              referrerTier={referrerTier}
+              referrerRebates={referrerRebates}
+              referrerVolume={referrerVolume}
+            />
+          )}
           {currentView === REBATES && (
             <TraderRebateStats
               active={active}
@@ -347,6 +421,19 @@ export default function Referral(props) {
               setIsCreateCodeModalVisible={setIsCreateCodeModalVisible}
               hasCreatedCode={hasCreatedCode}
               finalReferrerTotalStats={finalReferrerTotalStats}
+            />
+          )}
+          {currentView === LEADERBOARD && (
+            <ReferralLeaderboard
+              connectWallet={connectWallet}
+              userRoundData={userRoundData}
+              currentRoundData={currentRewardRound?.rewards}
+              referralCodeInString={referralCodeInString}
+              allRoundsRewardsData={allRoundsRewardsData}
+              allUsersRoundData={allUsersRoundData}
+              setSelectedRound={setSelectedRound}
+              rewardsMessage={rewardsMessage}
+              trackAction={trackAction}
             />
           )}
           {userRoundData && /* disable for now */ false && (

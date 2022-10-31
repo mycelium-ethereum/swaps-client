@@ -2933,7 +2933,7 @@ export function getCodeError(value) {
 }
 
 export function getTierIdDisplay(tierId) {
-  if (!tierId) {
+  if (tierId === undefined) {
     return "";
   }
   return Number(tierId) + 1;
@@ -2942,3 +2942,9 @@ export function getTierIdDisplay(tierId) {
 export function shareToTwitter(text) {
   window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`, "_blank");
 }
+
+export const numberToOrdinal = (n) => {
+  const s = ["th", "st", "nd", "rd"];
+  const v = n % 100;
+  return n + (s[(v - 20) % 10] || s[v] || s[0]);
+};
