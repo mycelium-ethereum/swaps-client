@@ -28,13 +28,12 @@ import FeeDistributor from "../../abis/FeeDistributor.json";
 import FeeDistributorReader from "../../abis/FeeDistributorReader.json";
 import ViewSwitch from "../../components/ViewSwitch/ViewSwitch";
 import { RoundDropdown } from "../../components/RewardsRoundSelect/RewardsRoundSelect";
-import FeeUpdateModal from "../../components/Modal/FeeUpdateModal";
 
 const PersonalHeader = () => (
   <div className="Page-title-section mt-0">
     <div className="Page-title">Trader Rewards</div>
     <div className="Page-description">
-      Be in the top 50% of traders to earn weekly rewards.
+      Be in the top 5% of traders to earn weekly rewards.
       <br /> Read the Terms of Use{" "}
       <a href="https://mycelium.xyz/rewards-terms-of-use" target="_blank" rel="noopener noreferrer">
         here
@@ -333,7 +332,7 @@ export default function Rewards(props) {
     <>
       <SEO
         title={getPageTitle("Rewards")}
-        description="Claim fees earned via being in the top 50% of traders on Mycelium Perpetual Swaps."
+        description="Claim fees earned via being in the top 5% of traders on Mycelium Perpetual Swaps."
       />
       <Styles.StyledRewardsPage className="default-container page-layout">
         {
