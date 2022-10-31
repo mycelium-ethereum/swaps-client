@@ -123,7 +123,7 @@ function TableRow({
               />
             : `${formatAmount(totalReward, ETH_DECIMALS, 4, true)} WETH`
           }
-          {rewardAmountUsd && `($${formatAmount(rewardAmountUsd, USD_DECIMALS, 2, true)})`}
+          {rewardAmountUsd && ` ($${formatAmount(rewardAmountUsd, USD_DECIMALS, 2, true)})`}
         </RewardCell>
         <ClaimCell
           className={cx({
