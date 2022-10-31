@@ -42,7 +42,7 @@ export const competitionPodiumContent = [
   },
   {
     prize: "$2,000 USDC Wildcard",
-    eligibility: <span>For the referral code generating the most volume</span>,
+    eligibility: <span>Every competition participant goes in the draw</span>,
     className: "wildcard",
   },
 ];

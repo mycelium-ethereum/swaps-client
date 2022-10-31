@@ -30,7 +30,7 @@ export default function TradingCompBanner() {
         <Styles.FlexContainer>
           <Styles.LiveIcon /> <Styles.GreenText>Live</Styles.GreenText>
         </Styles.FlexContainer>
-        <Styles.BannerTitle>Referrals Trading Competition</Styles.BannerTitle>
+        <Styles.BannerTitle>Referrals Competition</Styles.BannerTitle>
         <span>Refer more = Earn More</span>
         <Link to="/referrals#commissions">
           <Styles.GenerateButton>Generate & Share your code today to play.</Styles.GenerateButton>
