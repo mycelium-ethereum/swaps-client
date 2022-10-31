@@ -78,6 +78,7 @@ function TableRow({
   hasClaimed,
 }) {
   const hasLoaded = hasClaimed !== undefined;
+  const hasDegenReward = !!degenReward && !degenReward.eq(0);
   return (
     <>
       <tr
@@ -99,7 +100,7 @@ function TableRow({
               </a>
               <span>{ensName}</span>
             </UserDetails>
-            {!!degenReward && !degenReward.eq(0) && (
+            {hasDegenReward && (
               <TooltipComponent
                 handle={<img src={degenScore} alt="degen_score_logo" />}
                 renderContent={() => "Rewards boosted by DegenScore"}
@@ -109,17 +110,20 @@ function TableRow({
         </UserCell>
         <VolumeCell>${formatAmount(volume, USD_DECIMALS, 2, true)}</VolumeCell>
         <RewardCell>
-          <TooltipComponent
-            handle={`${formatAmount(totalReward, ETH_DECIMALS, 4, true)} WETH`}
-            renderContent={() => (
-              <>
-                Top 5%: {formatAmount(positionReward, ETH_DECIMALS, 6, true)} WETH
-                <br />
-                Degen rewards: {formatAmount(degenReward, ETH_DECIMALS, 6, true)} WETH
-              </>
-            )}
-          />
-          {rewardAmountUsd && `($${formatAmount(rewardAmountUsd, USD_DECIMALS, 2, true)})`}
+          {hasDegenReward 
+            ? <TooltipComponent
+                handle={`${formatAmount(totalReward, ETH_DECIMALS, 4, true)} WETH`}
+                renderContent={() => (
+                  <>
+                    Top 50%: {formatAmount(positionReward, ETH_DECIMALS, 6, true)} WETH
+                    <br />
+                    Degen rewards: {formatAmount(degenReward, ETH_DECIMALS, 6, true)} WETH
+                  </>
+                )}
+              />
+            : `${formatAmount(totalReward, ETH_DECIMALS, 4, true)} WETH`
+          }
+          {rewardAmountUsd && ` ($${formatAmount(rewardAmountUsd, USD_DECIMALS, 2, true)})`}
         </RewardCell>
         <ClaimCell
           className={cx({
