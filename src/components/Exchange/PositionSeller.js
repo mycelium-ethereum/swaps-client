@@ -48,6 +48,7 @@ import {
   useLocalStorageByChainId,
   getNextToAmount,
   adjustForDecimals,
+  getDeltaAfterFees,
 } from "../../Helpers";
 
 import "./PositionSeller.css";
@@ -161,6 +162,7 @@ export default function PositionSeller(props) {
     trackAction,
     usdgSupply,
     totalTokenWeights,
+    showPnlAfterFees
   } = props;
   const [savedSlippageAmount] = useLocalStorageSerializeKey([chainId, SLIPPAGE_BPS_KEY], DEFAULT_SLIPPAGE_AMOUNT);
   const [keepLeverage, setKeepLeverage] = useLocalStorageSerializeKey([chainId, "Exchange-keep-leverage"], true);
@@ -482,37 +484,45 @@ export default function PositionSeller(props) {
   }
 
   const [deltaStr, deltaPercentageStr] = useMemo(() => {
+    let pendingDelta, pendingDeltaPercentage, hasProfit;
     if (!position || !position.markPrice) {
       return ["-", "-"];
-    }
-    if (orderOption !== STOP) {
-      const { pendingDelta, pendingDeltaPercentage, hasProfit } = calculatePositionDelta(
+    } else if (orderOption !== STOP) {
+      ({ pendingDelta, pendingDeltaPercentage, hasProfit } = calculatePositionDelta(
         position.markPrice,
         position,
         fromAmount
-      );
-      const { deltaStr, deltaPercentageStr } = getDeltaStr({
+      ));
+    } else if (!triggerPriceUsd || triggerPriceUsd.eq(0)) {
+      return ["-", "-"];
+    } else {
+      ({ pendingDelta, pendingDeltaPercentage, hasProfit } = calculatePositionDelta(
+        triggerPriceUsd,
+        position,
+        fromAmount
+      ));
+    }
+
+    let deltaStr, deltaPercentageStr;
+    if (showPnlAfterFees) {
+      const { pendingDeltaAfterFees, deltaPercentageAfterFees, hasProfitAfterFees } = getDeltaAfterFees({
+        delta: pendingDelta,
+        totalFees: position.totalFees,
+        hasProfit,
+        collateral: position.collateral
+      })
+      ({ deltaStr, deltaPercentageStr } = getDeltaStr({
+        delta: pendingDeltaAfterFees,
+        deltaPercentage: deltaPercentageAfterFees,
+        hasProfit: hasProfitAfterFees,
+      }));
+    } else {
+      ({ deltaStr, deltaPercentageStr } = getDeltaStr({
         delta: pendingDelta,
         deltaPercentage: pendingDeltaPercentage,
         hasProfit,
-      });
-      return [deltaStr, deltaPercentageStr];
+      }));
     }
-    if (!triggerPriceUsd || triggerPriceUsd.eq(0)) {
-      return ["-", "-"];
-    }
-
-    const { pendingDelta, pendingDeltaPercentage, hasProfit } = calculatePositionDelta(
-      triggerPriceUsd,
-      position,
-      fromAmount
-    );
-
-    const { deltaStr, deltaPercentageStr } = getDeltaStr({
-      delta: pendingDelta,
-      deltaPercentage: pendingDeltaPercentage,
-      hasProfit,
-    });
     return [deltaStr, deltaPercentageStr];
   }, [position, triggerPriceUsd, orderOption, fromAmount]);
 

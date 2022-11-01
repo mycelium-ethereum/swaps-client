@@ -25,6 +25,7 @@ import {
   getLeverage,
   useLocalStorageByChainId,
   getDeltaStr,
+  getDeltaAfterFees,
   useChainId,
   useAccountOrders,
   getPageTitle,
@@ -246,27 +247,16 @@ export function getPositions(
       position.deltaPercentageStr = deltaPercentageStr;
       position.deltaBeforeFeesStr = deltaStr;
 
-      let hasProfitAfterFees;
-      let pendingDeltaAfterFees;
-
-      if (position.hasProfit) {
-        if (position.pendingDelta.gt(position.totalFees)) {
-          hasProfitAfterFees = true;
-          pendingDeltaAfterFees = position.pendingDelta.sub(position.totalFees);
-        } else {
-          hasProfitAfterFees = false;
-          pendingDeltaAfterFees = position.totalFees.sub(position.pendingDelta);
-        }
-      } else {
-        hasProfitAfterFees = false;
-        pendingDeltaAfterFees = position.pendingDelta.add(position.totalFees);
-      }
+      const { pendingDeltaAfterFees, deltaPercentageAfterFees, hasProfitAfterFees } = getDeltaAfterFees({
+        delta: position.pendingDelta,
+        totalFees: position.totalFees,
+        hasProfit: position.hasProfit,
+        collateral: position.collateral
+      })
 
       position.hasProfitAfterFees = hasProfitAfterFees;
       position.pendingDeltaAfterFees = pendingDeltaAfterFees;
-      position.deltaPercentageAfterFees = position.pendingDeltaAfterFees
-        .mul(BASIS_POINTS_DIVISOR)
-        .div(position.collateral);
+      position.deltaPercentageAfterFees = deltaPercentageAfterFees;
 
       const { deltaStr: deltaAfterFeesStr, deltaPercentageStr: deltaAfterFeesPercentageStr } = getDeltaStr({
         delta: position.pendingDeltaAfterFees,
