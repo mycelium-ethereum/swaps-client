@@ -511,6 +511,9 @@ export default function PositionSeller(props) {
         hasProfit,
         collateral: position.collateral
       })
+      if (!pendingDeltaAfterFees) {
+        return ['-', '-']
+      }
       ({ deltaStr, deltaPercentageStr } = getDeltaStr({
         delta: pendingDeltaAfterFees,
         deltaPercentage: deltaPercentageAfterFees,
