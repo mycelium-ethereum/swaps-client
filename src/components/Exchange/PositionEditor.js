@@ -21,7 +21,6 @@ import {
   getLiquidationPrice,
   approveTokens,
   getUserTokenBalances,
-  convertStringToFloat,
   getAnalyticsEventStage,
 } from "../../Helpers";
 import { getContract } from "../../Addresses";
@@ -31,6 +30,7 @@ import { callContract } from "../../Api";
 
 import PositionRouter from "../../abis/PositionRouter.json";
 import Token from "../../abis/Token.json";
+import { convertStringToFloat } from "../../utils/common";
 
 const DEPOSIT = "Deposit";
 const WITHDRAW = "Withdraw";

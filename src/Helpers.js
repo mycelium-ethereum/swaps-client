@@ -20,6 +20,7 @@ import OrderBook from "./abis/OrderBook.json";
 import { getWhitelistedTokens, isValidToken } from "./data/Tokens";
 import ComingSoonTooltip from "./components/Tooltip/ComingSoon";
 import { isAddress } from "ethers/lib/utils";
+import { copyToClipboard } from './utils/common';
 import {
   REFERRAL_CODE_QUERY_PARAMS,
   CURRENT_PROVIDER_LOCALSTORAGE_KEY,
@@ -2915,10 +2916,6 @@ export function truncateMiddleEthAddress(address, truncateLength) {
   return `${address.slice(0, leadingCharsNum)}...${address.slice(-trailingCharsNum)}`;
 }
 
-export function convertStringToFloat(str, decimals = 0) {
-  return parseFloat(str).toFixed(decimals);
-}
-
 export function getAnalyticsEventStage(stage) {
   switch (stage) {
     case 1:
@@ -2930,10 +2927,6 @@ export function getAnalyticsEventStage(stage) {
     default:
       return "Approve";
   }
-}
-
-export function copyToClipboard(item) {
-  navigator.clipboard.writeText(item);
 }
 
 /* REFERRAL CODE HELPERS */
@@ -2962,13 +2955,3 @@ export function getTierIdDisplay(tierId) {
   }
   return Number(tierId) + 1;
 }
-
-export function shareToTwitter(text) {
-  window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`, "_blank");
-}
-
-export const numberToOrdinal = (n) => {
-  const s = ["th", "st", "nd", "rd"];
-  const v = n % 100;
-  return n + (s[(v - 20) % 10] || s[v] || s[0]);
-};

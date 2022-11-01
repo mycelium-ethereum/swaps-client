@@ -42,7 +42,6 @@ import {
   formatDateTime,
   getTimeRemaining,
   getAnalyticsEventStage,
-  convertStringToFloat,
   getUserTokenBalances,
   USDG_DECIMALS,
   useLocalStorageByChainId,
@@ -50,6 +49,8 @@ import {
   adjustForDecimals,
   getDeltaAfterFees,
 } from "../../Helpers";
+
+
 
 import "./PositionSeller.css";
 import { getConstant } from "../../Constants";
@@ -65,6 +66,7 @@ import TooltipRow from "../Tooltip/TooltipRow";
 import { getTokens } from "../../data/Tokens";
 import TokenSelector from "./TokenSelector";
 import { getTokenAmountFromUsd, getUsd } from "../../utils/tokens";
+import { convertStringToFloat } from "../../utils/common";
 
 const { AddressZero } = ethers.constants;
 const ORDER_SIZE_DUST_USD = expandDecimals(1, USD_DECIMALS - 1); // $0.10

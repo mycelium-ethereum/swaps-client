@@ -1,11 +1,13 @@
 import { useState } from "react";
 import cx from "classnames";
 import * as Styles from "./ReferralLeaderboard.styles";
-import { getTierIdDisplay, numberToOrdinal, TIER_DISCOUNT_INFO, USD_DECIMALS, formatAmount } from "../../Helpers";
+import { getTierIdDisplay, TIER_DISCOUNT_INFO, USD_DECIMALS, formatAmount } from "../../Helpers";
 import liveIcon from "../../img/live.svg";
 import { RoundDropdown } from "../../components/RewardsRoundSelect/RewardsRoundSelect";
 import { decodeReferralCode } from "../../Api/referrals";
 import { competitionPodiumContent } from "./presets";
+import { numberToOrdinal } from "../../utils/common";
+
 
 const TABLE_HEADINGS = [
   "Rank",
