@@ -1160,6 +1160,30 @@ export function getDeltaStr({ delta, deltaPercentage, hasProfit }) {
   return { deltaStr, deltaPercentageStr };
 }
 
+export function getDeltaAfterFees({ delta, totalFees, collateral, hasProfit }) {
+    let hasProfitAfterFees;
+    let pendingDeltaAfterFees;
+
+    if (hasProfit) {
+      if (delta.gt(totalFees)) {
+        hasProfitAfterFees = true;
+        pendingDeltaAfterFees = delta.sub(totalFees);
+      } else {
+        hasProfitAfterFees = false;
+        pendingDeltaAfterFees = totalFees.sub(delta);
+      }
+    } else {
+      hasProfitAfterFees = false;
+      pendingDeltaAfterFees = delta.add(totalFees);
+    }
+
+    let deltaPercentageAfterFees = pendingDeltaAfterFees 
+      .mul(BASIS_POINTS_DIVISOR)
+      .div(collateral);
+
+  return { pendingDeltaAfterFees, deltaPercentageAfterFees, hasProfitAfterFees }
+}
+
 export function getLeverage({
   size,
   sizeDelta,
