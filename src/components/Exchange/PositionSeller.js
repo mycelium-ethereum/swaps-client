@@ -496,7 +496,7 @@ export default function PositionSeller(props) {
     } else if (!triggerPriceUsd || triggerPriceUsd.eq(0)) {
       return ["-", "-"];
     } else {
-      ({ pendingDelta, pendingDeltaPercentage, hasProfit} = calculatePositionDelta(
+      ({ pendingDelta, pendingDeltaPercentage, hasProfit } = calculatePositionDelta(
         triggerPriceUsd,
         position,
         fromAmount
@@ -508,7 +508,7 @@ export default function PositionSeller(props) {
       const { pendingDeltaAfterFees, deltaPercentageAfterFees, hasProfitAfterFees } = getDeltaAfterFees({
         delta: pendingDelta,
         totalFees: position.totalFees,
-        hasProfit: hasProfit,
+        hasProfit,
         collateral: position.collateral
       })
       ({ deltaStr, deltaPercentageStr } = getDeltaStr({
