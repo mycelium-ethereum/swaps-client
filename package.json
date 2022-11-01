@@ -81,6 +81,8 @@
     ]
   },
   "devDependencies": {
+    "@types/body-scroll-lock": "^3.1.0",
+    "@types/react-router-dom": "^5.3.3",
     "eslint": "^7.20.0",
     "husky": "^7.0.0",
     "lint-staged": "^12.3.4",
