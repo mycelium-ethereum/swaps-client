@@ -1,7 +1,9 @@
 import { useState } from "react";
 import cx from "classnames";
 import * as Styles from "./ReferralLeaderboard.styles";
-import { getTierIdDisplay, TIER_DISCOUNT_INFO, USD_DECIMALS, formatAmount } from "../../Helpers";
+import { USD_DECIMALS, formatAmount } from "../../Helpers";
+import { TIER_DISCOUNT_INFO } from "../../config/referrals";
+import { getTierIdDisplay } from "../../utils/referrals";
 import liveIcon from "../../img/live.svg";
 import { RoundDropdown } from "../../components/RewardsRoundSelect/RewardsRoundSelect";
 import { decodeReferralCode } from "../../Api/referrals";

@@ -1,6 +1,8 @@
-import React, {useEffect, useRef, useState} from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { setTraderReferralCodeByUser, encodeReferralCode, validateReferralCodeExists } from "../../Api/referrals";
-import { getCodeError, REFERRAL_CODE_REGEX, useDebounce } from "../../Helpers";
+import { REFERRAL_CODE_REGEX } from "../../config/referrals";
+import { getCodeError } from "../../utils/referrals";
+import useDebounce from "../../hooks/useDebounce";
 import * as Styles from "./Referrals.styles";
 
 export default function EnterCodeModal(props) {

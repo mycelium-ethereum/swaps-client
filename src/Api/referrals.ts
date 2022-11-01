@@ -4,7 +4,6 @@ import { useState, useEffect } from "react";
 
 import {
   ARBITRUM,
-  MAX_REFERRAL_CODE_LENGTH,
   bigNumberify,
   isAddressZero,
   helperToast,
@@ -19,6 +18,7 @@ import ReferralStorage from "../abis/ReferralStorage.json";
 import { callContract } from ".";
 import useSWR from "swr";
 import { ChainId, Library } from "../types/common";
+import { MAX_REFERRAL_CODE_LENGTH } from "../config/referrals";
 
 const ACTIVE_CHAINS = [ARBITRUM];
 

@@ -41,7 +41,6 @@ import {
   getProfitPrice,
   formatDateTime,
   getTimeRemaining,
-  getAnalyticsEventStage,
   getUserTokenBalances,
   USDG_DECIMALS,
   useLocalStorageByChainId,
@@ -49,8 +48,7 @@ import {
   adjustForDecimals,
   getDeltaAfterFees,
 } from "../../Helpers";
-
-
+import { getAnalyticsEventStage } from "../../utils/analytics";
 
 import "./PositionSeller.css";
 import { getConstant } from "../../Constants";

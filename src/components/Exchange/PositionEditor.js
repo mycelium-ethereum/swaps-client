@@ -21,8 +21,8 @@ import {
   getLiquidationPrice,
   approveTokens,
   getUserTokenBalances,
-  getAnalyticsEventStage,
 } from "../../Helpers";
+import { getAnalyticsEventStage } from "../../utils/analytics";
 import { getContract } from "../../Addresses";
 import Tab from "../Tab/Tab";
 import Modal from "../Modal/Modal";

@@ -147,20 +147,6 @@ export const SWAP_OPTIONS = [LONG, SHORT, SWAP];
 export const DEFAULT_SLIPPAGE_AMOUNT = 30;
 export const DEFAULT_HIGHER_SLIPPAGE_AMOUNT = 100;
 
-export const MAX_REFERRAL_CODE_LENGTH = 20;
-export const REFERRAL_CODE_REGEX = /^\w+$/; // only number, string and underscore is allowed
-export const TIER_REBATE_INFO = {
-  0: 5,
-  1: 10,
-  2: 15,
-};
-
-export const TIER_DISCOUNT_INFO = {
-  0: 5,
-  1: 10,
-  2: 10,
-};
-
 export const TRIGGER_PREFIX_ABOVE = ">";
 export const TRIGGER_PREFIX_BELOW = "<";
 
@@ -2914,44 +2900,4 @@ export function truncateMiddleEthAddress(address, truncateLength) {
   const trailingCharsNum = strLength - leadingCharsNum - 3;
 
   return `${address.slice(0, leadingCharsNum)}...${address.slice(-trailingCharsNum)}`;
-}
-
-export function getAnalyticsEventStage(stage) {
-  switch (stage) {
-    case 1:
-      return "Approve";
-    case 2:
-      return "Pre-confirmation";
-    case 3:
-      return "Post-confirmation";
-    default:
-      return "Approve";
-  }
-}
-
-/* REFERRAL CODE HELPERS */
-export function copyReferralCode(code) {
-  copyToClipboard(`https://swaps.mycelium.xyz?${REFERRAL_CODE_QUERY_PARAMS}=${code}`);
-  helperToast.success("Referral link copied to your clipboard");
-}
-
-export function getCodeError(value) {
-  const trimmedValue = value.trim();
-  if (!trimmedValue) return "";
-
-  if (trimmedValue.length > MAX_REFERRAL_CODE_LENGTH) {
-    return `The referral code can't be more than ${MAX_REFERRAL_CODE_LENGTH} characters.`;
-  }
-
-  if (!REFERRAL_CODE_REGEX.test(trimmedValue)) {
-    return "Only letters, numbers and underscores are allowed.";
-  }
-  return "";
-}
-
-export function getTierIdDisplay(tierId) {
-  if (tierId === undefined) {
-    return "";
-  }
-  return Number(tierId) + 1;
 }
