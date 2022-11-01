@@ -511,8 +511,6 @@ export default function PositionSeller(props) {
         hasProfit: hasProfit,
         collateral: position.collateral
       })
-      hasProfit = hasProfitAfterFees;
-
       ({ deltaStr, deltaPercentageStr } = getDeltaStr({
         delta: pendingDeltaAfterFees,
         deltaPercentage: deltaPercentageAfterFees,
