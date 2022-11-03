@@ -2678,8 +2678,8 @@ __metadata:
 
 "@mycelium-swaps-interface/charting_library@file:./public/charting_library/::locator=mycelium-swaps-interface%40workspace%3A.":
   version: 0.0.0
-  resolution: "@mycelium-swaps-interface/charting_library@file:./public/charting_library/#./public/charting_library/::hash=417396&locator=mycelium-swaps-interface%40workspace%3A."
-  checksum: ea135e1d987abe1579dae4b7e83763f7daa968489f0977b6cd91ebc219e5027f04d6a781ca21479455027b479db0370590540851da4917efa1092c8284cb05e0
+  resolution: "@mycelium-swaps-interface/charting_library@file:./public/charting_library/#./public/charting_library/::hash=faaf15&locator=mycelium-swaps-interface%40workspace%3A."
+  checksum: d3fd675fd9e1675422e80b8dbfe9b323898f23ecd89fe9e6615077372f027e01c9b766272240c53a52e80c6b66a01e27d76d2008a277016d4ba679c1838b0f77
   languageName: node
   linkType: hard
 
@@ -13667,6 +13667,7 @@ __metadata:
     prettier: ^2.5.1
     rc-slider: ^9.7.2
     react: ^17.0.1
+    react-countdown: ^2.3.3
     react-dom: ^17.0.1
     react-ga4: ^1.4.1
     react-helmet: ^6.1.0
@@ -16043,6 +16044,18 @@ __metadata:
   peerDependencies:
     react: ">=15.0.0"
   checksum: 87139fc2cc682d34ff8633c58ce96f89826cc3127499b623fb1d8c99dd8e1fe21055750a051933ffc500ca9c88aa017930deae963ffc635135c02907e5d75e22
+  languageName: node
+  linkType: hard
+
+"react-countdown@npm:^2.3.3":
+  version: 2.3.3
+  resolution: "react-countdown@npm:2.3.3"
+  dependencies:
+    prop-types: ^15.7.2
+  peerDependencies:
+    react: ">= 15"
+    react-dom: ">= 15"
+  checksum: 3c97b392766c7b226453d152d17f9586b1a4ef5df1f0e6576bc85a782bda3b237e36386c5005b65af885d241bf1710a73e37ad6da17395c8cc8393ac6a99281b
   languageName: node
   linkType: hard
 
