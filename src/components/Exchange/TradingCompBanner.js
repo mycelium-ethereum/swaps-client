@@ -4,7 +4,7 @@ import cx from "classnames";
 import Countdown from "react-countdown";
 import * as Styles from "./TradingCompBanner.styles";
 
-const COMP_END_TS = 1667952000000; // 2022-11-09 10:00:00 AEST
+const COMP_END_TS = 1668556800000; // 2022-11-16 10:00:00 AEST
 
 export default function TradingCompBanner() {
   const [showBanner, setShowBanner] = useState(true);
