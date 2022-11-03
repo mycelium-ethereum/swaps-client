@@ -155,9 +155,9 @@ export const TIER_REBATE_INFO = {
 };
 
 export const TIER_DISCOUNT_INFO = {
-  0: 5,
-  1: 10,
-  2: 10,
+  0: 10,
+  1: 15,
+  2: 20,
 };
 
 export const TRIGGER_PREFIX_ABOVE = ">";
@@ -1161,27 +1161,25 @@ export function getDeltaStr({ delta, deltaPercentage, hasProfit }) {
 }
 
 export function getDeltaAfterFees({ delta, totalFees, collateral, hasProfit }) {
-    let hasProfitAfterFees;
-    let pendingDeltaAfterFees;
+  let hasProfitAfterFees;
+  let pendingDeltaAfterFees;
 
-    if (hasProfit) {
-      if (delta.gt(totalFees)) {
-        hasProfitAfterFees = true;
-        pendingDeltaAfterFees = delta.sub(totalFees);
-      } else {
-        hasProfitAfterFees = false;
-        pendingDeltaAfterFees = totalFees.sub(delta);
-      }
+  if (hasProfit) {
+    if (delta.gt(totalFees)) {
+      hasProfitAfterFees = true;
+      pendingDeltaAfterFees = delta.sub(totalFees);
     } else {
       hasProfitAfterFees = false;
-      pendingDeltaAfterFees = delta.add(totalFees);
+      pendingDeltaAfterFees = totalFees.sub(delta);
     }
+  } else {
+    hasProfitAfterFees = false;
+    pendingDeltaAfterFees = delta.add(totalFees);
+  }
 
-    let deltaPercentageAfterFees = pendingDeltaAfterFees 
-      .mul(BASIS_POINTS_DIVISOR)
-      .div(collateral);
+  let deltaPercentageAfterFees = pendingDeltaAfterFees.mul(BASIS_POINTS_DIVISOR).div(collateral);
 
-  return { pendingDeltaAfterFees, deltaPercentageAfterFees, hasProfitAfterFees }
+  return { pendingDeltaAfterFees, deltaPercentageAfterFees, hasProfitAfterFees };
 }
 
 export function getLeverage({
