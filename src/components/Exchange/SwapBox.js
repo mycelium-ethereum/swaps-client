@@ -859,6 +859,17 @@ export default function SwapBox(props) {
             return [`${fromTokenInfo.symbol} pool exceeded, try different token`, true, "MAX_USDG"];
           }
         }
+        if (toTokenInfo && toTokenInfo.maxPrice) {
+          const sizeUsd = toAmount.mul(toTokenInfo.maxPrice).div(expandDecimals(1, toTokenInfo.decimals));
+          if (
+            toTokenInfo.maxGlobalLongSize &&
+            toTokenInfo.maxGlobalLongSize.gt(0) &&
+            toTokenInfo.maxAvailableLong &&
+            sizeUsd.gt(toTokenInfo.maxAvailableLong)
+          ) {
+            return [`Max ${toTokenInfo.symbol} long exceeded`];
+          }
+        }
       }
     }
 

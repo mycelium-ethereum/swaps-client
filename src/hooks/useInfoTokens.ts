@@ -4,8 +4,9 @@ import { InfoTokens, Token, TokenInfo } from "../types/tokens";
 import { BigNumber } from "ethers";
 import { getContract } from "src/Addresses";
 import { getTokens, getWhitelistedTokens } from "src/data/Tokens";
-import { BASIS_POINTS_DIVISOR, DEFAULT_MAX_USDG_AMOUNT, USD_DECIMALS, USDG_ADDRESS, MAX_PRICE_DEVIATION_BASIS_POINTS, bigNumberify, expandDecimals, fetcher, getServerUrl } from "src/Helpers";
+import { BASIS_POINTS_DIVISOR, DEFAULT_MAX_USDG_AMOUNT, USD_DECIMALS, USDG_ADDRESS, MAX_PRICE_DEVIATION_BASIS_POINTS, bigNumberify, expandDecimals, getTracerServerUrl } from "src/Helpers";
 import { Library } from "src/types/common";
+import { contractFetcher } from "src/lib/swr/contractFetcher";
 
 export function useInfoTokens(
   library: Library,
@@ -17,6 +18,7 @@ export function useInfoTokens(
 ) {
   const tokens = getTokens(chainId);
   const vaultReaderAddress = getContract(chainId, "VaultReader");
+  console.log(vaultReaderAddress);
   const vaultAddress = getContract(chainId, "Vault");
   const positionRouterAddress = getContract(chainId, "PositionRouter");
   const nativeTokenAddress = getContract(chainId, "NATIVE_TOKEN");
@@ -24,10 +26,10 @@ export function useInfoTokens(
   const whitelistedTokens = getWhitelistedTokens(chainId);
   const whitelistedTokenAddresses = whitelistedTokens.map((token) => token.address);
 
-  const { data: vaultTokenInfo } = useSWR<BigNumber[], any>(
+  const { data: vaultTokenInfo, error  } = useSWR<BigNumber[], any> (
     [`useInfoTokens:${active}`, chainId, vaultReaderAddress, "getVaultTokenInfoV4"],
     {
-      fetcher: fetcher(library, VaultReader, [
+      fetcher: contractFetcher(library, VaultReader, [
         vaultAddress,
         positionRouterAddress,
         nativeTokenAddress,
@@ -36,8 +38,9 @@ export function useInfoTokens(
       ]),
     }
   );
+  console.log(error)
 
-  const indexPricesUrl = getServerUrl(chainId, "/prices");
+  const indexPricesUrl = getTracerServerUrl(chainId, "/prices");
 
   const { data: indexPrices } = useSWR([indexPricesUrl], {
     // @ts-ignore spread args incorrect type
