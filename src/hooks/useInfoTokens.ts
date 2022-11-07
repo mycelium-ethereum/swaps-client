@@ -18,7 +18,6 @@ export function useInfoTokens(
 ) {
   const tokens = getTokens(chainId);
   const vaultReaderAddress = getContract(chainId, "VaultReader");
-  console.log(vaultReaderAddress);
   const vaultAddress = getContract(chainId, "Vault");
   const positionRouterAddress = getContract(chainId, "PositionRouter");
   const nativeTokenAddress = getContract(chainId, "NATIVE_TOKEN");
@@ -26,7 +25,7 @@ export function useInfoTokens(
   const whitelistedTokens = getWhitelistedTokens(chainId);
   const whitelistedTokenAddresses = whitelistedTokens.map((token) => token.address);
 
-  const { data: vaultTokenInfo, error  } = useSWR<BigNumber[], any> (
+  const { data: vaultTokenInfo } = useSWR<BigNumber[], any> (
     [`useInfoTokens:${active}`, chainId, vaultReaderAddress, "getVaultTokenInfoV4"],
     {
       fetcher: contractFetcher(library, VaultReader, [
@@ -38,7 +37,6 @@ export function useInfoTokens(
       ]),
     }
   );
-  console.log(error)
 
   const indexPricesUrl = getTracerServerUrl(chainId, "/prices");
 
