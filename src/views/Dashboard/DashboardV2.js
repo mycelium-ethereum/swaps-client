@@ -36,12 +36,10 @@ import {
   useTotalMYCInLiquidity,
   useMYCPrice,
   useTotalMYCSupply,
-  useInfoTokens,
   useFees,
   useFeesSince,
   useStakingApr,
   useTotalStaked,
-  useVolume,
   useSpreadCaptureVolume,
 } from "../../Api";
 
@@ -61,6 +59,7 @@ import arbitrum24Icon from "../../img/ic_arbitrum_24.svg";
 import AssetDropdown from "./AssetDropdown";
 import SEO from "../../components/Common/SEO";
 import { ADDRESS_ZERO } from "@uniswap/v3-sdk";
+import { useInfoTokens } from "src/hooks/useInfoTokens";
 
 const { AddressZero } = ethers.constants;
 

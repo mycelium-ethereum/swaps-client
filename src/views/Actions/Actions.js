@@ -9,7 +9,7 @@ import "./Actions.css";
 import { getContract } from "../../Addresses";
 import { formatAmount, fetcher, getTokenInfo, getServerBaseUrl, useChainId, useAccountOrders } from "../../Helpers";
 
-import { useInfoTokens } from "../../Api";
+import { useInfoTokens } from "../../hooks/useInfoTokens";
 import { getToken, getTokens, getWhitelistedTokens } from "../../data/Tokens";
 import { getPositions, getPositionQuery } from "../Exchange/Exchange";
 

@@ -109,7 +109,6 @@ import useEventToast from "./components/EventToast/useEventToast";
 import { Link } from "react-router-dom";
 import EventToastContainer from "./components/EventToast/EventToastContainer";
 import useRouteQuery from "./hooks/useRouteQuery";
-import { useInfoTokens } from "./Api";
 import { encodeReferralCode } from "./Api/referrals";
 
 import { getContract } from "./Addresses";
@@ -122,6 +121,7 @@ import LinkDropdown from "./components/Navigation/LinkDropdown/LinkDropdown";
 import Sidebar from "./components/Navigation/Sidebar/Sidebar";
 import EventModal from "./components/EventModal/EventModal";
 import AppDropdown from "./components/AppDropdown/AppDropdown";
+import { useInfoTokens } from "./hooks/useInfoTokens";
 // import { Banner, BannerContent } from "./components/Banner/Banner";
 
 if ("ethereum" in window) {

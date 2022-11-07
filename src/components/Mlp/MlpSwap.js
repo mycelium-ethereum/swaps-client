@@ -43,7 +43,7 @@ import {
   PLACEHOLDER_ACCOUNT,
 } from "../../Helpers";
 
-import { callContract, useMYCPrice, useInfoTokens } from "../../Api";
+import { callContract, useMYCPrice } from "../../Api";
 
 import TokenSelector from "../Exchange/TokenSelector";
 import BuyInputSection from "../BuyInputSection/BuyInputSection";
@@ -65,6 +65,7 @@ import arrowIcon from "../../img/ic_convert_down.svg";
 import "./MlpSwap.css";
 import AssetDropdown from "../../views/Dashboard/AssetDropdown";
 import { getAnalyticsEventStage } from "../../utils/analytics";
+import { useInfoTokens } from "src/hooks/useInfoTokens";
 
 const { AddressZero } = ethers.constants;
 
