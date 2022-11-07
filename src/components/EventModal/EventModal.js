@@ -1,10 +1,10 @@
 import React, { useEffect } from "react";
-import { shareToTwitter } from "../../Helpers";
 import * as Styled from "./EventModal.styles";
 import ethMergeHeader from "../../img/event-modal-header.png";
 import ethMergeHeadermesh from "../../img/event-modal-header-mesh.png";
 import twitterIcon from "../../img/twitter-icon.svg";
 import { Link } from "react-router-dom";
+import { shareToTwitter } from "../../utils/common";
 
 const EVENTS = {
   "new-earn-page": {

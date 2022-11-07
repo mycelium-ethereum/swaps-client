@@ -32,7 +32,6 @@ import {
   getUsd,
   adjustForDecimals,
   getUserTokenBalances,
-  getAnalyticsEventStage,
   NETWORK_NAME,
   MLP_DECIMALS,
   USD_DECIMALS,
@@ -65,6 +64,7 @@ import arrowIcon from "../../img/ic_convert_down.svg";
 
 import "./MlpSwap.css";
 import AssetDropdown from "../../views/Dashboard/AssetDropdown";
+import { getAnalyticsEventStage } from "../../utils/analytics";
 
 const { AddressZero } = ethers.constants;
 

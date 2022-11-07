@@ -5,7 +5,7 @@ import { ReactComponent as Twitter } from "../../img/nav/twitter.svg";
 import { ReactComponent as GitHub } from "../../img/nav/github.svg";
 import { ReactComponent as Discord } from "../../img/nav/discord.svg";
 import { ReactComponent as Medium } from "../../img/nav/medium.svg";
-import * as Links from "../../constants/links";
+import * as Links from "../../config/links";
 
 export const linkRowContent = [
   {
