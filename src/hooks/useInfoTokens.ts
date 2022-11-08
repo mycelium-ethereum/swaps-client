@@ -39,7 +39,7 @@ export function useInfoTokens(
   );
 
   // const indexPricesUrl = getTracerServerUrl(chainId, "/prices");
-  const indexPricesUrl = `https://pricing.myceliun.xyz/prices?network=${chainId}`;
+  const indexPricesUrl = `https://pricing.mycelium.xyz/prices?network=${chainId}`;
 
   const { data: indexPrices } = useSWR([indexPricesUrl], {
     // @ts-ignore spread args incorrect type
