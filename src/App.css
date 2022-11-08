@@ -1040,6 +1040,9 @@ button.App-button-option:disabled {
   position: static !important;
   padding-bottom: 40px;
 }
+.App-content.full-width {
+  margin-left: 48px;
+}
 
 .App-footer {
   left: 0;

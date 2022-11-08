@@ -723,7 +723,7 @@ function FullApp() {
         <div className="App-background-ball-1"></div>
         <div className="App-background-ball-2"></div>
         <div className="App-highlight"></div> */}
-        <div className="App-content">
+        <div className={cx("App-content", { "full-width": sidebarVisible })}>
           {isDrawerVisible && (
             <AnimatePresence>
               {isDrawerVisible && (
@@ -1136,7 +1136,7 @@ function PreviewApp() {
         <div className="App-background-ball-1"></div>
         <div className="App-background-ball-2"></div>
         <div className="App-highlight"></div>
-        <div className="App-content">
+        <div className={cx("App-content", { "full-width": isDrawerVisible })}>
           {isDrawerVisible && (
             <AnimatePresence>
               {isDrawerVisible && (
