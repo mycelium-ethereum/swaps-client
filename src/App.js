@@ -29,7 +29,6 @@ import {
   ARBITRUM_GOERLI,
   DEFAULT_SLIPPAGE_AMOUNT,
   BASIS_POINTS_DIVISOR,
-  fetcher,
   clearWalletConnectData,
   switchNetwork,
   helperToast,
@@ -122,6 +121,7 @@ import Sidebar from "./components/Navigation/Sidebar/Sidebar";
 import EventModal from "./components/EventModal/EventModal";
 import AppDropdown from "./components/AppDropdown/AppDropdown";
 import { useInfoTokens } from "./hooks/useInfoTokens";
+import { contractFetcher } from "./lib";
 // import { Banner, BannerContent } from "./components/Banner/Banner";
 
 if ("ethereum" in window) {
@@ -659,11 +659,11 @@ function FullApp() {
   const { data: tokenBalances } = useSWR(
     [`FullApp:getTokenBalances:${active}`, chainId, readerAddress, "getTokenBalances", account || PLACEHOLDER_ACCOUNT],
     {
-      fetcher: fetcher(library, ReaderV2, [tokenAddresses]),
+      fetcher: contractFetcher(library, ReaderV2, [tokenAddresses]),
     }
   );
   const { data: fundingRateInfo } = useSWR([active, chainId, readerAddress, "getFundingRates"], {
-    fetcher: fetcher(library, ReaderV2, [vaultAddress, nativeTokenAddress, whitelistedTokenAddresses]),
+    fetcher: contractFetcher(library, ReaderV2, [vaultAddress, nativeTokenAddress, whitelistedTokenAddresses]),
   });
 
   const { infoTokens } = useInfoTokens(library, chainId, active, tokenBalances, fundingRateInfo);
@@ -1136,7 +1136,7 @@ function PreviewApp() {
         <div className="App-background-ball-1"></div>
         <div className="App-background-ball-2"></div>
         <div className="App-highlight"></div>
-        <div className="App-content">
+        <div className="App-content">"
           {isDrawerVisible && (
             <AnimatePresence>
               {isDrawerVisible && (

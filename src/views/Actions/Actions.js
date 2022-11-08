@@ -1,4 +1,3 @@
-import React from "react";
 import useSWR from "swr";
 import { ethers } from "ethers";
 import { useWeb3React } from "@web3-react/core";
@@ -7,7 +6,7 @@ import { useParams } from "react-router-dom";
 import "./Actions.css";
 
 import { getContract } from "../../Addresses";
-import { formatAmount, fetcher, getTokenInfo, getServerBaseUrl, useChainId, useAccountOrders } from "../../Helpers";
+import { formatAmount, getTokenInfo, getServerBaseUrl, useChainId, useAccountOrders } from "../../Helpers";
 
 import { useInfoTokens } from "../../hooks/useInfoTokens";
 import { getToken, getTokens, getWhitelistedTokens } from "../../data/Tokens";
@@ -18,6 +17,7 @@ import OrdersList from "../../components/Exchange/OrdersList";
 
 import TradeHistory from "../../components/Exchange/TradeHistory";
 import Reader from "../../abis/Reader.json";
+import { contractFetcher } from "src/lib";
 
 const USD_DECIMALS = 30;
 
@@ -49,11 +49,11 @@ export default function Actions(props) {
   const whitelistedTokenAddresses = whitelistedTokens.map((token) => token.address);
   const tokenAddresses = tokens.map((token) => token.address);
   const { data: tokenBalances } = useSWR([active, chainId, readerAddress, "getTokenBalances", account], {
-    fetcher: fetcher(library, Reader, [tokenAddresses]),
+    fetcher: contractFetcher(library, Reader, [tokenAddresses]),
   });
 
   const { data: positionData } = useSWR([active, chainId, readerAddress, "getPositions", vaultAddress, account], {
-    fetcher: fetcher(library, Reader, [
+    fetcher: contractFetcher(library, Reader, [
       positionQuery.collateralTokens,
       positionQuery.indexTokens,
       positionQuery.isLong,
@@ -61,7 +61,7 @@ export default function Actions(props) {
   });
 
   const { data: fundingRateInfo } = useSWR([active, chainId, readerAddress, "getFundingRates"], {
-    fetcher: fetcher(library, Reader, [vaultAddress, nativeTokenAddress, whitelistedTokenAddresses]),
+    fetcher: contractFetcher(library, Reader, [vaultAddress, nativeTokenAddress, whitelistedTokenAddresses]),
   });
 
   const { infoTokens } = useInfoTokens(library, chainId, active, tokenBalances, fundingRateInfo);

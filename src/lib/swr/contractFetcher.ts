@@ -2,7 +2,7 @@ import { ethers } from "ethers";
 import { Web3Provider } from "@ethersproject/providers";
 import { getProvider, getFallbackProvider } from "src/Helpers";
 
-export const contractFetcher =
+export const contractFetcher = 
   <T>(library: Web3Provider, contractInfo: any, additionalArgs: any[]) =>
   (...args: any): Promise<T> => {
     // eslint-disable-next-line
@@ -71,6 +71,7 @@ export const contractFetcher =
       }, 2000);
     });
   };
+
 
 function getContractCall({ provider, contractInfo, arg0, arg1, method, params, additionalArgs }) {
   if (ethers.utils.isAddress(arg0)) {

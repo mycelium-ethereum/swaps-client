@@ -17,7 +17,6 @@ import {
   // getChainName,
   useChainId,
   expandDecimals,
-  fetcher,
   bigNumberify,
   formatAmount,
   formatAmountFree,
@@ -66,6 +65,7 @@ import "./MlpSwap.css";
 import AssetDropdown from "../../views/Dashboard/AssetDropdown";
 import { getAnalyticsEventStage } from "../../utils/analytics";
 import { useInfoTokens } from "src/hooks/useInfoTokens";
+import { contractFetcher } from "src/lib";
 
 const { AddressZero } = ethers.constants;
 
@@ -144,7 +144,7 @@ export default function MlpSwap(props) {
   const { data: tokenBalances } = useSWR(
     [`MlpSwap:getTokenBalances:${active}`, chainId, readerAddress, "getTokenBalances", account || PLACEHOLDER_ACCOUNT],
     {
-      fetcher: fetcher(library, ReaderV2, [tokenAddresses]),
+      fetcher: contractFetcher(library, ReaderV2, [tokenAddresses]),
     }
   );
 
@@ -157,18 +157,18 @@ export default function MlpSwap(props) {
       account || PLACEHOLDER_ACCOUNT,
     ],
     {
-      fetcher: fetcher(library, ReaderV2, [tokensForBalanceAndSupplyQuery]),
+      fetcher: contractFetcher(library, ReaderV2, [tokensForBalanceAndSupplyQuery]),
     }
   );
 
   const { data: aums } = useSWR([`MlpSwap:getAums:${active}`, chainId, mlpManagerAddress, "getAums"], {
-    fetcher: fetcher(library, MlpManager),
+    fetcher: contractFetcher(library, MlpManager),
   });
 
   const { data: totalTokenWeights } = useSWR(
     [`MlpSwap:totalTokenWeights:${active}`, chainId, vaultAddress, "totalTokenWeights"],
     {
-      fetcher: fetcher(library, VaultV2),
+      fetcher: contractFetcher(library, VaultV2),
     }
   );
 
@@ -176,21 +176,21 @@ export default function MlpSwap(props) {
   const { data: tokenAllowance } = useSWR(
     [active, chainId, tokenAllowanceAddress, "allowance", account || PLACEHOLDER_ACCOUNT, mlpManagerAddress],
     {
-      fetcher: fetcher(library, Token),
+      fetcher: contractFetcher(library, Token),
     }
   );
 
   const { data: lastPurchaseTime } = useSWR(
     [`MlpSwap:lastPurchaseTime:${active}`, chainId, mlpManagerAddress, "lastAddedAt", account || PLACEHOLDER_ACCOUNT],
     {
-      fetcher: fetcher(library, MlpManager),
+      fetcher: contractFetcher(library, MlpManager),
     }
   );
 
   const { data: mlpBalance } = useSWR(
     [`MlpSwap:mlpBalance:${active}`, chainId, feeMlpTrackerAddress, "stakedAmounts", account || PLACEHOLDER_ACCOUNT],
     {
-      fetcher: fetcher(library, RewardTracker),
+      fetcher: contractFetcher(library, RewardTracker),
     }
   );
 
@@ -198,7 +198,7 @@ export default function MlpSwap(props) {
   const { data: reservedAmount } = useSWR(
     [`MlpSwap:reservedAmount:${active}`, chainId, mlpVesterAddress, "pairAmounts", account || PLACEHOLDER_ACCOUNT],
     {
-      fetcher: fetcher(library, Vester),
+      fetcher: contractFetcher(library, Vester),
     }
   );
 
@@ -208,7 +208,7 @@ export default function MlpSwap(props) {
   const { data: stakingInfo } = useSWR(
     [`MlpSwap:stakingInfo:${active}`, chainId, rewardReaderAddress, "getStakingInfo", account || PLACEHOLDER_ACCOUNT],
     {
-      fetcher: fetcher(library, RewardReader, [rewardTrackersForStakingInfo]),
+      fetcher: contractFetcher(library, RewardReader, [rewardTrackersForStakingInfo]),
     }
   );
 

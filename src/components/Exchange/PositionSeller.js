@@ -21,7 +21,6 @@ import {
   TRIGGER_PREFIX_BELOW,
   TRIGGER_PREFIX_ABOVE,
   MIN_PROFIT_TIME,
-  fetcher,
   usePrevious,
   formatAmountFree,
   parseValue,
@@ -65,6 +64,7 @@ import { getTokens } from "../../data/Tokens";
 import TokenSelector from "./TokenSelector";
 import { getTokenAmountFromUsd, getUsd } from "../../utils/tokens";
 import { convertStringToFloat } from "../../utils/common";
+import { contractFetcher } from "src/lib";
 
 const { AddressZero } = ethers.constants;
 const ORDER_SIZE_DUST_USD = expandDecimals(1, USD_DECIMALS - 1); // $0.10
@@ -190,7 +190,7 @@ export default function PositionSeller(props) {
   }
 
   const { data: minExecutionFee } = useSWR([active, chainId, positionRouterAddress, "minExecutionFee"], {
-    fetcher: fetcher(library, PositionRouter),
+    fetcher: contractFetcher(library, PositionRouter),
   });
 
 

@@ -3,7 +3,6 @@ import React, { useState, useEffect, useMemo } from "react";
 import {
   ETH_DECIMALS,
   expandDecimals,
-  fetcher,
   getPageTitle,
   useChainId,
   useENS,
@@ -41,6 +40,7 @@ import FeeDistributorReader from "../../abis/FeeDistributorReader.json";
 import { getContract } from "../../Addresses";
 import { REFERRALS_SELECTED_TAB_KEY, REFERRAL_CODE_KEY } from "../../config/localstorage";
 import ReferralLeaderboard from "./ReferralLeaderboard";
+import { contractFetcher } from "src/lib";
 
 const REFERRAL_DATA_MAX_TIME = 60000 * 5; // 5 minutes
 export function isRecentReferralCodeNotExpired(referralCodeInfo) {
@@ -185,7 +185,7 @@ export default function Referral(props) {
       allRoundsRewardsData?.length ?? 1,
     ],
     {
-      fetcher: fetcher(library, FeeDistributorReader),
+      fetcher: contractFetcher(library, FeeDistributorReader),
     }
   );
 

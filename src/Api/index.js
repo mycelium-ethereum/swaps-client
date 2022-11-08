@@ -26,7 +26,6 @@ import {
   replaceNativeTokenAddress,
   getProvider,
   getOrderKey,
-  fetcher,
   parseValue,
   expandDecimals,
   getInfoTokens,
@@ -41,6 +40,7 @@ import {
 import { getTokens, getTokenBySymbol, getWhitelistedTokens } from "../data/Tokens";
 
 import { nissohGraphClient, arbitrumGraphClient, arbitrumTestnetGraphClient } from "./common";
+import { contractFetcher } from "src/lib";
 export * from "./prices";
 
 const { AddressZero } = ethers.constants;
@@ -554,7 +554,7 @@ export function useTotalMYCInLiquidity() {
       poolAddressArbitrum.uniswap,
     ],
     {
-      fetcher: fetcher(undefined, Token),
+      fetcher: contractFetcher(undefined, Token),
     }
   );
 
@@ -568,7 +568,7 @@ export function useTotalMYCInLiquidity() {
       poolAddressArbitrum.uniswapMycTcr,
     ],
     {
-      fetcher: fetcher(undefined, Token),
+      fetcher: contractFetcher(undefined, Token),
     }
   );
 
@@ -581,7 +581,7 @@ export function useTotalMYCInLiquidity() {
       poolAddressArbitrum.balancer,
     ],
     {
-      fetcher: fetcher(undefined, Token),
+      fetcher: contractFetcher(undefined, Token),
     }
   );
 
@@ -594,7 +594,7 @@ export function useTotalMYCInLiquidity() {
   // poolAddressArbitrum.uniswapTcr,
   // ],
   // {
-  // fetcher: fetcher(undefined, Token),
+  // fetcher: contractFetcher(undefined, Token),
   // }
   // );
 
@@ -607,7 +607,7 @@ export function useTotalMYCInLiquidity() {
   // poolAddressArbitrum.balancer,
   // ],
   // {
-  // fetcher: fetcher(undefined, Token),
+  // fetcher: contractFetcher(undefined, Token),
   // }
   // );
 
@@ -620,7 +620,7 @@ export function useTotalMYCInLiquidity() {
       poolAddressMainnet.uniswap,
     ],
     {
-      fetcher: fetcher(undefined, Token),
+      fetcher: contractFetcher(undefined, Token),
     }
   );
 
@@ -633,7 +633,7 @@ export function useTotalMYCInLiquidity() {
       poolAddressMainnet.balancer,
     ],
     {
-      fetcher: fetcher(undefined, Token),
+      fetcher: contractFetcher(undefined, Token),
     }
   );
 
@@ -646,7 +646,7 @@ export function useTotalMYCInLiquidity() {
   // poolAddressMainnet.sushiswap,
   // ],
   // {
-  // fetcher: fetcher(undefined, Token),
+  // fetcher: contractFetcher(undefined, Token),
   // }
   // );
 
@@ -697,7 +697,7 @@ function useMYCPriceFromMainnet(active) {
   const { data: mycEthUniPoolSlot0, mutate: updateTcrEthUniPoolSlot0 } = useSWR(
     [`StakeV2:mainnetUniPoolSlot0:${active}`, ETHEREUM, poolAddress, "slot0"],
     {
-      fetcher: fetcher(undefined, UniPool),
+      fetcher: contractFetcher(undefined, UniPool),
     }
   );
 
@@ -705,7 +705,7 @@ function useMYCPriceFromMainnet(active) {
   const { data: ethUsdcUniPoolSlot0, mutate: updateEthUsdcUniPoolSlot0 } = useSWR(
     [`StakeV2:mainnetEthPrice:${active}`, ETHEREUM, ethPoolAddress, "slot0"],
     {
-      fetcher: fetcher(undefined, UniPool),
+      fetcher: contractFetcher(undefined, UniPool),
     }
   );
 
@@ -757,7 +757,7 @@ function useMYCPriceFromArbitrum(library, active) {
   const { data: uniPoolSlot0, mutate: updateUniPoolSlot0 } = useSWR(
     [`StakeV2:uniPoolSlot0:${active}`, ARBITRUM, poolAddress, "slot0"],
     {
-      fetcher: fetcher(library, UniPool),
+      fetcher: contractFetcher(library, UniPool),
     }
   );
 
@@ -766,7 +766,7 @@ function useMYCPriceFromArbitrum(library, active) {
   const { data: ethPrice, mutate: updateEthPrice } = useSWR(
     [`StakeV2:ethPrice:${active}`, ARBITRUM, vaultAddress, "getMinPrice", ethAddress],
     {
-      fetcher: fetcher(library, Vault),
+      fetcher: contractFetcher(library, Vault),
     }
   );
 
@@ -1068,7 +1068,7 @@ export function useStakingApr(mycPrice, ethPrice) {
   const { data: currentCycle } = useSWR(
     [`useStakingApr:currentCycle:${ARBITRUM}`, ARBITRUM, getContract(ARBITRUM, "LentMYC"), "cycle"],
     {
-      fetcher: fetcher(undefined, LentMyc),
+      fetcher: contractFetcher(undefined, LentMyc),
     }
   );
 
@@ -1079,7 +1079,7 @@ export function useStakingApr(mycPrice, ethPrice) {
       ? [`useStakingApr:mycInStaking:${ARBITRUM}`, ARBITRUM, getContract(ARBITRUM, "LentMYC"), "totalAssets"]
       : null,
     {
-      fetcher: fetcher(undefined, LentMyc),
+      fetcher: contractFetcher(undefined, LentMyc),
     }
   );
 
@@ -1088,7 +1088,7 @@ export function useStakingApr(mycPrice, ethPrice) {
       ? [`useStakingApr:pendingMycInStaking:${ARBITRUM}`, ARBITRUM, getContract(ARBITRUM, "LentMYC"), "pendingDeposits"]
       : null,
     {
-      fetcher: fetcher(undefined, LentMyc),
+      fetcher: contractFetcher(undefined, LentMyc),
     }
   );
 
@@ -1097,7 +1097,7 @@ export function useStakingApr(mycPrice, ethPrice) {
       ? [`useStakingApr:prev:${ARBITRUM}`, ARBITRUM, getContract(ARBITRUM, "LentMYC"), "cycleCumulativeEthRewards"]
       : null,
     {
-      fetcher: fetcher(undefined, LentMyc, [cycle - 2]),
+      fetcher: contractFetcher(undefined, LentMyc, [cycle - 2]),
     }
   );
 
@@ -1106,7 +1106,7 @@ export function useStakingApr(mycPrice, ethPrice) {
       ? [`useStakingApr:current:${ARBITRUM}`, ARBITRUM, getContract(ARBITRUM, "LentMYC"), "cycleCumulativeEthRewards"]
       : null,
     {
-      fetcher: fetcher(undefined, LentMyc, [cycle - 1]),
+      fetcher: contractFetcher(undefined, LentMyc, [cycle - 1]),
     }
   );
 
@@ -1115,7 +1115,7 @@ export function useStakingApr(mycPrice, ethPrice) {
       ? [`useStakingApr:cycleAssets:${ARBITRUM}`, ARBITRUM, getContract(ARBITRUM, "LentMYC"), "cycleSharesAndAssets"]
       : null,
     {
-      fetcher: fetcher(undefined, LentMyc, [cycle - 1]),
+      fetcher: contractFetcher(undefined, LentMyc, [cycle - 1]),
     }
   );
 
@@ -1145,14 +1145,14 @@ export function useTotalStaked() {
   const { data: mycAssetsInStaking } = useSWR(
     [`DashboardV2:mycInStaking:${ARBITRUM}`, ARBITRUM, getContract(ARBITRUM, "LentMYC"), "totalAssets"],
     {
-      fetcher: fetcher(undefined, LentMyc),
+      fetcher: contractFetcher(undefined, LentMyc),
     }
   );
 
   const { data: pendingMycDepositsInStaking } = useSWR(
     [`DashboardV2:pendingMycInStaking:${ARBITRUM}`, ARBITRUM, getContract(ARBITRUM, "LentMYC"), "pendingDeposits"],
     {
-      fetcher: fetcher(undefined, LentMyc),
+      fetcher: contractFetcher(undefined, LentMyc),
     }
   );
 

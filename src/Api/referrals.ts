@@ -8,7 +8,6 @@ import {
   isAddressZero,
   helperToast,
   getProvider,
-  fetcher,
   ARBITRUM_GOERLI,
 } from "../Helpers";
 import { arbitrumReferralsGraphClient, arbitrumTestnetReferralsGraphClient } from "./common";
@@ -19,6 +18,7 @@ import { callContract } from ".";
 import useSWR from "swr";
 import { ChainId, Library } from "../types/common";
 import { MAX_REFERRAL_CODE_LENGTH } from "../config/referrals";
+import { contractFetcher } from "src/lib";
 
 const ACTIVE_CHAINS = [ARBITRUM];
 
@@ -215,7 +215,7 @@ export function useUserReferralCode(library: Library, chainId: ChainId, account:
   const { data: userReferralCode, mutate: mutateUserReferralCode } = useSWR(
     account && [`ReferralStorage:traderReferralCodes`, chainId, referralStorageAddress, "traderReferralCodes", account],
     {
-      fetcher: fetcher(library, ReferralStorage),
+      fetcher: contractFetcher(library, ReferralStorage),
     }
   );
   return {
@@ -229,7 +229,7 @@ export function useReferrerTier(library: Library, chainId: ChainId, account: str
   const { data: referrerTier, mutate: mutateReferrerTier } = useSWR(
     account && [`ReferralStorage:referrerTiers`, chainId, referralStorageAddress, "referrerTiers", account],
     {
-      fetcher: fetcher(library, ReferralStorage),
+      fetcher: contractFetcher(library, ReferralStorage),
     }
   );
   return {
@@ -243,7 +243,7 @@ export function useCodeOwner(library: Library, chainId: ChainId, account: string
   const { data: codeOwner, mutate: mutateCodeOwner } = useSWR(
     account && code && [`ReferralStorage:codeOwners`, chainId, referralStorageAddress, "codeOwners", code],
     {
-      fetcher: fetcher(library, ReferralStorage),
+      fetcher: contractFetcher(library, ReferralStorage),
     }
   );
   return {

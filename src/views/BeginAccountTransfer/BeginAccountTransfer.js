@@ -16,9 +16,10 @@ import RewardRouter from "../../abis/RewardRouter.json";
 
 import { FaCheck, FaTimes } from "react-icons/fa";
 
-import { fetcher, approveTokens, useChainId } from "../../Helpers";
+import { approveTokens, useChainId } from "../../Helpers";
 
 import "./BeginAccountTransfer.css";
+import { contractFetcher } from "src/lib";
 
 function ValidationRow({ isValid, children }) {
   return (
@@ -52,14 +53,14 @@ export default function BeginAccountTransfer(props) {
   const rewardRouterAddress = getContract(chainId, "RewardRouter");
 
   const { data: mlpVesterBalance } = useSWR([active, chainId, mlpVesterAddress, "balanceOf", account], {
-    fetcher: fetcher(library, Token),
+    fetcher: contractFetcher(library, Token),
   });
 
   const stakedMycTrackerAddress = getContract(chainId, "StakedMycTracker");
   const { data: cumulativeMycRewards } = useSWR(
     [active, chainId, stakedMycTrackerAddress, "cumulativeRewards", parsedReceiver],
     {
-      fetcher: fetcher(library, RewardTracker),
+      fetcher: contractFetcher(library, RewardTracker),
     }
   );
 
@@ -67,36 +68,36 @@ export default function BeginAccountTransfer(props) {
   const { data: cumulativeMlpRewards } = useSWR(
     [active, chainId, stakedMlpTrackerAddress, "cumulativeRewards", parsedReceiver],
     {
-      fetcher: fetcher(library, RewardTracker),
+      fetcher: contractFetcher(library, RewardTracker),
     }
   );
 
   const { data: transferredCumulativeMycRewards } = useSWR(
     [active, chainId, mlpVesterAddress, "transferredCumulativeRewards", parsedReceiver],
     {
-      fetcher: fetcher(library, Vester),
+      fetcher: contractFetcher(library, Vester),
     }
   );
 
   const { data: transferredCumulativeMlpRewards } = useSWR(
     [active, chainId, mlpVesterAddress, "transferredCumulativeRewards", parsedReceiver],
     {
-      fetcher: fetcher(library, Vester),
+      fetcher: contractFetcher(library, Vester),
     }
   );
 
   const { data: pendingReceiver } = useSWR([active, chainId, rewardRouterAddress, "pendingReceivers", account], {
-    fetcher: fetcher(library, RewardRouter),
+    fetcher: contractFetcher(library, RewardRouter),
   });
 
   const { data: mlpAllowance } = useSWR([active, chainId, mlpAddress, "allowance", account, stakedMycTrackerAddress], {
-    fetcher: fetcher(library, Token),
+    fetcher: contractFetcher(library, Token),
   });
 
   const { data: mlpStaked } = useSWR(
     [active, chainId, stakedMycTrackerAddress, "depositBalances", account, mlpAddress],
     {
-      fetcher: fetcher(library, RewardTracker),
+      fetcher: contractFetcher(library, RewardTracker),
     }
   );
 

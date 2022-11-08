@@ -12,7 +12,6 @@ import { getWhitelistedTokens } from "../../data/Tokens";
 import { getFeeHistory, SECONDS_PER_WEEK } from "../../data/Fees";
 
 import {
-  fetcher,
   formatAmount,
   formatKeyAmount,
   expandDecimals,
@@ -60,6 +59,7 @@ import AssetDropdown from "./AssetDropdown";
 import SEO from "../../components/Common/SEO";
 import { ADDRESS_ZERO } from "@uniswap/v3-sdk";
 import { useInfoTokens } from "src/hooks/useInfoTokens";
+import { contractFetcher } from "src/lib";
 
 const { AddressZero } = ethers.constants;
 
@@ -123,24 +123,24 @@ export default function DashboardV2() {
   const tokensForSupplyQuery = [mycAddress, mlpAddress, usdgAddress];
 
   const { data: aums } = useSWR([`Dashboard:getAums:${active}`, chainId, mlpManagerAddress, "getAums"], {
-    fetcher: fetcher(library, MlpManager),
+    fetcher: contractFetcher(library, MlpManager),
   });
 
   const { data: fees } = useSWR([`Dashboard:fees:${active}`, chainId, readerAddress, "getFees", vaultAddress], {
-    fetcher: fetcher(library, ReaderV2, [whitelistedTokenAddresses]),
+    fetcher: contractFetcher(library, ReaderV2, [whitelistedTokenAddresses]),
   });
 
   const { data: totalSupplies } = useSWR(
     [`Dashboard:totalSupplies:${active}`, chainId, readerAddress, "getTokenBalancesWithSupplies", AddressZero],
     {
-      fetcher: fetcher(library, ReaderV2, [tokensForSupplyQuery]),
+      fetcher: contractFetcher(library, ReaderV2, [tokensForSupplyQuery]),
     }
   );
 
   const { data: totalTokenWeights } = useSWR(
     [`MlpSwap:totalTokenWeights:${active}`, chainId, vaultAddress, "totalTokenWeights"],
     {
-      fetcher: fetcher(library, VaultV2),
+      fetcher: contractFetcher(library, VaultV2),
     }
   );
 

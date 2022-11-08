@@ -17,7 +17,6 @@ import { ethers } from "ethers";
 import {
   helperToast,
   bigNumberify,
-  fetcher,
   formatAmount,
   formatKeyAmount,
   formatAmountFree,
@@ -59,6 +58,7 @@ import SEO from "../../components/Common/SEO";
 import ClaimModal from "./ClaimModal";
 import Toggle from "../../components/Toggle/Toggle";
 import MlpPriceChart from "./MlpPriceChart";
+import { contractFetcher } from "src/lib";
 
 function CompoundModal(props) {
   const {
@@ -102,7 +102,7 @@ function CompoundModal(props) {
   const { data: tokenAllowance } = useSWR(
     active && [active, chainId, mycAddress, "allowance", account, stakedMlpTrackerAddress],
     {
-      fetcher: fetcher(library, Token),
+      fetcher: contractFetcher(library, Token),
     }
   );
 
@@ -560,7 +560,7 @@ export default function StakeV2({
       account || PLACEHOLDER_ACCOUNT,
     ],
     {
-      fetcher: fetcher(library, ReaderV2, [walletTokens]),
+      fetcher: contractFetcher(library, ReaderV2, [walletTokens]),
     }
   );
 
@@ -573,39 +573,39 @@ export default function StakeV2({
       account || PLACEHOLDER_ACCOUNT,
     ],
     {
-      fetcher: fetcher(library, RewardReader, [depositTokens, rewardTrackersForDepositBalances]),
+      fetcher: contractFetcher(library, RewardReader, [depositTokens, rewardTrackersForDepositBalances]),
     }
   );
 
   const { data: stakingInfo } = useSWR(
     [`StakeV2:stakingInfo:${active}`, chainId, rewardReaderAddress, "getStakingInfo", account || PLACEHOLDER_ACCOUNT],
     {
-      fetcher: fetcher(library, RewardReader, [rewardTrackersForStakingInfo]),
+      fetcher: contractFetcher(library, RewardReader, [rewardTrackersForStakingInfo]),
     }
   );
 
   const { data: stakedMycSupply } = useSWR(
     [`StakeV2:stakedMycSupply:${active}`, chainId, mycAddress, "balanceOf", stakedMycTrackerAddress],
     {
-      fetcher: fetcher(library, Token),
+      fetcher: contractFetcher(library, Token),
     }
   );
 
   const { data: aums } = useSWR([`StakeV2:getAums:${active}`, chainId, mlpManagerAddress, "getAums"], {
-    fetcher: fetcher(library, MlpManager),
+    fetcher: contractFetcher(library, MlpManager),
   });
 
   const { data: nativeTokenPrice } = useSWR(
     [`StakeV2:nativeTokenPrice:${active}`, chainId, vaultAddress, "getMinPrice", nativeTokenAddress],
     {
-      fetcher: fetcher(library, Vault),
+      fetcher: contractFetcher(library, Vault),
     }
   );
 
   const { data: vestingInfo } = useSWR(
     [`StakeV2:vestingInfo:${active}`, chainId, readerAddress, "getVestingInfo", account || PLACEHOLDER_ACCOUNT],
     {
-      fetcher: fetcher(library, ReaderV2, [vesterAddresses]),
+      fetcher: contractFetcher(library, ReaderV2, [vesterAddresses]),
     }
   );
 

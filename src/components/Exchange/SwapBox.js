@@ -35,7 +35,6 @@ import {
   isTriggerRatioInverted,
   usePrevious,
   formatAmountFree,
-  fetcher,
   parseValue,
   expandDecimals,
   shouldRaiseGasError,
@@ -81,6 +80,7 @@ import swapImg from "../../img/swap.svg";
 import { useUserReferralCode } from "../../Api/referrals";
 import { LeverageInput } from "./LeverageInput";
 import { REFERRAL_CODE_KEY } from "../../config/localstorage";
+import { contractFetcher } from "src/lib";
 
 const SWAP_ICONS = {
   [LONG]: longImg,
@@ -293,14 +293,14 @@ export default function SwapBox(props) {
   const { data: tokenAllowance } = useSWR(
     active && [active, chainId, tokenAllowanceAddress, "allowance", account, routerAddress],
     {
-      fetcher: fetcher(library, Token),
+      fetcher: contractFetcher(library, Token),
     }
   );
 
   const positionRouterAddress = getContract(chainId, "PositionRouter");
 
   const { data: minExecutionFee } = useSWR([active, chainId, positionRouterAddress, "minExecutionFee"], {
-    fetcher: fetcher(library, PositionRouter),
+    fetcher: contractFetcher(library, PositionRouter),
   });
 
   const { data: hasOutdatedUi } = Api.useHasOutdatedUi();

@@ -1,8 +1,9 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import UniPool from "../../abis/UniPool.json";
 import { useWeb3React } from "@web3-react/core";
 import useSWR from "swr";
-import { fetcher, useChainId } from "../../Helpers";
+import { useChainId } from "../../Helpers";
+import { contractFetcher } from "src/lib";
 
 export default function Debug() {
   const { active, library } = useWeb3React();
@@ -14,14 +15,14 @@ export default function Debug() {
   const { data: uniPoolSlot0, mutate: updateUniPoolSlot0 } = useSWR(
     [`Debug:uniPoolSlot0:${active}`, chainId, poolAddress, "slot0"],
     {
-      fetcher: fetcher(library, UniPool),
+      fetcher: contractFetcher(library, UniPool),
     }
   );
 
   const { data: uniPoolTickSpacing, mutate: updateUniPoolTickSpacing } = useSWR(
     [`Debug:uniPoolTickSpacing:${active}`, chainId, poolAddress, "tickSpacing"],
     {
-      fetcher: fetcher(library, UniPool),
+      fetcher: contractFetcher(library, UniPool),
     }
   );
 

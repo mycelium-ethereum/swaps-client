@@ -13,7 +13,6 @@ import {
   bigNumberify,
   usePrevious,
   formatAmountFree,
-  fetcher,
   parseValue,
   expandDecimals,
   shouldRaiseGasError,
@@ -31,6 +30,7 @@ import { callContract } from "../../Api";
 import PositionRouter from "../../abis/PositionRouter.json";
 import Token from "../../abis/Token.json";
 import { convertStringToFloat } from "../../utils/common";
+import { contractFetcher } from "src/lib";
 
 const DEPOSIT = "Deposit";
 const WITHDRAW = "Withdraw";
@@ -76,12 +76,12 @@ export default function PositionEditor(props) {
   const { data: tokenAllowance } = useSWR(
     [active, chainId, collateralTokenAddress, "allowance", account, routerAddress],
     {
-      fetcher: fetcher(library, Token),
+      fetcher: contractFetcher(library, Token),
     }
   );
 
   const { data: minExecutionFee } = useSWR([active, chainId, positionRouterAddress, "minExecutionFee"], {
-    fetcher: fetcher(library, PositionRouter),
+    fetcher: contractFetcher(library, PositionRouter),
   });
 
   const isDeposit = option === DEPOSIT;

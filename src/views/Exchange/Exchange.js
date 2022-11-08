@@ -19,7 +19,6 @@ import {
   formatAmount,
   bigNumberify,
   getTokenInfo,
-  fetcher,
   getPositionKey,
   getPositionContractKey,
   getLeverage,
@@ -57,6 +56,7 @@ import "./Exchange.css";
 import SEO from "../../components/Common/SEO";
 import { ExchangeHeader } from "../../components/Exchange/ExchangeHeader";
 import TradingCompBanner from "../../components/Exchange/TradingCompBanner";
+import { contractFetcher } from "src/lib";
 const { AddressZero } = ethers.constants;
 
 const PENDING_POSITION_VALID_DURATION = 600 * 1000;
@@ -458,7 +458,7 @@ export const Exchange = forwardRef((props, ref) => {
   const { data: positionData, error: positionDataError } = useSWR(
     active && [active, chainId, readerAddress, "getPositions", vaultAddress, account],
     {
-      fetcher: fetcher(library, Reader, [
+      fetcher: contractFetcher(library, Reader, [
         positionQuery.collateralTokens,
         positionQuery.indexTokens,
         positionQuery.isLong,
@@ -471,12 +471,12 @@ export const Exchange = forwardRef((props, ref) => {
   const { data: totalTokenWeights } = useSWR(
     [`Exchange:totalTokenWeights:${active}`, chainId, vaultAddress, "totalTokenWeights"],
     {
-      fetcher: fetcher(library, VaultV2),
+      fetcher: contractFetcher(library, VaultV2),
     }
   );
 
   const { data: usdgSupply } = useSWR([`Exchange:usdgSupply:${active}`, chainId, usdgAddress, "totalSupply"], {
-    fetcher: fetcher(library, Token),
+    fetcher: contractFetcher(library, Token),
   });
 
   const orderBookAddress = getContract(chainId, "OrderBook");
@@ -484,14 +484,14 @@ export const Exchange = forwardRef((props, ref) => {
   const { data: orderBookApproved } = useSWR(
     active && [active, chainId, routerAddress, "approvedPlugins", account, orderBookAddress],
     {
-      fetcher: fetcher(library, Router),
+      fetcher: contractFetcher(library, Router),
     }
   );
 
   const { data: positionRouterApproved } = useSWR(
     active && [active, chainId, routerAddress, "approvedPlugins", account, positionRouterAddress],
     {
-      fetcher: fetcher(library, Router),
+      fetcher: contractFetcher(library, Router),
     }
   );
 

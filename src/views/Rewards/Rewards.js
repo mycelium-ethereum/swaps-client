@@ -8,7 +8,6 @@ import {
   getTokenInfo,
   useChainId,
   useENS,
-  fetcher,
   expandDecimals,
   ETH_DECIMALS,
   helperToast,
@@ -28,6 +27,7 @@ import FeeDistributor from "../../abis/FeeDistributor.json";
 import FeeDistributorReader from "../../abis/FeeDistributorReader.json";
 import ViewSwitch from "../../components/ViewSwitch/ViewSwitch";
 import { RoundDropdown } from "../../components/RewardsRoundSelect/RewardsRoundSelect";
+import { contractFetcher } from "src/lib";
 
 const PersonalHeader = () => (
   <div className="Page-title-section mt-0">
@@ -98,7 +98,7 @@ export default function Rewards(props) {
       allRoundsRewardsData?.length ?? 1,
     ],
     {
-      fetcher: fetcher(library, FeeDistributorReader),
+      fetcher: contractFetcher(library, FeeDistributorReader),
     }
   );
 
