@@ -12,7 +12,6 @@ import Router from "../abis/Router.json";
 import LentMyc from "../abis/LentMyc.json";
 import UniPool from "../abis/UniPool.json";
 import Token from "../abis/Token.json";
-import VaultReader from "../abis/VaultReader.json";
 
 import { getContract } from "../Addresses";
 import { getConstant } from "../Constants";
@@ -29,18 +28,16 @@ import {
   fetcher,
   parseValue,
   expandDecimals,
-  getInfoTokens,
   helperToast,
-  getSupplyUrl,
-  getTracerServerUrl,
   USD_DECIMALS,
   ETH_DECIMALS,
   FORTNIGHTS_IN_YEAR,
   ARBITRUM_GOERLI,
 } from "../Helpers";
-import { getTokens, getTokenBySymbol, getWhitelistedTokens } from "../data/Tokens";
+import { getTokenBySymbol } from "../data/Tokens";
 
 import { nissohGraphClient, arbitrumGraphClient, arbitrumTestnetGraphClient } from "./common";
+import { getServerUrl, getSupplyUrl } from "src/lib";
 export * from "./prices";
 
 const { AddressZero } = ethers.constants;
@@ -405,7 +402,7 @@ function invariant(condition, errorMsg) {
 }
 
 export function useTrades(chainId, account) {
-  let url = getTracerServerUrl(chainId, "/actions");
+  let url = getServerUrl(chainId, "/actions");
   if (account && account.length) {
     url += `&account=${account}`;
   }
