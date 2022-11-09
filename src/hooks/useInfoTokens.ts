@@ -4,9 +4,10 @@ import { InfoTokens, Token, TokenInfo } from "../types/tokens";
 import { BigNumber } from "ethers";
 import { getContract } from "src/Addresses";
 import { getTokens, getWhitelistedTokens } from "src/data/Tokens";
-import { BASIS_POINTS_DIVISOR, DEFAULT_MAX_USDG_AMOUNT, USD_DECIMALS, USDG_ADDRESS, MAX_PRICE_DEVIATION_BASIS_POINTS, bigNumberify, expandDecimals, getTracerServerUrl } from "src/Helpers";
+import { BASIS_POINTS_DIVISOR, DEFAULT_MAX_USDG_AMOUNT, USD_DECIMALS, USDG_ADDRESS, MAX_PRICE_DEVIATION_BASIS_POINTS, bigNumberify, expandDecimals } from "src/Helpers";
 import { Library } from "src/types/common";
 import { contractFetcher } from "src/lib/swr/contractFetcher";
+import { getServerUrl } from "src/lib";
 
 export function useInfoTokens(
   library: Library,
@@ -38,7 +39,7 @@ export function useInfoTokens(
     }
   );
 
-  const indexPricesUrl = getTracerServerUrl(chainId, "/prices");
+  const indexPricesUrl = getServerUrl(chainId, "/prices");
 
   const { data: indexPrices } = useSWR([indexPricesUrl], {
     // @ts-ignore spread args incorrect type

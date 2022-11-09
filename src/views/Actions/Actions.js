@@ -7,7 +7,7 @@ import { useParams } from "react-router-dom";
 import "./Actions.css";
 
 import { getContract } from "../../Addresses";
-import { formatAmount, fetcher, getTokenInfo, getServerBaseUrl, useChainId, useAccountOrders } from "../../Helpers";
+import { formatAmount, fetcher, getTokenInfo, useChainId, useAccountOrders } from "../../Helpers";
 
 import { useInfoTokens } from "../../hooks/useInfoTokens";
 import { getToken, getTokens, getWhitelistedTokens } from "../../data/Tokens";
@@ -31,16 +31,10 @@ export default function Actions(props) {
   const vaultAddress = getContract(chainId, "Vault");
   const readerAddress = getContract(chainId, "Reader");
 
-  const shouldShowPnl = false;
-
   let checkSummedAccount = "";
   if (ethers.utils.isAddress(account)) {
     checkSummedAccount = ethers.utils.getAddress(account);
   }
-  const pnlUrl = `${getServerBaseUrl(chainId)}/pnl?account=${checkSummedAccount}`;
-  const { data: pnlData } = useSWR([pnlUrl], {
-    fetcher: (...args) => fetch(...args).then((res) => res.json()),
-  });
 
   const tokens = getTokens(chainId);
   const whitelistedTokens = getWhitelistedTokens(chainId);
@@ -83,29 +77,6 @@ export default function Actions(props) {
   return (
     <div className="Actions">
       {checkSummedAccount.length > 0 && <div className="Actions-section">Account: {checkSummedAccount}</div>}
-      {shouldShowPnl && (
-        <div className="Actions-section">
-          <div className="Actions-title">PnL</div>
-          {(!pnlData || pnlData.length === 0) && <div>No PnLs found</div>}
-          {pnlData &&
-            pnlData.length > 0 &&
-            pnlData.map((pnlRow, index) => {
-              const token = getToken(chainId, pnlRow.data.indexToken);
-              return (
-                <div className="TradeHistory-row App-box App-box-border" key={index}>
-                  <div>
-                    {token.symbol} {pnlRow.data.isLong ? "Long" : "Short"} Profit:{" "}
-                    {formatAmount(pnlRow.data.profit, USD_DECIMALS, 2, true)} USD
-                  </div>
-                  <div>
-                    {token.symbol} {pnlRow.data.isLong ? "Long" : "Short"} Loss:{" "}
-                    {formatAmount(pnlRow.data.loss, USD_DECIMALS, 2, true)} USD
-                  </div>
-                </div>
-              );
-            })}
-        </div>
-      )}
       {checkSummedAccount.length > 0 && (
         <div className="Actions-section">
           <div className="Actions-title">Positions</div>

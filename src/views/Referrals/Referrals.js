@@ -10,7 +10,6 @@ import {
   isHashZero,
   useLocalStorageSerializeKey,
   bigNumberify,
-  getTracerServerUrl,
   formatTimeTill,
   getTokenInfo,
 } from "../../Helpers";
@@ -41,6 +40,7 @@ import FeeDistributorReader from "../../abis/FeeDistributorReader.json";
 import { getContract } from "../../Addresses";
 import { REFERRALS_SELECTED_TAB_KEY, REFERRAL_CODE_KEY } from "../../config/localstorage";
 import ReferralLeaderboard from "./ReferralLeaderboard";
+import { getServerUrl } from "src/lib";
 
 const REFERRAL_DATA_MAX_TIME = 60000 * 5; // 5 minutes
 export function isRecentReferralCodeNotExpired(referralCodeInfo) {
@@ -133,7 +133,7 @@ export default function Referral(props) {
 
   // Fetch all week data from server
   const { data: allRoundsRewardsData_, error: failedFetchingRewards } = useSWR(
-    [getTracerServerUrl(chainId, "/referralRewards")],
+    [getServerUrl(chainId, "/referralRewards")],
     {
       fetcher: (...args) => fetch(...args).then((res) => res.json()),
     }
@@ -143,7 +143,7 @@ export default function Referral(props) {
 
   // Fetch only the latest week's data from server
   const { data: currentRewardRound, error: failedFetchingRoundRewards } = useSWR(
-    [getTracerServerUrl(chainId, "/referralRewards"), selectedRound],
+    [getServerUrl(chainId, "/referralRewards"), selectedRound],
     {
       fetcher: (url, week) => fetch(`${url}&round=${week}`).then((res) => res.json()),
     }
