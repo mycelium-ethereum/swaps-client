@@ -1,8 +1,10 @@
 .Exchange {
-  /* max-width: 155rem */
-  max-width: 1550px;
   margin: auto;
   justify-content: space-between;
+}
+
+.Exchange.default-container {
+  max-width: 1700px;
 }
 
 .Exchange-list-tab-container {

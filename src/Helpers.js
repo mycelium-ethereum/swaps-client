@@ -484,47 +484,6 @@ export function getMarginFee(sizeDelta) {
   return sizeDelta.sub(afterFeeUsd);
 }
 
-export function getSupplyUrl(route = "/totalSupply") {
-  // same supply across networks
-  // return "https://stats.mycelium.xyz/total_supply";
-  return `https://dev.api.tracer.finance/myc${route}`;
-}
-
-const BASE_TRACER_URL = process.env.REACT_APP_TRACER_API ?? "https://api.tracer.finance";
-
-export function getTracerServerUrl(chainId, path) {
-  if (!chainId) {
-    throw new Error("chainId is not supported");
-  } else if (chainId !== ARBITRUM && chainId !== ARBITRUM_GOERLI) {
-    throw new Error("chainId is not supported");
-  }
-
-  return `${BASE_TRACER_URL}/trs${path}?network=${chainId}`;
-}
-
-export function getServerBaseUrl(chainId) {
-  if (!chainId) {
-    throw new Error("chainId is not provided");
-  }
-  if (document.location.hostname.includes("deploy-preview")) {
-    const fromLocalStorage = localStorage.getItem("SERVER_BASE_URL");
-    if (fromLocalStorage) {
-      return fromLocalStorage;
-    }
-  }
-  if (chainId === ARBITRUM_GOERLI) {
-    // return "https://gambit-l2.as.r.appspot.com";
-    return "https://gmx-server-mainnet.uw.r.appspot.com";
-  } else if (chainId === ARBITRUM) {
-    return "https://gmx-server-mainnet.uw.r.appspot.com";
-  }
-  return "https://gmx-server-mainnet.uw.r.appspot.com";
-}
-
-export function getServerUrl(chainId, path) {
-  return `${getServerBaseUrl(chainId)}${path}`;
-}
-
 export function isTriggerRatioInverted(fromTokenInfo, toTokenInfo) {
   if (!toTokenInfo || !fromTokenInfo) return false;
   if (toTokenInfo.isStable || toTokenInfo.isUsdg) return true;
@@ -1915,21 +1874,6 @@ export function useAccountOrders(flagOrdersEnabled, overrideAccount) {
       const provider = getProvider(library, chainId);
       const orderBookContract = new ethers.Contract(orderBookAddress, OrderBook.abi, provider);
       const orderBookReaderContract = new ethers.Contract(orderBookReaderAddress, OrderBookReader.abi, provider);
-
-      const fetchIndexesFromServer = () => {
-        const ordersIndexesUrl = `${getServerBaseUrl(chainId)}/orders_indices?account=${account}`;
-        return fetch(ordersIndexesUrl)
-          .then(async (res) => {
-            const json = await res.json();
-            const ret = {};
-            for (const key of Object.keys(json)) {
-              ret[key.toLowerCase()] = json[key].map((val) => parseInt(val.value));
-            }
-
-            return ret;
-          })
-          .catch(() => ({ swap: [], increase: [], decrease: [] }));
-      };
 
       const fetchLastIndex = async (type) => {
         const method = type.toLowerCase() + "OrdersIndex";

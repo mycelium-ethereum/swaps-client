@@ -2358,7 +2358,7 @@ export default function SwapBox(props) {
                       )}
                       {!hasZeroBorrowFee && (
                         <div>
-                          The borrow fee is calculated as (assets borrowed) / (total assets in pool) * 0.01% per hour.
+                          The borrow fee is calculated as (assets borrowed) / (total assets in pool) * 0.005% per hour.
                           <br />
                           <br />
                           {isShort && `You can change the "Profits In" token above to find lower fees`}

@@ -28,7 +28,6 @@ import {
   MLP_POOL_COLORS,
   DEFAULT_MAX_USDG_AMOUNT,
   getPageTitle,
-  getTracerServerUrl,
   ETH_DECIMALS,
   ARBITRUM_GOERLI,
 } from "../../Helpers";
@@ -60,6 +59,7 @@ import AssetDropdown from "./AssetDropdown";
 import SEO from "../../components/Common/SEO";
 import { ADDRESS_ZERO } from "@uniswap/v3-sdk";
 import { useInfoTokens } from "src/hooks/useInfoTokens";
+import { getServerUrl } from "src/lib";
 
 const { AddressZero } = ethers.constants;
 
@@ -89,12 +89,12 @@ export default function DashboardV2() {
 
   const chainName = getChainName(chainId);
 
-  const positionStatsUrl = getTracerServerUrl(chainId, "/positionStats");
+  const positionStatsUrl = getServerUrl(chainId, "/positionStats");
   const { data: positionStats } = useSWR([positionStatsUrl], {
     fetcher: (...args) => fetch(...args).then((res) => res.json()),
   });
 
-  const mycTotalVolumeUrl = getTracerServerUrl(chainId, "/volume");
+  const mycTotalVolumeUrl = getServerUrl(chainId, "/volume");
   const { data: mycTotalVolume } = useSWR([mycTotalVolumeUrl], {
     fetcher: (...args) => fetch(...args).then((res) => res.json()),
   });

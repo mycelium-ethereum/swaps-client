@@ -3,7 +3,6 @@ import React, { useState, useMemo, useEffect } from "react";
 import useSWR from "swr";
 
 import {
-  getTracerServerUrl,
   getPageTitle,
   getTokenInfo,
   useChainId,
@@ -28,6 +27,7 @@ import FeeDistributor from "../../abis/FeeDistributor.json";
 import FeeDistributorReader from "../../abis/FeeDistributorReader.json";
 import ViewSwitch from "../../components/ViewSwitch/ViewSwitch";
 import { RoundDropdown } from "../../components/RewardsRoundSelect/RewardsRoundSelect";
+import { getServerUrl } from "src/lib";
 
 const PersonalHeader = () => (
   <div className="Page-title-section mt-0">
@@ -71,7 +71,7 @@ export default function Rewards(props) {
 
   // Fetch all round data from server
   const { data: allRoundsRewardsData_, error: failedFetchingRewards } = useSWR(
-    [getTracerServerUrl(chainId, "/tradingRewards")],
+    [getServerUrl(chainId, "/tradingRewards")],
     {
       fetcher: (...args) => fetch(...args).then((res) => res.json()),
     }
@@ -81,7 +81,7 @@ export default function Rewards(props) {
 
   // Fetch only the latest round's data from server
   const { data: currentRewardRound, error: failedFetchingRoundRewards } = useSWR(
-    [getTracerServerUrl(chainId, "/tradingRewards"), selectedRound],
+    [getServerUrl(chainId, "/tradingRewards"), selectedRound],
     {
       fetcher: (url, round) => fetch(`${url}&round=${round}`).then((res) => res.json()),
     }
@@ -104,7 +104,7 @@ export default function Rewards(props) {
 
   // Fetch user proof
   const { data: userProof } = useSWR(
-    [getTracerServerUrl(chainId, "/tradingRewardProof"), selectedRound, account ?? ethers.constants.AddressZero],
+    [getServerUrl(chainId, "/tradingRewardProof"), selectedRound, account ?? ethers.constants.AddressZero],
     {
       fetcher: (url, round, account) => fetch(`${url}&round=${round}&userAddress=${account}`).then((res) => res.json()),
     }
