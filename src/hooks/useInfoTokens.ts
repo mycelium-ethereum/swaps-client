@@ -40,8 +40,7 @@ export function useInfoTokens(
   );
 
   const oldIndexPricesUrl = getServerUrl(chainId, "/prices");
-  // const newIndexPricesUrl = `https://pricing.mycelium.xyz/prices?network=${chainId}`;
-  const newIndexPricesUrl = `http://localhost:3030/prices?network=${chainId}`;
+  const newIndexPricesUrl = `https://pricing.mycelium.xyz/prices?network=${chainId}`;
 
   const { data: newIndexPrices } = useSWR([newIndexPricesUrl], {
     // @ts-ignore spread args incorrect type
