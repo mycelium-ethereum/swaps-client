@@ -70,6 +70,14 @@ export function useInfoTokens(
         indexPrices[address] = price;
       }
     })
+  } else if (newIndexPrices) {
+    console.warn(`Using prices from: ${newIndexPricesUrl} without checking price age`);
+    Object.keys(newIndexPrices).forEach((address) => {
+      indexPrices[address] = newIndexPrices[address].price
+    })
+  } else if (oldIndexPrices) {
+    console.warn(`Using prices from: ${oldIndexPricesUrl}`);
+    indexPrices = oldIndexPrices;
   }
 
   return {
