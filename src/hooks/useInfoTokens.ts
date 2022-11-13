@@ -39,15 +39,46 @@ export function useInfoTokens(
     }
   );
 
-  const indexPricesUrl = getServerUrl(chainId, "/prices");
-  // const indexPricesUrl = `https://pricing.mycelium.xyz/prices?network=${chainId}`;
+  const oldIndexPricesUrl = getServerUrl(chainId, "/prices");
+  const newIndexPricesUrl = `https://pricing.mycelium.xyz/prices?network=${chainId}`;
 
-  const { data: indexPrices } = useSWR([indexPricesUrl], {
+  const { data: newIndexPrices } = useSWR([newIndexPricesUrl], {
     // @ts-ignore spread args incorrect type
     fetcher: (...args) => fetch(...args).then((res) => res.json()),
     refreshInterval: 500,
     refreshWhenHidden: true,
   });
+
+  const { data: oldIndexPrices } = useSWR([oldIndexPricesUrl], {
+    // @ts-ignore spread args incorrect type
+    fetcher: (...args) => fetch(...args).then((res) => res.json()),
+    refreshInterval: 500,
+    refreshWhenHidden: true,
+  });
+
+  let indexPrices: Record<string, BigNumber> = {};
+  if (newIndexPrices && oldIndexPrices) {
+    const FIVE_MINUTES = 60 * 5 * 1000;
+    let now = Date.now();
+    Object.keys(newIndexPrices).forEach((address) => {
+      const { medianAge, price } = newIndexPrices[address];
+      const isStale = Number(medianAge) < now - FIVE_MINUTES;
+      if (isStale) {
+        console.warn(`${address} prices are stale (${medianAge}): using prices from ${oldIndexPricesUrl}`);
+        indexPrices[address] = oldIndexPrices[address];
+      } else {
+        indexPrices[address] = price;
+      }
+    })
+  } else if (newIndexPrices) {
+    console.warn(`Using prices from: ${newIndexPricesUrl} without checking price age`);
+    Object.keys(newIndexPrices).forEach((address) => {
+      indexPrices[address] = newIndexPrices[address].price
+    })
+  } else if (oldIndexPrices) {
+    console.warn(`Using prices from: ${oldIndexPricesUrl}`);
+    indexPrices = oldIndexPrices;
+  }
 
   return {
     infoTokens: getInfoTokens(
