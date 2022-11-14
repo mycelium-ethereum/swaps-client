@@ -31,7 +31,7 @@ import { callContract } from "../../Api";
 import PositionRouter from "../../abis/PositionRouter.json";
 import Token from "../../abis/Token.json";
 import { convertStringToFloat } from "../../utils/common";
-import { getMaxLeverage, MAX_LEVERAGE_BUFFER } from "./LeverageInput";
+import { getMaxLeverage } from "./LeverageInput";
 
 const DEPOSIT = "Deposit";
 const WITHDRAW = "Withdraw";
@@ -207,7 +207,7 @@ export default function PositionEditor(props) {
       return "Min leverage: 1.1x";
     }
 
-    const maxLeverage = getMaxLeverage(position.indexToken.symbol) + MAX_LEVERAGE_BUFFER;
+    const maxLeverage = getMaxLeverage(position.indexToken.symbol);
     if (nextLeverageExcludingPnl && nextLeverageExcludingPnl.gt(maxLeverage * BASIS_POINTS_DIVISOR)) {
       return `Max leverage: ${maxLeverage}x`;
     }

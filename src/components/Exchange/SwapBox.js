@@ -79,7 +79,7 @@ import longImg from "../../img/long.svg";
 import shortImg from "../../img/short.svg";
 import swapImg from "../../img/swap.svg";
 import { useUserReferralCode } from "../../Api/referrals";
-import {  getMaxLeverage , LeverageInput, MAX_LEVERAGE_BUFFER } from "./LeverageInput";
+import {  getMaxLeverage , LeverageInput } from "./LeverageInput";
 import { REFERRAL_CODE_KEY } from "../../config/localstorage";
 
 const SWAP_ICONS = {
@@ -800,7 +800,7 @@ export default function SwapBox(props) {
       return ["Min leverage: 1.1x"];
     }
 
-    const maxLeverage = getMaxLeverage(toTokenInfo.symbol) + MAX_LEVERAGE_BUFFER;
+    const maxLeverage = getMaxLeverage(toTokenInfo.symbol);
     if (leverage && leverage.gt(maxLeverage * BASIS_POINTS_DIVISOR)) {
       return [`Max leverage: ${maxLeverage}x`];
     }
