@@ -78,11 +78,12 @@ async function getChartPricesFromStats(_chainId: ChainId, symbol: TokenSymbol, p
   if (["WBTC", "WETH"].includes(symbol)) {
     symbol = symbol.substr(1);
   }
-  const hostname = "https://analytics.mycelium.xyz/";
-  // const hostname = "http://localhost:8080/";
+  const hostname = "https://api.mycelium.xyz/";
+  // const hostname = "http://localhost:3030/";
+  // const hostname = "http://localhost:3113/";
   const timeDiff = CHART_PERIODS[period] * 3000;
   const from = Math.floor(Date.now() / 1000 - timeDiff);
-  const url = `${hostname}api/candles/${symbol}?preferableChainId=42161&period=${period}&from=${from}&preferableSource=fast`;
+  const url = `${hostname}trs/candles?ticker=${symbol}&preferableChainId=42161&period=${period}&from=${from}&preferableSource=fast`;
   const TIMEOUT = 5000;
   const res: Response = await new Promise(async (resolve, reject) => {
     let done = false;
@@ -110,35 +111,23 @@ async function getChartPricesFromStats(_chainId: ChainId, symbol: TokenSymbol, p
     throw new Error(`request failed ${res.status} ${res.statusText}`);
   }
 
-  let json = await res.json();
-  let prices = json?.prices;
+  let prices = await res.json();
   if (!prices || prices?.length < 10) {
     throw new Error(`not enough prices data: ${prices?.length}`);
-  }
-
-  const OBSOLETE_THRESHOLD = Date.now() / 1000 - 60 * 30; // 30 min ago
-  const updatedAt = json?.updatedAt || 0;
-  if (updatedAt < OBSOLETE_THRESHOLD) {
-    throw new Error(
-      "chart data is obsolete, last price record at " +
-        new Date(updatedAt * 1000).toISOString() +
-        " now: " +
-        new Date().toISOString()
-    );
   }
 
   prices = prices.map(({ t, o: open, c: close, h: high, l: low }, i: number) => {
     if (i !== 0) {
       // set open to close
       // prices are sorted in timestamp ascending order
-      open = prices[i-1].c;
+      open = Number(prices[i-1].c);
     }
     return {
-      time: t + timezoneOffset,
-      open,
-      close,
-      high,
-      low,
+      time: Number(t) + timezoneOffset,
+      open: Number(open),
+      close: Number(close),
+      high: Number(high),
+      low: Number(low),
     };
   });
 
