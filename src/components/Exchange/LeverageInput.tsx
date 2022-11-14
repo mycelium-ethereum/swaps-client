@@ -45,12 +45,14 @@ const getMarks = (max: number) => {
   })
 }
 
-export const getLeverageMax = (symbol: string) => {
+export const getMaxLeverage = (symbol: string) => {
   if (["WBTC", "WETH", "ETH"].includes(symbol)) {
-    return 50.5
+    return 50
   } // else
-  return 30.5;
+  return 30;
 }
+
+export const MAX_LEVERAGE_BUFFER = 0.5;
 
 
 export const LeverageInput = ({ value, onChange, max, min, step }) => {
@@ -82,7 +84,7 @@ export const LeverageInput = ({ value, onChange, max, min, step }) => {
       <SliderRow>
         <Slider
           min={min}
-          max={max}
+          max={max + MAX_LEVERAGE_BUFFER}
           step={step}
           marks={getMarks(max)}
           handle={LeverageSliderHandle}
