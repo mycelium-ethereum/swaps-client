@@ -79,7 +79,7 @@ import longImg from "../../img/long.svg";
 import shortImg from "../../img/short.svg";
 import swapImg from "../../img/swap.svg";
 import { useUserReferralCode } from "../../Api/referrals";
-import { LeverageInput } from "./LeverageInput";
+import { getLeverageMax, LeverageInput } from "./LeverageInput";
 import { REFERRAL_CODE_KEY } from "../../config/localstorage";
 
 const SWAP_ICONS = {
@@ -2123,7 +2123,7 @@ export default function SwapBox(props) {
         )}
         {(isLong || isShort) && (
           <div className="Exchange-leverage-box">
-            <LeverageInput value={leverageOption} onChange={setLeverageOption} max={30.5} min={1.1} step={0.01} />
+            <LeverageInput value={leverageOption} onChange={setLeverageOption} max={getLeverageMax(toToken.symbol)} min={1.1} step={0.01} />
             {isShort && (
               <div className="Exchange-info-row">
                 <div className="Exchange-info-label">Profits In</div>

@@ -4,20 +4,53 @@ import Slider, { SliderTooltip } from "rc-slider";
 import "rc-slider/assets/index.css";
 
 
-const LeverageSliderHandle = (props) => {
-    const { value, dragging, index, ...restProps } = props;
-    return (
-      <SliderTooltip
-        prefixCls="rc-slider-tooltip"
-        overlay={`${parseFloat(value).toFixed(2)}x`}
-        visible={dragging}
-        placement="top"
-        key={index}
-      >
-        <Slider.Handle value={value} {...restProps} />
-      </SliderTooltip>
-    );
-  };
+const LeverageSliderHandle = (props: any) => {
+  const { value, dragging, index, ...restProps } = props;
+  return (
+    <SliderTooltip
+      prefixCls="rc-slider-tooltip"
+      overlay={`${parseFloat(value).toFixed(2)}x`}
+      visible={dragging}
+      placement="top"
+      key={index}
+    >
+      <Slider.Handle value={value} {...restProps} />
+    </SliderTooltip>
+  );
+};
+
+const getMarks = (max: number) => {
+  if (max >= 50) {
+    return ({
+      5: "5x",
+      10: "10x",
+      // 15: "15x",
+      20: "20x",
+      // 25: "25x",
+      30: "30x",
+      // 35: "35x",
+      40: "40x",
+      // 45: "45x",
+      50: "50x",
+    })
+  }
+  return ({
+    2: "2x",
+    5: "5x",
+    10: "10x",
+    15: "15x",
+    20: "20x",
+    25: "25x",
+    30: "30x",
+  })
+}
+
+export const getLeverageMax = (symbol: string) => {
+  if (["WBTC", "WETH", "ETH"].includes(symbol)) {
+    return 50.5
+  } // else
+  return 30.5;
+}
 
 
 export const LeverageInput = ({ value, onChange, max, min, step }) => {
@@ -51,15 +84,7 @@ export const LeverageInput = ({ value, onChange, max, min, step }) => {
           min={min}
           max={max}
           step={step}
-          marks={{
-            2: "2x",
-            5: "5x",
-            10: "10x",
-            15: "15x",
-            20: "20x",
-            25: "25x",
-            30: "30x",
-          }}
+          marks={getMarks(max)}
           handle={LeverageSliderHandle}
           onChange={(value) => onChange(value)}
           value={value}
