@@ -437,7 +437,7 @@ export default function Referral(props) {
               trackAction={trackAction}
             />
           )}
-          {userRoundData && /* disable for now */ false && (
+          {userRoundData && (
             <ReferralRewards
               active={active}
               connectWallet={connectWallet}
