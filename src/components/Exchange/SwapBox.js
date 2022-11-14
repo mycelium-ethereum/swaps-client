@@ -3,7 +3,6 @@ import React, { useState, useEffect, useMemo, useCallback } from "react";
 import Tooltip from "../Tooltip/Tooltip";
 import Modal from "../Modal/Modal";
 
-import cx from "classnames";
 import useSWR from "swr";
 import { ethers } from "ethers";
 
@@ -14,8 +13,6 @@ import {
   helperToast,
   formatAmount,
   bigNumberify,
-  ARBITRUM,
-  AVALANCHE,
   USD_DECIMALS,
   USDG_DECIMALS,
   LONG,
@@ -57,7 +54,6 @@ import {
   calculatePositionDelta,
   replaceNativeTokenAddress,
   adjustForDecimals,
-  REFERRAL_CODE_KEY,
   isHashZero,
   NETWORK_NAME,
   getSpread,
@@ -84,6 +80,7 @@ import shortImg from "../../img/short.svg";
 import swapImg from "../../img/swap.svg";
 import { useUserReferralCode } from "../../Api/referrals";
 import { LeverageInput } from "./LeverageInput";
+import { REFERRAL_CODE_KEY } from "../../config/localstorage";
 
 const SWAP_ICONS = {
   [LONG]: longImg,
@@ -181,16 +178,6 @@ export default function SwapBox(props) {
   const isShort = swapOption === SHORT;
   const isSwap = swapOption === SWAP;
 
-  const getLeaderboardLink = () => {
-    if (chainId === ARBITRUM) {
-      return "https://www.gmx.house/arbitrum/leaderboard";
-    }
-    if (chainId === AVALANCHE) {
-      return "https://www.gmx.house/avalanche/leaderboard";
-    }
-    return "https://www.gmx.house";
-  };
-
   function getTokenLabel() {
     switch (true) {
       case isLong:
@@ -219,7 +206,7 @@ export default function SwapBox(props) {
 
   const onOrderOptionChange = (option) => {
     // limits disabled
-    if (typeof option === "string" && option !== LIMIT) {
+    if (typeof option === "string") {
       setOrderOption(option);
     }
   };
@@ -687,7 +674,7 @@ export default function SwapBox(props) {
 
   const getSwapError = () => {
     const gasTokenInfo = getTokenInfo(infoTokens, ethers.constants.AddressZero);
-    if (gasTokenInfo.balance?.eq(0)){
+    if (gasTokenInfo.balance?.eq(0)) {
       return ["Not enough ETH for gas"];
     }
 
@@ -777,7 +764,7 @@ export default function SwapBox(props) {
 
   const getLeverageError = useCallback(() => {
     const gasTokenInfo = getTokenInfo(infoTokens, ethers.constants.AddressZero);
-    if (gasTokenInfo.balance?.eq(0)){
+    if (gasTokenInfo.balance?.eq(0)) {
       return ["Not enough ETH for gas"];
     }
     if (hasOutdatedUi) {
@@ -870,6 +857,17 @@ export default function SwapBox(props) {
           const nextUsdgAmount = fromTokenInfo.usdgAmount.add(usdgFromAmount);
           if (nextUsdgAmount.gt(fromTokenInfo.maxUsdgAmount)) {
             return [`${fromTokenInfo.symbol} pool exceeded, try different token`, true, "MAX_USDG"];
+          }
+        }
+        if (toTokenInfo && toTokenInfo.maxPrice) {
+          const sizeUsd = toAmount.mul(toTokenInfo.maxPrice).div(expandDecimals(1, toTokenInfo.decimals));
+          if (
+            toTokenInfo.maxGlobalLongSize &&
+            toTokenInfo.maxGlobalLongSize.gt(0) &&
+            toTokenInfo.maxAvailableLong &&
+            sizeUsd.gt(toTokenInfo.maxAvailableLong)
+          ) {
+            return [`Max ${toTokenInfo.symbol} long exceeded`];
           }
         }
       }
@@ -1699,16 +1697,6 @@ export default function SwapBox(props) {
     feeBps = feeBasisPoints;
   }
 
-  const leverageMarks = { 
-    2: "2x",
-    5: "5x",
-    10: "10x",
-    15: "15x",
-    20: "20x",
-    25: "25x",
-    30: "30x",
-  };
-
   if (!fromToken || !toToken) {
     return null;
   }
@@ -1879,6 +1867,7 @@ export default function SwapBox(props) {
               type="inline"
               option={orderOption}
               onChange={onOrderOptionChange}
+              newItem={LIMIT}
             />
           )}
         </div>
@@ -2364,7 +2353,7 @@ export default function SwapBox(props) {
                       )}
                       {!hasZeroBorrowFee && (
                         <div>
-                          The borrow fee is calculated as (assets borrowed) / (total assets in pool) * 0.01% per hour.
+                          The borrow fee is calculated as (assets borrowed) / (total assets in pool) * 0.005% per hour.
                           <br />
                           <br />
                           {isShort && `You can change the "Profits In" token above to find lower fees`}

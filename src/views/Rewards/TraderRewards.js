@@ -25,6 +25,7 @@ export default function TraderRewards(props) {
     nextRewards,
     latestRound,
     handleClaim,
+    claimDelay,
     isClaiming,
     hasClaimed
   } = props;
@@ -95,7 +96,7 @@ export default function TraderRewards(props) {
         </Styles.RewardsDataBoxes>
         {active && <RewardsButton
           className={'App-cta large'}
-          disabled={!userRoundData?.totalReward || userRoundData.totalReward.eq(0) || isClaiming || hasClaimed || hasClaimed === undefined || latestRound}
+          disabled={!userRoundData?.totalReward || userRoundData.totalReward.eq(0) || isClaiming || hasClaimed || hasClaimed === undefined || latestRound || claimDelay}
           onClick={handleClaim}
         >
           Claim WETH

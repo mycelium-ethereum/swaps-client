@@ -3,7 +3,6 @@ import { FiChevronDown } from "react-icons/fi";
 import "./AssetDropdown.css";
 import coingeckoIcon from "../../img/ic_coingecko_16.svg";
 import arbitrumIcon from "../../img/ic_arbitrum_16.svg";
-import avalancheIcon from "../../img/ic_avalanche_16.svg";
 import metamaskIcon from "../../img/ic_metamask_16.svg";
 import { addTokenToMetamask, ICONLINKS, platformTokens, useChainId } from "../../Helpers";
 import { useWeb3React } from "@web3-react/core";
@@ -11,11 +10,10 @@ import { useWeb3React } from "@web3-react/core";
 function AssetDropdown({ assetSymbol, assetInfo, trackAction }) {
   const { active } = useWeb3React();
   const { chainId } = useChainId();
-  let { coingecko, arbitrum, avalanche } = ICONLINKS[chainId][assetSymbol];
+  let { coingecko, arbitrum } = ICONLINKS[chainId][assetSymbol];
   const unavailableTokenSymbols = {
     42161: ["ETH"],
-    421611: ["ETH"],
-    43114: ["AVAX"],
+    421613: ["ETH"],
   };
 
   return (
@@ -61,23 +59,6 @@ function AssetDropdown({ assetSymbol, assetInfo, trackAction }) {
                 }
               >
                 <img src={arbitrumIcon} alt="Open in explorer" />
-                <p>Open in Explorer</p>
-              </a>
-            )}
-            {avalanche && (
-              <a
-                target="_blank"
-                rel="noopener noreferrer"
-                href={avalanche}
-                className="asset-item"
-                onClick={() =>
-                  trackAction &&
-                  trackAction("Button clicked", {
-                    buttonName: `Open ${assetInfo.symbol} in Avalanche Explorer`,
-                  })
-                }
-              >
-                <img src={avalancheIcon} alt="Open in explorer" />
                 <p>Open in Explorer</p>
               </a>
             )}

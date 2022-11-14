@@ -32,7 +32,6 @@ import {
   getUsd,
   adjustForDecimals,
   getUserTokenBalances,
-  getAnalyticsEventStage,
   NETWORK_NAME,
   MLP_DECIMALS,
   USD_DECIMALS,
@@ -42,10 +41,9 @@ import {
   USDG_DECIMALS,
   ARBITRUM,
   PLACEHOLDER_ACCOUNT,
-  MM_TOKENS_PER_INTERVAL,
 } from "../../Helpers";
 
-import { callContract, useMYCPrice, useInfoTokens, useMarketMakingApr } from "../../Api";
+import { callContract, useMYCPrice } from "../../Api";
 
 import TokenSelector from "../Exchange/TokenSelector";
 import BuyInputSection from "../BuyInputSection/BuyInputSection";
@@ -66,6 +64,8 @@ import arrowIcon from "../../img/ic_convert_down.svg";
 
 import "./MlpSwap.css";
 import AssetDropdown from "../../views/Dashboard/AssetDropdown";
+import { getAnalyticsEventStage } from "../../utils/analytics";
+import { useInfoTokens } from "src/hooks/useInfoTokens";
 
 const { AddressZero } = ethers.constants;
 
@@ -314,10 +314,8 @@ export default function MlpSwap(props) {
     stakedMlpTrackerApr = stakedMlpTrackerAnnualRewardsUsd.mul(BASIS_POINTS_DIVISOR).div(mlpSupplyUsd);
   }
 
-  let mmApr = useMarketMakingApr(chainId, mlpSupplyUsd);
-
-  if (mmApr && stakedMlpTrackerApr && feeMlpTrackerApr) {
-    totalApr = totalApr.add(mmApr).add(feeMlpTrackerApr).add(stakedMlpTrackerApr);
+  if (stakedMlpTrackerApr && feeMlpTrackerApr) {
+    totalApr = totalApr.add(feeMlpTrackerApr).add(stakedMlpTrackerApr);
   }
 
   useEffect(() => {
@@ -497,7 +495,7 @@ export default function MlpSwap(props) {
     if (isSubmitting) {
       return false;
     }
-    if (isSwapTokenCapReached) {
+    if (isSwapTokenCapReached && isBuying) {
       return false;
     }
 
@@ -843,10 +841,6 @@ export default function MlpSwap(props) {
                         <div className="Tooltip-row">
                           <span className="label">esMYC APR</span>
                           <span>{formatAmount(stakedMlpTrackerApr, 2, 2, false)}%</span>
-                        </div>
-                        <div className="Tooltip-row">
-                          <span className="label">Market Making APR</span>
-                          <span>{formatAmount(mmApr, 2, 2, false)}%</span>
                         </div>
                       </>
                     );

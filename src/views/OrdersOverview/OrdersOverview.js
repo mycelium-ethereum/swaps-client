@@ -21,7 +21,8 @@ import {
   getOrderKey,
 } from "../../Helpers";
 
-import * as Api from "../../Api";
+import * as Api from "../../Api"
+import { useInfoTokens } from "src/hooks/useInfoTokens";
 
 import "./OrdersOverview.css";
 
@@ -31,7 +32,7 @@ export default function OrdersOverview() {
 
   const nativeTokenAddress = getContract(chainId, "NATIVE_TOKEN");
 
-  const { infoTokens } = Api.useInfoTokens(library, chainId, active, undefined, undefined);
+  const { infoTokens } = useInfoTokens(library, chainId, active, undefined, undefined);
 
   const orders = useAllOrders(chainId, library);
   const stats = useAllOrdersStats(chainId);

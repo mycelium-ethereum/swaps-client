@@ -39,6 +39,7 @@ body,
 }
 
 :root {
+  --light-green: #b9e500;
   --dark-blue: #17182c;
   --dark-blue-bg: #16182e;
   --dark-blue-accent: #a0a3c4;
@@ -48,9 +49,12 @@ body,
   --avax-red: #e84143;
   --arbitrum-blue: #28a0f0;
   --border-radius-sm: 4px;
+  --success-active: #4fc423;
 
   --short-active: #dd463a;
   --long-active: #3ee028;
+
+  --darkest-green: #001100;
 
   --background-primary: #000a00;
   --background-secondary: rgba(0, 9, 0, 0.2);
@@ -67,6 +71,7 @@ body,
   --action-hover: #003000;
   --action-stroke: #003000;
   --action-shadow: 0 0 4px 6px rgba(9, 130, 0, 0.1);
+  --action-gradient: linear-gradient(267.64deg, rgba(0, 48, 0, 0.5) -84.72%, rgba(0, 48, 0, 0) 144.55%);
 
   --cell-gradient: linear-gradient(180deg, rgba(5, 67, 1, 0.2) 0%, rgba(5, 67, 1, 0) 65.01%);
   --cell-hover: #03100e;

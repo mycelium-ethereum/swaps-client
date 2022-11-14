@@ -10,6 +10,11 @@
 
 # production
 /build
+/dist
+
+# library
+/public/charting_library
+/public/datafeeds
 
 # misc
 .DS_Store
