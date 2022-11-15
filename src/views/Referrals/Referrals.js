@@ -44,7 +44,7 @@ import { REFERRALS_SELECTED_TAB_KEY, REFERRAL_CODE_KEY } from "../../config/loca
 import ReferralLeaderboard from "./ReferralLeaderboard";
 import { getServerUrl } from "src/lib";
 import ReferralsClaim from "./ReferralsClaim";
-import {callContract} from "src/Api";
+import { callContract } from "src/Api";
 
 const REFERRAL_DATA_MAX_TIME = 60000 * 5; // 5 minutes
 export function isRecentReferralCodeNotExpired(referralCodeInfo) {
@@ -186,7 +186,9 @@ export default function Referral(props) {
         successMsg: "Claim completed!",
         setPendingTxns,
       }
-    ).finally(() => {
+    ).then(() => {
+      setIsClaimModalOpen(false);
+    }).finally(() => {
       setIsClaiming(false);
     });
   }
