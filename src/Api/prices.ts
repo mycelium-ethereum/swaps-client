@@ -80,6 +80,9 @@ async function getChartPricesFromStats(_chainId: ChainId, symbol: TokenSymbol, p
   }
   const hostname = "https://swaps-stats-kltusqhvaa-uw.a.run.app/";
   // const hostname = "http://localhost:8080/";
+  // const hostname = "https://api.mycelium.xyz/";
+  // const hostname = "http://localhost:3030/";
+  // const hostname = "http://localhost:3113/";
   const timeDiff = CHART_PERIODS[period] * 3000;
   const from = Math.floor(Date.now() / 1000 - timeDiff);
   const url = `${hostname}api/candles/${symbol}?preferableChainId=42161&period=${period}&from=${from}&preferableSource=fast`;

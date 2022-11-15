@@ -399,3 +399,18 @@ export const CopyButton = styled.button`
     height: 14px;
   }
 `;
+
+
+export const ReferralsClaimModalRow = styled.div`
+  display: grid;
+  grid-gap: 1rem;
+  grid-template-columns: auto auto;
+  font-size: 0.9rem;
+  margin-bottom: 0.3rem;
+  color: var(--text-secondary);
+
+  div:last-child {
+    color: var(--text-primary);
+    text-align: right;
+  }
+`
