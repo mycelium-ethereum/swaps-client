@@ -1,3 +1,5 @@
+import {ethers} from "ethers";
+
 // [5m, 15m, 60m (1h), 240m(4h), 1D(24h)]
 export const supportedResolutions = ["5", "15", "60", "240", "24H"];
 
@@ -5,8 +7,9 @@ const config = {
   supported_resolutions: [...supportedResolutions],
 };
 
-export const generateDataFeed = (priceData) => {
+export const generateDataFeed = (priceData, getCurrentPrice) => {
   if (!priceData) {
+    console.log("now priceData");
     return null;
   }
   const dataFeed = {
@@ -50,6 +53,7 @@ export const generateDataFeed = (priceData) => {
     },
 
     getBars: (symbolInfo, resolution, periodParams, onResult, onError) => {
+      console.log("Getting bars");
       if (priceData.length) {
         const bars = priceData.map((el) => {
           return {
@@ -70,8 +74,19 @@ export const generateDataFeed = (priceData) => {
       }
     },
 
-    subscribeBars: (_symbolInfo, _resolution, _onRealtimeCallback, _subscribeUID, _onResetCacheNeededCallback) => {
-      console.debug("=====subscribeBars runnning");
+    subscribeBars: (symbolInfo, resolution, onRealtimeCallback, subscriberUID, onResetCacheNeededCallback) => {
+      console.log("Subscribing bars hello");
+      setInterval(() => {
+        console.log("Subscribing bars");
+        const lastBar = priceData[priceData.length - 1];
+        const currentPrice = getCurrentPrice();
+        console.log(currentPrice);
+        if (currentPrice) {
+          const close = Number(ethers.utils.formatUnits(currentPrice, 30)).toFixed(2);
+          console.log("Close", close);
+          onRealtimeCallback({ ...lastBar, close })
+        }
+      }, 5 * 1000)
     },
     unsubscribeBars: (_subscriberUID) => {
       console.debug("=====unsubscribeBars running");

@@ -961,6 +961,7 @@ export const Exchange = forwardRef((props, ref) => {
                     chartToken={chartToken}
                     setChartToken={setChartToken}
                     priceData={priceData}
+                    updatePriceData={updatePriceData}
                     period={period}
                     setPeriod={setPeriod}
                     setToTokenAddress={setToTokenAddress}

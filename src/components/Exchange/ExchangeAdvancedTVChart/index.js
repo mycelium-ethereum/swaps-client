@@ -2,6 +2,7 @@ import React, { useState, useEffect, useMemo, useCallback } from "react";
 import cx from "classnames";
 import { widget } from "@mycelium-swaps-interface/charting_library";
 import { generateDataFeed, supportedResolutions } from "../../../Api/TradingView";
+import {ethers} from "ethers";
 
 const getLanguageFromURL = () => {
   const regex = new RegExp("[\\?&]lang=([^&#]*)");
@@ -41,7 +42,7 @@ const DEFAULT_COLOURS = {
 };
 
 export default function ExchangeAdvancedTVChart(props) {
-  const { chartToken, priceData, period } = props;
+  const { chartToken, priceData, period, currentAveragePrice } = props;
 
   const defaultProps = useMemo(
     () => ({
@@ -65,7 +66,9 @@ export default function ExchangeAdvancedTVChart(props) {
   const [prevToken, setPrevToken] = useState(null);
   const [prevPriceDataLength, setPrevPriceDataLength] = useState(0);
 
-  const dataFeed = useMemo(() => generateDataFeed(priceData), [priceData]);
+  const getCurrentPrice = () => currentAveragePrice;
+
+  const dataFeed = useMemo(() => generateDataFeed(priceData, getCurrentPrice), [priceData]);
 
   const createChart = useCallback(() => {
     const advancedChartPeriod = convertLightweightChartPeriod(period);
@@ -143,9 +146,19 @@ export default function ExchangeAdvancedTVChart(props) {
     }
   }, [chartToken, dataFeed, defaultProps, period]);
 
+  useEffect(() => {
+    if (showChart && tvWidget && tvWidget?.activeChart && currentAveragePrice) {
+      const price = Number(ethers.utils.formatUnits(currentAveragePrice, 30)).toFixed(2);
+      console.log(price);
+      tvWidget.chart().refreshMarks()
+      // tvWidget.activeChart().createShape({ time: Date.now(), price }, { shape: 'vertical_line' });
+    }
+  }, [showChart, tvWidget, currentAveragePrice])
+
   // Create chart
   useEffect(() => {
     if (!tvWidget && priceData?.length && chartToken) {
+      console.log("Setting price")
       createChart();
     }
   }, [chartToken, priceData, tvWidget, createChart]);
@@ -161,6 +174,7 @@ export default function ExchangeAdvancedTVChart(props) {
           tvWidget.remove();
           setTvWidget(null);
         }
+        console.log("Creating chart");
         createChart();
       }, 300); // Wait for overlay animation to complete
     }
