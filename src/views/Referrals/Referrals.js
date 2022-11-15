@@ -516,7 +516,7 @@ export default function Referral(props) {
               setIsClaimModalOpen={setIsClaimModalOpen}
             />
           )}
-          {active && (
+          {active && currentView !== LEADERBOARD && (
             <ReferralsClaim
               isVisible={isClaimModalOpen}
               setIsVisible={setIsClaimModalOpen}
