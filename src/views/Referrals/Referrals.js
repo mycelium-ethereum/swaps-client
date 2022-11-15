@@ -291,6 +291,8 @@ export default function Referral(props) {
         tier: traderData.tier,
         commissions,
         rebates,
+        commissionsVolume: bigNumberify(traderData.commissions_volume),
+        rebatesVolume: bigNumberify(traderData.rebates_volume),
       };
     } else {
       return {

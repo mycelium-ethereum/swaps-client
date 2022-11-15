@@ -1,4 +1,5 @@
 import Modal from "src/components/Modal/Modal";
+import Tooltip from "src/components/Tooltip/Tooltip";
 import {ETH_DECIMALS, formatAmount, formatDate, USD_DECIMALS} from "src/Helpers";
 import { RewardsButton } from "src/Shared.styles";
 import * as Styles from './Referrals.styles';
@@ -31,16 +32,30 @@ export default function ReferralsClaim ({
         <div>{round + 1}</div>
       </Styles.ReferralsClaimModalRow>
       <Styles.ReferralsClaimModalRow>
-        <div className="label">Total volume</div>
-        <div>${formatAmount(userRoundData?.volume, USD_DECIMALS, 4, true)}</div>
+        <div>
+          <Tooltip
+            handle={`Commissions volume`}
+            renderContent={() => `Total volume traded on created referral codes`}
+          />
+        </div>
+        <div>${formatAmount(userRoundData?.commissionsVolume, USD_DECIMALS, 2, true)}</div>
+      </Styles.ReferralsClaimModalRow>
+      <Styles.ReferralsClaimModalRow>
+        <div>
+          <Tooltip
+            handle={`Rebates volume`}
+            renderContent={() => `Total volume traded whilst using a referral code (this can be your own referral code)`}
+          />
+        </div>
+        <div>${formatAmount(userRoundData?.rebatesVolume, USD_DECIMALS, 2, true)}</div>
+      </Styles.ReferralsClaimModalRow>
+      <Styles.ReferralsClaimModalRow>
+        <div className="label">Total Rebates</div>
+        <div>{formatAmount(userRoundData?.rebates, ETH_DECIMALS, 4, true)} WETH</div>
       </Styles.ReferralsClaimModalRow>
       <Styles.ReferralsClaimModalRow>
         <div className="label">Commissions</div>
         <div>{formatAmount(userRoundData?.commissions, ETH_DECIMALS, 4, true)} WETH</div>
-      </Styles.ReferralsClaimModalRow>
-      <Styles.ReferralsClaimModalRow>
-        <div className="label">Rebates</div>
-        <div>{formatAmount(userRoundData?.rebates, ETH_DECIMALS, 4, true)} WETH</div>
       </Styles.ReferralsClaimModalRow>
       <Styles.ReferralsClaimModalRow>
         <div className="label">Total Reward</div>
