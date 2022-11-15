@@ -512,16 +512,18 @@ export default function Referral(props) {
               setIsClaimModalOpen={setIsClaimModalOpen}
             />
           )}
-          <ReferralsClaim
-            isVisible={isClaimModalOpen}
-            setIsVisible={setIsClaimModalOpen}
-            userRoundData={userRoundData}
-            round={selectedRound}
-            handleClaim={handleClaim}
-            isClaiming={isClaiming}
-            connectWallet={connectWallet}
-            active={active}
-          />
+          {active && (
+            <ReferralsClaim
+              isVisible={isClaimModalOpen}
+              setIsVisible={setIsClaimModalOpen}
+              userRoundData={userRoundData}
+              round={selectedRound}
+              handleClaim={handleClaim}
+              isClaiming={isClaiming}
+              connectWallet={connectWallet}
+              active={active}
+            />
+          )}
         </Styles.PersonalReferralContainer>
       </Styles.StyledReferralPage>
     </>
