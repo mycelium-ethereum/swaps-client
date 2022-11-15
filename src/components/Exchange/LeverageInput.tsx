@@ -48,7 +48,7 @@ const getMarks = (max: number) => {
 export const MAX_LEVERAGE_BUFFER = 0.5;
 
 export const getMaxLeverage = (symbol: string) => {
-  if (["WBTC", "WETH", "ETH"].includes(symbol)) {
+  if (["WBTC", "WETH", "ETH", "BTC"].includes(symbol)) {
     return 50 + MAX_LEVERAGE_BUFFER;
   } // else
   return 30 + MAX_LEVERAGE_BUFFER;
