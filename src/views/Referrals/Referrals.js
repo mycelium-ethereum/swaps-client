@@ -501,7 +501,7 @@ export default function Referral(props) {
               trackAction={trackAction}
             />
           )}
-          {userRoundData && (
+          {active && currentView !== LEADERBOARD && userRoundData && (
             <ReferralRewards
               active={active}
               connectWallet={connectWallet}
@@ -516,18 +516,16 @@ export default function Referral(props) {
               setIsClaimModalOpen={setIsClaimModalOpen}
             />
           )}
-          {active && currentView !== LEADERBOARD && (
-            <ReferralsClaim
-              isVisible={isClaimModalOpen}
-              setIsVisible={setIsClaimModalOpen}
-              userRoundData={userRoundData}
-              round={selectedRound}
-              handleClaim={handleClaim}
-              isClaiming={isClaiming}
-              connectWallet={connectWallet}
-              active={active}
-            />
-          )}
+          <ReferralsClaim
+            isVisible={isClaimModalOpen}
+            setIsVisible={setIsClaimModalOpen}
+            userRoundData={userRoundData}
+            round={selectedRound}
+            handleClaim={handleClaim}
+            isClaiming={isClaiming}
+            connectWallet={connectWallet}
+            active={active}
+          />
         </Styles.PersonalReferralContainer>
       </Styles.StyledReferralPage>
     </>
