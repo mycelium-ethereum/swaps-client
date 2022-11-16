@@ -26,15 +26,6 @@ const config = {
 
 const allSymbols = ["ETH/USD", "BTC/USD", "LINK/USD", "CRV/USD", "BAL/USD", "UNI/USD", "FXS/USD"]
 
-const parseFullSymbol = (fullSymbol) => {
-    const match = fullSymbol.match(/^(\w+):(\w+)\/(\w+)$/);
-    if (!match) {
-        return null;
-    }
-
-    return { exchange: match[1], fromSymbol: match[2], toSymbol: match[3] };
-}
-
 export const dataFeed = {
     onReady: (cb) => {
       console.debug("=====onReady running");

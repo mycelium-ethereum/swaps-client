@@ -167,61 +167,6 @@ export default function ExchangeAdvancedTVChart(props) {
     }
   }, [tvWidget, period, chartToken?.symbol])
 
-  // useEffect(() => {
-    // if (tvWidget && tvWidget.activeChart && chartToken) {
-      // console.log("Setting symvol", chartToken)
-      // tvWidget.activeChart().setSymbol(":ETH/USD");
-    // }
-  // }, [tvWidget, chartToken])
-
-  // Update chart on period change
-  // useEffect(() => {
-    // if (tvWidget && prevPeriod !== period && priceData?.length !== prevPriceDataLength && priceData?.length > 0) {
-      // setPrevPeriod(period);
-      // setPrevPriceDataLength(priceData.length);
-      // setShowChart(false);
-      // setTimeout(() => {
-        // if (tvWidget) {
-          // tvWidget.remove();
-          // setTvWidget(null);
-        // }
-        // createChart();
-      // }, 300); // Wait for overlay animation to complete
-    // }
-  // }, [period, prevPeriod, tvWidget, createChart, prevPriceDataLength, priceData?.length]);
-
-  // Recreate chart on token change
-  // useEffect(() => {
-    // if (showChart && tvWidget && priceData?.length !== prevPriceDataLength && prevToken !== chartToken?.address) {
-      // setShowChart(false);
-      // setPrevToken(chartToken?.address);
-      // setTimeout(() => {
-        // if (tvWidget) {
-          // tvWidget.remove();
-          // setTvWidget(null);
-        // }
-        // createChart();
-      // }, 300); // Wait for overlay animation to complete
-    // }
-  // }, [
-    // showChart,
-    // prevToken,
-    // tvWidget,
-    // priceData,
-    // chartToken?.address,
-    // chartToken?.symbol,
-    // period,
-    // createChart,
-    // prevPriceDataLength,
-  // ]);
-
-  // useEffect(() => {
-    // if (!priceData) {
-      // tvWidget.remove();
-      // setTvWidget(null);
-    // }
-  // }, [tvWidget, priceData]);
-
   if (!priceData || !chartToken) {
     return null;
   }
