@@ -142,20 +142,17 @@ export default function Referral(props) {
   const merkleDistributorReader = getContract(chainId, "MerkleDistributorReader");
 
   function handleClaim() {
-    console.log("Claiming rewards");
     setIsClaiming(true);
-    // helperToast.error("Claiming rewards is currently disabled");
     trackAction("Button clicked", {
       buttonName: "Claim rewards",
     });
-    console.log(userProof);
     let error;
     if (selectedRound === "latest") {
       helperToast.error("Cannot claim rewards before round has ended");
       error = true;
     }
     if (!userProof) {
-      helperToast.error("Fetching merkle proof");
+      helperToast.error("Fetching merkle proof. Please wait a minute and try again");
       error = true;
     }
     if (userProof.amount === "0") {
