@@ -1,6 +1,5 @@
-import { CHART_PERIODS, CHART_SECONDS } from "src/Helpers";
+import { CHART_PERIODS } from "src/Helpers";
 import { fillGaps, getChartPrices } from "../prices";
-import { ethers } from "ethers";
 
 // [5m, 15m, 60m (1h), 240m(4h), 1D(24h)]
 export const supportedResolutions = ["1", "5", "15", "60", "240", "24H"];
@@ -25,7 +24,7 @@ const config = {
 };
 
 
-const allSymbols = ["ETH/USD", "BTC/USD"]
+const allSymbols = ["ETH/USD", "BTC/USD", "LINK/USD", "CRV/USD", "BAL/USD", "UNI/USD", "FXS/USD"]
 
 const parseFullSymbol = (fullSymbol) => {
     const match = fullSymbol.match(/^(\w+):(\w+)\/(\w+)$/);
