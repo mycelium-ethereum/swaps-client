@@ -50,7 +50,7 @@ export default function ReferralLeaderboard(props) {
     }
   });
 
-  const modifiedRewardsMessage = [COMPETITION_ROUND, "latest"].includes(selectedRound)
+  const modifiedRewardsMessage = [COMPETITION_ROUND].includes(selectedRound)
     ? "Competition Round"
     : rewardsMessage;
 
