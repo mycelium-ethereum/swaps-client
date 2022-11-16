@@ -24,6 +24,18 @@ const config = {
   ]
 };
 
+
+const allSymbols = ["ETH/USD", "BTC/USD"]
+
+const parseFullSymbol = (fullSymbol) => {
+    const match = fullSymbol.match(/^(\w+):(\w+)\/(\w+)$/);
+    if (!match) {
+        return null;
+    }
+
+    return { exchange: match[1], fromSymbol: match[2], toSymbol: match[3] };
+}
+
 export const dataFeed = {
     onReady: (cb) => {
       console.debug("=====onReady running");
@@ -35,29 +47,32 @@ export const dataFeed = {
       const symbols = [
         {
           symbol: 'ETH/USD',
-
-          full_name: `${ethers.constants.AddressZero.toString()}:ETH/USD`,
+          ticker: 'ETH/USD',
+          full_name: `Swaps:ETH/USD`,
           description: 'Ethereum',
           type: 'crypto',
         }
       ]
-      setTimeout(() => onResultReadyCallback(symbols));
+      onResultReadyCallback(symbols);
     },
 
     resolveSymbol: (symbolName, onSymbolResolvedCallback, onResolveErrorCallback) => {
-      console.log("here and resolving")
-      console.log("resolveSymbol:", { symbolName });
-      const marketId = symbolName.split(":")[1];
-      const symbolStub = {
-        name: marketId,
-        full_name: `Swaps:${marketId}`,
-        description: marketId,
+      console.log('[resolveSymbol]: Method call', symbolName);
+      const market = symbolName.replace("Swaps:", "");
+      if (!allSymbols.includes(market)) {
+        onResolveErrorCallback('cannot resolve symbol');
+        return;
+      }
+      const symbol = {
+        name: market,
+        ticker: market,
+        full_name: symbolName,
+        description: market,
         type: "crypto",
         session: "24x7",
         exchange: "Swaps",
         timezone: "Etc/UTC",
         format: "price",
-        ticker: marketId,
         listed_exchange: "",
         minmov: 1,
         minmov2: 0,
@@ -67,27 +82,30 @@ export const dataFeed = {
         supported_resolutions: supportedResolutions,
       };
 
-      if (marketId.split("/")[1].match(/USD|EUR|JPY|AUD|GBP|KRW|CNY/)) {
-        symbolStub.pricescale = 100;
+      if (market.split("/")[1].match(/USD|EUR|JPY|AUD|GBP|KRW|CNY/)) {
+        symbol.pricescale = 100;
       }
-      setTimeout(function () {
-        onSymbolResolvedCallback(symbolStub);
-        console.debug("Resolving that symbol....", symbolStub);
-      }, 0);
+      onSymbolResolvedCallback(symbol);
     },
 
-    getBars: async (symbolInfo, resolution, periodParams, onResult, onError) => {
-      console.log("getting bars")
-      const symbol = symbolInfo.name.split("/")[0];
-      const period = supportedResolutionsToPeriod[resolution];
-      console.log("Period in", period, resolution, periodParams);
-      const prices_ = await getChartPrices(42161, symbol, period, periodParams);
-      console.log("prices1", prices_)
-      const prices = fillGaps(prices_, CHART_PERIODS[period])
-      console.log("prices", prices);
-      // console.log(prices);
-      // console.log("getting bars", symbolInfo, resolution, periodParams)
-      // if (prices.length) {
+    getBars: async (symbolInfo, resolution, periodParams, onResult, onErrorCallback) => {
+      const { from, to, firstDataRequest } = periodParams;
+      console.log('[getBars]: Method call', symbolInfo, resolution, from, to);
+      try {
+        const symbol = symbolInfo.name.split("/")[0];
+        const period = supportedResolutionsToPeriod[resolution];
+
+        // const prices_ = await getChartPrices(42161, symbol, period);
+        const prices_ = await getChartPrices(42161, symbol, period, periodParams);
+
+        if (prices_.length === 0) {
+          // "noData" should be set if there is no data in the requested period.
+          onResult([], { noData: true });
+          return;
+        }
+
+        const prices = fillGaps(prices_, CHART_PERIODS[period])
+
         const bars = prices.map((el) => {
           return {
             ...el,
@@ -95,22 +113,17 @@ export const dataFeed = {
           };
         })
 
-        // if (!periodParams.firstDataRequest) {
-          // onResult([], { noData: true});
-        if (bars.length < periodParams.countBack) {
-          onResult(bars, { noData: false });
-        } else {
-          onResult(bars, { noData: false });
-        }
-      // } 
-    // else {
-        // onResult([], { noData: true });
-      // }
-    },
-    getMarks: () => {
-      console.log("getting marks")
-    },
+        console.log(`[getBars]: returned ${bars.length} bar(s)`);
 
+        if (!firstDataRequest) {
+          onResult([], { noData: true});
+        }
+        onResult(bars, { noData: false });
+      } catch (error) {
+          console.log('[getBars]: Get error', error);
+          onErrorCallback(error);
+      }
+    },
     subscribeBars: (_symbolInfo, _resolution, _onRealtimeCallback, _subscribeUID, _onResetCacheNeededCallback) => {
       console.debug("=====subscribeBars runnning");
     },

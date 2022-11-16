@@ -73,7 +73,7 @@ export default function ExchangeAdvancedTVChart(props) {
     // const advancedChartPeriod = convertLightweightChartPeriod(period);
     const widgetOptions = {
       ...defaultProps,
-      // symbol: `${chartToken?.address}:${chartToken?.symbol}/USD`,
+      // symbol: `${chartToken?.address}:${chartToken?.eymbol}/USD`,
       debug: true,
       datafeed: dataFeed,
       // interval: advancedChartPeriod,
@@ -165,7 +165,7 @@ export default function ExchangeAdvancedTVChart(props) {
       }
       resetChart()
     }
-  }, [tvWidget, period, chartToken])
+  }, [tvWidget, period, chartToken?.symbol])
 
   // useEffect(() => {
     // if (tvWidget && tvWidget.activeChart && chartToken) {
