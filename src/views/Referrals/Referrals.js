@@ -183,11 +183,12 @@ export default function Referral(props) {
         successMsg: "Claim completed!",
         setPendingTxns,
       }
-    ).then(() => {
-      setIsClaimModalOpen(false);
+    ).then(async (res) => {
+        await res.wait();
+        setIsClaimModalOpen(false);
     }).finally(() => {
       setIsClaiming(false);
-    });
+    })
   }
 
   // Fetch all week data from server
