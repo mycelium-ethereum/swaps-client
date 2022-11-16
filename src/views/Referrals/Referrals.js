@@ -90,8 +90,8 @@ const HASH_BY_VIEW = {
 
 export default function Referral(props) {
   const location = useLocation();
-  const { connectWallet, trackAction, infoTokens } = props;
-  const { active, account, library, chainId: chainIdWithoutLocalStorage, pendingTxns, setPendingTxns } = useWeb3React();
+  const { connectWallet, trackAction, infoTokens, pendingTxns, setPendingTxns } = props;
+  const { active, account, library, chainId: chainIdWithoutLocalStorage } = useWeb3React();
   const { chainId } = useChainId();
   const { ensName } = useENS(account);
   const { data: referralsData } = useReferralsData(chainIdWithoutLocalStorage, account);
