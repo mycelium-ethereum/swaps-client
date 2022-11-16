@@ -1,6 +1,6 @@
 import Modal from "src/components/Modal/Modal";
 import Tooltip from "src/components/Tooltip/Tooltip";
-import {ETH_DECIMALS, formatAmount, formatDate, USD_DECIMALS} from "src/Helpers";
+import { ETH_DECIMALS, formatAmount, USD_DECIMALS } from "src/Helpers";
 import { RewardsButton } from "src/Shared.styles";
 import * as Styles from './Referrals.styles';
 import { UserRoundData } from "./Referrals.types";
