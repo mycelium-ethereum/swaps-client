@@ -5,7 +5,7 @@ import { ethers } from "ethers";
 
 import { USD_DECIMALS, CHART_PERIODS, formatAmount, sleep } from "../Helpers";
 import { chainlinkClient } from "./common";
-import { ChainId, Period, TokenSymbol } from "../types/common";
+import { ChainId, Period, TokenSymbol, Range } from "../types/common";
 
 
 type Price = {
@@ -36,7 +36,7 @@ const FEED_ID_MAP = {
 };
 const timezoneOffset = -new Date().getTimezoneOffset() * 60;
 
-function fillGaps(prices: Price[], periodSeconds: number) {
+export function fillGaps(prices: Price[], periodSeconds: number) {
   if (prices.length < 2) {
     return prices;
   }
@@ -74,15 +74,16 @@ function fillGaps(prices: Price[], periodSeconds: number) {
   return newPrices;
 }
 
-async function getChartPricesFromStats(_chainId: ChainId, symbol: TokenSymbol, period: Period) {
+async function getChartPricesFromStats(_chainId: ChainId, symbol: TokenSymbol, period: Period, range?: Range) {
   if (["WBTC", "WETH"].includes(symbol)) {
     symbol = symbol.substr(1);
   }
+  console.log("period in fetch", period)
   const hostname = "https://api.mycelium.xyz/";
   // const hostname = "http://localhost:3030/";
   // const hostname = "http://localhost:3113/";
   const timeDiff = CHART_PERIODS[period] * 3000;
-  const from = Math.floor(Date.now() / 1000 - timeDiff);
+  const from = range?.from ? range?.from - timeDiff : Math.floor(Date.now() / 1000 - timeDiff);
   const url = `${hostname}trs/candles?ticker=${symbol}&preferableChainId=42161&period=${period}&from=${from}&preferableSource=fast`;
   const TIMEOUT = 5000;
   const res: Response = await new Promise(async (resolve, reject) => {
@@ -173,7 +174,7 @@ function getCandlesFromPrices(prices, period: Period) {
   }));
 }
 
-async function getChainlinkChartPricesFromGraph(symbol: TokenSymbol, period: Period) {
+async function getChainlinkChartPricesFromGraph(symbol: TokenSymbol, period: Period, range?: Range) {
   if (["WBTC", "WETH"].includes(symbol)) {
     symbol = symbol.substr(1);
   }
@@ -225,24 +226,28 @@ async function getChainlinkChartPricesFromGraph(symbol: TokenSymbol, period: Per
     });
 }
 
+
+export const getChartPrices = async (chainId: ChainId, symbol: TokenSymbol, period: Period, range?: Range) => {
+  try {
+    console.log(period);
+    return await getChartPricesFromStats(chainId, symbol, period, range);
+  } catch (ex) {
+    console.warn(ex);
+    console.warn("Switching to graph chainlink data");
+    try {
+      return await getChainlinkChartPricesFromGraph(symbol, period, range);
+    } catch (ex2) {
+      console.warn("getChainlinkChartPricesFromGraph failed");
+      console.warn(ex2);
+      return [];
+    }
+  }
+}
+
 export function useChartPrices(chainId: ChainId, symbol: TokenSymbol, isStable: boolean, period: Period, currentAveragePrice: ethers.BigNumber) {
   const swrKey = !isStable && symbol ? ["getChartCandles", chainId, symbol, period] : null;
   let { data: prices, mutate: updatePrices } = useSWR(swrKey, {
-    fetcher: async (...args) => {
-      try {
-        return await getChartPricesFromStats(chainId, symbol, period);
-      } catch (ex) {
-        console.warn(ex);
-        console.warn("Switching to graph chainlink data");
-        try {
-          return await getChainlinkChartPricesFromGraph(symbol, period);
-        } catch (ex2) {
-          console.warn("getChainlinkChartPricesFromGraph failed");
-          console.warn(ex2);
-          return [];
-        }
-      }
-    },
+    fetcher: async (...args) => getChartPrices(chainId, symbol, period),
     dedupingInterval: 60000,
     focusThrottleInterval: 60000 * 10,
   });
