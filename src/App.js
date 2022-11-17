@@ -986,13 +986,6 @@ function FullApp() {
         draggable={false}
         pauseOnHover
       />
-      <EventModal
-        isModalVisible={isEventModalVisible}
-        setEventModalVisible={setEventModalVisible}
-        eventKey={"referrals-comp"}
-        twitterButtonText={"Share your code for a chance to win"}
-        twitterText={`🍄🍄🍄 @mycelium_xyz IYKYK\n\nUse my code for a discount: [insert code]\nhttps://swaps.mycelium.xyz/referrals`}
-      />
       <EventToastContainer />
       <Modal
         className="Connect-wallet-modal"
