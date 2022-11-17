@@ -21,7 +21,7 @@ const TABLE_HEADINGS = [
   "Rewards (USD)",
 ];
 
-const COMPETITION_ROUND = 7;
+const COMPETITION_ROUND = '7';
 
 export default function ReferralLeaderboard(props) {
   const [isPodiumShown, setIsPodiumShown] = useState(true);
