@@ -127,7 +127,6 @@ export default function ExchangeAdvancedTVChart(props) {
     };
     try {
       const tvWidget = new widget(widgetOptions);
-      console.log(tvWidget);
       tvWidget.onChartReady(() => {
         setShowChart(true);
         setTvWidget(tvWidget);
