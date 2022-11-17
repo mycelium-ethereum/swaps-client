@@ -138,17 +138,6 @@ export default function Sidebar({ sidebarVisible, setSidebarVisible }) {
                 </a>
               </MenuItem>
             </NavMenu>
-            <EventBox>
-              <EventHeader>WHAT'S HAPPENING THIS WEEK</EventHeader>
-              <EventContent>
-                <EventGraphic src={graphic} />
-                <EventTitle>Mycelium Referrals Competition</EventTitle>
-                <EventDescription>Win $20,000 USDC in prizes for sharing the trading spirit.</EventDescription>
-                <Link to="/referrals#leaderboard">
-                  <ViewNowButton>View Now</ViewNowButton>
-                </Link>
-              </EventContent>
-            </EventBox>
             <BottomMenuItem>
               <a
                 href="https://swaps.docs.mycelium.xyz/perpetual-swaps/mycelium-perpetual-swaps"
