@@ -45,35 +45,7 @@ const EVENTS = {
         to be updated.
       </span>
     ),
-  },
-  "referrals-comp": {
-    title: (
-      <>
-        <h2>
-          Referrals Competition is{" "}
-          <Styled.LiveSpanContainer>
-            <Styled.LiveIcon /> <Styled.GreenText>Live</Styled.GreenText>
-          </Styled.LiveSpanContainer>
-        </h2>
-      </>
-    ),
-    description: (
-      <div>
-        <p>
-          <b>Share your referral code for the chance to win $20,000 USDC in prizes.</b>
-        </p>
-        <p>
-          The most creative referral code tweet wins third prize of $3,000 USDC. You must tag{" "}
-          <a href="https://twitter.com/mycelium_xyz" target="_blank" rel="noopener noreferrer" className="inline-link">
-            @mycelium_xyz
-          </a>{" "}
-          on Twitter to be eligible.
-        </p>
-      </div>
-    ),
-    continueLink: "/referrals#commissions",
-    continueLinkText: "Generate code now",
-  },
+  }
 };
 
 export default function EventModal({
