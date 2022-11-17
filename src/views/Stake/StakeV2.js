@@ -965,7 +965,7 @@ export default function StakeV2({
               <StakeV2Styled.VestingInfo>
                 <StakeV2Styled.StakedTokens>
                   <StakeV2Styled.RewardsBannerText secondary large>
-                    Staked Tokens
+                    Vesting Tokens
                   </StakeV2Styled.RewardsBannerText>
                   <div>
                     <StakeV2Styled.RewardsBannerTextWrap>
@@ -980,13 +980,6 @@ export default function StakeV2({
                   </div>
                 </StakeV2Styled.StakedTokens>
                 <StakeV2Styled.StakingBannerRow>
-                  <div className="App-card-row">
-                    <div className="label">Reserved for Vesting</div>
-                    <div>
-                      {formatKeyAmount(vestingData, "mlpVesterPairAmount", 18, 2, true)} /{" "}
-                      {formatAmount(totalRewardTokens, 18, 2, true)}
-                    </div>
-                  </div>
                   <div className="App-card-row">
                     <div className="label">Vesting Status</div>
                     <div>
@@ -1053,10 +1046,10 @@ export default function StakeV2({
                 </StakeV2Styled.StakingBannerRow>
                 <StakeV2Styled.StakingBannerRow borderTop>
                   <StakeV2Styled.RewardsBannerText large title>
-                    MYC Staking
+                    MYC/esMYC Staking
                   </StakeV2Styled.RewardsBannerText>
                   <StakeV2Styled.RewardsBannerText secondary title>
-                    Stake MYC to receive interest in ETH
+                    Stake MYC & esMYC to receive interest in ETH
                   </StakeV2Styled.RewardsBannerText>
                   {stakingApr && (
                     <div className="App-card-row">
@@ -1066,7 +1059,7 @@ export default function StakeV2({
                   )}
                   <StakeV2Styled.Buttons>
                     <a href="https://stake.mycelium.xyz" target="_blank" rel="noopener noreferrer">
-                      <button className="App-button-option App-card-option">MYC Staking</button>
+                      <button className="App-button-option App-card-option">MYC/esMYC Staking</button>
                     </a>
                   </StakeV2Styled.Buttons>
                 </StakeV2Styled.StakingBannerRow>
