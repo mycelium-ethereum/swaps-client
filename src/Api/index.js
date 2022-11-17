@@ -12,7 +12,7 @@ import Router from "../abis/Router.json";
 import LentMyc from "../abis/LentMyc.json";
 import UniPool from "../abis/UniPool.json";
 import Token from "../abis/Token.json";
-import VaultReader from "../abis/VaultReader.json";
+import RewardsTracker from "../abis/RewardTracker.json";
 
 import { getContract } from "../Addresses";
 import { getConstant } from "../Constants";
@@ -29,24 +29,16 @@ import {
   fetcher,
   parseValue,
   expandDecimals,
-  getInfoTokens,
   helperToast,
-  getSupplyUrl,
-  getTracerServerUrl,
-  MM_FEE_MULTIPLIER,
-  FEE_MULTIPLIER_BASIS_POINTS,
-  BASIS_POINTS_DIVISOR,
   USD_DECIMALS,
   ETH_DECIMALS,
-  MM_SWAPS_FEE_MULTIPLIER,
-  FORTNIGHTS_IN_YEAR,
-  useLocalStorageSerializeKey,
   ARBITRUM_GOERLI,
+  SECONDS_PER_YEAR
 } from "../Helpers";
-import { getTokens, getTokenBySymbol, getWhitelistedTokens } from "../data/Tokens";
+import { getTokenBySymbol } from "../data/Tokens";
 
 import { nissohGraphClient, arbitrumGraphClient, arbitrumTestnetGraphClient } from "./common";
-import { SECONDS_PER_WEEK } from "../data/Fees";
+import { getServerUrl, getSupplyUrl } from "src/lib";
 export * from "./prices";
 
 const { AddressZero } = ethers.constants;
@@ -113,137 +105,40 @@ export function useFeesSince(chainId, from, to) {
   return res;
 }
 
-export function useMarketMakingFeesSince(chainId, from, to, stableTokens) {
-  const [res, setRes] = useState();
+const FEE_MULTIPLIER_BASIS_POINTS = 4;
+const MM_FEE_MULTIPLIER = bigNumberify(6);
+const MM_SWAPS_FEE_MULTIPLIER = bigNumberify(12);
 
-  const stableMap = stableTokens.reduce((o, t) => ({ ...o, [t.address.toLowerCase()]: true }), {});
-
+export function useSpreadCaptureVolume(chainId) {
+  // spread capture turned off
+  const to = 1665792441;
   const query = gql(`{
-    hourlyVolumes (first: 1000, where: { id_gte: ${from}, id_lt: ${to}}) {
+    volumeStats(first: 1000, period: daily, orderBy: id, orderDirection: desc, where: { id_lt: ${to} }) {
+      margin
       liquidation
+      swap
       mint
       burn
-      margin
-    },
-    tokensSwapsVolume1: hourlyVolumeByTokens (first: 1000, where: { timestamp_gte: ${from}, timestamp_lt: ${to} }) {
-      swap
-      tokenA
-      tokenB
-    },
-    tokensSwapsVolume2: hourlyVolumeByTokens (first: 1000, skip: 1000, where: { timestamp_gte: ${from}, timestamp_lt: ${to} }) {
-      swap
-      tokenA
-      tokenB
-    },
+    }
   }`);
 
-  useEffect(() => {
-    if (!from) {
-      return;
-    }
-    getMycGraphClient(chainId)
-      .query({ query })
-      .then((res) => {
-        if (res.data.hourlyVolumes) {
-          let mmFees = res.data.hourlyVolumes.reduce(
-            (sum, stat) =>
-              sum
-                .add(MM_FEE_MULTIPLIER.mul(stat.mint))
-                .add(MM_FEE_MULTIPLIER.mul(stat.burn))
-                .add(MM_FEE_MULTIPLIER.mul(stat.margin))
-                .add(MM_FEE_MULTIPLIER.mul(stat.liquidation)),
-            bigNumberify(0)
-          );
+  const [res, setRes] = useState(undefined);
 
-          const allSwapsVolume = res.data.tokensSwapsVolume1.concat(res.data.tokensSwapsVolume2);
-          let swapMMFees = allSwapsVolume.reduce((sum, stat) => {
-            const tokenAIsStable = stableMap[stat.tokenA];
-            const tokenBIsStable = stableMap[stat.tokenB];
-            if (tokenAIsStable && tokenBIsStable) {
-              return sum;
-            } else if (!tokenAIsStable && !tokenBIsStable) {
-              return sum.add(MM_SWAPS_FEE_MULTIPLIER.mul(stat.swap));
-            } else {
-              return sum.add(MM_FEE_MULTIPLIER.mul(stat.swap));
-            }
-          }, bigNumberify(0));
-          setRes(mmFees.add(swapMMFees).div(expandDecimals(1, FEE_MULTIPLIER_BASIS_POINTS)));
-        }
-      })
-      .catch(console.warn);
-  }, [setRes, query, chainId, from]);
+  useEffect(() => {
+    getMycGraphClient(chainId).query({ query }).then((res) => {
+      const totalMMFees = res.data.volumeStats.reduce((sum, stat) => sum
+        .add(MM_FEE_MULTIPLIER.mul(stat.mint))
+        .add(MM_FEE_MULTIPLIER.mul(stat.burn))
+        .add(MM_FEE_MULTIPLIER.mul(stat.margin))
+        .add(MM_FEE_MULTIPLIER.mul(stat.liquidation))
+        .add(MM_SWAPS_FEE_MULTIPLIER.mul(stat.swap))
+      , bigNumberify(0));
+      setRes(totalMMFees.div(expandDecimals(1, FEE_MULTIPLIER_BASIS_POINTS)))
+    }).catch(console.warn);
+  }, [setRes, query, chainId]);
 
   return res;
 }
-
-export function useUserSpreadCapture(chainId, account, mlpBalance, ethPrice) {
-  const [spreadCapturePerToken, setSpreadCapturePerToken] = useState();
-
-  const [hasRecentlyClaimed, setHasRecentlyClaimed] = useLocalStorageSerializeKey(
-    [chainId, "Recently-claimed-spread-capture"],
-    true
-  );
-
-  // if claimed in the last 5 minutes then zero out rewards
-  const shouldZeroSpreadCapture = useMemo(
-    () => Number(hasRecentlyClaimed) + 60 * 5 * 1000 > Date.now(),
-    [hasRecentlyClaimed]
-  );
-
-  useEffect(() => {
-    const query = gql(`{
-      spreadCapture(id: "total") {
-        cumulativeRewardsPerToken
-      },
-      userSpreadCapture(id: "${account?.toLowerCase() ?? ""}") {
-        id
-        lastCumulativeRewardsPerToken
-      }
-    }`);
-
-    getMycGraphClient(chainId)
-      .query({ query })
-      .then((res) => {
-        if (res.data.spreadCapture && res.data.userSpreadCapture) {
-          let cumulativeRewardsPerToken = bigNumberify(res.data.spreadCapture.cumulativeRewardsPerToken);
-          let lastCumulativeRewardsPerToken = bigNumberify(res.data.userSpreadCapture.lastCumulativeRewardsPerToken);
-          setSpreadCapturePerToken(cumulativeRewardsPerToken.sub(lastCumulativeRewardsPerToken));
-        }
-      })
-      .catch(console.warn);
-  }, [chainId, account]);
-
-  let userSpreadCapture, userSpreadCaptureEth;
-  if (spreadCapturePerToken && mlpBalance && ethPrice) {
-    if (shouldZeroSpreadCapture) {
-      userSpreadCapture = ethers.BigNumber.from(0);
-      userSpreadCaptureEth = ethers.BigNumber.from(0);
-    } else {
-      userSpreadCapture = spreadCapturePerToken.mul(mlpBalance).div(expandDecimals(1, 18));
-      userSpreadCaptureEth = userSpreadCapture.mul(expandDecimals(1, 18)).div(ethPrice);
-    }
-  }
-
-  return {
-    userSpreadCapture,
-    userSpreadCaptureEth,
-    setHasRecentlyClaimed,
-  };
-}
-
-export const useMarketMakingApr = (chainId, mlpSupplyUsd) => {
-  const whitelistedTokens = getWhitelistedTokens(chainId);
-  const stableTokens = whitelistedTokens.filter((t) => t.isStable);
-
-  const [to] = useState(Math.floor(Date.now() / 1000));
-  const from = to - SECONDS_PER_WEEK;
-  const lastWeeksMMFees = useMarketMakingFeesSince(chainId, from, to, stableTokens);
-
-  if (lastWeeksMMFees && mlpSupplyUsd && mlpSupplyUsd.gt(0)) {
-    let mmAnnualFeesUsd = lastWeeksMMFees.mul(52);
-    return mmAnnualFeesUsd.mul(BASIS_POINTS_DIVISOR).div(mlpSupplyUsd);
-  }
-};
 
 export function useVolume(chainId) {
   const query = gql(`{
@@ -287,50 +182,6 @@ export function useAllOrdersStats(chainId) {
   }, [setRes, query, chainId]);
 
   return res ? res.data.orderStat : null;
-}
-
-export function useInfoTokens(library, chainId, active, tokenBalances, fundingRateInfo, vaultPropsLength) {
-  const tokens = getTokens(chainId);
-  const vaultReaderAddress = getContract(chainId, "VaultReader");
-  const vaultAddress = getContract(chainId, "Vault");
-  const positionRouterAddress = getContract(chainId, "PositionRouter");
-  const nativeTokenAddress = getContract(chainId, "NATIVE_TOKEN");
-
-  const whitelistedTokens = getWhitelistedTokens(chainId);
-  const whitelistedTokenAddresses = whitelistedTokens.map((token) => token.address);
-
-  const { data: vaultTokenInfo } = useSWR(
-    [`useInfoTokens:${active}`, chainId, vaultReaderAddress, "getVaultTokenInfoV3"],
-    {
-      fetcher: fetcher(library, VaultReader, [
-        vaultAddress,
-        positionRouterAddress,
-        nativeTokenAddress,
-        expandDecimals(1, 18),
-        whitelistedTokenAddresses,
-      ]),
-    }
-  );
-
-  const indexPricesUrl = getTracerServerUrl(chainId, "/prices");
-  const { data: indexPrices } = useSWR([indexPricesUrl], {
-    fetcher: (...args) => fetch(...args).then((res) => res.json()),
-    refreshInterval: 500,
-    refreshWhenHidden: true,
-  });
-
-  return {
-    infoTokens: getInfoTokens(
-      tokens,
-      tokenBalances,
-      whitelistedTokens,
-      vaultTokenInfo,
-      fundingRateInfo,
-      vaultPropsLength,
-      indexPrices,
-      nativeTokenAddress
-    ),
-  };
 }
 
 export function useUserStat(chainId) {
@@ -552,7 +403,7 @@ function invariant(condition, errorMsg) {
 }
 
 export function useTrades(chainId, account) {
-  let url = getTracerServerUrl(chainId, "/actions");
+  let url = getServerUrl(chainId, "/actions");
   if (account && account.length) {
     url += `&account=${account}`;
   }
@@ -1212,76 +1063,46 @@ function ToastifyDebug(props) {
 export function useStakingApr(mycPrice, ethPrice) {
   const [stakingApr, setStakingApr] = useState(null);
 
-  const { data: currentCycle } = useSWR(
-    [`useStakingApr:currentCycle:${ARBITRUM}`, ARBITRUM, getContract(ARBITRUM, "LentMYC"), "cycle"],
+  // apr is annualised rewards (USD value) / total staked (USD value) * 100
+  const { data: tokensPerInterval } = useSWR(
+    [`useStakingApr:tokensPerInterval:${ARBITRUM}`, ARBITRUM, getContract(ARBITRUM, "MYCStakingRewards"), "tokensPerInterval"],
     {
-      fetcher: fetcher(undefined, LentMyc),
+      fetcher: fetcher(undefined, RewardsTracker),
     }
   );
 
-  const cycle = currentCycle?.toNumber();
-
-  const { data: mycAssetsInStaking } = useSWR(
-    cycle
-      ? [`useStakingApr:mycInStaking:${ARBITRUM}`, ARBITRUM, getContract(ARBITRUM, "LentMYC"), "totalAssets"]
-      : null,
+  const mycTokenAddress = getContract(ARBITRUM, 'MYC');
+  const { data: mycDeposited } = useSWR(
+    [`useStakingApr:totalDepositSupply(MYC):${ARBITRUM}`, ARBITRUM, getContract(ARBITRUM, "MYCStakingRewards"), "totalDepositSupply"],
     {
-      fetcher: fetcher(undefined, LentMyc),
+      fetcher: fetcher(undefined, RewardsTracker, mycTokenAddress)
     }
   );
 
-  const { data: pendingMycDepositsInStaking } = useSWR(
-    cycle
-      ? [`useStakingApr:pendingMycInStaking:${ARBITRUM}`, ARBITRUM, getContract(ARBITRUM, "LentMYC"), "pendingDeposits"]
-      : null,
+  const esMycTokenAddress = getContract(ARBITRUM, 'ES_MYC');
+  const { data: esMycDeposited } = useSWR(
+    [`useStakingApr:totalDepositSupply(esMYC):${ARBITRUM}`, ARBITRUM, getContract(ARBITRUM, "MYCStakingRewards"), "totalDepositSupply"],
     {
-      fetcher: fetcher(undefined, LentMyc),
-    }
-  );
-
-  const { data: prev } = useSWR(
-    cycle
-      ? [`useStakingApr:prev:${ARBITRUM}`, ARBITRUM, getContract(ARBITRUM, "LentMYC"), "cycleCumulativeEthRewards"]
-      : null,
-    {
-      fetcher: fetcher(undefined, LentMyc, [cycle - 2]),
-    }
-  );
-
-  const { data: current } = useSWR(
-    cycle
-      ? [`useStakingApr:current:${ARBITRUM}`, ARBITRUM, getContract(ARBITRUM, "LentMYC"), "cycleCumulativeEthRewards"]
-      : null,
-    {
-      fetcher: fetcher(undefined, LentMyc, [cycle - 1]),
-    }
-  );
-
-  const { data: cycleAssets } = useSWR(
-    cycle
-      ? [`useStakingApr:cycleAssets:${ARBITRUM}`, ARBITRUM, getContract(ARBITRUM, "LentMYC"), "cycleSharesAndAssets"]
-      : null,
-    {
-      fetcher: fetcher(undefined, LentMyc, [cycle - 1]),
+      fetcher: fetcher(undefined, RewardsTracker, esMycTokenAddress)
     }
   );
 
   useEffect(() => {
-    const values = [mycAssetsInStaking, pendingMycDepositsInStaking, ethPrice, mycPrice, current, prev, cycleAssets];
-    if (values.every(Boolean)) {
-      const cycleEthRewardsPerShare = current.sub(prev);
-      const cycleSupply = cycleAssets[0];
-      const cycleEthRewards = cycleEthRewardsPerShare.mul(cycleSupply).div(ethers.BigNumber.from(10).pow(18));
-      const ethDistributed = cycleEthRewards;
-      const mycDeposited = mycAssetsInStaking.add(pendingMycDepositsInStaking).div(expandDecimals(1, ETH_DECIMALS));
-      const mycUSDValue = mycDeposited.mul(mycPrice);
-      const ethUSDValue = ethDistributed.mul(ethPrice);
+    if(ethPrice?.gt(0) && mycPrice?.gt(0) && tokensPerInterval && mycDeposited && esMycDeposited) {
 
-      const aprPercentageForCycle = ethers.utils.formatUnits(ethUSDValue.div(mycUSDValue));
-      const aprPercentageYearly = parseFloat(aprPercentageForCycle) * FORTNIGHTS_IN_YEAR * 100;
-      setStakingApr(aprPercentageYearly.toFixed(2));
+      const tokensPerYear = tokensPerInterval.mul(SECONDS_PER_YEAR);
+      const annualRewardsUsd = tokensPerYear.mul(ethPrice);
+
+      const totalDepositTokens = mycDeposited.add(esMycDeposited);
+      const totalDepositsUsd = totalDepositTokens.mul(mycPrice);
+
+      const aprPrecision = 10;
+      const apr = annualRewardsUsd.mul(expandDecimals(1, aprPrecision)).div(totalDepositsUsd);
+
+      const formattedApr = apr.toNumber() / (10 ** aprPrecision) * 100;
+      setStakingApr(formattedApr.toFixed(2));
     }
-  }, [mycAssetsInStaking, pendingMycDepositsInStaking, ethPrice, mycPrice, current, prev, cycleAssets]);
+  }, [ethPrice, mycPrice, tokensPerInterval, mycDeposited, esMycDeposited]);
 
   return stakingApr;
 }

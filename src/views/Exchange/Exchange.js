@@ -25,6 +25,7 @@ import {
   getLeverage,
   useLocalStorageByChainId,
   getDeltaStr,
+  getDeltaAfterFees,
   useChainId,
   useAccountOrders,
   getPageTitle,
@@ -250,27 +251,16 @@ export function getPositions(
       position.deltaPercentageStr = deltaPercentageStr;
       position.deltaBeforeFeesStr = deltaStr;
 
-      let hasProfitAfterFees;
-      let pendingDeltaAfterFees;
-
-      if (position.hasProfit) {
-        if (position.pendingDelta.gt(position.totalFees)) {
-          hasProfitAfterFees = true;
-          pendingDeltaAfterFees = position.pendingDelta.sub(position.totalFees);
-        } else {
-          hasProfitAfterFees = false;
-          pendingDeltaAfterFees = position.totalFees.sub(position.pendingDelta);
-        }
-      } else {
-        hasProfitAfterFees = false;
-        pendingDeltaAfterFees = position.pendingDelta.add(position.totalFees);
-      }
+      const { pendingDeltaAfterFees, deltaPercentageAfterFees, hasProfitAfterFees } = getDeltaAfterFees({
+        delta: position.pendingDelta,
+        totalFees: position.totalFees,
+        hasProfit: position.hasProfit,
+        collateral: position.collateral
+      })
 
       position.hasProfitAfterFees = hasProfitAfterFees;
       position.pendingDeltaAfterFees = pendingDeltaAfterFees;
-      position.deltaPercentageAfterFees = position.pendingDeltaAfterFees
-        .mul(BASIS_POINTS_DIVISOR)
-        .div(position.collateral);
+      position.deltaPercentageAfterFees = deltaPercentageAfterFees;
 
       const { deltaStr: deltaAfterFeesStr, deltaPercentageStr: deltaAfterFeesPercentageStr } = getDeltaStr({
         delta: position.pendingDeltaAfterFees,
@@ -1016,9 +1006,8 @@ export const Exchange = forwardRef((props, ref) => {
         isVisible={isLeaderboardVisible}
         setIsVisible={setIsLeaderboardVisible}
       />
-      <FeeUpdateModal />
       <SEO description="Trade with liquidity, leverage, low fees. Trade with Mycelium. Trade Perpetual Swaps and Perpetual Pools on Ethereum scaling solution, Arbitrum with liquid markets for BTC, ETH, LINK, UNI, CRV, FXS, & BAL." />
-      <div className="Exchange default-container">
+      <div className="Exchange default-container ReferralsBannerActive">
         <div className="Exchange-content">
           <div className="Exchange-left">
             <div className="ExchangeChart tv">

@@ -79,7 +79,7 @@ import longImg from "../../img/long.svg";
 import shortImg from "../../img/short.svg";
 import swapImg from "../../img/swap.svg";
 import { useUserReferralCode } from "../../Api/referrals";
-import { LeverageInput } from "./LeverageInput";
+import {  getMaxLeverage , LeverageInput } from "./LeverageInput";
 import { REFERRAL_CODE_KEY } from "../../config/localstorage";
 
 const SWAP_ICONS = {
@@ -802,8 +802,9 @@ export default function SwapBox(props) {
       return ["Min leverage: 1.1x"];
     }
 
-    if (leverage && leverage.gt(30.5 * BASIS_POINTS_DIVISOR)) {
-      return ["Max leverage: 30.5x"];
+    const maxLeverage = getMaxLeverage(toTokenInfo.symbol);
+    if (leverage && leverage.gt(maxLeverage * BASIS_POINTS_DIVISOR)) {
+      return [`Max leverage: ${maxLeverage}x`];
     }
 
     if (!isMarketOrder && entryMarkPrice && triggerPriceUsd) {
@@ -859,6 +860,17 @@ export default function SwapBox(props) {
           const nextUsdgAmount = fromTokenInfo.usdgAmount.add(usdgFromAmount);
           if (nextUsdgAmount.gt(fromTokenInfo.maxUsdgAmount)) {
             return [`${fromTokenInfo.symbol} pool exceeded, try different token`, true, "MAX_USDG"];
+          }
+        }
+        if (toTokenInfo && toTokenInfo.maxPrice) {
+          const sizeUsd = toAmount.mul(toTokenInfo.maxPrice).div(expandDecimals(1, toTokenInfo.decimals));
+          if (
+            toTokenInfo.maxGlobalLongSize &&
+            toTokenInfo.maxGlobalLongSize.gt(0) &&
+            toTokenInfo.maxAvailableLong &&
+            sizeUsd.gt(toTokenInfo.maxAvailableLong)
+          ) {
+            return [`Max ${toTokenInfo.symbol} long exceeded`];
           }
         }
       }
@@ -1544,11 +1556,6 @@ export default function SwapBox(props) {
       }
     }
 
-    // Limits not enabled for swaps yet
-    if (opt === SWAP && orderOption === LIMIT) {
-      setOrderOption(MARKET);
-    }
-
     trackAction &&
       trackAction("Swap option changed", {
         option: opt,
@@ -2124,7 +2131,7 @@ export default function SwapBox(props) {
         )}
         {(isLong || isShort) && (
           <div className="Exchange-leverage-box">
-            <LeverageInput value={leverageOption} onChange={setLeverageOption} max={30.5} min={1.1} step={0.01} />
+            <LeverageInput value={leverageOption} onChange={setLeverageOption} max={getMaxLeverage(toToken.symbol)} min={1.1} step={0.01} />
             {isShort && (
               <div className="Exchange-info-row">
                 <div className="Exchange-info-label">Profits In</div>
@@ -2355,7 +2362,7 @@ export default function SwapBox(props) {
                       )}
                       {!hasZeroBorrowFee && (
                         <div>
-                          The borrow fee is calculated as (assets borrowed) / (total assets in pool) * 0.01% per hour.
+                          The borrow fee is calculated as (assets borrowed) / (total assets in pool) * 0.005% per hour.
                           <br />
                           <br />
                           {isShort && `You can change the "Profits In" token above to find lower fees`}

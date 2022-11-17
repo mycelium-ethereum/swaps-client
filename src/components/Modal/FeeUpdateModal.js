@@ -46,7 +46,7 @@ export default function FeeUpdateModal() {
           </p>
           <p>
             For trading rewards, as of Round 7 (commencing on Wednesday, 19th October) trading rewards will be changing
-            from 10% of fees to the top 50% of traders to 5% of fees to the top 5% of traders. This change is to make
+            from 10% of fees to the top 5% of traders to 5% of fees to the top 5% of traders. This change is to make
             trading rewards more competitive.
           </p>
           <p>

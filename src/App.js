@@ -7,7 +7,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Web3ReactProvider, useWeb3React } from "@web3-react/core";
 import { Web3Provider } from "@ethersproject/providers";
 
-import { Switch, Route, NavLink } from "react-router-dom";
+import { Switch, Route, NavLink, useLocation } from "react-router-dom";
 
 import { ThemeProvider } from "@tracer-protocol/tracer-ui";
 import { useAnalytics } from "./segmentAnalytics";
@@ -97,7 +97,7 @@ import "./AppOrder.css";
 
 import logoImg from "./img/logo_MYC.svg";
 import logoSmallImg from "./img/logo_MYC_small.svg";
-import poolsSmallImg from "./img/myc_pools_short.svg";
+// import poolsSmallImg from "./img/myc_pools_short.svg";
 import connectWalletImg from "./img/ic_wallet_24.svg";
 
 import metamaskImg from "./img/metamask.png";
@@ -109,7 +109,6 @@ import useEventToast from "./components/EventToast/useEventToast";
 import { Link } from "react-router-dom";
 import EventToastContainer from "./components/EventToast/EventToastContainer";
 import useRouteQuery from "./hooks/useRouteQuery";
-import { useInfoTokens } from "./Api";
 import { encodeReferralCode } from "./Api/referrals";
 
 import { getContract } from "./Addresses";
@@ -121,6 +120,9 @@ import useSWR from "swr";
 import LinkDropdown from "./components/Navigation/LinkDropdown/LinkDropdown";
 import Sidebar from "./components/Navigation/Sidebar/Sidebar";
 import EventModal from "./components/EventModal/EventModal";
+import AppDropdown from "./components/AppDropdown/AppDropdown";
+import { useInfoTokens } from "./hooks/useInfoTokens";
+// import { Banner, BannerContent } from "./components/Banner/Banner";
 
 if ("ethereum" in window) {
   window.ethereum.autoRefreshOnNetworkChange = false;
@@ -286,16 +288,6 @@ function AppHeaderUser({
   if (!active) {
     return (
       <div className="App-header-user">
-        {/* <div className="App-header-user-link">
-          <NavLink exact activeClassName="active" className="default-btn trade-link" to="/">
-            Trade
-          </NavLink>
-        </div> */}
-        <div className="App-header-user-link Trade-btn">
-          <NavLink exact activeClassName="active" className="default-btn trade-link" to="/">
-            Trade
-          </NavLink>
-        </div>
         {showSelector && (
           <NetworkSelector
             options={networkOptions}
@@ -318,18 +310,7 @@ function AppHeaderUser({
         >
           {small ? "Connect" : "Connect Wallet"}
         </ConnectWalletButton>
-        <div className="App-header-user-link Switch-app-btn">
-          <a
-            href="https://pools.mycelium.xyz"
-            rel="noopener noreferrer"
-            target="_blank"
-            onClick={() => trackAction && trackAction("Button clicked", { buttonName: "Switch to Perpetual Pools" })}
-          >
-            <button className="default-btn switch-link">
-              <span>Switch to</span> <img src={poolsSmallImg} alt="Perpetual Pools" />
-            </button>
-          </a>
-        </div>
+        <AppDropdown />
       </div>
     );
   }
@@ -338,11 +319,6 @@ function AppHeaderUser({
 
   return (
     <div className="App-header-user">
-      <div className="App-header-user-link Trade-btn">
-        <NavLink exact activeClassName="active" className="default-btn trade-link" to="/">
-          Trade
-        </NavLink>
-      </div>
       {showSelector && (
         <NetworkSelector
           options={networkOptions}
@@ -366,22 +342,13 @@ function AppHeaderUser({
           trackAction={trackAction}
         />
       </div>
-      <div className="App-header-user-link Switch-app-btn">
-        <a
-          href="https://pools.mycelium.xyz"
-          rel="noopener noreferrer"
-          onClick={() => trackAction && trackAction("Button clicked", { buttonName: "Switch to Perpetual Pools" })}
-        >
-          <button className="default-btn switch-link">
-            <span>Switch to</span> <img src={poolsSmallImg} alt="Perpetual Pools" />
-          </button>
-        </a>
-      </div>
+      <AppDropdown />
     </div>
   );
 }
 
 function FullApp() {
+  const location = useLocation();
   const [sidebarVisible, setSidebarVisible] = useState(false);
   const [loggedInTracked, setLoggedInTracked] = useState(false);
   const { trackLogin, trackPageWithTraits, trackAction, analytics } = useAnalytics();
@@ -746,7 +713,7 @@ function FullApp() {
   return (
     <>
       <div
-        className={cx("App", {
+        className={cx("App ReferralsBannerActive", {
           "full-width": sidebarVisible,
         })}
       >
@@ -756,7 +723,7 @@ function FullApp() {
         <div className="App-background-ball-1"></div>
         <div className="App-background-ball-2"></div>
         <div className="App-highlight"></div> */}
-        <div className="App-content">
+        <div className={cx("App-content", { "full-width": sidebarVisible })}>
           {isDrawerVisible && (
             <AnimatePresence>
               {isDrawerVisible && (
@@ -835,7 +802,7 @@ function FullApp() {
                     }}
                   >
                     <img src={logoSmallImg} className="small" alt="Mycelium Swaps Logo" />
-                    <img src={logoImg} alt="Mycelium Swaps Logo" />
+                    <img src={logoImg} className="big" alt="Mycelium Swaps Logo" />
                   </Link>
                 </div>
                 <div>
@@ -853,11 +820,14 @@ function FullApp() {
                       trackAction={trackAction}
                     />
                   </div>
-                  <div className="App-header-user-link Trade-btn-mobile">
-                    <NavLink exact activeClassName="active" className="default-btn trade-link" to="/">
-                      Trade
-                    </NavLink>
-                  </div>
+                  {location?.pathname !== "/" && (
+                    <div className="App-header-user-link Trade-btn-mobile">
+                      <NavLink exact activeClassName="active" className="default-btn trade-link" to="/">
+                        Trade
+                      </NavLink>
+                    </div>
+                  )}
+                  <AppDropdown isMobile />
                   {/* Hamburger menu */}
                   <button className="App-header-menu-icon-block" onClick={() => setIsDrawerVisible(!isDrawerVisible)}>
                     <span />
@@ -1016,11 +986,6 @@ function FullApp() {
         draggable={false}
         pauseOnHover
       />
-      <EventModal
-        isModalVisible={isEventModalVisible}
-        setEventModalVisible={setEventModalVisible}
-        eventKey={"add-limit-orders"}
-      />
       <EventToastContainer />
       <Modal
         className="Connect-wallet-modal"
@@ -1164,7 +1129,7 @@ function PreviewApp() {
         <div className="App-background-ball-1"></div>
         <div className="App-background-ball-2"></div>
         <div className="App-highlight"></div>
-        <div className="App-content">
+        <div className={cx("App-content", { "full-width": isDrawerVisible })}>
           {isDrawerVisible && (
             <AnimatePresence>
               {isDrawerVisible && (

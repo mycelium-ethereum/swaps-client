@@ -10,6 +10,7 @@
 
 # production
 /build
+/dist
 
 # library
 /public/charting_library

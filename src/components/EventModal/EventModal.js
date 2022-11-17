@@ -1,10 +1,10 @@
 import React, { useEffect } from "react";
-import { shareToTwitter } from "../../Helpers";
 import * as Styled from "./EventModal.styles";
 import ethMergeHeader from "../../img/event-modal-header.png";
 import ethMergeHeadermesh from "../../img/event-modal-header-mesh.png";
 import twitterIcon from "../../img/twitter-icon.svg";
 import { Link } from "react-router-dom";
+import { shareToTwitter } from "../../utils/common";
 
 const EVENTS = {
   "new-earn-page": {
@@ -33,10 +33,30 @@ const EVENTS = {
     ),
     description: <span>Mycelium now supports limit orders for opening and closing leveraged positions!</span>,
   },
+  "disable-limit-orders": {
+    title: (
+      <>
+        <h2>Limit Orders Disabled</h2>
+      </>
+    ),
+    description: (
+      <span>
+        Limit orders are currently disabled. Limits will be live again soon. Your previously set limit orders will need
+        to be updated.
+      </span>
+    ),
+  }
 };
 
-export default function EventModal({ isModalVisible, setEventModalVisible, twitterText, eventKey }) {
-  const eventText = EVENTS[eventKey];
+export default function EventModal({
+  isModalVisible,
+  setEventModalVisible,
+  twitterButtonText,
+  twitterText,
+  eventKey,
+  hideHeader,
+}) {
+  const event = EVENTS[eventKey];
 
   useEffect(() => {
     const hasSeenEventModal = window.localStorage.getItem(eventKey);
@@ -46,34 +66,43 @@ export default function EventModal({ isModalVisible, setEventModalVisible, twitt
     }
   }, [eventKey, setEventModalVisible]);
 
+  const onClose = () => {
+    setEventModalVisible(false);
+  };
+
   return (
-    <Styled.EventModal isVisible={isModalVisible} setIsVisible={setEventModalVisible}>
-      <Styled.EventModalHeader>
-        <Styled.EventModalGraphic infront src={ethMergeHeader} alt="Event modal header graphic" />
-        <Styled.EventModalGraphic src={ethMergeHeadermesh} alt="Event modal header mesh" />
-      </Styled.EventModalHeader>
-      <Styled.EventModalTitle>{eventText.title}</Styled.EventModalTitle>
-      <Styled.EventModalButtonContent className="Button-content">
-        {eventText.description}
-        {eventText.continueLink ? (
-          <Link
-            to={eventText.continueLink}
-            onClick={() => setEventModalVisible(false)}
-            className="App-button-option App-card-option"
-          >
-            Continue
-          </Link>
-        ) : (
-          <button className="App-button-option App-card-option" onClick={() => setEventModalVisible(false)}>
-            Continue
-          </button>
-        )}
-        {twitterText && (
-          <button className="App-button-option App-card-option" onClick={() => shareToTwitter(twitterText)}>
-            Share on Twitter <img src={twitterIcon} alt="Twitter" />
-          </button>
-        )}
-      </Styled.EventModalButtonContent>
+    <Styled.EventModal isVisible={isModalVisible} setIsVisible={setEventModalVisible} hideHeader={hideHeader}>
+      {!hideHeader && (
+        <Styled.EventModalHeader>
+          <Styled.ReferralsCompHeader>
+            <Styled.ReferralsCompAmount />
+            <Styled.ReferralsCompPrizeText>USDC in prizes</Styled.ReferralsCompPrizeText>
+          </Styled.ReferralsCompHeader>
+          <Styled.EventModalGraphic infront src={ethMergeHeader} alt="Event modal header graphic" />
+          <Styled.EventModalGraphic src={ethMergeHeadermesh} alt="Event modal header mesh" />
+        </Styled.EventModalHeader>
+      )}
+      <Styled.EventModalContent>
+        <Styled.EventModalTitle>{event.title}</Styled.EventModalTitle>
+        <Styled.EventModalButtonContent className="Button-content">
+          <Styled.EventModalCloseButton onClick={onClose} />
+          {event.description}
+          {twitterText && (
+            <button className="App-button-option App-card-option" onClick={() => shareToTwitter(twitterText)}>
+              <img src={twitterIcon} alt="Twitter" /> {twitterButtonText ? twitterButtonText : "Share on Twitter"}
+            </button>
+          )}
+          {event.continueLink ? (
+            <Link to={event.continueLink} onClick={onClose} className="App-button-option App-card-option">
+              {event.continueLinkText ? event.continueLinkText : `Continue`}
+            </Link>
+          ) : (
+            <button className="App-button-option App-card-option" onClick={onClose}>
+              {event.continueLinkText ? event.continueLinkText : `Continue`}
+            </button>
+          )}
+        </Styled.EventModalButtonContent>
+      </Styled.EventModalContent>
     </Styled.EventModal>
   );
 }

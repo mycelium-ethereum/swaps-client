@@ -1,6 +1,7 @@
 import React from "react";
 import Tooltip from "../../components/Tooltip/Tooltip";
-import {getTierIdDisplay, TIER_DISCOUNT_INFO} from "../../Helpers";
+import { TIER_DISCOUNT_INFO } from "../../config/referrals";
+import { getTierIdDisplay } from "../../utils/referrals";
 import * as Styles from "./Referrals.styles";
 
 export default function TraderRebateStats(props) {

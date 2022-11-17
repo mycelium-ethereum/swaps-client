@@ -5,7 +5,17 @@ import { ethers } from "ethers";
 
 import { USD_DECIMALS, CHART_PERIODS, formatAmount, sleep } from "../Helpers";
 import { chainlinkClient } from "./common";
+import { ChainId, Period, TokenSymbol } from "../types/common";
 
+
+type Price = {
+  time: number
+  open: number,
+  close: number,
+  low: number
+  high: number,
+
+}
 const BigNumber = ethers.BigNumber;
 
 // Ethereum network, Chainlink Aggregator contracts
@@ -26,7 +36,7 @@ const FEED_ID_MAP = {
 };
 const timezoneOffset = -new Date().getTimezoneOffset() * 60;
 
-function fillGaps(prices, periodSeconds) {
+function fillGaps(prices: Price[], periodSeconds: number) {
   if (prices.length < 2) {
     return prices;
   }
@@ -64,7 +74,7 @@ function fillGaps(prices, periodSeconds) {
   return newPrices;
 }
 
-async function getChartPricesFromStats(_chainId, symbol, period) {
+async function getChartPricesFromStats(_chainId: ChainId, symbol: TokenSymbol, period: Period) {
   if (["WBTC", "WETH"].includes(symbol)) {
     symbol = symbol.substr(1);
   }
@@ -74,14 +84,14 @@ async function getChartPricesFromStats(_chainId, symbol, period) {
   const from = Math.floor(Date.now() / 1000 - timeDiff);
   const url = `${hostname}api/candles/${symbol}?preferableChainId=42161&period=${period}&from=${from}&preferableSource=fast`;
   const TIMEOUT = 5000;
-  const res = await new Promise(async (resolve, reject) => {
+  const res: Response = await new Promise(async (resolve, reject) => {
     let done = false;
     setTimeout(() => {
       done = true;
       reject(new Error(`request timeout ${url}`));
     }, TIMEOUT);
 
-    let lastEx;
+    let lastEx: any;
     for (let i = 0; i < 3; i++) {
       if (done) return;
       try {
@@ -117,7 +127,7 @@ async function getChartPricesFromStats(_chainId, symbol, period) {
     );
   }
 
-  prices = prices.map(({ t, o: open, c: close, h: high, l: low }, i) => {
+  prices = prices.map(({ t, o: open, c: close, h: high, l: low }, i: number) => {
     if (i !== 0) {
       // set open to close
       // prices are sorted in timestamp ascending order
@@ -135,7 +145,7 @@ async function getChartPricesFromStats(_chainId, symbol, period) {
   return prices;
 }
 
-function getCandlesFromPrices(prices, period) {
+function getCandlesFromPrices(prices, period: Period) {
   const periodTime = CHART_PERIODS[period];
 
   if (prices.length < 2) {
@@ -174,11 +184,11 @@ function getCandlesFromPrices(prices, period) {
   }));
 }
 
-function getChainlinkChartPricesFromGraph(tokenSymbol, period) {
-  if (["WBTC", "WETH"].includes(tokenSymbol)) {
-    tokenSymbol = tokenSymbol.substr(1);
+async function getChainlinkChartPricesFromGraph(symbol: TokenSymbol, period: Period) {
+  if (["WBTC", "WETH"].includes(symbol)) {
+    symbol = symbol.substr(1);
   }
-  const marketName = tokenSymbol + "_USD";
+  const marketName = symbol + "_USD";
   const feedId = FEED_ID_MAP[marketName];
   if (!feedId) {
     throw new Error(`undefined marketName ${marketName}`);
@@ -207,7 +217,7 @@ function getChainlinkChartPricesFromGraph(tokenSymbol, period) {
       let prices = [];
       const uniqTs = new Set();
       chunks.forEach((chunk) => {
-        chunk.data.rounds.forEach((item) => {
+        chunk.data.rounds.forEach((item: any) => {
           if (uniqTs.has(item.unixTimestamp)) {
             return;
           }
@@ -226,7 +236,7 @@ function getChainlinkChartPricesFromGraph(tokenSymbol, period) {
     });
 }
 
-export function useChartPrices(chainId, symbol, isStable, period, currentAveragePrice) {
+export function useChartPrices(chainId: ChainId, symbol: TokenSymbol, isStable: boolean, period: Period, currentAveragePrice: ethers.BigNumber) {
   const swrKey = !isStable && symbol ? ["getChartCandles", chainId, symbol, period] : null;
   let { data: prices, mutate: updatePrices } = useSWR(swrKey, {
     fetcher: async (...args) => {
@@ -269,7 +279,7 @@ export function useChartPrices(chainId, symbol, isStable, period, currentAverage
   return [retPrices, updatePrices];
 }
 
-function appendCurrentAveragePrice(prices, currentAveragePrice, period) {
+function appendCurrentAveragePrice(prices: Price[], currentAveragePrice: ethers.BigNumber, period: Period) {
   const periodSeconds = CHART_PERIODS[period];
   const currentCandleTime = Math.floor(Date.now() / 1000 / periodSeconds) * periodSeconds + timezoneOffset;
   const last = prices[prices.length - 1];
@@ -291,7 +301,7 @@ function appendCurrentAveragePrice(prices, currentAveragePrice, period) {
   }
 }
 
-function getStablePriceData(period) {
+function getStablePriceData(period: Period) {
   const periodSeconds = CHART_PERIODS[period];
   const now = Math.floor(Date.now() / 1000 / periodSeconds) * periodSeconds;
   let priceData = [];

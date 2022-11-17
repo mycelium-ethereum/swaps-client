@@ -28,10 +28,6 @@ import {
   MLP_POOL_COLORS,
   DEFAULT_MAX_USDG_AMOUNT,
   getPageTitle,
-  getTracerServerUrl,
-  MM_FEE_MULTIPLIER,
-  MM_SWAPS_FEE_MULTIPLIER,
-  FEE_MULTIPLIER_BASIS_POINTS,
   ETH_DECIMALS,
   ARBITRUM_GOERLI,
 } from "../../Helpers";
@@ -39,13 +35,11 @@ import {
   useTotalMYCInLiquidity,
   useMYCPrice,
   useTotalMYCSupply,
-  useInfoTokens,
   useFees,
-  useVolume,
-  useMarketMakingFeesSince,
   useFeesSince,
   useStakingApr,
   useTotalStaked,
+  useSpreadCaptureVolume,
 } from "../../Api";
 
 import { getContract } from "../../Addresses";
@@ -64,6 +58,8 @@ import arbitrum24Icon from "../../img/ic_arbitrum_24.svg";
 import AssetDropdown from "./AssetDropdown";
 import SEO from "../../components/Common/SEO";
 import { ADDRESS_ZERO } from "@uniswap/v3-sdk";
+import { useInfoTokens } from "src/hooks/useInfoTokens";
+import { getServerUrl } from "src/lib";
 
 const { AddressZero } = ethers.constants;
 
@@ -93,12 +89,12 @@ export default function DashboardV2() {
 
   const chainName = getChainName(chainId);
 
-  const positionStatsUrl = getTracerServerUrl(chainId, "/positionStats");
+  const positionStatsUrl = getServerUrl(chainId, "/positionStats");
   const { data: positionStats } = useSWR([positionStatsUrl], {
     fetcher: (...args) => fetch(...args).then((res) => res.json()),
   });
 
-  const mycTotalVolumeUrl = getTracerServerUrl(chainId, "/volume");
+  const mycTotalVolumeUrl = getServerUrl(chainId, "/volume");
   const { data: mycTotalVolume } = useSWR([mycTotalVolumeUrl], {
     fetcher: (...args) => fetch(...args).then((res) => res.json()),
   });
@@ -115,7 +111,6 @@ export default function DashboardV2() {
   const whitelistedTokens = getWhitelistedTokens(chainId);
   const whitelistedTokenAddresses = whitelistedTokens.map((token) => token.address);
   const tokenList = whitelistedTokens.filter((t) => !t.isWrapped);
-  const stableTokens = whitelistedTokens.filter((t) => t.isStable);
 
   const readerAddress = getContract(chainId, "Reader");
   const vaultAddress = getContract(chainId, "Vault");
@@ -151,25 +146,20 @@ export default function DashboardV2() {
 
   const { infoTokens } = useInfoTokens(library, chainId, active, undefined, undefined);
 
-  let totalFeesDistributed;
   const allFees = useFees(chainId);
 
   const feeHistory = getFeeHistory(chainId);
 
   const from = feeHistory[0]?.to;
   const to = from + SECONDS_PER_WEEK * 2;
-  const currentMMFees = useMarketMakingFeesSince(chainId, from, to, stableTokens);
   const currentGraphFees = useFeesSince(chainId, from, to);
   const currentUnclaimedFees = getUnclaimedFees(whitelistedTokenAddresses, infoTokens, fees);
-  let totalCurrentFees, currentFees;
+  let totalCurrentFees;
   if (currentUnclaimedFees && currentGraphFees) {
-    currentFees = currentUnclaimedFees.gt(currentGraphFees) ? currentUnclaimedFees : currentGraphFees;
+    totalCurrentFees = currentUnclaimedFees.gt(currentGraphFees) ? currentUnclaimedFees : currentGraphFees;
   }
 
-  if (currentFees && currentMMFees) {
-    totalCurrentFees = currentFees.add(currentMMFees);
-  }
-
+  let totalFeesDistributed;
   if (allFees) {
     totalFeesDistributed = bigNumberify(allFees.mint)
       .add(allFees.burn)
@@ -177,16 +167,7 @@ export default function DashboardV2() {
       .add(allFees.swap);
   }
 
-  let totalMMFees;
-  const allVolume = useVolume(chainId);
-  if (allVolume) {
-    totalMMFees = MM_FEE_MULTIPLIER.mul(allVolume.mint)
-      .add(MM_FEE_MULTIPLIER.mul(allVolume.burn))
-      .add(MM_FEE_MULTIPLIER.mul(allVolume.margin))
-      .add(MM_FEE_MULTIPLIER.mul(allVolume.liquidation))
-      .add(MM_SWAPS_FEE_MULTIPLIER.mul(allVolume.swap));
-    totalMMFees = totalMMFees.div(expandDecimals(1, FEE_MULTIPLIER_BASIS_POINTS));
-  }
+  const totalMMFees = useSpreadCaptureVolume(chainId);
 
   let totalFees;
   if (totalFeesDistributed && totalMMFees) {
@@ -518,18 +499,7 @@ export default function DashboardV2() {
                   <div className="App-card-row">
                     <div className="label">Fees since {formatDate(feeHistory[0].to)}</div>
                     <div>
-                      <TooltipComponent
-                        position="right-bottom"
-                        className="nowrap"
-                        handle={`$${formatAmount(totalCurrentFees, USD_DECIMALS, 2, true)}`}
-                        renderContent={() => (
-                          <>
-                            Distributed Fees: ${formatAmount(currentFees, USD_DECIMALS, 2, true)}
-                            <br />
-                            Spread Capture: ${formatAmount(currentMMFees, USD_DECIMALS, 2, true)}
-                          </>
-                        )}
-                      />
+                      ${formatAmount(totalCurrentFees, USD_DECIMALS, 2, true)}
                     </div>
                   </div>
                 ) : null}

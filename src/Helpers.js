@@ -20,12 +20,13 @@ import OrderBook from "./abis/OrderBook.json";
 import { getWhitelistedTokens, isValidToken } from "./data/Tokens";
 import ComingSoonTooltip from "./components/Tooltip/ComingSoon";
 import { isAddress } from "ethers/lib/utils";
-import { 
+import { copyToClipboard } from './utils/common';
+import {
   REFERRAL_CODE_QUERY_PARAMS,
   CURRENT_PROVIDER_LOCALSTORAGE_KEY,
   WALLET_CONNECT_LOCALSTORAGE_KEY,
   WALLET_LINK_LOCALSTORAGE_PREFIX,
-  SHOULD_EAGER_CONNECT_LOCALSTORAGE_KEY
+  SHOULD_EAGER_CONNECT_LOCALSTORAGE_KEY,
 } from "./config/localstorage";
 
 const { AddressZero } = ethers.constants;
@@ -55,12 +56,9 @@ const GAS_PRICE_ADJUSTMENT_MAP = {
   [ARBITRUM]: "0",
 };
 
-const MAX_GAS_PRICE_MAP = {
-};
+const MAX_GAS_PRICE_MAP = {};
 
-const alchemyWhitelistedDomains = [
-  "swaps.mycelium.xyz"
-];
+const alchemyWhitelistedDomains = ["swaps.mycelium.xyz"];
 
 export function getFallbackArbitrumRpcUrl(useWebsocket) {
   if (useWebsocket) {
@@ -75,7 +73,7 @@ export function getDefaultArbitrumRpcUrl(useWebsocket) {
     }
     return "https://arb-mainnet.g.alchemy.com/v2/SKz5SvTuqIVjE38XsFsy0McZbgfFPOng";
   }
-  return  getFallbackArbitrumRpcUrl(useWebsocket)
+  return getFallbackArbitrumRpcUrl(useWebsocket);
 }
 
 export function getFallbackArbitrumGoerliRpcUrl(useWebsocket) {
@@ -144,35 +142,15 @@ export const MARKET = "Market";
 export const LIMIT = "Limit";
 export const STOP = "Stop";
 export const LEVERAGE_ORDER_OPTIONS = [MARKET, LIMIT];
-export const SWAP_ORDER_OPTIONS = [MARKET, <ComingSoonTooltip handle={LIMIT} />];
+export const SWAP_ORDER_OPTIONS = [MARKET, LIMIT];
 export const SWAP_OPTIONS = [LONG, SHORT, SWAP];
 export const DEFAULT_SLIPPAGE_AMOUNT = 30;
 export const DEFAULT_HIGHER_SLIPPAGE_AMOUNT = 100;
-
-export const MAX_REFERRAL_CODE_LENGTH = 20;
-export const REFERRAL_CODE_REGEX = /^\w+$/; // only number, string and underscore is allowed
-export const TIER_REBATE_INFO = {
-  0: 5,
-  1: 10,
-  2: 15,
-};
-
-export const TIER_DISCOUNT_INFO = {
-  0: 5,
-  1: 10,
-  2: 10,
-};
 
 export const TRIGGER_PREFIX_ABOVE = ">";
 export const TRIGGER_PREFIX_BELOW = "<";
 
 export const MIN_PROFIT_BIPS = 0;
-
-// USD tokens per interval given by kurtis
-export const MM_TOKENS_PER_INTERVAL = ethers.utils.parseUnits("0.1859475633", USD_DECIMALS);
-export const FEE_MULTIPLIER_BASIS_POINTS = 4;
-export const MM_FEE_MULTIPLIER = bigNumberify(6);
-export const MM_SWAPS_FEE_MULTIPLIER = bigNumberify(12)
 
 export const MLP_POOL_COLORS = {
   ETH: "#6062a6",
@@ -504,47 +482,6 @@ export function getMarginFee(sizeDelta) {
   }
   const afterFeeUsd = sizeDelta.mul(BASIS_POINTS_DIVISOR - MARGIN_FEE_BASIS_POINTS).div(BASIS_POINTS_DIVISOR);
   return sizeDelta.sub(afterFeeUsd);
-}
-
-export function getSupplyUrl(route = "/totalSupply") {
-  // same supply across networks
-  // return "https://stats.mycelium.xyz/total_supply";
-  return `https://dev.api.tracer.finance/myc${route}`;
-}
-
-const BASE_TRACER_URL = process.env.REACT_APP_TRACER_API ?? "https://api.tracer.finance";
-
-export function getTracerServerUrl(chainId, path) {
-  if (!chainId) {
-    throw new Error("chainId is not supported");
-  } else if (chainId !== ARBITRUM && chainId !== ARBITRUM_GOERLI) {
-    throw new Error("chainId is not supported");
-  }
-
-  return `${BASE_TRACER_URL}/trs${path}?network=${chainId}`;
-}
-
-export function getServerBaseUrl(chainId) {
-  if (!chainId) {
-    throw new Error("chainId is not provided");
-  }
-  if (document.location.hostname.includes("deploy-preview")) {
-    const fromLocalStorage = localStorage.getItem("SERVER_BASE_URL");
-    if (fromLocalStorage) {
-      return fromLocalStorage;
-    }
-  }
-  if (chainId === ARBITRUM_GOERLI) {
-    // return "https://gambit-l2.as.r.appspot.com";
-    return "https://gmx-server-mainnet.uw.r.appspot.com";
-  } else if (chainId === ARBITRUM) {
-    return "https://gmx-server-mainnet.uw.r.appspot.com";
-  }
-  return "https://gmx-server-mainnet.uw.r.appspot.com";
-}
-
-export function getServerUrl(chainId, path) {
-  return `${getServerBaseUrl(chainId)}${path}`;
 }
 
 export function isTriggerRatioInverted(fromTokenInfo, toTokenInfo) {
@@ -1167,6 +1104,28 @@ export function getDeltaStr({ delta, deltaPercentage, hasProfit }) {
   deltaPercentageStr += `${formatAmount(deltaPercentage, 2, 2)}%`;
 
   return { deltaStr, deltaPercentageStr };
+}
+
+export function getDeltaAfterFees({ delta, totalFees, collateral, hasProfit }) {
+  let hasProfitAfterFees;
+  let pendingDeltaAfterFees;
+
+  if (hasProfit) {
+    if (delta.gt(totalFees)) {
+      hasProfitAfterFees = true;
+      pendingDeltaAfterFees = delta.sub(totalFees);
+    } else {
+      hasProfitAfterFees = false;
+      pendingDeltaAfterFees = totalFees.sub(delta);
+    }
+  } else {
+    hasProfitAfterFees = false;
+    pendingDeltaAfterFees = delta.add(totalFees);
+  }
+
+  let deltaPercentageAfterFees = pendingDeltaAfterFees.mul(BASIS_POINTS_DIVISOR).div(collateral);
+
+  return { pendingDeltaAfterFees, deltaPercentageAfterFees, hasProfitAfterFees };
 }
 
 export function getLeverage({
@@ -1916,21 +1875,6 @@ export function useAccountOrders(flagOrdersEnabled, overrideAccount) {
       const orderBookContract = new ethers.Contract(orderBookAddress, OrderBook.abi, provider);
       const orderBookReaderContract = new ethers.Contract(orderBookReaderAddress, OrderBookReader.abi, provider);
 
-      const fetchIndexesFromServer = () => {
-        const ordersIndexesUrl = `${getServerBaseUrl(chainId)}/orders_indices?account=${account}`;
-        return fetch(ordersIndexesUrl)
-          .then(async (res) => {
-            const json = await res.json();
-            const ret = {};
-            for (const key of Object.keys(json)) {
-              ret[key.toLowerCase()] = json[key].map((val) => parseInt(val.value));
-            }
-
-            return ret;
-          })
-          .catch(() => ({ swap: [], increase: [], decrease: [] }));
-      };
-
       const fetchLastIndex = async (type) => {
         const method = type.toLowerCase() + "OrdersIndex";
         return await orderBookContract[method](account).then((res) => bigNumberify(res._hex).toNumber());
@@ -2351,93 +2295,6 @@ export function setTokenUsingIndexPrices(token, indexPrices, nativeTokenAddress)
   const halfSpreadBps = spreadBps.div(2).toNumber();
   token.maxPrice = indexPriceBn.mul(BASIS_POINTS_DIVISOR + halfSpreadBps).div(BASIS_POINTS_DIVISOR);
   token.minPrice = indexPriceBn.mul(BASIS_POINTS_DIVISOR - halfSpreadBps).div(BASIS_POINTS_DIVISOR);
-}
-
-export function getInfoTokens(
-  tokens,
-  tokenBalances,
-  whitelistedTokens,
-  vaultTokenInfo,
-  fundingRateInfo,
-  vaultPropsLength,
-  indexPrices,
-  nativeTokenAddress
-) {
-  if (!vaultPropsLength) {
-    vaultPropsLength = 14;
-  }
-  const fundingRatePropsLength = 2;
-  const infoTokens = {};
-
-  for (let i = 0; i < tokens.length; i++) {
-    const token = JSON.parse(JSON.stringify(tokens[i]));
-    if (tokenBalances) {
-      token.balance = tokenBalances[i];
-    }
-    if (token.address === USDG_ADDRESS) {
-      token.minPrice = expandDecimals(1, USD_DECIMALS);
-      token.maxPrice = expandDecimals(1, USD_DECIMALS);
-    }
-    infoTokens[token.address] = token;
-  }
-
-  for (let i = 0; i < whitelistedTokens.length; i++) {
-    const token = JSON.parse(JSON.stringify(whitelistedTokens[i]));
-    if (vaultTokenInfo) {
-      token.poolAmount = vaultTokenInfo[i * vaultPropsLength];
-      token.reservedAmount = vaultTokenInfo[i * vaultPropsLength + 1];
-      token.availableAmount = token.poolAmount.sub(token.reservedAmount);
-      token.usdgAmount = vaultTokenInfo[i * vaultPropsLength + 2];
-      token.redemptionAmount = vaultTokenInfo[i * vaultPropsLength + 3];
-      token.weight = vaultTokenInfo[i * vaultPropsLength + 4];
-      token.bufferAmount = vaultTokenInfo[i * vaultPropsLength + 5];
-      token.maxUsdgAmount = vaultTokenInfo[i * vaultPropsLength + 6];
-      token.globalShortSize = vaultTokenInfo[i * vaultPropsLength + 7];
-      token.maxGlobalShortSize = vaultTokenInfo[i * vaultPropsLength + 8];
-      token.minPrice = vaultTokenInfo[i * vaultPropsLength + 9];
-      token.maxPrice = vaultTokenInfo[i * vaultPropsLength + 10];
-      token.guaranteedUsd = vaultTokenInfo[i * vaultPropsLength + 11];
-      token.maxPrimaryPrice = vaultTokenInfo[i * vaultPropsLength + 12];
-      token.minPrimaryPrice = vaultTokenInfo[i * vaultPropsLength + 13];
-
-      // save minPrice and maxPrice as setTokenUsingIndexPrices may override it
-      token.contractMinPrice = token.minPrice;
-      token.contractMaxPrice = token.maxPrice;
-
-      token.maxAvailableShort = bigNumberify(0);
-      if (token.maxGlobalShortSize.gt(0)) {
-        if (token.maxGlobalShortSize.gt(token.globalShortSize)) {
-          token.maxAvailableShort = token.maxGlobalShortSize.sub(token.globalShortSize);
-        }
-      }
-
-      if (token.maxUsdgAmount.eq(0)) {
-        token.maxUsdgAmount = DEFAULT_MAX_USDG_AMOUNT;
-      }
-
-      token.availableUsd = token.isStable
-        ? token.poolAmount.mul(token.minPrice).div(expandDecimals(1, token.decimals))
-        : token.availableAmount.mul(token.minPrice).div(expandDecimals(1, token.decimals));
-
-      token.managedUsd = token.availableUsd.add(token.guaranteedUsd);
-      token.managedAmount = token.managedUsd.mul(expandDecimals(1, token.decimals)).div(token.minPrice);
-
-      setTokenUsingIndexPrices(token, indexPrices, nativeTokenAddress);
-    }
-
-    if (fundingRateInfo) {
-      token.fundingRate = fundingRateInfo[i * fundingRatePropsLength];
-      token.cumulativeFundingRate = fundingRateInfo[i * fundingRatePropsLength + 1];
-    }
-
-    if (infoTokens[token.address]) {
-      token.balance = infoTokens[token.address].balance;
-    }
-
-    infoTokens[token.address] = token;
-  }
-
-  return infoTokens;
 }
 
 export const CHART_PERIODS = {
@@ -2898,70 +2755,4 @@ export function truncateMiddleEthAddress(address, truncateLength) {
   const trailingCharsNum = strLength - leadingCharsNum - 3;
 
   return `${address.slice(0, leadingCharsNum)}...${address.slice(-trailingCharsNum)}`;
-}
-
-export function convertStringToFloat(str, decimals = 0) {
-  return parseFloat(str).toFixed(decimals);
-}
-
-export function getAnalyticsEventStage(stage) {
-  switch (stage) {
-    case 1:
-      return "Approve";
-    case 2:
-      return "Pre-confirmation";
-    case 3:
-      return "Post-confirmation";
-    default:
-      return "Approve";
-  }
-}
-
-export function copyToClipboard(item) {
-  navigator.clipboard.writeText(item);
-}
-
-/* REFERRAL CODE HELPERS */
-export function copyReferralCode(code) {
-  copyToClipboard(`https://swaps.mycelium.xyz?${REFERRAL_CODE_QUERY_PARAMS}=${code}`);
-  helperToast.success("Referral link copied to your clipboard");
-}
-
-export function getCodeError(value) {
-  const trimmedValue = value.trim();
-  if (!trimmedValue) return "";
-
-  if (trimmedValue.length > MAX_REFERRAL_CODE_LENGTH) {
-    return `The referral code can't be more than ${MAX_REFERRAL_CODE_LENGTH} characters.`;
-  }
-
-  if (!REFERRAL_CODE_REGEX.test(trimmedValue)) {
-    return "Only letters, numbers and underscores are allowed.";
-  }
-  return "";
-}
-
-export function getTierIdDisplay(tierId) {
-  if (!tierId) {
-    return "";
-  }
-  return Number(tierId) + 1;
-}
-
-export function shareToTwitter(text) {
-  window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`, "_blank");
-}
-
-export function calcMarketMakingFees(data) {
-  if (!data) {
-    return 0;
-  }
-  const mmFees = ethers.BigNumber.from(0)
-    .add(MM_SWAPS_FEE_MULTIPLIER.mul(data.swap))
-    .add(MM_FEE_MULTIPLIER.mul(data.mint))
-    .add(MM_FEE_MULTIPLIER.mul(data.burn))
-    .add(MM_FEE_MULTIPLIER.mul(data.margin))
-    .add(MM_FEE_MULTIPLIER.mul(data.liquidation));
-
-  return mmFees.div(expandDecimals(1, FEE_MULTIPLIER_BASIS_POINTS));
 }

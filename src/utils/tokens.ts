@@ -1,15 +1,14 @@
-
-
-import { ethers } from "ethers";
+import { BigNumber, ethers } from "ethers";
 import { expandDecimals, getTokenInfo, MARKET, PRECISION, USDG_ADDRESS } from "../Helpers";
+import {InfoTokens, TokenInfo} from "../types/tokens";
 
 export function getUsd(
-  amount,
-  tokenAddress,
-  max,
-  infoTokens,
-  orderOption,
-  triggerPriceUsd 
+  amount: BigNumber,
+  tokenAddress: string,
+  max: boolean,
+  infoTokens: InfoTokens,
+  orderOption?: string,
+  triggerPriceUsd?: BigNumber
 ) {
   if (!amount) {
     return;
@@ -31,10 +30,13 @@ export function getUsd(
   // overridePrice?: BigNumber;
 // } = {}
 export function getTokenAmountFromUsd(
-  infoTokens,
-  tokenAddress,
-  usdAmount,
-  opts = {}
+  infoTokens: InfoTokens,
+  tokenAddress: string,
+  usdAmount?: BigNumber,
+  opts: {
+    max?: boolean;
+    overridePrice?: BigNumber;
+  } = {}
 ) {
   if (!usdAmount) {
     return;
@@ -50,7 +52,7 @@ export function getTokenAmountFromUsd(
     return;
   }
 
-  let price
+  let price: BigNumber
   if (info.isStable) {
     price = expandDecimals(1, 30);
   } else {
@@ -66,11 +68,11 @@ export function getTokenAmountFromUsd(
 }
 
 export function getTriggerPrice(
-  _tokenAddress,
-  max,
-  info,
-  orderOption,
-  triggerPriceUsd 
+  _tokenAddress: string,
+  max: boolean,
+  info: TokenInfo,
+  orderOption?: string,
+  triggerPriceUsd?: BigNumber
 ) {
   // Limit/stop orders are executed with price specified by user
   if (orderOption && orderOption !== MARKET && triggerPriceUsd) {

@@ -8,7 +8,7 @@ export const nissohGraphClient = createClient("https://api.thegraph.com/subgraph
 export const arbitrumReferralsGraphClient = createClient("https://api.thegraph.com/subgraphs/name/mycelium-ethereum/myc-swaps-referrals");
 export const arbitrumTestnetReferralsGraphClient = createClient("https://api.thegraph.com/subgraphs/name/mycelium-ethereum/myc-swaps-testnet-referrals");
 
-function createClient(uri) {
+function createClient(uri: string) {
   return new ApolloClient({
     uri,
     cache: new InMemoryCache(),

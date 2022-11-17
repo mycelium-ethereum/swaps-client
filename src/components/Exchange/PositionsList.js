@@ -181,6 +181,7 @@ export default function PositionsList(props) {
           trackAction={trackAction}
           usdgSupply={usdgSupply}
           totalTokenWeights={totalTokenWeights}
+          showPnlAfterFees={showPnlAfterFees}
         />
       )}
       {positions && (

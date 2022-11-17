@@ -36,15 +36,12 @@ import {
   getStakingData,
   getProcessedData,
   getPageTitle,
-  ETH_DECIMALS,
 } from "../../Helpers";
 import {
   callContract,
-  useMarketMakingApr,
   useMYCPrice,
   useStakingApr,
   useTotalMYCSupply,
-  useUserSpreadCapture,
 } from "../../Api";
 import { getConstant } from "../../Constants";
 
@@ -62,7 +59,6 @@ import SEO from "../../components/Common/SEO";
 import ClaimModal from "./ClaimModal";
 import Toggle from "../../components/Toggle/Toggle";
 import MlpPriceChart from "./MlpPriceChart";
-import FeeUpdateModal from "../../components/Modal/FeeUpdateModal";
 
 function CompoundModal(props) {
   const {
@@ -78,7 +74,6 @@ function CompoundModal(props) {
     nativeTokenSymbol,
     wrappedTokenSymbol,
     processedData,
-    setHasRecentlyClaimed,
     vesterAddress,
     stakedMlpTrackerAddress,
     esMycAddress,
@@ -170,9 +165,6 @@ function CompoundModal(props) {
       }
     )
       .then(async (res) => {
-        if (shouldBuyMlpWithEth) {
-          setHasRecentlyClaimed(Date.now());
-        }
         if (shouldClaimEsMyc) {
           await res.wait();
           depositEsMyc();
@@ -650,18 +642,6 @@ export default function StakeV2({
 
   const stakingApr = useStakingApr(mycPrice, nativeTokenPrice);
 
-  let { userSpreadCapture, userSpreadCaptureEth, setHasRecentlyClaimed } = useUserSpreadCapture(
-    chainId,
-    account,
-    processedData?.mlpBalance,
-    nativeTokenPrice
-  );
-  const mmApr = useMarketMakingApr(chainId, processedData.mlpSupplyUsd);
-  if (mmApr) {
-    processedData.mmApr = mmApr;
-    processedData.mlpAprTotal = processedData.mlpAprTotal.add(mmApr);
-  }
-
   let totalRewardTokens;
   if (processedData && processedData.bnMycInFeeMyc && processedData.bonusMycInFeeMyc) {
     totalRewardTokens = processedData.bnMycInFeeMyc.add(processedData.bonusMycInFeeMyc);
@@ -743,7 +723,6 @@ export default function StakeV2({
 
   return (
     <div className="StakeV2 Page page-layout default-container">
-      <FeeUpdateModal />
       <VesterDepositModal
         isVisible={isVesterDepositModalVisible}
         setIsVisible={setIsVesterDepositModalVisible}
@@ -785,33 +764,22 @@ export default function StakeV2({
         library={library}
         chainId={chainId}
         processedData={processedData}
-        setHasRecentlyClaimed={setHasRecentlyClaimed}
         vesterAddress={mlpVesterAddress}
         stakedMlpTrackerAddress={stakedMlpTrackerAddress}
         esMycAddress={esMycAddress}
       />
       <ClaimModal
         active={active}
-        account={account}
         setPendingTxns={setPendingTxns}
-        savedSlippageAmount={savedSlippageAmount}
         connectWallet={connectWallet}
-        infoTokens={infoTokens}
-        trackAction={trackAction}
-        trackPageWithTraits={trackPageWithTraits}
-        analytics={analytics}
         library={library}
         chainId={chainId}
         isVisible={isClaimModalVisible}
         setIsVisible={setIsClaimModalVisible}
         rewardRouterAddress={rewardRouterAddress}
-        totalVesterRewards={processedData.totalVesterRewards}
         wrappedTokenSymbol={wrappedTokenSymbol}
         nativeTokenSymbol={nativeTokenSymbol}
         processedData={processedData}
-        setHasRecentlyClaimed={setHasRecentlyClaimed}
-        userSpreadCapture={userSpreadCapture}
-        userSpreadCaptureEth={userSpreadCaptureEth}
       />
 
       <StakeV2Styled.StakeV2Content className="StakeV2-content">
@@ -866,10 +834,6 @@ export default function StakeV2({
                                 <div className="Tooltip-row">
                                   <span className="label">esMYC APR</span>
                                   <span>{formatKeyAmount(processedData, "mlpAprForEsMyc", 2, 2, true)}%</span>
-                                </div>
-                                <div className="Tooltip-row">
-                                  <span className="label">Market Making APR</span>
-                                  <span>{formatKeyAmount(processedData, "mmApr", 2, 2, true)}%</span>
                                 </div>
                               </>
                             );
@@ -951,30 +915,6 @@ export default function StakeV2({
                         <StakeV2Styled.RewardsBannerText secondary>
                           ($
                           {formatKeyAmount(processedData, "stakedMlpTrackerRewardsUsd", USD_DECIMALS, 2, true)})
-                        </StakeV2Styled.RewardsBannerText>
-                      </StakeV2Styled.RewardsBannerTextWrap>
-                    </div>
-                    <div className="App-card-row">
-                      <div className="label">Market Making Rewards</div>
-                      <StakeV2Styled.RewardsBannerTextWrap>
-                        <StakeV2Styled.RewardsBannerText large>
-                          <Tooltip
-                            handle={`${formatAmount(
-                              userSpreadCaptureEth,
-                              ETH_DECIMALS,
-                              4,
-                              true,
-                              "0.00"
-                            )} ${nativeTokenSymbol}`}
-                            position="right-bottom"
-                            renderContent={() =>
-                              "Market Making rewards are sourced from the spread of the traded markets and is realised by MLP holders through the appreciation of the MLP token."
-                            }
-                          />
-                        </StakeV2Styled.RewardsBannerText>{" "}
-                        <StakeV2Styled.RewardsBannerText secondary>
-                          ($
-                          {formatAmount(userSpreadCapture, USD_DECIMALS, 2, true, "0.00")})
                         </StakeV2Styled.RewardsBannerText>
                       </StakeV2Styled.RewardsBannerTextWrap>
                     </div>
@@ -1125,7 +1065,7 @@ export default function StakeV2({
                     </div>
                   )}
                   <StakeV2Styled.Buttons>
-                    <a href="https://lend.mycelium.xyz" target="_blank" rel="noopener noreferrer">
+                    <a href="https://stake.mycelium.xyz" target="_blank" rel="noopener noreferrer">
                       <button className="App-button-option App-card-option">MYC Staking</button>
                     </a>
                   </StakeV2Styled.Buttons>

@@ -132,11 +132,15 @@ export default function ExchangeAdvancedTVChart(props) {
       toolbar_bg: "#000a00",
       custom_css_url: "/AdvancedTVChart.css",
     };
-    const tvWidget = new widget(widgetOptions);
-    tvWidget.onChartReady(() => {
-      setShowChart(true);
-    });
-    setTvWidget(tvWidget);
+    try {
+      const tvWidget = new widget(widgetOptions);
+      tvWidget.onChartReady(() => {
+        setShowChart(true);
+      });
+      setTvWidget(tvWidget);
+    } catch (error) {
+      console.error(error);
+    }
   }, [chartToken, dataFeed, defaultProps, period]);
 
   // Create chart

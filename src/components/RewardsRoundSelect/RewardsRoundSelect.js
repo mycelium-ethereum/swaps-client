@@ -9,26 +9,25 @@ export default function RewardsRoundSelect({
   allRoundsRewardsData,
   setSelectedRound,
   trackAction,
-  rewardsMessage
+  rewardsMessage,
 }) {
-
   return (
-      <Styles.RewardsRoundSelect>
-        {!!allRoundsRewardsData && (
-          <RoundDropdown
-            allRoundsRewardsData={allRoundsRewardsData}
-            setSelectedRound={setSelectedRound}
-            rewardsMessage={rewardsMessage}
-            trackAction={trackAction}
-          />
-        )}
-        {timeTillRewards && (
-          <Styles.RewardsRoundNextRewards>
-            Next rewards in <Styles.RewardsRoundCountdown>{timeTillRewards}</Styles.RewardsRoundCountdown>
-          </Styles.RewardsRoundNextRewards>
-        )}
-      </Styles.RewardsRoundSelect>
-  )
+    <Styles.RewardsRoundSelect>
+      {!!allRoundsRewardsData && (
+        <RoundDropdown
+          allRoundsRewardsData={allRoundsRewardsData}
+          setSelectedRound={setSelectedRound}
+          rewardsMessage={rewardsMessage}
+          trackAction={trackAction}
+        />
+      )}
+      {timeTillRewards && (
+        <Styles.RewardsRoundNextRewards>
+          Next rewards in <Styles.RewardsRoundCountdown>{timeTillRewards}</Styles.RewardsRoundCountdown>
+        </Styles.RewardsRoundNextRewards>
+      )}
+    </Styles.RewardsRoundSelect>
+  );
 }
 
 export function RoundDropdown(props) {
@@ -57,29 +56,32 @@ export function RoundDropdown(props) {
             </Menu.Button>
             <div className="hide-overflow">
               <Menu.Items as="div" className="menu-items">
-                {allRoundsRewardsData
-                  .sort((a, b) => b.round - a.round)
-                  .map((rewardRound, index) => (
-                    <Menu.Item>
-                      <div
-                        className="menu-item large"
-                        onClick={() => {
-                          let selectedRound = parseFloat(rewardRound?.round);
-                          if (index === 0) {
-                            selectedRound = "latest"
-                          }
-                          setSelectedRound(selectedRound);
-                          trackAction &&
-                            trackAction("Button clicked", {
-                              buttonName: "Select rewards round",
-                              weekNo: selectedRound,
-                            });
-                        }}
-                      >
-                        Round {parseFloat(rewardRound?.round) + 1}
-                      </div>
-                    </Menu.Item>
-                  ))}
+                {allRoundsRewardsData &&
+                  allRoundsRewardsData
+                    .sort((a, b) => b.round - a.round)
+                    .map((rewardRound, index) => (
+                      <Menu.Item>
+                        <div
+                          className="menu-item large"
+                          onClick={() => {
+                            let selectedRound = parseFloat(rewardRound?.round);
+                            if (index === 0) {
+                              selectedRound = "latest";
+                            }
+                            setSelectedRound(selectedRound);
+                            trackAction &&
+                              trackAction("Button clicked", {
+                                buttonName: "Select rewards round",
+                                weekNo: selectedRound,
+                              });
+                          }}
+                        >
+                          {rewardRound?.customRoundText
+                            ? rewardRound.customRoundText
+                            : `Round ${parseFloat(rewardRound?.round) + 1}`}
+                        </div>
+                      </Menu.Item>
+                    ))}
               </Menu.Items>
             </div>
           </>
