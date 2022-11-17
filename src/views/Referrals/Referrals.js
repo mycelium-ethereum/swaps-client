@@ -144,7 +144,7 @@ export default function Referral(props) {
   function handleClaim() {
     setIsClaiming(true);
     trackAction("Button clicked", {
-      buttonName: "Claim rewards",
+      buttonName: "Claim referral rewards",
     });
     let error;
     if (selectedRound === "latest") {
