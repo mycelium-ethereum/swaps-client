@@ -499,7 +499,7 @@ export default function Referral(props) {
               trackAction={trackAction}
             />
           )}
-          {active && currentView !== LEADERBOARD && userRoundData && (
+          {active && currentView !== LEADERBOARD && (
             <ReferralRewards
               active={active}
               connectWallet={connectWallet}
