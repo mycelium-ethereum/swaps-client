@@ -1049,7 +1049,7 @@ export default function StakeV2({
                     MYC/esMYC Staking
                   </StakeV2Styled.RewardsBannerText>
                   <StakeV2Styled.RewardsBannerText secondary title>
-                    Stake MYC & esMYC to receive interest in ETH
+                    Stake MYC or esMYC to receive interest in ETH
                   </StakeV2Styled.RewardsBannerText>
                   {stakingApr && (
                     <div className="App-card-row">
