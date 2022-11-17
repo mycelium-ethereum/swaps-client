@@ -6,6 +6,7 @@ import { ethers } from "ethers";
 import { USD_DECIMALS, CHART_PERIODS, formatAmount, sleep } from "../Helpers";
 import { chainlinkClient } from "./common";
 import { ChainId, Period, TokenSymbol, Range } from "../types/common";
+import { Candle, FastPrice } from "../types/prices";
 
 
 type Price = {
@@ -74,17 +75,91 @@ export function fillGaps(prices: Price[], periodSeconds: number) {
   return newPrices;
 }
 
+
+
+async function getChartPricesFromStatsV1(_chainId: ChainId, symbol: TokenSymbol, period: Period, range?: Range) {
+  if (["WBTC", "WETH"].includes(symbol)) {
+    symbol = symbol.substr(1);
+  }
+
+  const timeDiff = CHART_PERIODS[period] * 3000;
+  const from = range?.from ? range?.from - timeDiff : Math.floor(Date.now() / 1000 - timeDiff);
+  const hostname = "https://swaps-stats-kltusqhvaa-uw.a.run.app";
+  // const hostname = "http://localhost:3113/";
+  const url = `${hostname}/api/candles/${symbol}?preferableChainId=42161&period=${period}&from=${from}&preferableSource=fast`;
+  const TIMEOUT = 5000;
+  const res: Response = await new Promise(async (resolve, reject) => {
+    let done = false;
+    setTimeout(() => {
+      done = true;
+      reject(new Error(`request timeout ${url}`));
+    }, TIMEOUT);
+
+    let lastEx: any;
+    for (let i = 0; i < 3; i++) {
+      if (done) return;
+      try {
+        const res = await fetch(url);
+        resolve(res);
+        return;
+      } catch (ex) {
+        await sleep(300);
+        lastEx = ex;
+      }
+    }
+    reject(lastEx);
+  });
+
+  if (!res.ok) {
+    throw new Error(`request failed ${res.status} ${res.statusText}`);
+  }
+
+  let json = await res.json();
+  let prices = json?.prices;
+  if (!prices || prices?.length < 10) {
+    throw new Error(`not enough prices data: ${prices?.length}`);
+  }
+
+  const OBSOLETE_THRESHOLD = Date.now() / 1000 - 60 * 30; // 30 min ago
+  const updatedAt = json?.updatedAt || 0;
+  if (updatedAt < OBSOLETE_THRESHOLD) {
+    throw new Error(
+      "chart data is obsolete, last price record at " +
+        new Date(updatedAt * 1000).toISOString() +
+        " now: " +
+        new Date().toISOString()
+    );
+  }
+
+  prices = prices.map(({ t, o: open, c: close, h: high, l: low }, i: number) => {
+    if (i !== 0) {
+      // set open to close
+      // prices are sorted in timestamp ascending order
+      open = prices[i-1].c;
+    }
+    return {
+      time: t + timezoneOffset,
+      open,
+      close,
+      high,
+      low,
+    };
+  });
+
+  return prices;
+
+}
+
 async function getChartPricesFromStats(_chainId: ChainId, symbol: TokenSymbol, period: Period, range?: Range) {
   if (["WBTC", "WETH"].includes(symbol)) {
     symbol = symbol.substr(1);
   }
-  console.log("period in fetch", period)
-  const hostname = "https://api.mycelium.xyz/";
-  // const hostname = "http://localhost:3030/";
-  // const hostname = "http://localhost:3113/";
+
   const timeDiff = CHART_PERIODS[period] * 3000;
   const from = range?.from ? range?.from - timeDiff : Math.floor(Date.now() / 1000 - timeDiff);
-  const url = `${hostname}trs/candles?ticker=${symbol}&preferableChainId=42161&period=${period}&from=${from}&preferableSource=fast`;
+  const hostname = "https://api.mycelium.xyz";
+  // const hostname = "http://localhost:3030/";
+  const url = `${hostname}/trs/candles?ticker=${symbol}&preferableChainId=42161&period=${period}&from=${from}&preferableSource=fast`;
   const TIMEOUT = 5000;
   const res: Response = await new Promise(async (resolve, reject) => {
     let done = false;
@@ -135,14 +210,14 @@ async function getChartPricesFromStats(_chainId: ChainId, symbol: TokenSymbol, p
   return prices;
 }
 
-function getCandlesFromPrices(prices, period: Period) {
+function getCandlesFromPrices(prices: FastPrice[], period: Period): Candle[] {
   const periodTime = CHART_PERIODS[period];
 
   if (prices.length < 2) {
     return [];
   }
 
-  const candles = [];
+  const candles: Candle[] = [];
   const first = prices[0];
   let prevTsGroup = Math.floor(first[0] / periodTime) * periodTime;
   let prevPrice = first[1];
@@ -154,7 +229,7 @@ function getCandlesFromPrices(prices, period: Period) {
     const [ts, price] = prices[i];
     const tsGroup = Math.floor(ts / periodTime) * periodTime;
     if (prevTsGroup !== tsGroup) {
-      candles.push({ t: prevTsGroup + timezoneOffset, o, h, l, c });
+      candles.push({ time: prevTsGroup + timezoneOffset, open: o, high: h, low: l, close: c });
       o = c;
       h = Math.max(o, c);
       l = Math.min(o, c);
@@ -164,17 +239,10 @@ function getCandlesFromPrices(prices, period: Period) {
     l = Math.min(l, price);
     prevTsGroup = tsGroup;
   }
-
-  return candles.map(({ t: time, o: open, c: close, h: high, l: low }) => ({
-    time,
-    open,
-    close,
-    high,
-    low,
-  }));
+  return candles;
 }
 
-async function getChainlinkChartPricesFromGraph(symbol: TokenSymbol, period: Period, range?: Range) {
+async function getChainlinkChartPricesFromGraph(symbol: TokenSymbol, period: Period, range?: Range): Promise<Candle[]> {
   if (["WBTC", "WETH"].includes(symbol)) {
     symbol = symbol.substr(1);
   }
@@ -185,7 +253,7 @@ async function getChainlinkChartPricesFromGraph(symbol: TokenSymbol, period: Per
   }
   const PER_CHUNK = 1000;
   const CHUNKS_TOTAL = 6;
-  const requests = [];
+  const requests: any[] = [];
   for (let i = 0; i < CHUNKS_TOTAL; i++) {
     const query = gql(`{
       rounds(
@@ -204,10 +272,10 @@ async function getChainlinkChartPricesFromGraph(symbol: TokenSymbol, period: Per
 
   return Promise.all(requests)
     .then((chunks) => {
-      let prices = [];
+      let prices: FastPrice[] = [];
       const uniqTs = new Set();
       chunks.forEach((chunk) => {
-        chunk.data.rounds.forEach((item: any) => {
+        chunk.data.rounds.forEach((item: { unixTimestamp: number, value: string }) => {
           if (uniqTs.has(item.unixTimestamp)) {
             return;
           }
@@ -218,33 +286,38 @@ async function getChainlinkChartPricesFromGraph(symbol: TokenSymbol, period: Per
       });
 
       prices.sort(([timeA], [timeB]) => timeA - timeB);
-      prices = getCandlesFromPrices(prices, period);
-      return prices;
+      const candles = getCandlesFromPrices(prices, period);
+      return candles;
     })
     .catch((err) => {
       console.error("Failed to fetch chainlink prices", err);
+      return []
     });
 }
 
 
-export const getChartPrices = async (chainId: ChainId, symbol: TokenSymbol, period: Period, range?: Range) => {
+export const getChartPrices = async (chainId: ChainId, symbol: TokenSymbol, period: Period, range?: Range): Promise<Candle[]> => {
   try {
-    console.log(period);
     return await getChartPricesFromStats(chainId, symbol, period, range);
   } catch (ex) {
     console.warn(ex);
-    console.warn("Switching to graph chainlink data");
+    console.warn("Switching to v1 stats data");
     try {
-      return await getChainlinkChartPricesFromGraph(symbol, period, range);
-    } catch (ex2) {
-      console.warn("getChainlinkChartPricesFromGraph failed");
-      console.warn(ex2);
-      return [];
+      return await getChartPricesFromStatsV1(chainId, symbol, period, range);
+    } catch (ex) {
+      console.warn("Switching to graph chainlink data");
+      try {
+        return await getChainlinkChartPricesFromGraph(symbol, period, range);
+      } catch (ex2) {
+        console.warn("getChainlinkChartPricesFromGraph failed");
+        console.warn(ex2);
+        return [];
+      }
     }
   }
 }
 
-export function useChartPrices(chainId: ChainId, symbol: TokenSymbol, isStable: boolean, period: Period, currentAveragePrice: ethers.BigNumber) {
+export function useChartPrices(chainId: ChainId, symbol: TokenSymbol, isStable: boolean, period: Period, currentAveragePrice: ethers.BigNumber): [Candle[], () => any]{
   const swrKey = !isStable && symbol ? ["getChartCandles", chainId, symbol, period] : null;
   let { data: prices, mutate: updatePrices } = useSWR(swrKey, {
     fetcher: async (...args) => getChartPrices(chainId, symbol, period),
@@ -273,7 +346,7 @@ export function useChartPrices(chainId: ChainId, symbol: TokenSymbol, isStable: 
   return [retPrices, updatePrices];
 }
 
-function appendCurrentAveragePrice(prices: Price[], currentAveragePrice: ethers.BigNumber, period: Period) {
+function appendCurrentAveragePrice(prices: Price[], currentAveragePrice: ethers.BigNumber, period: Period): Candle[] {
   const periodSeconds = CHART_PERIODS[period];
   const currentCandleTime = Math.floor(Date.now() / 1000 / periodSeconds) * periodSeconds + timezoneOffset;
   const last = prices[prices.length - 1];
@@ -295,10 +368,10 @@ function appendCurrentAveragePrice(prices: Price[], currentAveragePrice: ethers.
   }
 }
 
-function getStablePriceData(period: Period) {
+function getStablePriceData(period: Period): Candle[] {
   const periodSeconds = CHART_PERIODS[period];
   const now = Math.floor(Date.now() / 1000 / periodSeconds) * periodSeconds;
-  let priceData = [];
+  let priceData: Candle[] = [];
   for (let i = 100; i > 0; i--) {
     priceData.push({
       time: now - i * periodSeconds,
