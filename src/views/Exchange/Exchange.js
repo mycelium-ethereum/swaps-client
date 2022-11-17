@@ -56,7 +56,7 @@ import Tab from "../../components/Tab/Tab";
 import "./Exchange.css";
 import SEO from "../../components/Common/SEO";
 import { ExchangeHeader } from "../../components/Exchange/ExchangeHeader";
-import TradingCompBanner from "../../components/Exchange/TradingCompBanner";
+
 const { AddressZero } = ethers.constants;
 
 const PENDING_POSITION_VALID_DURATION = 600 * 1000;
@@ -913,7 +913,6 @@ export const Exchange = forwardRef((props, ref) => {
   return (
     <>
       <SEO description="Trade with liquidity, leverage, low fees. Trade with Mycelium. Trade Perpetual Swaps and Perpetual Pools on Ethereum scaling solution, Arbitrum with liquid markets for BTC, ETH, LINK, UNI, CRV, FXS, & BAL." />
-      <TradingCompBanner />
       <div className="Exchange default-container ReferralsBannerActive">
         <div className="Exchange-content">
           <div className="Exchange-left">

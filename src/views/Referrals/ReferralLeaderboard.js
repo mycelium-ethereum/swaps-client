@@ -56,37 +56,41 @@ export default function ReferralLeaderboard(props) {
 
   return (
     <>
-      <Styles.CompetitionRewardsToggle onClick={togglePodium}>
-        <span>Referral Competition Rewards</span>
-        <Styles.ChevronDown isOpen={isPodiumShown} />
-      </Styles.CompetitionRewardsToggle>
-      <Styles.CompetitionRewardsBanner isOpen={isPodiumShown}>
-        <Styles.PodiumBackground />
-        <Styles.CompetitionRewardsContainer className="desktop">
-          {competitionPodiumContent.map(({ icon, prize, eligibility, className, mobileOnly }) => {
-            if (!mobileOnly)
-              return (
-                <Styles.PodiumItem className={className} key={prize}>
-                  {icon && <img src={icon} alt="podium icon" />}
-                  <h3>{prize}</h3>
-                  {eligibility}
-                </Styles.PodiumItem>
-              );
-          })}
-        </Styles.CompetitionRewardsContainer>
-        <Styles.CompetitionRewardsContainer className="mobile">
-          {competitionPodiumContent.map(({ icon, prize, eligibility, className, desktopOnly }) => {
-            if (!desktopOnly)
-              return (
-                <Styles.PodiumItem className={className} key={prize}>
-                  {icon && <img src={icon} alt="podium icon" />}
-                  <h3>{prize}</h3>
-                  {eligibility}
-                </Styles.PodiumItem>
-              );
-          })}
-        </Styles.CompetitionRewardsContainer>
-      </Styles.CompetitionRewardsBanner>
+      {selectedRound === 7 && (
+        <>
+          <Styles.CompetitionRewardsToggle onClick={togglePodium}>
+            <span>Referral Competition Rewards</span>
+            <Styles.ChevronDown isOpen={isPodiumShown} />
+          </Styles.CompetitionRewardsToggle>
+          <Styles.CompetitionRewardsBanner isOpen={isPodiumShown}>
+            <Styles.PodiumBackground />
+            <Styles.CompetitionRewardsContainer className="desktop">
+              {competitionPodiumContent.map(({ icon, prize, eligibility, className, mobileOnly }) => {
+                if (!mobileOnly)
+                  return (
+                    <Styles.PodiumItem className={className} key={prize}>
+                      {icon && <img src={icon} alt="podium icon" />}
+                      <h3>{prize}</h3>
+                      {eligibility}
+                    </Styles.PodiumItem>
+                  );
+              })}
+            </Styles.CompetitionRewardsContainer>
+            <Styles.CompetitionRewardsContainer className="mobile">
+              {competitionPodiumContent.map(({ icon, prize, eligibility, className, desktopOnly }) => {
+                if (!desktopOnly)
+                  return (
+                    <Styles.PodiumItem className={className} key={prize}>
+                      {icon && <img src={icon} alt="podium icon" />}
+                      <h3>{prize}</h3>
+                      {eligibility}
+                    </Styles.PodiumItem>
+                  );
+              })}
+            </Styles.CompetitionRewardsContainer>
+          </Styles.CompetitionRewardsBanner>
+        </>
+      )}
       <UserStatsRow userRoundData={userRoundData} />
       <Styles.FlexBetweenContainer>
         <Styles.LeaderboardTitle>
