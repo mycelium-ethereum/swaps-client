@@ -1065,7 +1065,7 @@ export default function StakeV2({
                     </div>
                   )}
                   <StakeV2Styled.Buttons>
-                    <a href="https://lend.mycelium.xyz" target="_blank" rel="noopener noreferrer">
+                    <a href="https://stake.mycelium.xyz" target="_blank" rel="noopener noreferrer">
                       <button className="App-button-option App-card-option">MYC Staking</button>
                     </a>
                   </StakeV2Styled.Buttons>
