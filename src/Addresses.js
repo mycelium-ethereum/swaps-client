@@ -111,6 +111,7 @@ const CONTRACTS = {
     FeeDistributorReader: "0xe6d60D6A7d39d9435403e0993890D6B50B4B03BC",
 
     LentMYC: "0x9B225FF56C48671d4D04786De068Ed8b88b672d6",
+    MYCStakingRewards: "0xF9B003Ee160dA9677115Ad3c5bd6BB6dADcB2F93" // v2 staking
   },
 };
 
