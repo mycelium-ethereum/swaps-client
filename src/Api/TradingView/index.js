@@ -1,5 +1,8 @@
 import { CHART_PERIODS } from "src/Helpers";
+import { roundUpTime } from "src/utils/common";
 import { fillGaps, getChartPrices } from "../prices";
+import { newPriceEmitter } from "./newPriceEmitter";
+
 
 // [5m, 15m, 60m (1h), 240m(4h), 1D(24h)]
 export const supportedResolutions = ["1", "5", "15", "60", "240", "24H"];
@@ -68,7 +71,7 @@ export const dataFeed = {
         minmov2: 0,
         pricescale: 100000,
         has_intraday: true,
-        debug: true,
+        debug: false,
         supported_resolutions: supportedResolutions,
       };
 
@@ -87,6 +90,7 @@ export const dataFeed = {
 
         // const prices_ = await getChartPrices(42161, symbol, period);
         const prices_ = await getChartPrices(42161, symbol, period, periodParams);
+        // const latestPrices = await fetch
 
         if (prices_.length === 0) {
           // "noData" should be set if there is no data in the requested period.
@@ -114,8 +118,12 @@ export const dataFeed = {
           onErrorCallback(error);
       }
     },
-    subscribeBars: (_symbolInfo, _resolution, _onRealtimeCallback, _subscribeUID, _onResetCacheNeededCallback) => {
+    subscribeBars: (_symbolInfo, resolution, onRealtimeCallback, _subscribeUID, _onResetCacheNeededCallback) => {
       console.debug("=====subscribeBars runnning");
+      newPriceEmitter.on('update', (bar) => {
+        const period = supportedResolutionsToPeriod[resolution]
+        onRealtimeCallback({ ...bar, time: roundUpTime(bar.time, period) * 1000 })
+      })
     },
     unsubscribeBars: (_subscriberUID) => {
       console.debug("=====unsubscribeBars running");

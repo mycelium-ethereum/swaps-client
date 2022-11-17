@@ -7,6 +7,7 @@ import { USD_DECIMALS, CHART_PERIODS, formatAmount, sleep } from "../Helpers";
 import { chainlinkClient } from "./common";
 import { ChainId, Period, TokenSymbol, Range } from "../types/common";
 import { Candle, FastPrice } from "../types/prices";
+import { newPriceEmitter } from "./TradingView/newPriceEmitter";
 
 
 type Price = {
@@ -355,6 +356,7 @@ function appendCurrentAveragePrice(prices: Price[], currentAveragePrice: ethers.
     last.close = averagePriceValue;
     last.high = Math.max(last.high, averagePriceValue);
     last.low = Math.max(last.low, averagePriceValue);
+    newPriceEmitter.emit('update', last);
     return prices;
   } else {
     const newCandle = {
@@ -364,6 +366,7 @@ function appendCurrentAveragePrice(prices: Price[], currentAveragePrice: ethers.
       high: averagePriceValue,
       low: averagePriceValue,
     };
+    newPriceEmitter.emit('update', newCandle);
     return [...prices, newCandle];
   }
 }

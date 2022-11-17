@@ -2,6 +2,7 @@ import React, { useState, useEffect, useMemo, useCallback } from "react";
 import cx from "classnames";
 import { widget } from "@mycelium-swaps-interface/charting_library";
 import { dataFeed, supportedResolutions } from "../../../Api/TradingView";
+import {newPriceEmitter} from "src/Api/TradingView/newPriceEmitter";
 
 const getLanguageFromURL = () => {
   const regex = new RegExp("[\\?&]lang=([^&#]*)");
@@ -63,20 +64,12 @@ export default function ExchangeAdvancedTVChart(props) {
   );
   const [tvWidget, setTvWidget] = useState(null);
   const [showChart, setShowChart] = useState(false);
-  const [prevPeriod, setPrevPeriod] = useState(period);
-  const [prevToken, setPrevToken] = useState(null);
-  const [prevPriceDataLength, setPrevPriceDataLength] = useState(0);
-
-  // const dataFeed = useMemo(() => generateDataFeed(priceData), [priceData]);
 
   const createChart = useCallback(() => {
-    // const advancedChartPeriod = convertLightweightChartPeriod(period);
     const widgetOptions = {
       ...defaultProps,
-      // symbol: `${chartToken?.address}:${chartToken?.eymbol}/USD`,
-      debug: true,
+      debug: false,
       datafeed: dataFeed,
-      // interval: advancedChartPeriod,
       container: "tv_chart_container",
       library_path: "/charting_library/",
       locale: getLanguageFromURL() || "en",
@@ -87,9 +80,7 @@ export default function ExchangeAdvancedTVChart(props) {
         "go_to_date",
         "header_resolutions",
       ],
-      // chartToken: chartToken,
       enabled_features: [],
-      // timeframe: TIMEFRAME[period],
       overrides: {
         "paneProperties.backgroundType": "solid",
         "paneProperties.background": "#000a00",
@@ -166,6 +157,13 @@ export default function ExchangeAdvancedTVChart(props) {
       resetChart()
     }
   }, [tvWidget, period, chartToken?.symbol])
+
+  useEffect(() => {
+    if (tvWidget && priceData && showChart && priceData.length !== 0) {
+      const lastBar = priceData[priceData.length - 1];
+      newPriceEmitter.emit('update', { ...lastBar })
+    }
+  }, [tvWidget, showChart, priceData])
 
   if (!priceData || !chartToken) {
     return null;
