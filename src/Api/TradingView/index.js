@@ -49,7 +49,7 @@ export const dataFeed = {
       onResultReadyCallback(symbols);
     },
 
-    resolveSymbol: (symbolName, onSymbolResolvedCallback, onResolveErrorCallback) => {
+    resolveSymbol: async (symbolName, onSymbolResolvedCallback, onResolveErrorCallback) => {
       console.log('[resolveSymbol]: Method call', symbolName);
       const market = symbolName.replace("Swaps:", "");
       if (!allSymbols.includes(market)) {
