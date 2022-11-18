@@ -6,8 +6,9 @@ export type TokenSymbol = string;
 export type Period = keyof typeof CHART_PERIODS
 
 export type Range = {
-  from?: number
-  to?: number
+  from?: number,
+  to?: number,
+  countBack?: number // trading view pageSize
 }
 
 export type Library = Web3ReactContextInterface["library"];

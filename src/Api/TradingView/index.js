@@ -15,6 +15,8 @@ export const supportedResolutionsToPeriod = {
   1440: '1d',
 }
 
+export const intradayMultipliers = ["1", "5", "15", "60", "240"];
+
 const config = {
   supported_resolutions: [...supportedResolutions],
   exchanges: [
@@ -71,8 +73,12 @@ export const dataFeed = {
         minmov2: 0,
         pricescale: 100000,
         has_intraday: true,
+        intraday_multipliers: intradayMultipliers,
         debug: false,
         supported_resolutions: supportedResolutions,
+        has_daily: true,
+        dailyMultipliers: ['1'],
+        has_empty_bars: true
       };
 
       if (market.split("/")[1].match(/USD|EUR|JPY|AUD|GBP|KRW|CNY/)) {
@@ -82,23 +88,25 @@ export const dataFeed = {
     },
 
     getBars: async (symbolInfo, resolution, periodParams, onResult, onErrorCallback) => {
-      const { from, to, firstDataRequest } = periodParams;
-      console.log('[getBars]: Method call', symbolInfo, resolution, from, to);
+      const { from, to, firstDataRequest, countBack } = periodParams;
+      console.log('[getBars]: Method call', symbolInfo, resolution, periodParams);
       try {
         const symbol = symbolInfo.name.split("/")[0];
         const period = supportedResolutionsToPeriod[resolution];
 
-        // const prices_ = await getChartPrices(42161, symbol, period);
-        const prices_ = await getChartPrices(42161, symbol, period, periodParams);
-        // const latestPrices = await fetch
+        if (countBack === 0 || !firstDataRequest) {
+          onResult([], { noData: true });
+        }
 
-        if (prices_.length === 0) {
+        const prices = await getChartPrices(42161, symbol, period, { from, to });
+
+        if (prices.length === 0) {
           // "noData" should be set if there is no data in the requested period.
           onResult([], { noData: true });
           return;
         }
 
-        const prices = fillGaps(prices_, CHART_PERIODS[period])
+        // const prices = fillGaps(prices_, CHART_PERIODS[period])
 
         const bars = prices.map((el) => {
           return {
@@ -108,21 +116,18 @@ export const dataFeed = {
         })
 
         console.log(`[getBars]: returned ${bars.length} bar(s)`);
-
-        if (!firstDataRequest) {
-          onResult([], { noData: true});
-        }
         onResult(bars, { noData: false });
       } catch (error) {
           console.log('[getBars]: Get error', error);
           onErrorCallback(error);
       }
     },
-    subscribeBars: (_symbolInfo, resolution, onRealtimeCallback, _subscribeUID, _onResetCacheNeededCallback) => {
+    subscribeBars: (_symbolInfo, resolution, onRealtimeCallback, _subscribeUID, onResetCacheNeededCallback) => {
       console.debug("=====subscribeBars runnning");
       newPriceEmitter.on('update', (bar) => {
         const period = supportedResolutionsToPeriod[resolution]
         onRealtimeCallback({ ...bar, time: roundUpTime(bar.time, period) * 1000 })
+        // onResetCacheNeededCallback();
       })
     },
     unsubscribeBars: (_subscriberUID) => {

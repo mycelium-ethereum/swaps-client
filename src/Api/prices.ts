@@ -156,9 +156,10 @@ async function getChartPricesFromStats(_chainId: ChainId, symbol: TokenSymbol, p
 
   const timeDiff = CHART_PERIODS[period] * 3000;
   const from = range?.from ? range?.from - timeDiff : Math.floor(Date.now() / 1000 - timeDiff);
-  const hostname = "https://api.mycelium.xyz";
-  // const hostname = "http://localhost:3030/";
-  const url = `${hostname}/trs/candles?ticker=${symbol}&preferableChainId=42161&period=${period}&from=${from}&preferableSource=fast`;
+  const pageSize = range?.countBack ? range?.countBack : 200;
+  const hostname = "https://dev.api.mycelium.xyz";
+  // const hostname = "http://localhost:3030";
+  const url = `${hostname}/trs/candles?ticker=${symbol}&preferableChainId=42161&period=${period}&from=${from}&pageSize=${pageSize}&preferableSource=fast`;
   const TIMEOUT = 5000;
   const res: Response = await new Promise(async (resolve, reject) => {
     let done = false;
@@ -186,12 +187,14 @@ async function getChartPricesFromStats(_chainId: ChainId, symbol: TokenSymbol, p
     throw new Error(`request failed ${res.status} ${res.statusText}`);
   }
 
-  let prices = await res.json();
-  if (!prices || prices?.length < 10) {
+  const json = await res.json();
+  let prices = json?.rows;
+  const min = range?.countBack ? range.countBack : 10
+  if (!prices || prices?.length < min) {
     throw new Error(`not enough prices data: ${prices?.length}`);
   }
 
-  prices = prices.map(({ t, o: open, c: close, h: high, l: low }, i: number) => {
+  prices = prices.sort((a: { t: number }, b: { t: number }) => a.t - b.t).map(({ t, o: open, c: close, h: high, l: low }, i: number) => {
     if (i !== 0) {
       // set open to close
       // prices are sorted in timestamp ascending order
@@ -204,7 +207,7 @@ async function getChartPricesFromStats(_chainId: ChainId, symbol: TokenSymbol, p
       high: Number(high),
       low: Number(low),
     };
-  });
+  })
 
   return prices;
 }

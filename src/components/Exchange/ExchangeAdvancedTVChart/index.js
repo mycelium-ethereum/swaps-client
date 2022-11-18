@@ -158,9 +158,9 @@ export default function ExchangeAdvancedTVChart(props) {
   }, [tvWidget, period, chartToken?.symbol])
 
   useEffect(() => {
-    if (tvWidget && priceData && showChart && priceData.length !== 0) {
+    if (tvWidget && priceData && showChart && priceData.length >= 1) {
       const lastBar = priceData[priceData.length - 1];
-      newPriceEmitter.emit('update', { ...lastBar })
+      newPriceEmitter.emit('update', lastBar)
     }
   }, [tvWidget, showChart, priceData])
 
