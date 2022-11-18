@@ -156,8 +156,8 @@ async function getChartPricesFromStats(_chainId: ChainId, symbol: TokenSymbol, p
 
   const timeDiff = CHART_PERIODS[period] * 3000;
   const from = range?.from ? range?.from - timeDiff : Math.floor(Date.now() / 1000 - timeDiff);
-  const pageSize = range?.countBack ? range?.countBack : 200;
-  const hostname = "https://dev.api.mycelium.xyz";
+  const pageSize = range?.countBack ? range?.countBack : 1000;
+  const hostname = "https://api.mycelium.xyz";
   // const hostname = "http://localhost:3030";
   const url = `${hostname}/trs/candles?ticker=${symbol}&preferableChainId=42161&period=${period}&from=${from}&pageSize=${pageSize}&preferableSource=fast`;
   const TIMEOUT = 5000;
