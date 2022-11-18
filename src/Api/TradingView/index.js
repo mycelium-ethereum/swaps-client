@@ -39,15 +39,13 @@ export const dataFeed = {
 
     searchSymbols: (_userInput, _exchange, _symbolType, onResultReadyCallback) => {
       console.log("====Search Symbols running");
-      const symbols = [
-        {
-          symbol: 'ETH/USD',
-          ticker: 'ETH/USD',
-          full_name: `Swaps:ETH/USD`,
-          description: 'Ethereum',
-          type: 'crypto',
-        }
-      ]
+      const symbols = allSymbols.map((symbol) => ({
+        symbol: symbol,
+        ticker: symbol,
+        full_name: `Swaps:${symbol}`,
+        description: symbol,
+        type: 'crypto',
+      }))
       onResultReadyCallback(symbols);
     },
 
