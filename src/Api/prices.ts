@@ -189,7 +189,7 @@ async function getChartPricesFromStats(_chainId: ChainId, symbol: TokenSymbol, p
 
   const json = await res.json();
   let prices = json?.rows;
-  const min = range?.countBack ? range.countBack : 10
+  const min = range?.countBack ? Math.min(1000, range.countBack) : 10
   if (!prices || prices?.length < min) {
     throw new Error(`not enough prices data: ${prices?.length}`);
   }

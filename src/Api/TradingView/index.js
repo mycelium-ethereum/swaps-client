@@ -107,8 +107,13 @@ export const dataFeed = {
         // const prices = fillGaps(prices_, CHART_PERIODS[period])
 
         const bars = prices.map((el) => {
+          let low = el.low;
+          if (low === 0) {
+            low = el.open * 0.9996;
+          }
           return {
             ...el,
+            low,
             time: el.time * 1000, //TradingView requires bar time in ms
           };
         })
