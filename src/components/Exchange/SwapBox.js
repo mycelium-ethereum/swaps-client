@@ -313,20 +313,64 @@ export default function SwapBox(props) {
   const toTokenInfo = getTokenInfo(infoTokens, toTokenAddress);
   const toTokenAvailableUsd = toTokenInfo.availableUsd;
 
-  const renderAvailableLongLiquidity = () => {
-    if (!isLong) {
-      return null;
-    }
+  const hasMaxAvailableShort = isShort && toTokenInfo.maxAvailableShort && toTokenInfo.maxAvailableShort.gt(0);
 
-    return (
-      <div className="Exchange-info-row">
-        <div className="Exchange-info-label">Available Liquidity</div>
-        <div className="align-right">{formatAmount(toTokenAvailableUsd, USD_DECIMALS, 2, true)}</div>
-      </div>
-    );
+  const renderAvailableLiquidity = () => {
+    if (!isLong && hasMaxAvailableShort) {
+      return (
+        <div className="Exchange-info-row">
+          <div className="Exchange-info-label">Available Liquidity</div>
+          <div className="align-right">
+            <Tooltip
+              handle={`${formatAmount(toTokenInfo.maxAvailableShort, USD_DECIMALS, 2, true)}`}
+              position="right-bottom"
+              renderContent={() => {
+                return (
+                  <>
+                    Max {toTokenInfo.symbol} short capacity: $
+                    {formatAmount(toTokenInfo.maxGlobalShortSize, USD_DECIMALS, 2, true)}
+                    <br />
+                    <br />
+                    Current {toTokenInfo.symbol} shorts: $
+                    {formatAmount(toTokenInfo.globalShortSize, USD_DECIMALS, 2, true)}
+                    <br />
+                  </>
+                );
+              }}
+            ></Tooltip>
+          </div>
+        </div>
+      )
+    } else if (isLong) {
+      return (
+        <div className="Exchange-info-row">
+          <div className="Exchange-info-label">Available Liquidity</div>
+          <div className="align-right">
+            <Tooltip
+              handle={`$${formatAmount(toTokenInfo.maxAvailableLong, USD_DECIMALS, 2, true)}`}
+              position="right-bottom"
+              renderContent={() => {
+                return (
+                  <>
+                    Max {toTokenInfo.symbol} long capacity: $
+                    {formatAmount(toTokenInfo.maxLongCapacity, USD_DECIMALS, 0, true)}
+                    <br />
+                    <br />
+                    Current {toTokenInfo.symbol} longs: $
+                    {formatAmount(toTokenInfo.guaranteedUsd, USD_DECIMALS, 0, true)}
+                    <br />
+                  </>
+                );
+              }}
+            ></Tooltip>
+          </div>
+        </div>
+      );
+
+    } // else
+    return null
   };
 
-  const hasMaxAvailableShort = isShort && toTokenInfo.maxAvailableShort && toTokenInfo.maxAvailableShort.gt(0);
 
   const fromBalance = fromTokenInfo ? fromTokenInfo.balance : bigNumberify(0);
   const toBalance = toTokenInfo ? toTokenInfo.balance : bigNumberify(0);
@@ -2376,31 +2420,7 @@ export default function SwapBox(props) {
               </Tooltip>
             </div>
           </div>
-          {renderAvailableLongLiquidity()}
-          {hasMaxAvailableShort && (
-            <div className="Exchange-info-row">
-              <div className="Exchange-info-label">Available Liquidity</div>
-              <div className="align-right">
-                <Tooltip
-                  handle={`${formatAmount(toTokenInfo.maxAvailableShort, USD_DECIMALS, 2, true)}`}
-                  position="right-bottom"
-                  renderContent={() => {
-                    return (
-                      <>
-                        Max {toTokenInfo.symbol} short capacity: $
-                        {formatAmount(toTokenInfo.maxGlobalShortSize, USD_DECIMALS, 2, true)}
-                        <br />
-                        <br />
-                        Current {toTokenInfo.symbol} shorts: $
-                        {formatAmount(toTokenInfo.globalShortSize, USD_DECIMALS, 2, true)}
-                        <br />
-                      </>
-                    );
-                  }}
-                ></Tooltip>
-              </div>
-            </div>
-          )}
+          {renderAvailableLiquidity()}
         </div>
       )}
       <div className="Exchange-swap-market-box App-box App-box-border">
