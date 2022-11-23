@@ -18,6 +18,11 @@
   --tv-list-item-button-background-hover-color: #098200;
 }
 
+/* Market open indicator */
+div[class*="marketStatusOpen"] {
+  display: none;
+}
+
 [class*="variant-secondary"] {
   --ui-lib-button-default-color-bg: transparent !important;
 }

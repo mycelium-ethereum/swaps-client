@@ -60,7 +60,7 @@ export function fillGaps(prices: Price[], periodSeconds: number) {
     }
 
     prevTime = time;
-
+    
     if (low === 0) {
       newPrices.push({
         ...prices[i],
@@ -124,9 +124,9 @@ async function getChartPricesFromStatsV1(_chainId: ChainId, symbol: TokenSymbol,
   if (updatedAt < OBSOLETE_THRESHOLD) {
     throw new Error(
       "chart data is obsolete, last price record at " +
-      new Date(updatedAt * 1000).toISOString() +
-      " now: " +
-      new Date().toISOString()
+        new Date(updatedAt * 1000).toISOString() +
+        " now: " +
+        new Date().toISOString()
     );
   }
 
@@ -134,7 +134,7 @@ async function getChartPricesFromStatsV1(_chainId: ChainId, symbol: TokenSymbol,
     if (i !== 0) {
       // set open to close
       // prices are sorted in timestamp ascending order
-      open = prices[i - 1].c;
+      open = prices[i-1].c;
     }
     return {
       time: t + timezoneOffset,
@@ -198,7 +198,7 @@ async function getChartPricesFromStats(_chainId: ChainId, symbol: TokenSymbol, p
     if (i !== 0) {
       // set open to close
       // prices are sorted in timestamp ascending order
-      open = Number(prices[i - 1].c);
+      open = Number(prices[i-1].c);
     }
     return {
       time: Number(t) + timezoneOffset,
@@ -319,7 +319,7 @@ export const getChartPrices = async (chainId: ChainId, symbol: TokenSymbol, peri
   }
 }
 
-export function useChartPrices(chainId: ChainId, symbol: TokenSymbol, isStable: boolean, period: Period, currentAveragePrice: ethers.BigNumber): [Candle[], () => any] {
+export function useChartPrices(chainId: ChainId, symbol: TokenSymbol, isStable: boolean, period: Period, currentAveragePrice: ethers.BigNumber): [Candle[], () => any]{
   const swrKey = !isStable && symbol ? ["getChartCandles", chainId, symbol, period] : null;
   let { data: prices, mutate: updatePrices } = useSWR(swrKey, {
     fetcher: async (...args) => getChartPrices(chainId, symbol, period),

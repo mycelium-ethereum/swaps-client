@@ -1,11 +1,15 @@
 import styled from "styled-components";
 
-export const DropdownContainer = styled.div`
-  position: relative;
-`;
-
-export const DropdownButton = styled.button(
+export const DropdownContainer = styled.div(
   (props) => `
+  position: relative;
+  @media (min-width: 700px) {
+    display: ${props.isMobile ? "none" : "block"};
+  }
+`
+);
+
+export const DropdownButton = styled.button`
   display: flex;
   align-items: center;
   justify-content: flex-end;
@@ -14,45 +18,58 @@ export const DropdownButton = styled.button(
   font-size: 14px;
   border-radius: 4px;
   white-space: nowrap;
-  ${
-    props.isLanguageDropdown
-      ? `
-        height: 36px;
-        padding: 0 8px;
-        background: var(--background-gradient);
-        border: 1px solid var(--action-active);
-        transition: background-color 0.3s ease;
-        &:hover {
-          background: var(--action-active);
-        }
-        `
-      : `
-          width: 98px;
-          background: unset;
-          border: unset;
-          `
-  }
-
   margin-right: 20px;
   color: white;
 
   > img {
-    ${props.isLanguageDropdown ? "margin-right: 8px" : "margin-left: 8px"};
+    margin-left: 8px;
     width: 20px;
     height: 20px;
   }
-`
-);
+`;
 
 export const LinkDropdownButton = styled(DropdownButton)`
+  width: 98px;
+  background: unset;
+  border: unset;
   @media (min-width: 1281px) {
     display: none;
   }
   @media (max-width: 1280px) {
     display: flex;
   }
-  @media (max-width: 670px) {
+  @media (max-width: 700px) {
     display: none;
+  }
+`;
+
+export const LanguageDropdownButton = styled(DropdownButton)`
+  height: 36px;
+  padding: 0 8px;
+  background: var(--background-gradient);
+  border: 1px solid var(--action-active);
+  transition: background-color 0.3s ease;
+
+  &:hover {
+    background: var(--action-active);
+  }
+
+  > img {
+    margin-right: 8px;
+    margin-left: 0;
+  }
+
+  @media (max-width: 780px) {
+    span {
+      display: none;
+    }
+    > img {
+      margin-right: 0;
+    }
+  }
+
+  @media (max-width: 700px) {
+    margin-right: 0;
   }
 `;
 
@@ -63,7 +80,6 @@ export const LinkMenu = styled.ul(
   left: 0;
   padding: 0;
   border-radius: 4px;
-  width: 160px;
   border: 1px solid var(--action-active);
   background: var(--background-gradient);
   overflow: hidden;
@@ -71,22 +87,27 @@ export const LinkMenu = styled.ul(
   opacity: ${props.open ? 1 : 0};
   pointer-events: ${props.open ? "all" : "none"};
 
-  ${
-    !props.isLanguageDropdown
-      ? `
-      @media (min-width: 1281px) {
-        display: none;
-      }
-      @media (max-width: 670px) {
-        display: none;
-      }
-    `
-      : `
-      font-family: 'Noto Sans', sans-serif;
-      `
-  }
 `
 );
+
+export const NavLinkMenu = styled(LinkMenu)`
+  width: 180px;
+  @media (min-width: 1281px) {
+    display: none;
+  }
+  @media (max-width: 700px) {
+    display: none;
+  }
+`;
+
+export const LanguageMenu = styled(LinkMenu)`
+  width: 160px;
+  font-family: "Noto Sans", sans-serif;
+  @media (max-width: 700px) {
+    left: unset;
+    right: 0;
+  }
+`;
 
 export const ListItem = styled.li(
   (props) => `
@@ -116,6 +137,13 @@ export const ListItem = styled.li(
     color: white;
   }
 
+  ${
+    props.disabled &&
+    `opacity: 0.5;
+     pointer-events: none;
+    `
+  }
+
   a {
     &.active {
       background-color: var(--action-stroke);
@@ -130,11 +158,10 @@ export const ListItem = styled.li(
     display: block;
   }
 
-  ${
-    props.disabled &&
-    `opacity: 0.5;
-    pointer-events: none;
-    `
+  @media (max-width: 780px) {
+    span:not(.english) {
+      display: none;
+    }
   }
 `
 );

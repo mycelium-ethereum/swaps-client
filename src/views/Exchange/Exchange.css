@@ -50,9 +50,6 @@
   color: var(--text-secondary);
   transition: padding-top 0.3s ease;
 }
-.Exchange.ReferralsBannerActive .Exchange-content {
-  padding-top: 4rem;
-}
 
 .Exchange.page-layout .footer {
   padding: 1rem 2rem;
@@ -1091,12 +1088,6 @@ table.Exchange-list-small td {
   }
 }
 
-/* Added padding for Referrals comp */
-@media (max-width: 1000px) {
-  .Exchange.ReferralsBannerActive .Exchange-content {
-    padding-top: 10rem;
-  }
-}
 @media (max-width: 700px) {
   .PositionEditor .Modal-content {
     width: 90vw;
@@ -1116,11 +1107,6 @@ table.Exchange-list-small td {
   }
   .Exchange-content {
     padding-top: 0rem;
-  }
-
-  /* Added padding for Referrals comp */
-  .Exchange.ReferralsBannerActive .Exchange-content {
-    padding-top: 8rem;
   }
 
   .Exchange-swap-box .TokenSelector .Modal {

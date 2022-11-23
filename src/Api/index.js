@@ -33,13 +33,12 @@ import {
   USD_DECIMALS,
   ETH_DECIMALS,
   ARBITRUM_GOERLI,
-  SECONDS_PER_YEAR,
+  SECONDS_PER_YEAR
 } from "../Helpers";
 import { getTokenBySymbol } from "../data/Tokens";
 
 import { nissohGraphClient, arbitrumGraphClient, arbitrumTestnetGraphClient } from "./common";
 import { getServerUrl, getSupplyUrl } from "src/lib";
-import { Text } from "src/components/Translation/Text";
 export * from "./prices";
 
 const { AddressZero } = ethers.constants;
@@ -126,22 +125,16 @@ export function useSpreadCaptureVolume(chainId) {
   const [res, setRes] = useState(undefined);
 
   useEffect(() => {
-    getMycGraphClient(chainId)
-      .query({ query })
-      .then((res) => {
-        const totalMMFees = res.data.volumeStats.reduce(
-          (sum, stat) =>
-            sum
-              .add(MM_FEE_MULTIPLIER.mul(stat.mint))
-              .add(MM_FEE_MULTIPLIER.mul(stat.burn))
-              .add(MM_FEE_MULTIPLIER.mul(stat.margin))
-              .add(MM_FEE_MULTIPLIER.mul(stat.liquidation))
-              .add(MM_SWAPS_FEE_MULTIPLIER.mul(stat.swap)),
-          bigNumberify(0)
-        );
-        setRes(totalMMFees.div(expandDecimals(1, FEE_MULTIPLIER_BASIS_POINTS)));
-      })
-      .catch(console.warn);
+    getMycGraphClient(chainId).query({ query }).then((res) => {
+      const totalMMFees = res.data.volumeStats.reduce((sum, stat) => sum
+        .add(MM_FEE_MULTIPLIER.mul(stat.mint))
+        .add(MM_FEE_MULTIPLIER.mul(stat.burn))
+        .add(MM_FEE_MULTIPLIER.mul(stat.margin))
+        .add(MM_FEE_MULTIPLIER.mul(stat.liquidation))
+        .add(MM_SWAPS_FEE_MULTIPLIER.mul(stat.swap))
+      , bigNumberify(0));
+      setRes(totalMMFees.div(expandDecimals(1, FEE_MULTIPLIER_BASIS_POINTS)))
+    }).catch(console.warn);
   }, [setRes, query, chainId]);
 
   return res;
@@ -1059,7 +1052,7 @@ function ToastifyDebug(props) {
     <div className="Toastify-debug">
       {!open && (
         <span className="Toastify-debug-button" onClick={() => setOpen(true)}>
-          <Text>Show error</Text>
+          Show error
         </span>
       )}
       {open && props.children}
@@ -1072,45 +1065,31 @@ export function useStakingApr(mycPrice, ethPrice) {
 
   // apr is annualised rewards (USD value) / total staked (USD value) * 100
   const { data: tokensPerInterval } = useSWR(
-    [
-      `useStakingApr:tokensPerInterval:${ARBITRUM}`,
-      ARBITRUM,
-      getContract(ARBITRUM, "MYCStakingRewards"),
-      "tokensPerInterval",
-    ],
+    [`useStakingApr:tokensPerInterval:${ARBITRUM}`, ARBITRUM, getContract(ARBITRUM, "MYCStakingRewards"), "tokensPerInterval"],
     {
       fetcher: fetcher(undefined, RewardsTracker),
     }
   );
 
-  const mycTokenAddress = getContract(ARBITRUM, "MYC");
+  const mycTokenAddress = getContract(ARBITRUM, 'MYC');
   const { data: mycDeposited } = useSWR(
-    [
-      `useStakingApr:totalDepositSupply(MYC):${ARBITRUM}`,
-      ARBITRUM,
-      getContract(ARBITRUM, "MYCStakingRewards"),
-      "totalDepositSupply",
-    ],
+    [`useStakingApr:totalDepositSupply(MYC):${ARBITRUM}`, ARBITRUM, getContract(ARBITRUM, "MYCStakingRewards"), "totalDepositSupply"],
     {
-      fetcher: fetcher(undefined, RewardsTracker, mycTokenAddress),
+      fetcher: fetcher(undefined, RewardsTracker, mycTokenAddress)
     }
   );
 
-  const esMycTokenAddress = getContract(ARBITRUM, "ES_MYC");
+  const esMycTokenAddress = getContract(ARBITRUM, 'ES_MYC');
   const { data: esMycDeposited } = useSWR(
-    [
-      `useStakingApr:totalDepositSupply(esMYC):${ARBITRUM}`,
-      ARBITRUM,
-      getContract(ARBITRUM, "MYCStakingRewards"),
-      "totalDepositSupply",
-    ],
+    [`useStakingApr:totalDepositSupply(esMYC):${ARBITRUM}`, ARBITRUM, getContract(ARBITRUM, "MYCStakingRewards"), "totalDepositSupply"],
     {
-      fetcher: fetcher(undefined, RewardsTracker, esMycTokenAddress),
+      fetcher: fetcher(undefined, RewardsTracker, esMycTokenAddress)
     }
   );
 
   useEffect(() => {
-    if (ethPrice?.gt(0) && mycPrice?.gt(0) && tokensPerInterval && mycDeposited && esMycDeposited) {
+    if(ethPrice?.gt(0) && mycPrice?.gt(0) && tokensPerInterval && mycDeposited && esMycDeposited) {
+
       const tokensPerYear = tokensPerInterval.mul(SECONDS_PER_YEAR);
       const annualRewardsUsd = tokensPerYear.mul(ethPrice);
 
@@ -1120,7 +1099,7 @@ export function useStakingApr(mycPrice, ethPrice) {
       const aprPrecision = 10;
       const apr = annualRewardsUsd.mul(expandDecimals(1, aprPrecision)).div(totalDepositsUsd);
 
-      const formattedApr = (apr.toNumber() / 10 ** aprPrecision) * 100;
+      const formattedApr = apr.toNumber() / (10 ** aprPrecision) * 100;
       setStakingApr(formattedApr.toFixed(2));
     }
   }, [ethPrice, mycPrice, tokensPerInterval, mycDeposited, esMycDeposited]);
@@ -1185,7 +1164,7 @@ export async function callContract(chainId, contract, method, params, opts) {
       <div>
         {sentMsg}{" "}
         <a href={txUrl} target="_blank" rel="noopener noreferrer">
-          <Text>View status.</Text>
+          View status.
         </a>
         <br />
       </div>
@@ -1206,30 +1185,26 @@ export async function callContract(chainId, contract, method, params, opts) {
       case NOT_ENOUGH_FUNDS:
         failMsg = (
           <div>
-            <Text>There is not enough ETH in your account on Arbitrum to send this transaction.</Text>
+            There is not enough ETH in your account on Arbitrum to send this transaction.
             <br />
             <br />
             <a href={"https://arbitrum.io/bridge-tutorial/"} target="_blank" rel="noopener noreferrer">
-              <Text>Bridge ETH to Arbitrum</Text>
+              Bridge ETH to Arbitrum
             </a>
           </div>
         );
         break;
       case USER_DENIED:
-        failMsg = <Text>Transaction was cancelled.</Text>;
+        failMsg = "Transaction was cancelled.";
         break;
       case SLIPPAGE:
-        failMsg = (
-          <Text>
-            The mark price has changed, consider increasing your Allowed Slippage by clicking on the "..." icon next to
-            your address.
-          </Text>
-        );
+        failMsg =
+          'The mark price has changed, consider increasing your Allowed Slippage by clicking on the "..." icon next to your address.';
         break;
       default:
         failMsg = (
           <div>
-            <Text>{opts.failMsg || "Transaction failed."}</Text>
+            {opts.failMsg || "Transaction failed."}
             <br />
             {message && <ToastifyDebug>{message}</ToastifyDebug>}
           </div>

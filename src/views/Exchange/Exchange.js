@@ -365,6 +365,7 @@ export const Exchange = forwardRef((props, ref) => {
     trackAction,
     sidebarVisible,
     analytics,
+    currentLang,
   } = props;
 
   const [pendingPositions, setPendingPositions] = useState({});
@@ -916,7 +917,7 @@ export const Exchange = forwardRef((props, ref) => {
   return (
     <>
       <SEO description="Trade with liquidity, leverage, low fees. Trade with Mycelium. Trade Perpetual Swaps and Perpetual Pools on Ethereum scaling solution, Arbitrum with liquid markets for BTC, ETH, LINK, UNI, CRV, FXS, & BAL." />
-      <div className="Exchange default-container ReferralsBannerActive">
+      <div className="Exchange default-container">
         <div className="Exchange-content">
           <div className="Exchange-left">
             <div className="ExchangeChart tv">
@@ -959,17 +960,10 @@ export const Exchange = forwardRef((props, ref) => {
                   />
                 ) : (
                   <ExchangeAdvancedTVChart
-                    infoTokens={infoTokens}
                     chartToken={chartToken}
-                    setChartToken={setChartToken}
                     priceData={priceData}
                     period={period}
-                    setPeriod={setPeriod}
-                    setToTokenAddress={setToTokenAddress}
-                    swapOption={swapOption}
-                    chainId={chainId}
-                    currentAveragePrice={currentAveragePrice}
-                    trackAction={trackAction}
+                    currentLang={currentLang}
                   />
                 )}
               </div>

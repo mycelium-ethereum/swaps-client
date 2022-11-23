@@ -3,6 +3,7 @@ import { formatAmount, USD_DECIMALS, getTokenInfo, CHART_PERIODS } from "../../.
 import ChartTokenSelector from "../ChartTokenSelector";
 import Tab from "../../Tab/Tab";
 import { ChartToggle } from "./ChartToggle";
+import { Text } from "src/components/Translation/Text";
 
 export const ExchangeHeader = (props) => {
   const {
@@ -105,26 +106,38 @@ export const ExchangeHeader = (props) => {
               {!deltaPercentageStr && "-"}
               {deltaPercentageStr && deltaPercentageStr}
             </div>
-            <div className="ExchangeChart-info-label">24h Change</div>
+            <div className="ExchangeChart-info-label">
+              24h <Text>Change</Text>
+            </div>
           </div>
           <div className="ExchangeChart-additional-info">
             <div>
               {!high && "-"}
               {high && high.toFixed(2)}
             </div>
-            <div className="ExchangeChart-info-label">24h High</div>
+            <div className="ExchangeChart-info-label">
+              24h <Text>High</Text>
+            </div>
           </div>
           <div className="ExchangeChart-additional-info">
             <div>
               {!low && "-"}
               {low && low.toFixed(2)}
             </div>
-            <div className="ExchangeChart-info-label">24h Low</div>
+            <div className="ExchangeChart-info-label">
+              24h <Text>Low</Text>
+            </div>
           </div>
         </div>
       </div>
       <div className="ExchangeChart-top-controls">
-        <Tab options={Object.keys(CHART_PERIODS)} option={period} setOption={setPeriod} trackAction={trackAction} />
+        <Tab
+          options={Object.keys(CHART_PERIODS)}
+          option={period}
+          setOption={setPeriod}
+          trackAction={trackAction}
+          noTranslate
+        />
         <ChartToggle selectedChart={selectedChart} setSelectedChart={setSelectedChart} />
       </div>
     </>

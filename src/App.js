@@ -696,7 +696,7 @@ function FullApp(props) {
   return (
     <>
       <div
-        className={cx("App ReferralsBannerActive", {
+        className={cx("App", {
           "full-width": sidebarVisible,
         })}
       >
@@ -814,6 +814,7 @@ function FullApp(props) {
                       </NavLink>
                     </div>
                   )}
+                  <LanguageDropdown currentLang={currentLang} setCurrentLang={setCurrentLang} isMobile />
                   <AppDropdown isMobile />
                   {/* Hamburger menu */}
                   <button className="App-header-menu-icon-block" onClick={() => setIsDrawerVisible(!isDrawerVisible)}>
@@ -870,6 +871,7 @@ function FullApp(props) {
                 trackAction={trackAction}
                 analytics={analytics}
                 sidebarVisible={sidebarVisible}
+                currentLang={currentLang}
               />
             </Route>
             <Route exact path="/dashboard">
@@ -1196,9 +1198,10 @@ function App() {
   }
 
   const cacheProvider = {
-    get: (language, key) => ((translations || {})[key] || {})[language],
+    get: (language, key) =>
+      ((translations || JSON.parse(localStorage.getItem("translations")) || {})[key] || {})[language],
     set: (language, key, value) => {
-      const existing = translations || {
+      const existing = JSON.parse(localStorage.getItem("translations")) || {
         [key]: {},
       };
       existing[key] = { ...existing[key], [language]: value };

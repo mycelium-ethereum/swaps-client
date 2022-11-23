@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo, useCallback } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import cx from "classnames";
 import { widget } from "@mycelium-swaps-interface/charting_library";
 import { dataFeed, supportedResolutions } from "../../../Api/TradingView";
@@ -7,7 +7,7 @@ import { newPriceEmitter } from "src/Api/TradingView/newPriceEmitter";
 const getLanguageFromURL = () => {
   const regex = new RegExp("[\\?&]lang=([^&#]*)");
   const results = regex.exec(window.location.search);
-  return results === null ? null : decodeURIComponent(results[1].replace(/\+/g, " "));
+  return results && results[1] ? decodeURIComponent(results[1].replace(/\+/g, " ").split("-")[0]) : null;
 };
 
 const convertLightweightChartPeriod = (period) => {
@@ -44,7 +44,7 @@ const DEFAULT_COLOURS = {
 };
 
 export default function ExchangeAdvancedTVChart(props) {
-  const { chartToken, priceData, period } = props;
+  const { chartToken, priceData, period, currentLang } = props;
 
   const defaultProps = useMemo(
     () => ({
@@ -134,15 +134,16 @@ export default function ExchangeAdvancedTVChart(props) {
     } catch (error) {
       console.error(error);
     }
-  }, []);
+  }, [defaultProps]);
 
   // Create chart
   useEffect(() => {
     if (!tvWidget) {
       createChart();
     }
-  }, [tvWidget]);
+  }, [tvWidget, createChart]);
 
+  // Update chart
   useEffect(() => {
     if (tvWidget && tvWidget.activeChart && period && chartToken?.symbol) {
       const advancedChartPeriod = convertLightweightChartPeriod(period);
@@ -156,6 +157,15 @@ export default function ExchangeAdvancedTVChart(props) {
       resetChart();
     }
   }, [tvWidget, period, chartToken?.symbol]);
+
+  // Update chart on language change
+  useEffect(() => {
+    setShowChart(false);
+    setTimeout(() => {
+      setTvWidget(null);
+      createChart(currentLang);
+    }, 300);
+  }, [currentLang, createChart]);
 
   useEffect(() => {
     if (tvWidget && priceData && showChart && priceData.length >= 1) {
