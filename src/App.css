@@ -13,6 +13,12 @@
 .App.full-width {
   padding-left: 0px;
 }
+.App .trading-comp-banner {
+  width: calc(100% - 306px);
+}
+.App.full-width .trading-comp-banner {
+  width: 100%;
+}
 
 .App-header-backdrop {
   position: fixed;
@@ -30,7 +36,7 @@
   height: 62px;
   width: 100%;
   z-index: 800;
-  padding-left: 326px;
+  padding-left: 310px;
   transition: all 0.5s ease;
 }
 
@@ -413,80 +419,6 @@
 .Connect-wallet-modal .Modal-content .divider {
   display: none;
 }
-.Eth-merge-modal .Modal-content {
-  max-width: 424px;
-  width: 100%;
-  overflow: unset;
-}
-.Eth-merge-modal .Modal-body {
-  padding-top: 120px;
-  text-align: center;
-}
-
-.Eth-merge-modal .Modal-content .divider {
-  display: none;
-}
-.Eth-merge-modal .Eth-merge-modal-header {
-  position: absolute;
-  top: 0;
-  left: 0;
-  height: 157px;
-  width: 100%;
-  background-color: var(--background-primary);
-  border-top-right-radius: 8px;
-  border-top-left-radius: 8px;
-  border-bottom: 0;
-}
-
-.Eth-merge-modal .Eth-merge-modal-graphic,
-.Eth-merge-modal .Eth-merge-modal-mesh {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-}
-
-.Eth-merge-modal .Eth-merge-modal-graphic {
-  height: 296px;
-  z-index: 1;
-}
-
-.Eth-merge-modal .Eth-merge-modal-title small {
-  display: block;
-  font-size: 24px;
-  line-height: 36px;
-  font-weight: 600;
-}
-.Eth-merge-modal .Eth-merge-modal-title h2 {
-  font-size: 36px;
-  line-height: 48px;
-  font-weight: 600;
-  margin: 0 0 16px;
-}
-.Eth-merge-modal .Modal-body .Eth-merge-modal-divider {
-  border-color: var(--cell-stroke);
-  margin: 0 0 16px;
-}
-
-.Eth-merge-modal .Button-content {
-  display: grid;
-  row-gap: 16px;
-}
-.Eth-merge-modal .Button-content span {
-  font-weight: 300;
-}
-.Eth-merge-modal .Button-content button {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 4px;
-  height: 44px;
-  margin: 0;
-}
-.Eth-merge-modal .Button-content button img {
-  margin-left: 13px;
-}
 
 button.App-connect-wallet {
   cursor: pointer;
@@ -754,7 +686,11 @@ button.App-connect-wallet:hover {
 }
 
 .App-card-option {
-  margin: 0.4rem;
+  margin: 0.4rem 1rem 0.4rem 0;
+}
+
+.App-card-option:last-child {
+  margin-right: 0rem;
 }
 
 .App-header a.App-header-link-main,
@@ -1006,13 +942,15 @@ button.App-button-option {
   cursor: pointer;
   display: inline-block;
   padding: 0.4rem 0.7rem;
-  border-radius: 7px;
+  border-radius: 4px;
   color: white;
   text-decoration: none;
-  border: none;
+  border: 1px solid var(--action-active);
   font-size: 1rem;
-  background-color: var(--action-active);
+  background: var(--action-gradient);
   transition: all 0.3s ease;
+  min-width: 145px;
+  text-align: center;
 }
 
 a.App-button-option:hover,
@@ -1101,6 +1039,9 @@ button.App-button-option:disabled {
 .App-content {
   position: static !important;
   padding-bottom: 40px;
+}
+.App-content.full-width {
+  margin-left: 48px;
 }
 
 .App-footer {
@@ -1312,6 +1253,17 @@ button.App-button {
   width: 100%;
 }
 
+.Fee-update-modal-content {
+  width: 600px;
+}
+.Fee-update-modal-content ul li:last-child {
+  padding-bottom: 0;
+}
+
+.Fee-update-modal-content .Exchange-swap-button-container {
+  margin-top: 16px;
+}
+
 @media (max-width: 1380px) {
   .App-header-user-link.Trade-btn {
     display: block;
@@ -1422,6 +1374,10 @@ button.App-button {
   .App nav {
     padding-left: 0;
   }
+  .App.full-width .trading-comp-banner,
+  .App .trading-comp-banner {
+    width: 100%;
+  }
   .App-header a.App-header-link-main,
   .App-header .App-header-link-main {
     display: flex;
@@ -1456,6 +1412,13 @@ button.App-button {
   .App-header-menu-icon-block {
     margin-left: 16px;
   }
+  .FeeModal .Modal-content {
+    width: calc(100% - 32px);
+    max-width: 600px;
+  }
+  .FeeModal .Fee-update-modal-content {
+    width: auto;
+  }
 }
 
 @media (max-width: 700px) {
@@ -1469,11 +1432,17 @@ button.App-button {
     padding-left: 16px;
     padding-right: 16px;
   }
+  .App {
+    padding-top: 80px;
+  }
 }
 
 @media (max-width: 670px) {
   .App-header-link-main img.big {
     display: none;
+  }
+  .App-header-link-main img.small {
+    display: block;
   }
   .App-header-menu-icon-block {
     display: flex;
@@ -1507,7 +1476,7 @@ button.App-button {
     height: 1.2rem;
   }
   .App-header-user-link.Trade-btn-mobile {
-    margin-right: 16px;
+    margin-right: 0px;
   }
   .App-header-user-link {
     margin-right: 6px;
@@ -1555,19 +1524,6 @@ button.App-button {
   .App-header-container-right {
     display: none;
   }
-  .Eth-merge-modal .Modal-content {
-    max-width: calc(100% - 32px);
-  }
-  .Eth-merge-modal .Eth-merge-modal-title small {
-    display: block;
-    font-size: 20px;
-    line-height: 30px;
-    font-weight: 600;
-  }
-  .Eth-merge-modal .Eth-merge-modal-title h2 {
-    font-size: 30px;
-    line-height: 40px;
-  }
 }
 
 @media (max-width: 380px) {
@@ -1576,6 +1532,9 @@ button.App-button {
   }
   .App-header-link-main img.small {
     display: block;
+  }
+  .App {
+    padding-top: 80px;
   }
 }
 

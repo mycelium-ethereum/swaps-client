@@ -3,7 +3,6 @@ import React, { useState, useMemo, useEffect } from "react";
 import useSWR from "swr";
 
 import {
-  getTracerServerUrl,
   getPageTitle,
   getTokenInfo,
   useChainId,
@@ -29,6 +28,7 @@ import FeeDistributor from "../../abis/FeeDistributor.json";
 import FeeDistributorReader from "../../abis/FeeDistributorReader.json";
 import ViewSwitch from "../../components/ViewSwitch/ViewSwitch";
 import { RoundDropdown } from "../../components/RewardsRoundSelect/RewardsRoundSelect";
+import { getServerUrl } from "src/lib";
 
 const PersonalHeader = () => (
   <div className="Page-title-section mt-0">
@@ -36,7 +36,7 @@ const PersonalHeader = () => (
       <Text>Trader Rewards</Text>
     </div>
     <div className="Page-description">
-      <Text>Be in the top 50% of traders to earn weekly rewards.</Text>
+      <Text>Be in the top 5% of traders to earn weekly rewards.</Text>
       <br /> <Text>Read the Terms of Use</Text>{" "}
       <a href="https://mycelium.xyz/rewards-terms-of-use" target="_blank" rel="noopener noreferrer">
         <Text>here</Text>
@@ -71,21 +71,24 @@ export default function Rewards(props) {
   const [pageTracked, setPageTracked] = useState(false);
   const [isClaiming, setIsClaiming] = useState(false);
   const [nextRewards, setNextRewards] = useState();
+  const [claimDelay, setClaimDelay] = useState();
 
   const feeDistributor = getContract(chainId, "FeeDistributor");
   const feeDistributorReader = getContract(chainId, "FeeDistributorReader");
 
   // Fetch all round data from server
-  const { data: allRoundsRewardsData, error: failedFetchingRewards } = useSWR(
-    [getTracerServerUrl(chainId, "/tradingRewards")],
+  const { data: allRoundsRewardsData_, error: failedFetchingRewards } = useSWR(
+    [getServerUrl(chainId, "/tradingRewards")],
     {
       fetcher: (...args) => fetch(...args).then((res) => res.json()),
     }
   );
 
+  const allRoundsRewardsData = Array.isArray(allRoundsRewardsData_) ? allRoundsRewardsData_ : undefined;
+
   // Fetch only the latest round's data from server
   const { data: currentRewardRound, error: failedFetchingRoundRewards } = useSWR(
-    [getTracerServerUrl(chainId, "/tradingRewards"), selectedRound],
+    [getServerUrl(chainId, "/tradingRewards"), selectedRound],
     {
       fetcher: (url, round) => fetch(`${url}&round=${round}`).then((res) => res.json()),
     }
@@ -108,7 +111,7 @@ export default function Rewards(props) {
 
   // Fetch user proof
   const { data: userProof } = useSWR(
-    [getTracerServerUrl(chainId, "/tradingRewardProof"), selectedRound, account ?? ethers.constants.AddressZero],
+    [getServerUrl(chainId, "/tradingRewardProof"), selectedRound, account ?? ethers.constants.AddressZero],
     {
       fetcher: (url, round, account) => fetch(`${url}&round=${round}&userAddress=${account}`).then((res) => res.json()),
     }
@@ -182,7 +185,7 @@ export default function Rewards(props) {
       (trader) => trader.user_address.toLowerCase() === account?.toLowerCase()
     );
     let traderData;
-    if (leaderBoardIndex && leaderBoardIndex >= 0) {
+    if (leaderBoardIndex !== undefined && leaderBoardIndex >= 0) {
       traderData = currentRewardRound.rewards[leaderBoardIndex];
     }
     // trader's data found
@@ -246,6 +249,16 @@ export default function Rewards(props) {
         view: currentView === "Leaderboard" ? "Rewards" : "Leaderboard",
       });
   };
+
+  useEffect(() => {
+    const now = Date.now();
+    const buffer = 60 * 60 * 2 * 1000; // 2 hours
+    if (currentRewardRound && Number(currentRewardRound.end) + buffer > now) {
+      setClaimDelay(true);
+    } else {
+      setClaimDelay(false);
+    }
+  }, [currentRewardRound]);
 
   useEffect(() => {
     if (!!allRoundsRewardsData) {
@@ -326,7 +339,7 @@ export default function Rewards(props) {
     <>
       <SEO
         title={getPageTitle("Rewards")}
-        description="Claim fees earned via being in the top 50% of traders on Mycelium Perpetual Swaps."
+        description="Claim fees earned via being in the top 5% of traders on Mycelium Perpetual Swaps."
       />
       <Styles.StyledRewardsPage className="default-container page-layout">
         {
@@ -361,6 +374,7 @@ export default function Rewards(props) {
           nextRewards={nextRewards}
           latestRound={isLatestRound}
           handleClaim={handleClaim}
+          claimDelay={claimDelay}
           isClaiming={isClaiming}
           hasClaimed={hasClaimedRound}
         />
@@ -375,6 +389,7 @@ export default function Rewards(props) {
           connectWallet={connectWallet}
           trackAction={trackAction}
           handleClaim={handleClaim}
+          claimDelay={claimDelay}
           latestRound={isLatestRound}
           isClaiming={isClaiming}
           hasClaimed={hasClaimedRound}

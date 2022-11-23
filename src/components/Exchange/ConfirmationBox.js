@@ -15,12 +15,14 @@ import {
   getExchangeRateDisplay,
   DEFAULT_SLIPPAGE_AMOUNT,
   DEFAULT_HIGHER_SLIPPAGE_AMOUNT,
-  SLIPPAGE_BPS_KEY,
   formatDateTime,
   calculatePositionDelta,
   getSpread,
 } from "../../Helpers";
 import { Text } from "../Translation/Text";
+
+import { SLIPPAGE_BPS_KEY } from "../../config/localstorage";
+
 import { getConstant } from "../../Constants";
 import { getContract } from "../../Addresses";
 

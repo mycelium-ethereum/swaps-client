@@ -276,7 +276,7 @@ export default function OrdersList(props) {
             <div className="App-card-title-small">
               <Text>Swap</Text>{" "}
               {formatAmount(order.amountIn, fromTokenInfo.decimals, fromTokenInfo.isStable ? 2 : 4, true)}{" "}
-              {fromTokenInfo.symbol} <Text>for</Text>{" "}
+              {fromTokenInfo.symbol} -&gt;{" "}
               {formatAmount(order.minOut, toTokenInfo.decimals, toTokenInfo.isStable ? 2 : 4, true)}{" "}
               {toTokenInfo.symbol}
             </div>

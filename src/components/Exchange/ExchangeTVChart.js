@@ -9,18 +9,13 @@ import {
   SWAP,
   INCREASE,
   CHART_PERIODS,
-  getTokenInfo,
   formatAmount,
   formatDateTime,
   usePrevious,
   getLiquidationPrice,
-  useLocalStorageSerializeKey,
 } from "../../Helpers";
-import { useChartPrices } from "../../Api";
-import Tab from "../Tab/Tab";
 
 import { getTokens, getToken } from "../../data/Tokens";
-import ChartTokenSelector from "./ChartTokenSelector";
 
 const PRICE_LINE_TEXT_WIDTH = 15;
 
@@ -57,8 +52,6 @@ export function getChartToken(swapOption, fromToken, toToken, chainId) {
 
   return toToken;
 }
-
-const DEFAULT_PERIOD = "4h";
 
 const getSeriesOptions = () => ({
   // https://github.com/tradingview/lightweight-charts/blob/master/docs/area-series.md
@@ -125,38 +118,18 @@ const getChartOptions = (width, height) => ({
 export default function ExchangeTVChart(props) {
   const {
     swapOption,
-    fromTokenAddress,
-    toTokenAddress,
-    infoTokens,
     chainId,
     positions,
     savedShouldShowPositionLines,
     orders,
-    setToTokenAddress,
     sidebarVisible,
-    trackAction,
+    chartToken,
+    period,
+    priceData,
+    updatePriceData,
   } = props;
   const [currentChart, setCurrentChart] = useState();
   const [currentSeries, setCurrentSeries] = useState();
-
-  let [period, setPeriod] = useLocalStorageSerializeKey([chainId, "Chart-period"], DEFAULT_PERIOD);
-  if (!(period in CHART_PERIODS)) {
-    period = DEFAULT_PERIOD;
-  }
-
-  const [hoveredCandlestick, setHoveredCandlestick] = useState();
-
-  const fromToken = getTokenInfo(infoTokens, fromTokenAddress);
-  const toToken = getTokenInfo(infoTokens, toTokenAddress);
-
-  const [chartToken, setChartToken] = useState({
-    maxPrice: null,
-    minPrice: null,
-  });
-  useEffect(() => {
-    const tmp = getChartToken(swapOption, fromToken, toToken, chainId);
-    setChartToken(tmp);
-  }, [swapOption, fromToken, toToken, chainId]);
 
   const symbol = chartToken ? (chartToken.isWrapped ? chartToken.baseSymbol : chartToken.symbol) : undefined;
   const marketName = chartToken ? symbol + "_USD" : undefined;
@@ -182,16 +155,6 @@ export default function ExchangeTVChart(props) {
   const ref = useRef(null);
   const chartRef = useRef(null);
 
-  const currentAveragePrice =
-    chartToken.maxPrice && chartToken.minPrice ? chartToken.maxPrice.add(chartToken.minPrice).div(2) : null;
-  const [priceData, updatePriceData] = useChartPrices(
-    chainId,
-    chartToken.symbol,
-    chartToken.isStable,
-    period,
-    currentAveragePrice
-  );
-
   const [chartInited, setChartInited] = useState(false);
   useEffect(() => {
     if (marketName !== previousMarketName) {
@@ -204,6 +167,8 @@ export default function ExchangeTVChart(props) {
     const to = Date.now() / 1000 + timezoneOffset;
     currentChart.timeScale().setVisibleRange({ from, to });
   }, [currentChart, period]);
+
+  const [hoveredCandlestick, setHoveredCandlestick] = useState();
 
   const onCrosshairMove = useCallback(
     (evt) => {
@@ -255,22 +220,22 @@ export default function ExchangeTVChart(props) {
   }, [updatePriceData]);
 
   useEffect(() => {
-    if (!currentChart) {
+    if (!currentChart && !chartRef?.current) {
       return;
     }
     const resizeChart = () => {
-      currentChart.resize(chartRef.current.offsetWidth, chartRef.current.offsetHeight);
+      currentChart?.resize(chartRef.current.offsetWidth, chartRef.current.offsetHeight);
     };
     window.addEventListener("resize", resizeChart);
     return () => window.removeEventListener("resize", resizeChart);
   }, [currentChart]);
 
   useEffect(() => {
-    if (!currentChart) {
+    if (!currentChart && !chartRef?.current) {
       return;
     }
     const resizeChart = () => {
-      currentChart.resize(chartRef.current.offsetWidth, chartRef.current.offsetHeight);
+      currentChart?.resize(chartRef.current.offsetWidth, chartRef.current.offsetHeight);
     };
     let timeout = setTimeout(() => {
       resizeChart();
@@ -378,133 +343,16 @@ export default function ExchangeTVChart(props) {
     );
   }, [hoveredCandlestick, priceData]);
 
-  let high;
-  let low;
-  let deltaPrice;
-  let delta;
-  let deltaPercentage;
-  let deltaPercentageStr;
-
-  const now = parseInt(Date.now() / 1000);
-  const timeThreshold = now - 24 * 60 * 60;
-
-  if (priceData) {
-    for (let i = priceData.length - 1; i > 0; i--) {
-      const price = priceData[i];
-      if (price.time < timeThreshold) {
-        break;
-      }
-      if (!low) {
-        low = price.low;
-      }
-      if (!high) {
-        high = price.high;
-      }
-
-      if (price.high > high) {
-        high = price.high;
-      }
-      if (price.low < low) {
-        low = price.low;
-      }
-
-      deltaPrice = price.open;
-    }
-  }
-
-  if (deltaPrice && currentAveragePrice) {
-    const average = parseFloat(formatAmount(currentAveragePrice, USD_DECIMALS, 2));
-    delta = average - deltaPrice;
-    deltaPercentage = (delta * 100) / average;
-    if (deltaPercentage > 0) {
-      deltaPercentageStr = `+${deltaPercentage.toFixed(2)}%`;
-    } else {
-      deltaPercentageStr = `${deltaPercentage.toFixed(2)}%`;
-    }
-    if (deltaPercentage === 0) {
-      deltaPercentageStr = "0.00";
-    }
-  }
-
   if (!chartToken) {
     return null;
   }
 
-  const onSelectToken = (token) => {
-    const tmp = getTokenInfo(infoTokens, token.address);
-    setChartToken(tmp);
-    setToTokenAddress(swapOption, token.address);
-  };
-
   return (
-    <div className="ExchangeChart tv" ref={ref}>
-      <div className="ExchangeChart-top App-box App-box-border">
-        <div className="ExchangeChart-top-inner">
-          <div>
-            <div className="ExchangeChart-title">
-              <ChartTokenSelector
-                chainId={chainId}
-                selectedToken={chartToken}
-                swapOption={swapOption}
-                infoTokens={infoTokens}
-                onSelectToken={onSelectToken}
-                className="chart-token-selector"
-                trackAction={trackAction}
-              />
-            </div>
-          </div>
-          <div>
-            <div className="ExchangeChart-main-price">
-              {chartToken.maxPrice && formatAmount(chartToken.maxPrice, USD_DECIMALS, 2)}
-            </div>
-            <div className="ExchangeChart-info-label">
-              ${chartToken.minPrice && formatAmount(chartToken.minPrice, USD_DECIMALS, 2)}
-            </div>
-          </div>
-          <div>
-            <div className={cx({ positive: deltaPercentage > 0, negative: deltaPercentage < 0 })}>
-              {!deltaPercentageStr && "-"}
-              {deltaPercentageStr && deltaPercentageStr}
-            </div>
-            <div className="ExchangeChart-info-label">
-              <Text>24h Change</Text>
-            </div>
-          </div>
-          <div className="ExchangeChart-additional-info">
-            <div>
-              {!high && "-"}
-              {high && high.toFixed(2)}
-            </div>
-            <div className="ExchangeChart-info-label">
-              <Text>24h High</Text>
-            </div>
-          </div>
-          <div className="ExchangeChart-additional-info">
-            <div>
-              {!low && "-"}
-              {low && low.toFixed(2)}
-            </div>
-            <div className="ExchangeChart-info-label">
-              <Text>24h Low</Text>
-            </div>
-          </div>
-        </div>
+    <>
+      <div className="LightweightChart-container" ref={ref}>
+        <div className="LightweightChart" ref={chartRef}></div>
+        <div className="CandleStats">{candleStatsHtml}</div>
       </div>
-      <div className="ExchangeChart-bottom App-box App-box-border">
-        <div className="ExchangeChart-bottom-header">
-          <div className="ExchangeChart-bottom-controls">
-            <Tab
-              options={Object.keys(CHART_PERIODS)}
-              option={period}
-              setOption={setPeriod}
-              trackAction={trackAction}
-              noTranslate
-            />
-          </div>
-          {candleStatsHtml}
-        </div>
-        <div className="ExchangeChart-bottom-content" ref={chartRef}></div>
-      </div>
-    </div>
+    </>
   );
 }

@@ -114,11 +114,12 @@ export const ClaimedRewards = styled.div`
     width: 100%;
     margin: auto;
   }
-  & span:first-child, & span:last-child {
+  & span:first-child,
+  & span:last-child {
     height: 1px;
     background: var(--cell-stroke);
   }
-`
+`;
 
 export const RewardsData = styled.div`
   margin-top: 1rem;
@@ -159,6 +160,8 @@ export const LeaderboardContainer = styled.div`
 
 export const PersonalRewardsTableContainer = styled.div`
   position: relative;
+  border: 1px solid var(--action-active);
+  border-radius: 4px;
 `;
 
 export const RewardsTableContainer = styled.div`
@@ -168,9 +171,12 @@ export const RewardsTableContainer = styled.div`
 
 export const ScrollContainer = styled.div`
   position: relative;
-  overflow-x: hidden;
-  overflow-y: auto;
+  overflow: auto;
+  width: 100%;
   max-height: 491px;
+  &::-webkit-scrollbar-track {
+    border-left: 1px solid var(--cell-stroke);
+  }
 `;
 
 export const RewardsTable = styled.table`
@@ -178,28 +184,18 @@ export const RewardsTable = styled.table`
   z-index: 1;
   width: 100%;
   border-radius: 4px;
-  border: 0;
-  border-collapse: separate;
-  border-spacing: 0 1px;
+  border-collapse: collapse;
+  border-spacing: 0;
 
   tbody tr {
-    position: relative;
-    &:after {
-      content: "";
-      position: absolute;
-      top: 0;
-      left: 50%;
-      transform: translateX(-50%);
-      height: 1px;
-      width: calc(100% - 32px);
-      border-bottom: 1px solid var(--cell-stroke);
-    }
+    border-top: 1px solid var(--cell-stroke);
   }
   tbody tr:last-child {
     border-bottom: 0;
   }
   tbody tr.highlight-current {
-    background: linear-gradient(180deg, rgba(5, 67, 1, 0.2) 0%, rgba(5, 67, 1, 0) 65.01%);
+    background: linear-gradient(111.31deg, #003000 23.74%, rgba(0, 48, 0, 0) 99.29%);
+    border: 1px solid var(--action-active);
   }
 `;
 
@@ -259,7 +255,7 @@ const TableCell = styled.td`
   padding: 16px;
 `;
 
-export const TopFiftyRow = styled.tr`
+export const TopFiveRow = styled.tr`
   &:after {
     display: none;
   }
@@ -270,7 +266,7 @@ export const TopFiftyRow = styled.tr`
   }
 `;
 
-export const TopFiftyRowCell = styled(TableCell)`
+export const TopFiveRowCell = styled(TableCell)`
   font-weight: bold;
   text-align: center;
   height: 40px;
@@ -280,6 +276,7 @@ export const TopFiftyRowCell = styled(TableCell)`
 export const RankCell = styled(TableCell)`
   text-align: center;
   font-weight: 700;
+  padding: 0 16px 0 0;
 `;
 
 export const UserCell = styled(TableCell)`
@@ -309,8 +306,7 @@ export const UserDetails = styled.div`
 
 export const VolumeCell = styled(TableCell)``;
 
-export const RewardCell = styled(TableCell)`
-`;
+export const RewardCell = styled(TableCell)``;
 
 export const ClaimCell = styled(TableCell)`
   padding: 16px;
@@ -375,7 +371,7 @@ export const ConnectWalletOverlay = styled.div`
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 9, 0, 0.2);
+    background: rgba(0, 9, 0, 0.9);
     display: flex;
     align-items: center;
     justify-content: center;

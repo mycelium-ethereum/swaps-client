@@ -1,27 +1,11 @@
 import { ethers } from "ethers";
 
-import { MAINNET, TESTNET, ARBITRUM_TESTNET, ARBITRUM, AVALANCHE } from "./Helpers";
+import { ARBITRUM, ARBITRUM_GOERLI } from "./Helpers";
 
 const { parseEther } = ethers.utils;
 
 const constants = {
-  [MAINNET]: {
-    nativeTokenSymbol: "BNB",
-    defaultCollateralSymbol: "BUSD",
-    defaultFlagOrdersEnabled: false,
-    positionReaderPropsLength: 8,
-    v2: false,
-  },
-
-  [TESTNET]: {
-    nativeTokenSymbol: "BNB",
-    defaultCollateralSymbol: "BUSD",
-    defaultFlagOrdersEnabled: true,
-    positionReaderPropsLength: 8,
-    v2: false,
-  },
-
-  [ARBITRUM_TESTNET]: {
+  [ARBITRUM_GOERLI]: {
     nativeTokenSymbol: "ETH",
     wrappedTokenSymbol: "WETH",
     defaultCollateralSymbol: "USDC",
@@ -29,10 +13,10 @@ const constants = {
     positionReaderPropsLength: 9,
     v2: true,
 
-    SWAP_ORDER_EXECUTION_GAS_FEE: parseEther("0.0003"),
-    INCREASE_ORDER_EXECUTION_GAS_FEE: parseEther("0.0003"),
+    SWAP_ORDER_EXECUTION_GAS_FEE: parseEther("0.01"),
+    INCREASE_ORDER_EXECUTION_GAS_FEE: parseEther("0.01"),
     // contract requires that execution fee be strictly greater than instead of gte
-    DECREASE_ORDER_EXECUTION_GAS_FEE: parseEther("0.000300001"),
+    DECREASE_ORDER_EXECUTION_GAS_FEE: parseEther("0.010000001"),
   },
 
   [ARBITRUM]: {
@@ -47,20 +31,6 @@ const constants = {
     INCREASE_ORDER_EXECUTION_GAS_FEE: parseEther("0.0003"),
     // contract requires that execution fee be strictly greater than instead of gte
     DECREASE_ORDER_EXECUTION_GAS_FEE: parseEther("0.000300001"),
-  },
-
-  [AVALANCHE]: {
-    nativeTokenSymbol: "AVAX",
-    wrappedTokenSymbol: "WAVAX",
-    defaultCollateralSymbol: "MIM",
-    defaultFlagOrdersEnabled: true,
-    positionReaderPropsLength: 9,
-    v2: true,
-
-    SWAP_ORDER_EXECUTION_GAS_FEE: parseEther("0.01"),
-    INCREASE_ORDER_EXECUTION_GAS_FEE: parseEther("0.01"),
-    // contract requires that execution fee be strictly greater than instead of gte
-    DECREASE_ORDER_EXECUTION_GAS_FEE: parseEther("0.0100001"),
   },
 };
 

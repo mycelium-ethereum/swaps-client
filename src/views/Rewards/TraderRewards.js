@@ -26,6 +26,7 @@ export default function TraderRewards(props) {
     nextRewards,
     latestRound,
     handleClaim,
+    claimDelay,
     isClaiming,
     hasClaimed,
   } = props;
@@ -126,7 +127,8 @@ export default function TraderRewards(props) {
               isClaiming ||
               hasClaimed ||
               hasClaimed === undefined ||
-              latestRound
+              latestRound ||
+              claimDelay
             }
             onClick={handleClaim}
           >

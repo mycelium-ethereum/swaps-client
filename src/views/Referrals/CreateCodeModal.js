@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { bigNumberify, getCodeError, helperToast, useDebounce } from "../../Helpers";
+import { bigNumberify, helperToast } from "../../Helpers";
 import { encodeReferralCode, getReferralCodeTakenStatus, registerReferralCode } from "../../Api/referrals";
 import { Text } from "../../components/Translation/Text";
 import * as Styles from "./Referrals.styles";
+import useDebounce from "../../hooks/useDebounce";
+import { getCodeError } from "../../utils/referrals";
 
 const getSampleReferrerStat = (code) => {
   return {

@@ -7,7 +7,7 @@ import {
   getLanguageFromLocalStorage,
   changeLanguage,
   changeFontFromLanguage,
-} from "../../../Helpers";
+} from "../../../utils/translation";
 
 const languages = [
   {

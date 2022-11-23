@@ -1,7 +1,8 @@
 import React from "react";
 import * as Styles from "./Referrals.styles";
 import CopyIcon from "../../img/copy.svg";
-import { copyReferralCode, formatAmount, USD_DECIMALS } from "../../Helpers";
+import { formatAmount, USD_DECIMALS } from "../../Helpers";
+import { copyReferralCode } from "../../utils/referrals";
 import { Text } from "../../components/Translation/Text";
 
 export default function ReferralCodesTable(props) {

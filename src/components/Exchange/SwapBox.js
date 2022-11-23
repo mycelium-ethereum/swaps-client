@@ -14,8 +14,6 @@ import {
   helperToast,
   formatAmount,
   bigNumberify,
-  ARBITRUM,
-  AVALANCHE,
   USD_DECIMALS,
   USDG_DECIMALS,
   LONG,
@@ -57,7 +55,6 @@ import {
   calculatePositionDelta,
   replaceNativeTokenAddress,
   adjustForDecimals,
-  REFERRAL_CODE_KEY,
   isHashZero,
   NETWORK_NAME,
   getSpread,
@@ -83,7 +80,8 @@ import longImg from "../../img/long.svg";
 import shortImg from "../../img/short.svg";
 import swapImg from "../../img/swap.svg";
 import { useUserReferralCode } from "../../Api/referrals";
-import { LeverageInput } from "./LeverageInput";
+import { getMaxLeverage, LeverageInput } from "./LeverageInput";
+import { REFERRAL_CODE_KEY } from "../../config/localstorage";
 
 const SWAP_ICONS = {
   [LONG]: longImg,
@@ -181,16 +179,6 @@ export default function SwapBox(props) {
   const isShort = swapOption === SHORT;
   const isSwap = swapOption === SWAP;
 
-  const getLeaderboardLink = () => {
-    if (chainId === ARBITRUM) {
-      return "https://www.gmx.house/arbitrum/leaderboard";
-    }
-    if (chainId === AVALANCHE) {
-      return "https://www.gmx.house/avalanche/leaderboard";
-    }
-    return "https://www.gmx.house";
-  };
-
   function getTokenLabel() {
     switch (true) {
       case isLong:
@@ -219,7 +207,7 @@ export default function SwapBox(props) {
 
   const onOrderOptionChange = (option) => {
     // limits disabled
-    if (typeof option === "string" && option !== LIMIT) {
+    if (typeof option === "string") {
       setOrderOption(option);
     }
   };
@@ -819,8 +807,9 @@ export default function SwapBox(props) {
       return ["Min leverage: 1.1x"];
     }
 
-    if (leverage && leverage.gt(30.5 * BASIS_POINTS_DIVISOR)) {
-      return ["Max leverage: 30.5x"];
+    const maxLeverage = getMaxLeverage(toTokenInfo.symbol);
+    if (leverage && leverage.gt(maxLeverage * BASIS_POINTS_DIVISOR)) {
+      return [`Max leverage: ${maxLeverage}x`];
     }
 
     if (!isMarketOrder && entryMarkPrice && triggerPriceUsd) {
@@ -876,6 +865,17 @@ export default function SwapBox(props) {
           const nextUsdgAmount = fromTokenInfo.usdgAmount.add(usdgFromAmount);
           if (nextUsdgAmount.gt(fromTokenInfo.maxUsdgAmount)) {
             return [`${fromTokenInfo.symbol} pool exceeded, try different token`, true, "MAX_USDG"];
+          }
+        }
+        if (toTokenInfo && toTokenInfo.maxPrice) {
+          const sizeUsd = toAmount.mul(toTokenInfo.maxPrice).div(expandDecimals(1, toTokenInfo.decimals));
+          if (
+            toTokenInfo.maxGlobalLongSize &&
+            toTokenInfo.maxGlobalLongSize.gt(0) &&
+            toTokenInfo.maxAvailableLong &&
+            sizeUsd.gt(toTokenInfo.maxAvailableLong)
+          ) {
+            return [`Max ${toTokenInfo.symbol} long exceeded`];
           }
         }
       }
@@ -1711,16 +1711,6 @@ export default function SwapBox(props) {
     feeBps = feeBasisPoints;
   }
 
-  const leverageMarks = {
-    2: "2x",
-    5: "5x",
-    10: "10x",
-    15: "15x",
-    20: "20x",
-    25: "25x",
-    30: "30x",
-  };
-
   if (!fromToken || !toToken) {
     return null;
   }
@@ -1891,6 +1881,7 @@ export default function SwapBox(props) {
               type="inline"
               option={orderOption}
               onChange={onOrderOptionChange}
+              newItem={LIMIT}
             />
           )}
         </div>
@@ -2156,7 +2147,13 @@ export default function SwapBox(props) {
         )}
         {(isLong || isShort) && (
           <div className="Exchange-leverage-box">
-            <LeverageInput value={leverageOption} onChange={setLeverageOption} max={30.5} min={1.1} step={0.01} />
+            <LeverageInput
+              value={leverageOption}
+              onChange={setLeverageOption}
+              max={getMaxLeverage(toToken.symbol)}
+              min={1.1}
+              step={0.01}
+            />
             {isShort && (
               <div className="Exchange-info-row">
                 <div className="Exchange-info-label">

@@ -4,7 +4,6 @@ import { useWeb3React } from "@web3-react/core";
 import useSWR from "swr";
 import { ethers } from "ethers";
 import { useLocalStorage } from "react-use";
-import Countdown from "react-countdown";
 import { Text } from "../../components/Translation/Text";
 
 import {
@@ -15,6 +14,7 @@ import {
   LONG,
   SHORT,
   USD_DECIMALS,
+  CHART_PERIODS,
   getExplorerUrl,
   helperToast,
   formatAmount,
@@ -26,12 +26,15 @@ import {
   getLeverage,
   useLocalStorageByChainId,
   getDeltaStr,
+  getDeltaAfterFees,
   useChainId,
   useAccountOrders,
   getPageTitle,
+  useLocalStorageSerializeKey,
 } from "../../Helpers";
 import { getConstant } from "../../Constants";
 import { approvePlugin } from "../../Api";
+import { useChartPrices } from "../../Api";
 
 import { getContract } from "../../Addresses";
 import { getTokens, getToken, getWhitelistedTokens, getTokenBySymbol } from "../../data/Tokens";
@@ -44,6 +47,7 @@ import Token from "../../abis/Token.json";
 import Checkbox from "../../components/Checkbox/Checkbox";
 import SwapBox from "../../components/Exchange/SwapBox";
 import ExchangeTVChart, { getChartToken } from "../../components/Exchange/ExchangeTVChart";
+import ExchangeAdvancedTVChart from "../../components/Exchange/ExchangeAdvancedTVChart";
 import PositionsList from "../../components/Exchange/PositionsList";
 import OrdersList from "../../components/Exchange/OrdersList";
 import TradeHistory from "../../components/Exchange/TradeHistory";
@@ -52,10 +56,14 @@ import Tab from "../../components/Tab/Tab";
 
 import "./Exchange.css";
 import SEO from "../../components/Common/SEO";
+import { ExchangeHeader } from "../../components/Exchange/ExchangeHeader";
+
 const { AddressZero } = ethers.constants;
 
 const PENDING_POSITION_VALID_DURATION = 600 * 1000;
 const UPDATED_POSITION_VALID_DURATION = 60 * 1000;
+
+const DEFAULT_PERIOD = "4h";
 
 const notifications = {};
 
@@ -112,65 +120,6 @@ const getTokenAddress = (token, nativeTokenAddress) => {
     return nativeTokenAddress;
   }
   return token.address;
-};
-
-const renderer = ({ days, hours, minutes, seconds, completed }) => {
-  if (completed) {
-    // Render a completed state
-    return (
-      <>
-        <span className="merge-started-text">
-          <Text>The Ethereum Merge is now in progress.</Text>
-        </span>
-      </>
-    );
-  } else {
-    // Render a countdown
-    return (
-      <>
-        <span>
-          <Text>COUNTDOWN TO THE MERGE</Text>
-        </span>
-        <div className="Countdown-timer">
-          {days ? (
-            <div className="Countdown-section">
-              <span>{days}&nbsp;:</span>
-              <span>
-                <Text>DAYS</Text>
-              </span>
-            </div>
-          ) : null}
-          <div className="Countdown-section">
-            <span>{hours}&nbsp;:</span>
-            <span>
-              <Text>HOURS</Text>
-            </span>
-          </div>
-          <div className="Countdown-section">
-            <span>{minutes}&nbsp;:</span>
-            <span>
-              <Text>MINUTES</Text>
-            </span>
-          </div>
-          {seconds ? (
-            <div className="Countdown-section">
-              <span>{seconds < 10 ? `0${seconds}` : seconds}</span>
-              <span>
-                <Text>SECONDS</Text>
-              </span>
-            </div>
-          ) : (
-            <div className="Countdown-section">
-              <span>{0}</span>
-              <span>
-                <Text>SECONDS</Text>
-              </span>
-            </div>
-          )}
-        </div>
-      </>
-    );
-  }
 };
 
 function applyPendingChanges(position, pendingPositions) {
@@ -299,27 +248,16 @@ export function getPositions(
       position.deltaPercentageStr = deltaPercentageStr;
       position.deltaBeforeFeesStr = deltaStr;
 
-      let hasProfitAfterFees;
-      let pendingDeltaAfterFees;
-
-      if (position.hasProfit) {
-        if (position.pendingDelta.gt(position.totalFees)) {
-          hasProfitAfterFees = true;
-          pendingDeltaAfterFees = position.pendingDelta.sub(position.totalFees);
-        } else {
-          hasProfitAfterFees = false;
-          pendingDeltaAfterFees = position.totalFees.sub(position.pendingDelta);
-        }
-      } else {
-        hasProfitAfterFees = false;
-        pendingDeltaAfterFees = position.pendingDelta.add(position.totalFees);
-      }
+      const { pendingDeltaAfterFees, deltaPercentageAfterFees, hasProfitAfterFees } = getDeltaAfterFees({
+        delta: position.pendingDelta,
+        totalFees: position.totalFees,
+        hasProfit: position.hasProfit,
+        collateral: position.collateral,
+      });
 
       position.hasProfitAfterFees = hasProfitAfterFees;
       position.pendingDeltaAfterFees = pendingDeltaAfterFees;
-      position.deltaPercentageAfterFees = position.pendingDeltaAfterFees
-        .mul(BASIS_POINTS_DIVISOR)
-        .div(position.collateral);
+      position.deltaPercentageAfterFees = deltaPercentageAfterFees;
 
       const { deltaStr: deltaAfterFeesStr, deltaPercentageStr: deltaAfterFeesPercentageStr } = getDeltaStr({
         delta: position.pendingDeltaAfterFees,
@@ -844,10 +782,6 @@ export const Exchange = forwardRef((props, ref) => {
     listSection = LIST_SECTIONS[0];
   }
 
-  if (!getToken(chainId, toTokenAddress)) {
-    return null;
-  }
-
   const getListSection = () => {
     return (
       <div>
@@ -906,6 +840,8 @@ export const Exchange = forwardRef((props, ref) => {
             orders={orders}
             showPnlAfterFees={savedShowPnlAfterFees}
             trackAction={trackAction}
+            usdgSupply={usdgSupply}
+            totalTokenWeights={totalTokenWeights}
           />
         )}
         {listSection === "Orders" && (
@@ -937,38 +873,107 @@ export const Exchange = forwardRef((props, ref) => {
     );
   };
 
+  const DEFAULT_CHART = "lightweight";
+  let [selectedChart, setSelectedChart] = useLocalStorageSerializeKey([chainId, "Selected-chart"], DEFAULT_CHART);
+
+  const [chartToken, setChartToken] = useState({
+    maxPrice: null,
+    minPrice: null,
+  });
+
+  let [period, setPeriod] = useLocalStorageSerializeKey([chainId, "Chart-period"], DEFAULT_PERIOD);
+  if (!(period in CHART_PERIODS)) {
+    period = DEFAULT_PERIOD;
+  }
+
+  const currentAveragePrice =
+    chartToken.maxPrice && chartToken.minPrice ? chartToken.maxPrice.add(chartToken.minPrice).div(2) : null;
+
+  const [priceData, updatePriceData] = useChartPrices(
+    chainId,
+    chartToken.symbol,
+    chartToken.isStable,
+    period,
+    currentAveragePrice
+  );
+
+  const fromToken = getTokenInfo(infoTokens, fromTokenAddress);
+  const toToken = getTokenInfo(infoTokens, toTokenAddress);
+
+  useEffect(() => {
+    const tmp = getChartToken(swapOption, fromToken, toToken, chainId);
+    setChartToken(tmp);
+  }, [swapOption, fromToken, toToken, chainId]);
+
+  if (!getToken(chainId, toTokenAddress)) {
+    return null;
+  }
+
   const onSelectWalletToken = (token) => {
     setFromTokenAddress(swapOption, token.address);
-  };
-
-  const renderChart = () => {
-    return (
-      <ExchangeTVChart
-        fromTokenAddress={fromTokenAddress}
-        toTokenAddress={toTokenAddress}
-        infoTokens={infoTokens}
-        swapOption={swapOption}
-        chainId={chainId}
-        positions={positions}
-        savedShouldShowPositionLines={savedShouldShowPositionLines}
-        orders={orders}
-        setToTokenAddress={setToTokenAddress}
-        sidebarVisible={sidebarVisible}
-        trackAction={trackAction}
-      />
-    );
   };
 
   return (
     <>
       <SEO description="Trade with liquidity, leverage, low fees. Trade with Mycelium. Trade Perpetual Swaps and Perpetual Pools on Ethereum scaling solution, Arbitrum with liquid markets for BTC, ETH, LINK, UNI, CRV, FXS, & BAL." />
-      <div className="Exchange default-container">
-        <div className="Merge-countdown">
-          <Countdown date={1663222419000} intervalDelay={0} precision={2} renderer={renderer} />
-        </div>
+      <div className="Exchange default-container ReferralsBannerActive">
         <div className="Exchange-content">
           <div className="Exchange-left">
-            {renderChart()}
+            <div className="ExchangeChart tv">
+              <ExchangeHeader
+                priceData={priceData}
+                currentAveragePrice={currentAveragePrice}
+                setChartToken={setChartToken}
+                setToTokenAddress={setToTokenAddress}
+                swapOption={swapOption}
+                chainId={chainId}
+                chartToken={chartToken}
+                trackAction={trackAction}
+                period={period}
+                setPeriod={setPeriod}
+                infoTokens={infoTokens}
+                selectedChart={selectedChart}
+                setSelectedChart={setSelectedChart}
+              />
+              <div className="ExchangeChart-border">
+                {selectedChart === "lightweight" ? (
+                  <ExchangeTVChart
+                    fromTokenAddress={fromTokenAddress}
+                    toTokenAddress={toTokenAddress}
+                    infoTokens={infoTokens}
+                    swapOption={swapOption}
+                    chainId={chainId}
+                    positions={positions}
+                    savedShouldShowPositionLines={savedShouldShowPositionLines}
+                    orders={orders}
+                    setToTokenAddress={setToTokenAddress}
+                    sidebarVisible={sidebarVisible}
+                    trackAction={trackAction}
+                    chartToken={chartToken}
+                    setChartToken={setChartToken}
+                    currentAveragePrice={currentAveragePrice}
+                    period={period}
+                    setPeriod={setPeriod}
+                    priceData={priceData}
+                    updatePriceData={updatePriceData}
+                  />
+                ) : (
+                  <ExchangeAdvancedTVChart
+                    infoTokens={infoTokens}
+                    chartToken={chartToken}
+                    setChartToken={setChartToken}
+                    priceData={priceData}
+                    period={period}
+                    setPeriod={setPeriod}
+                    setToTokenAddress={setToTokenAddress}
+                    swapOption={swapOption}
+                    chainId={chainId}
+                    currentAveragePrice={currentAveragePrice}
+                    trackAction={trackAction}
+                  />
+                )}
+              </div>
+            </div>
             <div className="Exchange-lists large">{getListSection()}</div>
           </div>
           <div className="Exchange-right">

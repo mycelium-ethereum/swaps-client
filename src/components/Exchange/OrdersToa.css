@@ -1,3 +1,8 @@
+.Modal.Orders-toa {
+  /* 1 extra index to display in front of other modals */
+  z-index: 1001;
+}
+
 .Orders-toa .Modal-content {
   width: 22rem;
 }

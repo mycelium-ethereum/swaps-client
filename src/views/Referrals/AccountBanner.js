@@ -1,18 +1,12 @@
 import React from "react";
 import Davatar from "@davatar/react";
 import * as Styles from "./Referrals.styles";
-import {
-  formatAmount,
-  shortenAddress,
-  USD_DECIMALS,
-  copyReferralCode,
-  getTierIdDisplay,
-  TIER_DISCOUNT_INFO,
-} from "../../Helpers";
+import { formatAmount, shortenAddress, USD_DECIMALS } from "../../Helpers";
 import CopyIcon from "../../img/copy.svg";
 import Tooltip from "../../components/Tooltip/Tooltip";
+import { copyReferralCode, getTierIdDisplay } from "../../utils/referrals";
+import { TIER_DISCOUNT_INFO } from "../../config/referrals";
 import { Text } from "../../components/Translation/Text";
-// import { COMMISSIONS } from "./Referrals";
 
 export default function AccountBanner(props) {
   const {

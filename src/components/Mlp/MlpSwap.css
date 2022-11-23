@@ -316,6 +316,10 @@
   }
 }
 @media (max-width: 510px) {
+
+  .MlpSwap-from-token .Modal .Modal-content {
+    width: 100%;
+  }
   .token-grid {
     display: grid;
     grid-template-columns: 1fr;

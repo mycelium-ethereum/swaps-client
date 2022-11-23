@@ -9,16 +9,15 @@ import OrderBook from "../abis/OrderBook.json";
 import PositionManager from "../abis/PositionManager.json";
 import Vault from "../abis/Vault.json";
 import Router from "../abis/Router.json";
+import LentMyc from "../abis/LentMyc.json";
 import UniPool from "../abis/UniPool.json";
 import Token from "../abis/Token.json";
-import VaultReader from "../abis/VaultReader.json";
+import RewardsTracker from "../abis/RewardTracker.json";
 
 import { getContract } from "../Addresses";
 import { getConstant } from "../Constants";
 import {
   ARBITRUM,
-  AVALANCHE,
-  ARBITRUM_TESTNET,
   ETHEREUM,
   bigNumberify,
   getExplorerUrl,
@@ -30,20 +29,17 @@ import {
   fetcher,
   parseValue,
   expandDecimals,
-  getInfoTokens,
   helperToast,
-  getSupplyUrl,
-  getTracerServerUrl,
-  MM_FEE_MULTIPLIER,
-  FEE_MULTIPLIER_BASIS_POINTS,
-  BASIS_POINTS_DIVISOR,
-  MM_SWAPS_FEE_MULTIPLIER,
+  USD_DECIMALS,
+  ETH_DECIMALS,
+  ARBITRUM_GOERLI,
+  SECONDS_PER_YEAR,
 } from "../Helpers";
-import { getTokens, getTokenBySymbol, getWhitelistedTokens } from "../data/Tokens";
+import { getTokenBySymbol } from "../data/Tokens";
 
 import { nissohGraphClient, arbitrumGraphClient, arbitrumTestnetGraphClient } from "./common";
-import { SECONDS_PER_WEEK } from "../data/Fees";
-import { Text } from "../components/Translation/Text";
+import { getServerUrl, getSupplyUrl } from "src/lib";
+import { Text } from "src/components/Translation/Text";
 export * from "./prices";
 
 const { AddressZero } = ethers.constants;
@@ -51,7 +47,7 @@ const { AddressZero } = ethers.constants;
 function getMycGraphClient(chainId) {
   if (chainId === ARBITRUM) {
     return arbitrumGraphClient;
-  } else if (chainId === ARBITRUM_TESTNET) {
+  } else if (chainId === ARBITRUM_GOERLI) {
     return arbitrumTestnetGraphClient;
   }
   throw new Error(`Unsupported chain ${chainId}`);
@@ -110,82 +106,46 @@ export function useFeesSince(chainId, from, to) {
   return res;
 }
 
-export function useMarketMakingFeesSince(chainId, from, to, stableTokens) {
-  const [res, setRes] = useState();
+const FEE_MULTIPLIER_BASIS_POINTS = 4;
+const MM_FEE_MULTIPLIER = bigNumberify(6);
+const MM_SWAPS_FEE_MULTIPLIER = bigNumberify(12);
 
-  const stableMap = stableTokens.reduce((o, t) => ({ ...o, [t.address.toLowerCase()]: true }), {});
-
+export function useSpreadCaptureVolume(chainId) {
+  // spread capture turned off
+  const to = 1665792441;
   const query = gql(`{
-    hourlyVolumes (first: 1000, where: { id_gte: ${from}, id_lt: ${to}}) {
+    volumeStats(first: 1000, period: daily, orderBy: id, orderDirection: desc, where: { id_lt: ${to} }) {
+      margin
       liquidation
+      swap
       mint
       burn
-      margin
-    },
-    tokensSwapsVolume1: hourlyVolumeByTokens (first: 1000, where: { timestamp_gte: ${from}, timestamp_lt: ${to} }) {
-      swap
-      tokenA
-      tokenB
-    },
-    tokensSwapsVolume2: hourlyVolumeByTokens (first: 1000, skip: 1000, where: { timestamp_gte: ${from}, timestamp_lt: ${to} }) {
-      swap
-      tokenA
-      tokenB
-    },
+    }
   }`);
 
+  const [res, setRes] = useState(undefined);
+
   useEffect(() => {
-    if (!from) {
-      return;
-    }
     getMycGraphClient(chainId)
       .query({ query })
       .then((res) => {
-        if (res.data.hourlyVolumes) {
-          let mmFees = res.data.hourlyVolumes.reduce(
-            (sum, stat) =>
-              sum
-                .add(MM_FEE_MULTIPLIER.mul(stat.mint))
-                .add(MM_FEE_MULTIPLIER.mul(stat.burn))
-                .add(MM_FEE_MULTIPLIER.mul(stat.margin))
-                .add(MM_FEE_MULTIPLIER.mul(stat.liquidation)),
-            bigNumberify(0)
-          );
-
-          const allSwapsVolume = res.data.tokensSwapsVolume1.concat(res.data.tokensSwapsVolume2);
-          let swapMMFees = allSwapsVolume.reduce((sum, stat) => {
-            const tokenAIsStable = stableMap[stat.tokenA];
-            const tokenBIsStable = stableMap[stat.tokenB];
-            if (tokenAIsStable && tokenBIsStable) {
-              return sum;
-            } else if (!tokenAIsStable && !tokenBIsStable) {
-              return sum.add(MM_SWAPS_FEE_MULTIPLIER.mul(stat.swap));
-            } else {
-              return sum.add(MM_FEE_MULTIPLIER.mul(stat.swap));
-            }
-          }, bigNumberify(0));
-          setRes(mmFees.add(swapMMFees).div(expandDecimals(1, FEE_MULTIPLIER_BASIS_POINTS)));
-        }
+        const totalMMFees = res.data.volumeStats.reduce(
+          (sum, stat) =>
+            sum
+              .add(MM_FEE_MULTIPLIER.mul(stat.mint))
+              .add(MM_FEE_MULTIPLIER.mul(stat.burn))
+              .add(MM_FEE_MULTIPLIER.mul(stat.margin))
+              .add(MM_FEE_MULTIPLIER.mul(stat.liquidation))
+              .add(MM_SWAPS_FEE_MULTIPLIER.mul(stat.swap)),
+          bigNumberify(0)
+        );
+        setRes(totalMMFees.div(expandDecimals(1, FEE_MULTIPLIER_BASIS_POINTS)));
       })
       .catch(console.warn);
-  }, [setRes, query, chainId, from]);
+  }, [setRes, query, chainId]);
 
   return res;
 }
-
-export const useMarketMakingApr = (chainId, mlpSupplyUsd) => {
-  const whitelistedTokens = getWhitelistedTokens(chainId);
-  const stableTokens = whitelistedTokens.filter((t) => t.isStable);
-
-  const [to] = useState(Math.floor(Date.now() / 1000));
-  const from = to - SECONDS_PER_WEEK;
-  const lastWeeksMMFees = useMarketMakingFeesSince(chainId, from, to, stableTokens);
-
-  if (lastWeeksMMFees && mlpSupplyUsd) {
-    let mmAnnualFeesUsd = lastWeeksMMFees.mul(52);
-    return mmAnnualFeesUsd.mul(BASIS_POINTS_DIVISOR).div(mlpSupplyUsd);
-  }
-};
 
 export function useVolume(chainId) {
   const query = gql(`{
@@ -229,50 +189,6 @@ export function useAllOrdersStats(chainId) {
   }, [setRes, query, chainId]);
 
   return res ? res.data.orderStat : null;
-}
-
-export function useInfoTokens(library, chainId, active, tokenBalances, fundingRateInfo, vaultPropsLength) {
-  const tokens = getTokens(chainId);
-  const vaultReaderAddress = getContract(chainId, "VaultReader");
-  const vaultAddress = getContract(chainId, "Vault");
-  const positionRouterAddress = getContract(chainId, "PositionRouter");
-  const nativeTokenAddress = getContract(chainId, "NATIVE_TOKEN");
-
-  const whitelistedTokens = getWhitelistedTokens(chainId);
-  const whitelistedTokenAddresses = whitelistedTokens.map((token) => token.address);
-
-  const { data: vaultTokenInfo } = useSWR(
-    [`useInfoTokens:${active}`, chainId, vaultReaderAddress, "getVaultTokenInfoV3"],
-    {
-      fetcher: fetcher(library, VaultReader, [
-        vaultAddress,
-        positionRouterAddress,
-        nativeTokenAddress,
-        expandDecimals(1, 18),
-        whitelistedTokenAddresses,
-      ]),
-    }
-  );
-
-  const indexPricesUrl = getTracerServerUrl(chainId, "/prices");
-  const { data: indexPrices } = useSWR([indexPricesUrl], {
-    fetcher: (...args) => fetch(...args).then((res) => res.json()),
-    refreshInterval: 500,
-    refreshWhenHidden: true,
-  });
-
-  return {
-    infoTokens: getInfoTokens(
-      tokens,
-      tokenBalances,
-      whitelistedTokens,
-      vaultTokenInfo,
-      fundingRateInfo,
-      vaultPropsLength,
-      indexPrices,
-      nativeTokenAddress
-    ),
-  };
 }
 
 export function useUserStat(chainId) {
@@ -494,7 +410,7 @@ function invariant(condition, errorMsg) {
 }
 
 export function useTrades(chainId, account) {
-  let url = getTracerServerUrl(chainId, "/actions");
+  let url = getServerUrl(chainId, "/actions");
   if (account && account.length) {
     url += `&account=${account}`;
   }
@@ -507,13 +423,25 @@ export function useTrades(chainId, account) {
   // Convert the response to match expected format
   let trades = [];
   if (Array.isArray(data)) {
-    trades = data.map((datum) => ({
-      id: datum.dataValues.id.toString(),
-      data: {
-        ...datum.dataValues,
-        params: JSON.stringify(datum.dataValues.params),
-      },
-    }));
+    trades = data.map((datum) => {
+      if (datum.dataValues) {
+        return {
+          id: datum.dataValues.id.toString(),
+          data: {
+            ...datum.dataValues,
+            params: JSON.stringify(datum.dataValues.params),
+          },
+        };
+      } else {
+        return {
+          id: datum.id,
+          data: {
+            ...datum,
+            params: JSON.stringify(datum.params),
+          },
+        };
+      }
+    });
   }
 
   if (trades) {
@@ -557,40 +485,6 @@ export function useTrades(chainId, account) {
   }
 
   return { trades, updateTrades };
-}
-
-export function useStakedMycSupply(library, active) {
-  const mycAddressArb = getContract(ARBITRUM, "MYC");
-  const stakedMycTrackerAddressArb = getContract(ARBITRUM, "StakedMycTracker");
-
-  const { data: arbData, mutate: arbMutate } = useSWR(
-    [`StakeV2:stakedMycSupply:${active}`, ARBITRUM, mycAddressArb, "balanceOf", stakedMycTrackerAddressArb],
-    {
-      fetcher: fetcher(library, Token),
-    }
-  );
-
-  const mycAddressAvax = getContract(AVALANCHE, "MYC");
-  const stakedMycTrackerAddressAvax = getContract(AVALANCHE, "StakedMycTracker");
-
-  const { data: avaxData, mutate: avaxMutate } = useSWR(
-    [`StakeV2:stakedMycSupply:${active}`, AVALANCHE, mycAddressAvax, "balanceOf", stakedMycTrackerAddressAvax],
-    {
-      fetcher: fetcher(undefined, Token),
-    }
-  );
-
-  let data;
-  if (arbData && avaxData) {
-    data = arbData.add(avaxData);
-  }
-
-  const mutate = () => {
-    arbMutate();
-    avaxMutate();
-  };
-
-  return { data, mutate };
 }
 
 export function useHasOutdatedUi() {
@@ -637,53 +531,6 @@ export function useTotalMYCSupply() {
   return {
     total: mycSupply ? bigNumberify(ethers.utils.parseUnits(mycSupply, 18)) : undefined,
     circulating: circulatingMycSupply ? bigNumberify(ethers.utils.parseUnits(circulatingMycSupply, 18)) : undefined,
-    mutate,
-  };
-}
-
-export function useTotalMycStaked() {
-  const stakedMycTrackerAddressArbitrum = getContract(ARBITRUM, "StakedMycTracker");
-  const stakedMycTrackerAddressAvax = getContract(AVALANCHE, "StakedMycTracker");
-  let totalStakedMyc = useRef(bigNumberify(0));
-  const { data: stakedMycSupplyArbitrum, mutate: updateStakedMycSupplyArbitrum } = useSWR(
-    [
-      `StakeV2:stakedMycSupply:${ARBITRUM}`,
-      ARBITRUM,
-      getContract(ARBITRUM, "MYC"),
-      "balanceOf",
-      stakedMycTrackerAddressArbitrum,
-    ],
-    {
-      fetcher: fetcher(undefined, Token),
-    }
-  );
-  const { data: stakedMycSupplyAvax, mutate: updateStakedMycSupplyAvax } = useSWR(
-    [
-      `StakeV2:stakedMycSupply:${AVALANCHE}`,
-      AVALANCHE,
-      getContract(AVALANCHE, "MYC"),
-      "balanceOf",
-      stakedMycTrackerAddressAvax,
-    ],
-    {
-      fetcher: fetcher(undefined, Token),
-    }
-  );
-
-  const mutate = useCallback(() => {
-    updateStakedMycSupplyArbitrum();
-    updateStakedMycSupplyAvax();
-  }, [updateStakedMycSupplyArbitrum, updateStakedMycSupplyAvax]);
-
-  if (stakedMycSupplyArbitrum && stakedMycSupplyAvax) {
-    let total = bigNumberify(stakedMycSupplyArbitrum).add(stakedMycSupplyAvax);
-    totalStakedMyc.current = total;
-  }
-
-  return {
-    avax: stakedMycSupplyAvax,
-    arbitrum: stakedMycSupplyArbitrum,
-    total: totalStakedMyc.current,
     mutate,
   };
 }
@@ -1220,6 +1067,97 @@ function ToastifyDebug(props) {
   );
 }
 
+export function useStakingApr(mycPrice, ethPrice) {
+  const [stakingApr, setStakingApr] = useState(null);
+
+  // apr is annualised rewards (USD value) / total staked (USD value) * 100
+  const { data: tokensPerInterval } = useSWR(
+    [
+      `useStakingApr:tokensPerInterval:${ARBITRUM}`,
+      ARBITRUM,
+      getContract(ARBITRUM, "MYCStakingRewards"),
+      "tokensPerInterval",
+    ],
+    {
+      fetcher: fetcher(undefined, RewardsTracker),
+    }
+  );
+
+  const mycTokenAddress = getContract(ARBITRUM, "MYC");
+  const { data: mycDeposited } = useSWR(
+    [
+      `useStakingApr:totalDepositSupply(MYC):${ARBITRUM}`,
+      ARBITRUM,
+      getContract(ARBITRUM, "MYCStakingRewards"),
+      "totalDepositSupply",
+    ],
+    {
+      fetcher: fetcher(undefined, RewardsTracker, mycTokenAddress),
+    }
+  );
+
+  const esMycTokenAddress = getContract(ARBITRUM, "ES_MYC");
+  const { data: esMycDeposited } = useSWR(
+    [
+      `useStakingApr:totalDepositSupply(esMYC):${ARBITRUM}`,
+      ARBITRUM,
+      getContract(ARBITRUM, "MYCStakingRewards"),
+      "totalDepositSupply",
+    ],
+    {
+      fetcher: fetcher(undefined, RewardsTracker, esMycTokenAddress),
+    }
+  );
+
+  useEffect(() => {
+    if (ethPrice?.gt(0) && mycPrice?.gt(0) && tokensPerInterval && mycDeposited && esMycDeposited) {
+      const tokensPerYear = tokensPerInterval.mul(SECONDS_PER_YEAR);
+      const annualRewardsUsd = tokensPerYear.mul(ethPrice);
+
+      const totalDepositTokens = mycDeposited.add(esMycDeposited);
+      const totalDepositsUsd = totalDepositTokens.mul(mycPrice);
+
+      const aprPrecision = 10;
+      const apr = annualRewardsUsd.mul(expandDecimals(1, aprPrecision)).div(totalDepositsUsd);
+
+      const formattedApr = (apr.toNumber() / 10 ** aprPrecision) * 100;
+      setStakingApr(formattedApr.toFixed(2));
+    }
+  }, [ethPrice, mycPrice, tokensPerInterval, mycDeposited, esMycDeposited]);
+
+  return stakingApr;
+}
+
+export function useTotalStaked() {
+  const [totalStakedMyc, setTotalStakedMyc] = useState(null);
+
+  const { data: mycAssetsInStaking } = useSWR(
+    [`DashboardV2:mycInStaking:${ARBITRUM}`, ARBITRUM, getContract(ARBITRUM, "LentMYC"), "totalAssets"],
+    {
+      fetcher: fetcher(undefined, LentMyc),
+    }
+  );
+
+  const { data: pendingMycDepositsInStaking } = useSWR(
+    [`DashboardV2:pendingMycInStaking:${ARBITRUM}`, ARBITRUM, getContract(ARBITRUM, "LentMYC"), "pendingDeposits"],
+    {
+      fetcher: fetcher(undefined, LentMyc),
+    }
+  );
+
+  useEffect(() => {
+    if (mycAssetsInStaking && pendingMycDepositsInStaking && !totalStakedMyc) {
+      const mycDeposited = mycAssetsInStaking.add(pendingMycDepositsInStaking).div(expandDecimals(1, ETH_DECIMALS));
+
+      if (!totalStakedMyc) {
+        setTotalStakedMyc(mycDeposited);
+      }
+    }
+  }, [mycAssetsInStaking, pendingMycDepositsInStaking, totalStakedMyc]);
+
+  return totalStakedMyc;
+}
+
 export async function callContract(chainId, contract, method, params, opts) {
   try {
     if (!Array.isArray(params) && typeof params === "object" && opts === undefined) {
@@ -1257,6 +1195,7 @@ export async function callContract(chainId, contract, method, params, opts) {
         hash: res.hash,
         message: opts.successMsg || "Transaction completed!",
       };
+
       opts.setPendingTxns((pendingTxns) => [...pendingTxns, pendingTxn]);
     }
     return res;
@@ -1299,4 +1238,133 @@ export async function callContract(chainId, contract, method, params, opts) {
     helperToast.error(failMsg);
     throw e;
   }
+}
+
+export function useMlpPrices(chainId, currentMlpPrice) {
+  const query = gql(`{
+    mlpStats(
+      first: 1000,
+      orderBy: id,
+      orderDirection: asc,
+      where: { period: daily }
+    ) {
+      id
+      aumInUsdg
+      mlpSupply
+      distributedUsd
+      distributedEth
+    },
+    feeStats (
+      first: 1000,
+      orderBy: id,
+      orderDirection: asc,
+      where: { period: daily }
+    ) {
+      id
+      margin
+      marginAndLiquidation
+      swap
+      liquidation
+      mint
+      burn
+    }
+  }`);
+
+  const [data, setData] = useState();
+
+  useEffect(() => {
+    getMycGraphClient(chainId).query({ query }).then(setData).catch(console.warn);
+  }, [setData, query, chainId]);
+
+  let cumulativeDistributedUsdPerMlp = 0;
+  let cumulativeDistributedEthPerMlp = 0;
+  const mlpChartData = useMemo(() => {
+    if (!data) {
+      return null;
+    }
+
+    let prevMlpSupply;
+    let prevAum;
+
+    const feeStatsById = data.data.feeStats.reduce(
+      (o, stat) => ({
+        ...o,
+        [stat.id]: ethers.BigNumber.from(stat.marginAndLiquidation).add(stat.swap).add(stat.mint).add(stat.burn),
+      }),
+      {}
+    );
+
+    let cumulativeFees = ethers.BigNumber.from(0);
+    let ret = data.data.mlpStats
+      .filter((item) => item.id % 86400 === 0)
+      .reduce((memo, item, i) => {
+        const last = memo[memo.length - 1];
+
+        const aum = Number(item.aumInUsdg) / 1e18;
+        const mlpSupply = Number(item.mlpSupply) / 1e18;
+
+        const distributedUsd = Number(item.distributedUsd) / 1e30;
+        const distributedUsdPerMlp = distributedUsd / mlpSupply || 0;
+        cumulativeDistributedUsdPerMlp += distributedUsdPerMlp;
+
+        const distributedEth = Number(item.distributedEth) / 1e18;
+        const distributedEthPerMlp = distributedEth / mlpSupply || 0;
+        cumulativeDistributedEthPerMlp += distributedEthPerMlp;
+
+        const feeStat = feeStatsById[item.id] ?? ethers.BigNumber.from(0);
+        cumulativeFees = cumulativeFees.add(feeStat);
+        const totalFees = parseFloat(ethers.utils.formatUnits(cumulativeFees, USD_DECIMALS));
+
+        const mlpPrice = aum / mlpSupply;
+        const mlpPriceWithFees = (totalFees + aum) / mlpSupply;
+
+        const timestamp = parseInt(item.id);
+
+        const newItem = {
+          time: timestamp,
+          aum,
+          mlpSupply,
+          value: mlpPrice,
+          mlpPriceWithFees: mlpPriceWithFees,
+          cumulativeDistributedEthPerMlp,
+          cumulativeDistributedUsdPerMlp,
+          distributedUsdPerMlp,
+          distributedEthPerMlp,
+        };
+        if (i === data.data.mlpStats.length - 1 && currentMlpPrice) {
+          newItem.mlpPriceWithFees = Number.isNaN(mlpPrice)
+            ? parseFloat(ethers.utils.formatUnits(currentMlpPrice, USD_DECIMALS))
+            : mlpPriceWithFees;
+          newItem.value = parseFloat(ethers.utils.formatUnits(currentMlpPrice, USD_DECIMALS));
+        }
+
+        if (last && last.timestamp === timestamp) {
+          memo[memo.length - 1] = newItem;
+        } else {
+          memo.push(newItem);
+        }
+        return memo;
+      }, [])
+      .map((item) => {
+        let { mlpSupply, aum } = item;
+        if (!mlpSupply) {
+          mlpSupply = prevMlpSupply;
+        }
+        if (!aum) {
+          aum = prevAum;
+        }
+        item.mlpSupplyChange = prevMlpSupply ? ((mlpSupply - prevMlpSupply) / prevMlpSupply) * 100 : 0;
+        if (item.mlpSupplyChange > 1000) item.mlpSupplyChange = 0;
+        item.aumChange = prevAum ? ((aum - prevAum) / prevAum) * 100 : 0;
+        if (item.aumChange > 1000) item.aumChange = 0;
+        prevMlpSupply = mlpSupply;
+        prevAum = aum;
+        return item;
+      });
+
+    // ret = fillNa(ret);
+    return ret;
+  }, [data, currentMlpPrice]);
+
+  return mlpChartData;
 }

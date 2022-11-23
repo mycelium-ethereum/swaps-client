@@ -1,4 +1,3 @@
-import React from "react";
 import { truncateMiddleEthAddress, formatAmount, USD_DECIMALS, ETH_DECIMALS } from "../../Helpers";
 import Jazzicon, { jsNumberForAddress } from "react-jazzicon";
 import Davatar from "@davatar/react";
@@ -25,8 +24,8 @@ import {
   ClaimCell,
   ClaimButton,
   WalletIcon,
-  TopFiftyRow,
-  TopFiftyRowCell,
+  TopFiveRow,
+  TopFiveRowCell,
 } from "./Rewards.styles";
 import { RewardsButton } from "../../Shared.styles";
 import TooltipComponent from "../../components/Tooltip/Tooltip";
@@ -37,9 +36,9 @@ import degenScore from "../../img/ic_degen.svg";
 const ARBISCAN_URL = "https://arbiscan.io/address/";
 const headings = ["Rank", "User", "Volume", "Reward", ""];
 
-function RewardsTableWrapper({ children }) {
+function RewardsTableWrapper({ className, children }) {
   return (
-    <RewardsTable>
+    <RewardsTable className={className}>
       <RewardsTableHeader>
         <tr>
           {headings.map((heading) => (
@@ -54,17 +53,18 @@ function RewardsTableWrapper({ children }) {
   );
 }
 
-function TopFiftyIndicatorRow() {
+function TopIndicatorRow({ round }) {
   return (
-    <TopFiftyRow>
-      <TopFiftyRowCell colSpan={5} className="">
+    <TopFiveRow>
+      <TopFiveRowCell colSpan={5} className="">
         <span>
-          <Text>Top 50% of traders</Text>
+          <Text>Top {round > 5 ? 5 : 50}% of traders</Text>
         </span>
-      </TopFiftyRowCell>
-    </TopFiftyRow>
+      </TopFiveRowCell>
+    </TopFiveRow>
   );
 }
+
 function TableRow({
   ensName,
   position,
@@ -74,6 +74,7 @@ function TableRow({
   positionReward,
   degenReward,
   handleClaim,
+  claimDelay,
   userRow,
   rewardAmountUsd,
   latestRound,
@@ -81,6 +82,7 @@ function TableRow({
   hasClaimed,
 }) {
   const hasLoaded = hasClaimed !== undefined;
+  const hasDegenReward = !!degenReward && !degenReward.eq(0);
   return (
     <>
       <tr
@@ -102,7 +104,7 @@ function TableRow({
               </a>
               <span>{ensName}</span>
             </UserDetails>
-            {!!degenReward && !degenReward.eq(0) && (
+            {hasDegenReward && (
               <TooltipComponent
                 handle={<img src={degenScore} alt="degen_score_logo" />}
                 renderContent={() => "Rewards boosted by DegenScore"}
@@ -112,16 +114,20 @@ function TableRow({
         </UserCell>
         <VolumeCell>${formatAmount(volume, USD_DECIMALS, 2, true)}</VolumeCell>
         <RewardCell>
-          <TooltipComponent
-            handle={`${formatAmount(totalReward, ETH_DECIMALS, 4, true)} WETH`}
-            renderContent={() => (
-              <>
-                <Text>Top</Text> 50%: {formatAmount(positionReward, ETH_DECIMALS, 6, true)} WETH
-                <br />
-                Degen <Text>rewards</Text>: {formatAmount(degenReward, ETH_DECIMALS, 6, true)} WETH
-              </>
-            )}
-          />
+          {hasDegenReward ? (
+            <TooltipComponent
+              handle={`${formatAmount(totalReward, ETH_DECIMALS, 4, true)} WETH`}
+              renderContent={() => (
+                <>
+                  <Text>Top 50%</Text>: {formatAmount(positionReward, ETH_DECIMALS, 6, true)} WETH
+                  <br />
+                  <Text>Degen rewards</Text>: {formatAmount(degenReward, ETH_DECIMALS, 6, true)} WETH
+                </>
+              )}
+            />
+          ) : (
+            `${formatAmount(totalReward, ETH_DECIMALS, 4, true)} WETH`
+          )}
           {rewardAmountUsd && ` ($${formatAmount(rewardAmountUsd, USD_DECIMALS, 2, true)})`}
         </RewardCell>
         <ClaimCell
@@ -129,7 +135,7 @@ function TableRow({
             "highlight-current": userRow,
           })}
         >
-          {userRow && !totalReward.eq(0) && !latestRound && hasLoaded && !hasClaimed && (
+          {userRow && !totalReward.eq(0) && !latestRound && hasLoaded && !hasClaimed && !claimDelay && (
             <ClaimButton disabled={isClaiming} onClick={handleClaim}>
               <Text>{isClaiming ? "Claiming" : "Claim"}</Text> WETH
             </ClaimButton>
@@ -155,6 +161,7 @@ export default function Leaderboard(props) {
     handleClaim,
     latestRound,
     isClaiming,
+    claimDelay,
     hasClaimed,
   } = props;
 
@@ -162,7 +169,6 @@ export default function Leaderboard(props) {
     <LeaderboardContainer hidden={currentView === "Personal"}>
       <Title>Your rewards</Title>
       <PersonalRewardsTableContainer>
-        <RewardsTableBorder />
         {userAccount && userRoundData && userRoundData.position ? (
           <RewardsTableWrapper>
             <TableRow
@@ -176,6 +182,7 @@ export default function Leaderboard(props) {
               rewardAmountUsd={userRoundData.rewardAmountUsd}
               userRow={true}
               handleClaim={handleClaim}
+              claimDelay={claimDelay}
               latestRound={latestRound}
               isClaiming={isClaiming}
               hasClaimed={hasClaimed}
@@ -234,7 +241,7 @@ export default function Leaderboard(props) {
                   const isUserRow = user_address === userAccount;
                   return (
                     <>
-                      {index === middleRow ? <TopFiftyIndicatorRow /> : null}
+                      {index === middleRow ? <TopIndicatorRow round={roundData.round} /> : null}
                       <TableRow
                         key={user_address}
                         totalTraders={roundData.rewards.length}
@@ -247,6 +254,7 @@ export default function Leaderboard(props) {
                         degenReward={degenReward}
                         rewardAmountUsd={rewardAmountUsd}
                         handleClaim={handleClaim}
+                        claimDelay={claimDelay}
                         userRow={isUserRow}
                         latestRound={latestRound}
                         isClaiming={isClaiming}

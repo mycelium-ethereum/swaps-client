@@ -9,21 +9,28 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Web3ReactProvider, useWeb3React } from "@web3-react/core";
 import { Web3Provider } from "@ethersproject/providers";
 
-import { Switch, Route, NavLink } from "react-router-dom";
+import { Switch, Route, NavLink, useLocation } from "react-router-dom";
 
 import { ThemeProvider } from "@tracer-protocol/tracer-ui";
 import { useAnalytics } from "./segmentAnalytics";
 import { getTokens, getWhitelistedTokens } from "./data/Tokens";
 
 import {
-  ARBITRUM,
-  AVALANCHE,
-  DEFAULT_SLIPPAGE_AMOUNT,
   SLIPPAGE_BPS_KEY,
   IS_PNL_IN_LEVERAGE_KEY,
   SHOW_PNL_AFTER_FEES_KEY,
-  BASIS_POINTS_DIVISOR,
   SHOULD_SHOW_POSITION_LINES_KEY,
+  REFERRAL_CODE_KEY,
+  REFERRAL_CODE_QUERY_PARAMS,
+  SHOULD_EAGER_CONNECT_LOCALSTORAGE_KEY,
+  CURRENT_PROVIDER_LOCALSTORAGE_KEY,
+} from "./config/localstorage";
+
+import {
+  ARBITRUM,
+  ARBITRUM_GOERLI,
+  DEFAULT_SLIPPAGE_AMOUNT,
+  BASIS_POINTS_DIVISOR,
   fetcher,
   clearWalletConnectData,
   switchNetwork,
@@ -49,19 +56,13 @@ import {
   hasChangedAccount,
   setCurrentAccount,
   networkOptions,
-  SHOULD_EAGER_CONNECT_LOCALSTORAGE_KEY,
-  CURRENT_PROVIDER_LOCALSTORAGE_KEY,
-  REFERRAL_CODE_KEY,
-  REFERRAL_CODE_QUERY_PARAMS,
-  ARBITRUM_TESTNET,
   PLACEHOLDER_ACCOUNT,
   getDefaultArbitrumRpcUrl,
-  shareToTwitter,
 } from "./Helpers";
 import ReaderV2 from "./abis/ReaderV2.json";
 
-import Dashboard from "./views/Dashboard/Dashboard";
-import Stake from "./views/Stake/Stake";
+import Dashboard from "./views/Dashboard/DashboardV2";
+import Stake from "./views/Stake/StakeV2";
 import { Exchange } from "./views/Exchange/Exchange";
 import Actions from "./views/Actions/Actions";
 import OrdersOverview from "./views/OrdersOverview/OrdersOverview";
@@ -98,11 +99,8 @@ import "./AppOrder.css";
 
 import logoImg from "./img/logo_MYC.svg";
 import logoSmallImg from "./img/logo_MYC_small.svg";
-import poolsSmallImg from "./img/myc_pools_short.svg";
+// import poolsSmallImg from "./img/myc_pools_short.svg";
 import connectWalletImg from "./img/ic_wallet_24.svg";
-import ethMergeHeader from "./img/eth-merge-modal-header.png";
-import ethMergeHeadermesh from "./img/eth-merge-modal-header-mesh.png";
-import twitterIcon from "./img/twitter-icon.svg";
 
 import metamaskImg from "./img/metamask.png";
 import coinbaseImg from "./img/coinbaseWallet.png";
@@ -113,7 +111,6 @@ import useEventToast from "./components/EventToast/useEventToast";
 import { Link } from "react-router-dom";
 import EventToastContainer from "./components/EventToast/EventToastContainer";
 import useRouteQuery from "./hooks/useRouteQuery";
-import { useInfoTokens } from "./Api";
 import { encodeReferralCode } from "./Api/referrals";
 
 import { getContract } from "./Addresses";
@@ -125,10 +122,9 @@ import useSWR from "swr";
 import LinkDropdown from "./components/Navigation/LinkDropdown/LinkDropdown";
 import Sidebar from "./components/Navigation/Sidebar/Sidebar";
 import LanguageDropdown from "./components/Navigation/LanguageDropdown/LanguageDropdown";
-
-const TWITTER_SHARE_TEXT = `I’m trading the merge fee-free with @mycelium_xyz Perpetual Swaps!
-
-https://swaps.mycelium.xyz/`;
+import EventModal from "./components/EventModal/EventModal";
+import AppDropdown from "./components/AppDropdown/AppDropdown";
+import { useInfoTokens } from "./hooks/useInfoTokens";
 
 if ("ethereum" in window) {
   window.ethereum.autoRefreshOnNetworkChange = false;
@@ -153,9 +149,7 @@ function inPreviewMode() {
 }
 
 const arbWsProvider = new ethers.providers.WebSocketProvider(getDefaultArbitrumRpcUrl(true));
-// const arbTestnetWsProvider = new ethers.providers.WebSocketProvider("wss://rinkeby.arbitrum.io/ws");
-const arbTestnetWsProvider = new ethers.providers.JsonRpcProvider("https://rinkeby.arbitrum.io/rpc");
-const avaxWsProvider = new ethers.providers.JsonRpcProvider("https://api.avax.network/ext/bc/C/rpc");
+const arbTestnetWsProvider = new ethers.providers.JsonRpcProvider("https://goerli-rollup.arbitrum.io/rpc/");
 
 function getWsProvider(active, chainId) {
   if (!active) {
@@ -165,12 +159,8 @@ function getWsProvider(active, chainId) {
     return arbWsProvider;
   }
 
-  if (chainId === ARBITRUM_TESTNET) {
+  if (chainId === ARBITRUM_GOERLI) {
     return arbTestnetWsProvider;
-  }
-
-  if (chainId === AVALANCHE) {
-    return avaxWsProvider;
   }
 }
 
@@ -278,11 +268,6 @@ function AppHeaderUser({
     return (
       <div className="App-header-user">
         <LanguageDropdown currentLang={currentLang} setCurrentLang={setCurrentLang} />
-        <div className="App-header-user-link Trade-btn">
-          <NavLink exact activeClassName="active" className="default-btn trade-link" to="/">
-            <Text>Trade</Text>
-          </NavLink>
-        </div>
         {showSelector && (
           <NetworkSelector
             options={networkOptions}
@@ -305,21 +290,7 @@ function AppHeaderUser({
         >
           <Text>{small ? "Connect" : "Connect Wallet"}</Text>
         </ConnectWalletButton>
-        <div className="App-header-user-link Switch-app-btn">
-          <a
-            href="https://pools.mycelium.xyz"
-            rel="noopener noreferrer"
-            target="_blank"
-            onClick={() => trackAction && trackAction("Button clicked", { buttonName: "Switch to Perpetual Pools" })}
-          >
-            <button className="default-btn switch-link">
-              <span>
-                <Text>Switch to</Text>
-              </span>{" "}
-              <img src={poolsSmallImg} alt="Perpetual Pools" />
-            </button>
-          </a>
-        </div>
+        <AppDropdown />
       </div>
     );
   }
@@ -329,11 +300,6 @@ function AppHeaderUser({
   return (
     <div className="App-header-user">
       <LanguageDropdown currentLang={currentLang} setCurrentLang={setCurrentLang} />
-      <div className="App-header-user-link Trade-btn">
-        <NavLink exact activeClassName="active" className="default-btn trade-link" to="/">
-          <Text>Trade</Text>
-        </NavLink>
-      </div>
       {showSelector && (
         <NetworkSelector
           options={networkOptions}
@@ -357,26 +323,14 @@ function AppHeaderUser({
           trackAction={trackAction}
         />
       </div>
-      <div className="App-header-user-link Switch-app-btn">
-        <a
-          href="https://pools.mycelium.xyz"
-          rel="noopener noreferrer"
-          onClick={() => trackAction && trackAction("Button clicked", { buttonName: "Switch to Perpetual Pools" })}
-        >
-          <button className="default-btn switch-link">
-            <span>
-              <Text>Switch to</Text>
-            </span>{" "}
-            <img src={poolsSmallImg} alt="Perpetual Pools" />
-          </button>
-        </a>
-      </div>
+      <AppDropdown />
     </div>
   );
 }
 
 function FullApp(props) {
   const { currentLang, setCurrentLang } = props;
+  const location = useLocation();
   const [sidebarVisible, setSidebarVisible] = useState(false);
   const [loggedInTracked, setLoggedInTracked] = useState(false);
   const { trackLogin, trackPageWithTraits, trackAction, analytics } = useAnalytics();
@@ -478,7 +432,7 @@ function FullApp(props) {
   };
 
   const [walletModalVisible, setWalletModalVisible] = useState();
-  const [mergeModalVisible, setMergeModalVisible] = useState(false);
+  const [isEventModalVisible, setEventModalVisible] = useState(false);
   const connectWallet = () => setWalletModalVisible(true);
 
   const [isDrawerVisible, setIsDrawerVisible] = useState(undefined);
@@ -584,11 +538,18 @@ function FullApp(props) {
   const [pendingTxns, setPendingTxns] = useState([]);
 
   useEffect(() => {
+    const pendingTxnHashes = {};
     const checkPendingTxns = async () => {
       const updatedPendingTxns = [];
       for (let i = 0; i < pendingTxns.length; i++) {
         const pendingTxn = pendingTxns[i];
+        // because the interval is 2 seconds, if the txn takes longer than 2 seconds there
+        // is potential for the interval event que to trigger multiple success or error notifications
+        if (pendingTxnHashes[pendingTxn.hash]) {
+          continue;
+        }
         const receipt = await library.getTransactionReceipt(pendingTxn.hash);
+        pendingTxnHashes[pendingTxn.hash] = true;
         if (receipt) {
           if (receipt.status === 0) {
             const txUrl = getExplorerUrl(chainId) + "tx/" + pendingTxn.hash;
@@ -731,18 +692,10 @@ function FullApp(props) {
     [chainId, active]
   );
 
-  useEffect(() => {
-    const hasSeenEthMergeModal = window.localStorage.getItem("ethMergeModalSeen");
-    if (!hasSeenEthMergeModal) {
-      setMergeModalVisible(true);
-      window.localStorage.setItem("ethMergeModalSeen", "true");
-    }
-  }, []);
-
   return (
     <>
       <div
-        className={cx("App", {
+        className={cx("App ReferralsBannerActive", {
           "full-width": sidebarVisible,
         })}
       >
@@ -752,7 +705,7 @@ function FullApp(props) {
         <div className="App-background-ball-1"></div>
         <div className="App-background-ball-2"></div>
         <div className="App-highlight"></div> */}
-        <div className="App-content">
+        <div className={cx("App-content", { "full-width": sidebarVisible })}>
           {isDrawerVisible && (
             <AnimatePresence>
               {isDrawerVisible && (
@@ -833,7 +786,7 @@ function FullApp(props) {
                     }}
                   >
                     <img src={logoSmallImg} className="small" alt="Mycelium Swaps Logo" />
-                    <img src={logoImg} alt="Mycelium Swaps Logo" />
+                    <img src={logoImg} className="big" alt="Mycelium Swaps Logo" />
                   </Link>
                 </div>
                 <div>
@@ -853,11 +806,14 @@ function FullApp(props) {
                       setCurrentLang={setCurrentLang}
                     />
                   </div>
-                  <div className="App-header-user-link Trade-btn-mobile">
-                    <NavLink exact activeClassName="active" className="default-btn trade-link" to="/">
-                      <Text>Trade</Text>
-                    </NavLink>
-                  </div>
+                  {location?.pathname !== "/" && (
+                    <div className="App-header-user-link Trade-btn-mobile">
+                      <NavLink exact activeClassName="active" className="default-btn trade-link" to="/">
+                        <Text>Trade</Text>
+                      </NavLink>
+                    </div>
+                  )}
+                  <AppDropdown isMobile />
                   {/* Hamburger menu */}
                   <button className="App-header-menu-icon-block" onClick={() => setIsDrawerVisible(!isDrawerVisible)}>
                     <span />
@@ -919,7 +875,15 @@ function FullApp(props) {
               <Dashboard />
             </Route>
             <Route exact path="/earn">
-              <Stake setPendingTxns={setPendingTxns} connectWallet={connectWallet} trackAction={trackAction} />
+              <Stake
+                setPendingTxns={setPendingTxns}
+                connectWallet={connectWallet}
+                trackAction={trackAction}
+                trackPageWithTraits={trackPageWithTraits}
+                analytics={analytics}
+                infoTokens={infoTokens}
+                savedSlippageAmount={savedSlippageAmount}
+              />
             </Route>
             <Route exact path="/buy_mlp">
               <BuyMlp
@@ -984,7 +948,6 @@ function FullApp(props) {
         <Sidebar sidebarVisible={sidebarVisible} setSidebarVisible={setSidebarVisible} />
         {/* <Footer /> */}
       </div>
-
       <ToastContainer
         limit={3}
         transition={Zoom}
@@ -997,33 +960,6 @@ function FullApp(props) {
         pauseOnHover
       />
       <EventToastContainer />
-      {/* ETH Merge Modal */}
-      <Modal className="Eth-merge-modal" isVisible={mergeModalVisible} setIsVisible={setMergeModalVisible}>
-        <div className="Eth-merge-modal-header">
-          <img src={ethMergeHeader} className="Eth-merge-modal-graphic" alt="ETH Merge header graphic" />
-          <img src={ethMergeHeadermesh} className="Eth-merge-modal-mesh" alt="" />
-        </div>
-        <div className="Eth-merge-modal-title">
-          <small>
-            <Text>Trade The Merge</Text>
-          </small>
-          <h2>
-            <Text>Fee-Free Spree</Text>
-          </h2>
-        </div>
-        <hr className="Eth-merge-modal-divider" />
-        <div className="Button-content">
-          <span>
-            <Text>On Mycelium Perpetual Swaps</Text>
-          </span>
-          <button className="App-button-option App-card-option" onClick={() => setMergeModalVisible(false)}>
-            <Text>Continue</Text>
-          </button>
-          <button className="App-button-option App-card-option" onClick={() => shareToTwitter(TWITTER_SHARE_TEXT)}>
-            <Text>Share on Twitter</Text> <img src={twitterIcon} alt="Twitter" />
-          </button>
-        </div>
-      </Modal>
       <Modal
         className="Connect-wallet-modal"
         isVisible={walletModalVisible}
@@ -1170,7 +1106,7 @@ function PreviewApp() {
         <div className="App-background-ball-1"></div>
         <div className="App-background-ball-2"></div>
         <div className="App-highlight"></div>
-        <div className="App-content">
+        <div className={cx("App-content", { "full-width": isDrawerVisible })}>
           {isDrawerVisible && (
             <AnimatePresence>
               {isDrawerVisible && (
@@ -1233,11 +1169,6 @@ function PreviewApp() {
               </AnimatePresence>
             </div>
           </header>
-          <Switch>
-            <Route exact path="/earn">
-              <Stake />
-            </Route>
-          </Switch>
         </div>
       </div>
     </>

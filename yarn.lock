@@ -2676,6 +2676,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@mycelium-swaps-interface/charting_library@file:./public/charting_library/::locator=mycelium-swaps-interface%40workspace%3A.":
+  version: 0.0.0
+  resolution: "@mycelium-swaps-interface/charting_library@file:./public/charting_library/#./public/charting_library/::hash=faaf15&locator=mycelium-swaps-interface%40workspace%3A."
+  checksum: d3fd675fd9e1675422e80b8dbfe9b323898f23ecd89fe9e6615077372f027e01c9b766272240c53a52e80c6b66a01e27d76d2008a277016d4ba679c1838b0f77
+  languageName: node
+  linkType: hard
+
 "@nodelib/fs.scandir@npm:2.1.5":
   version: 2.1.5
   resolution: "@nodelib/fs.scandir@npm:2.1.5"
@@ -4567,6 +4574,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/body-scroll-lock@npm:^3.1.0":
+  version: 3.1.0
+  resolution: "@types/body-scroll-lock@npm:3.1.0"
+  checksum: 9b0d88053cd65abfc7b0f4946da844f4c822f58d47413457e03220a62bc3de897f7682339e6a04eba07658020910bbfc5dcd0a12ef8f0282780d1ce6e4d71570
+  languageName: node
+  linkType: hard
+
 "@types/eslint@npm:^7.29.0":
   version: 7.29.0
   resolution: "@types/eslint@npm:7.29.0"
@@ -4607,6 +4621,13 @@ __metadata:
   dependencies:
     "@types/node": "*"
   checksum: d076bb61f45d0fc42dee496ef8b1c2f8742e15d5e47e90e20d0243386e426c04d4efd408a48875ab432f7960b4ce3414db20ed0fbbfc7bcc89d84e574f6e045a
+  languageName: node
+  linkType: hard
+
+"@types/history@npm:^4.7.11":
+  version: 4.7.11
+  resolution: "@types/history@npm:4.7.11"
+  checksum: c92e2ba407dcab0581a9afdf98f533aa41b61a71133420a6d92b1ca9839f741ab1f9395b17454ba5b88cb86020b70b22d74a1950ccfbdfd9beeaa5459fdc3464
   languageName: node
   linkType: hard
 
@@ -4728,6 +4749,27 @@ __metadata:
   dependencies:
     "@types/react": "*"
   checksum: 66e1f9eb961eaa863bab02e143f0298516d9fa640f0737816ebc766b90ca1062c2dc18cbfda1c1679aa4be640172efe6931886207af4f01b8c894988f9df085a
+  languageName: node
+  linkType: hard
+
+"@types/react-router-dom@npm:^5.3.3":
+  version: 5.3.3
+  resolution: "@types/react-router-dom@npm:5.3.3"
+  dependencies:
+    "@types/history": ^4.7.11
+    "@types/react": "*"
+    "@types/react-router": "*"
+  checksum: 28c4ea48909803c414bf5a08502acbb8ba414669b4b43bb51297c05fe5addc4df0b8fd00e0a9d1e3535ec4073ef38aaafac2c4a2b95b787167d113bc059beff3
+  languageName: node
+  linkType: hard
+
+"@types/react-router@npm:*":
+  version: 5.1.19
+  resolution: "@types/react-router@npm:5.1.19"
+  dependencies:
+    "@types/history": ^4.7.11
+    "@types/react": "*"
+  checksum: 3536c3dec7af1f12fed2bea246eb143bd893ee66d4e58c1d3fe734cbd67d8a0aedac0bba9255c58fc69dbd32ae17ad280d6866916aee32653a705178e4a544dc
   languageName: node
   linkType: hard
 
@@ -13632,11 +13674,14 @@ __metadata:
     "@ethersproject/providers": ^5.0.23
     "@ethersproject/units": ^5.0.10
     "@headlessui/react": dev
+    "@mycelium-swaps-interface/charting_library": ./public/charting_library/
     "@segment/analytics-next": ^1.41.0
     "@testing-library/jest-dom": ^5.11.4
     "@testing-library/react": ^11.1.0
     "@testing-library/user-event": ^12.1.10
     "@tracer-protocol/tracer-ui": latest
+    "@types/body-scroll-lock": ^3.1.0
+    "@types/react-router-dom": ^5.3.3
     "@uniswap/sdk-core": ^3.0.1
     "@uniswap/v3-sdk": ^3.3.2
     "@web3-react/core": ^6.1.9
@@ -13660,8 +13705,9 @@ __metadata:
     rc-slider: ^9.7.2
     react: ^17.0.1
     react-auto-translate: ^0.0.6
-    react-countdown: ^2.3.2
+    react-countdown: ^2.3.3
     react-dom: ^17.0.1
+    react-ga4: ^1.4.1
     react-helmet: ^6.1.0
     react-hot-toast: ^2.2.0
     react-icons: ^4.3.0
@@ -13675,6 +13721,7 @@ __metadata:
     recharts: ^2.0.9
     styled-components: ^5.3.5
     swr: ^0.4.2
+    typescript: ^4.8.4
     web-vitals: ^1.0.1
   languageName: unknown
   linkType: soft
@@ -16048,15 +16095,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-countdown@npm:^2.3.2":
-  version: 2.3.2
-  resolution: "react-countdown@npm:2.3.2"
+"react-countdown@npm:^2.3.3":
+  version: 2.3.3
+  resolution: "react-countdown@npm:2.3.3"
   dependencies:
     prop-types: ^15.7.2
   peerDependencies:
     react: ">= 15"
     react-dom: ">= 15"
-  checksum: 670d7f6f355cd2c862fde2039e3fbaf39dae2925d2dea78c0406c04a9a5c35cca61bbd137de04a965ebdbbbaee5d435a06f06c0786a86d7bfc175b4fd9789e19
+  checksum: 3c97b392766c7b226453d152d17f9586b1a4ef5df1f0e6576bc85a782bda3b237e36386c5005b65af885d241bf1710a73e37ad6da17395c8cc8393ac6a99281b
   languageName: node
   linkType: hard
 
@@ -16116,6 +16163,13 @@ __metadata:
   version: 3.2.0
   resolution: "react-fast-compare@npm:3.2.0"
   checksum: 8ef272c825ae329f61633ce4ce7f15aa5b84e5214d88bc0823880236e03e985a13195befa2c7a4eda7db3b017dc7985729152d88445823f652403cf36c2b86aa
+  languageName: node
+  linkType: hard
+
+"react-ga4@npm:^1.4.1":
+  version: 1.4.1
+  resolution: "react-ga4@npm:1.4.1"
+  checksum: 4c33ecb47dfc26c241a6af8e2b08b29b6c059f40e456e93d1c2b65c995edce18f32d9777295774ec992d968d7c5efdd105eb62398972d85ff2e2b6dad8646a26
   languageName: node
   linkType: hard
 
@@ -18986,6 +19040,26 @@ __metadata:
   version: 0.0.6
   resolution: "typedarray@npm:0.0.6"
   checksum: 33b39f3d0e8463985eeaeeacc3cb2e28bc3dfaf2a5ed219628c0b629d5d7b810b0eb2165f9f607c34871d5daa92ba1dc69f49051cf7d578b4cbd26c340b9d1b1
+  languageName: node
+  linkType: hard
+
+"typescript@npm:^4.8.4":
+  version: 4.8.4
+  resolution: "typescript@npm:4.8.4"
+  bin:
+    tsc: bin/tsc
+    tsserver: bin/tsserver
+  checksum: 3e4f061658e0c8f36c820802fa809e0fd812b85687a9a2f5430bc3d0368e37d1c9605c3ce9b39df9a05af2ece67b1d844f9f6ea8ff42819f13bcb80f85629af0
+  languageName: node
+  linkType: hard
+
+"typescript@patch:typescript@^4.8.4#~builtin<compat/typescript>":
+  version: 4.8.4
+  resolution: "typescript@patch:typescript@npm%3A4.8.4#~builtin<compat/typescript>::version=4.8.4&hash=ddd1e8"
+  bin:
+    tsc: bin/tsc
+    tsserver: bin/tsserver
+  checksum: 563a0ef47abae6df27a9a3ab38f75fc681f633ccf1a3502b1108e252e187787893de689220f4544aaf95a371a4eb3141e4a337deb9895de5ac3c1ca76430e5f0
   languageName: node
   linkType: hard
 

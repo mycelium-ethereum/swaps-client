@@ -14,6 +14,7 @@ import {
   MobileNavMenu,
   NetworkDropdownContainer,
   ScrollContainer,
+  FlexContainer,
 } from "./MobileNav.styles";
 
 import { NavLink } from "react-router-dom";
@@ -25,6 +26,10 @@ import mobileMeshBackground from "../../img/background_mesh_mobile.png";
 import connectWalletImg from "../../img/ic_wallet_24.svg";
 
 const navLinks = [
+  {
+    name: "Trade",
+    path: "/",
+  },
   {
     name: "Dashboard",
     path: "/dashboard",
@@ -112,42 +117,44 @@ export default function AppHeaderLinks({
               <Text>Switch to</Text> <img src={poolsSmallImg} alt="Perpetual Pools" />
             </SwitchButton>
           </a>
-          <AccountDropdownContainer>
-            {active ? (
-              <AddressDropdown
-                account={account}
-                small={false}
-                accountUrl={accountUrl}
-                disconnectAccountAndCloseSettings={disconnectAccountAndCloseSettings}
-                openSettings={openSettings}
+          <FlexContainer>
+            <AccountDropdownContainer>
+              {active ? (
+                <AddressDropdown
+                  account={account}
+                  small={false}
+                  accountUrl={accountUrl}
+                  disconnectAccountAndCloseSettings={disconnectAccountAndCloseSettings}
+                  openSettings={openSettings}
+                  trackAction={trackAction}
+                />
+              ) : (
+                <ConnectWalletButton
+                  onClick={() => {
+                    trackAction && trackAction("Button clicked", { buttonName: "Connect Wallet" });
+                    setWalletModalVisible(true);
+                  }}
+                  imgSrc={connectWalletImg}
+                >
+                  Connect Wallet
+                </ConnectWalletButton>
+              )}
+            </AccountDropdownContainer>
+            <NetworkDropdownContainer>
+              <NetworkSelector
+                options={networkOptions}
+                label={selectorLabel}
+                onSelect={onNetworkSelect}
+                className="App-header-user-netowork"
+                showCaret={false}
+                modalLabel="Select Network"
+                small={true}
+                showModal={showNetworkSelectorModal}
                 trackAction={trackAction}
+                isMobileNav
               />
-            ) : (
-              <ConnectWalletButton
-                onClick={() => {
-                  trackAction && trackAction("Button clicked", { buttonName: "Connect Wallet" });
-                  setWalletModalVisible(true);
-                }}
-                imgSrc={connectWalletImg}
-              >
-                <Text>Connect Wallet</Text>
-              </ConnectWalletButton>
-            )}
-          </AccountDropdownContainer>
-          <NetworkDropdownContainer>
-            <NetworkSelector
-              options={networkOptions}
-              label={selectorLabel}
-              onSelect={onNetworkSelect}
-              className="App-header-user-netowork"
-              showCaret={false}
-              modalLabel="Select Network"
-              small={true}
-              showModal={showNetworkSelectorModal}
-              trackAction={trackAction}
-              isMobileNav
-            />
-          </NetworkDropdownContainer>
+            </NetworkDropdownContainer>
+          </FlexContainer>
         </div>
         <div>
           {navLinks.map((navLink) => (
@@ -157,6 +164,11 @@ export default function AppHeaderLinks({
               </NavLink>
             </AppHeaderLinkContainer>
           ))}
+          <AppHeaderLinkContainer>
+            <a href="https://stake.mycelium.xyz" target="_blank" rel="noopener noreferrer">
+              MYC Staking
+            </a>
+          </AppHeaderLinkContainer>
           <AppHeaderLinkContainer>
             <a href="https://analytics.mycelium.xyz" target="_blank" rel="noopener noreferrer">
               <Text>Analytics</Text>

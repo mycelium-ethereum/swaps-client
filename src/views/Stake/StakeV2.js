@@ -3,7 +3,6 @@ import { Link } from "react-router-dom";
 import { useWeb3React } from "@web3-react/core";
 
 import Modal from "../../components/Modal/Modal";
-import Checkbox from "../../components/Checkbox/Checkbox";
 import Tooltip from "../../components/Tooltip/Tooltip";
 import { Text } from "../../components/Translation/Text";
 
@@ -39,7 +38,7 @@ import {
   getProcessedData,
   getPageTitle,
 } from "../../Helpers";
-import { callContract, useMarketMakingApr, useMYCPrice, useTotalMYCSupply } from "../../Api";
+import { callContract, useMYCPrice, useStakingApr, useTotalMYCSupply } from "../../Api";
 import { getConstant } from "../../Constants";
 
 import useSWR from "swr";
@@ -53,6 +52,9 @@ import * as StakeV2Styled from "./StakeV2Styles";
 import "./StakeV2.css";
 
 import SEO from "../../components/Common/SEO";
+import ClaimModal from "./ClaimModal";
+import Toggle from "../../components/Toggle/Toggle";
+import MlpPriceChart from "./MlpPriceChart";
 
 function CompoundModal(props) {
   const {
@@ -67,8 +69,13 @@ function CompoundModal(props) {
     totalVesterRewards,
     nativeTokenSymbol,
     wrappedTokenSymbol,
+    processedData,
+    vesterAddress,
+    stakedMlpTrackerAddress,
+    esMycAddress,
   } = props;
   const [isCompounding, setIsCompounding] = useState(false);
+  const [isDepositing, setIsDepositing] = useState(false);
 
   const [shouldClaimMyc, setShouldClaimMyc] = useLocalStorageSerializeKey(
     [chainId, "StakeV2-compound-should-claim-myc"],
@@ -80,22 +87,12 @@ function CompoundModal(props) {
     true
   );
 
-  const [shouldClaimWeth, setShouldClaimWeth] = useLocalStorageSerializeKey(
-    [chainId, "StakeV2-compound-should-claim-weth"],
-    true
-  );
-  const [shouldConvertWeth, setShouldConvertWeth] = useLocalStorageSerializeKey(
-    [chainId, "StakeV2-compound-should-convert-weth"],
-    false
-  );
   const [shouldBuyMlpWithEth, setShouldBuyMlpWithEth] = useLocalStorageSerializeKey(
     [chainId, "StakeV2-compound-should-buy-mlp"],
     true
   );
 
   const mycAddress = getContract(chainId, "MYC");
-  const stakedMlpTrackerAddress = getContract(chainId, "StakedMlpTracker");
-
   const [isApproving, setIsApproving] = useState(false);
 
   const { data: tokenAllowance } = useSWR(
@@ -108,7 +105,7 @@ function CompoundModal(props) {
   const needApproval = tokenAllowance && totalVesterRewards && totalVesterRewards.gt(tokenAllowance);
 
   const isPrimaryEnabled = () => {
-    return !isCompounding && !isApproving && !isCompounding;
+    return !isCompounding && !isApproving && !isCompounding && !isDepositing;
   };
 
   const getPrimaryText = () => {
@@ -120,6 +117,9 @@ function CompoundModal(props) {
     }
     if (isCompounding) {
       return "Compounding...";
+    }
+    if (isDepositing) {
+      return "Depositing...";
     }
     return "Compound";
   };
@@ -144,14 +144,14 @@ function CompoundModal(props) {
       contract,
       "handleRewards",
       [
-        shouldClaimMyc,
+        shouldClaimMyc, // shouldClaimMyc,
         false, // shouldStakeMYC,
-        shouldClaimEsMyc,
+        shouldClaimEsMyc, // shouldClaimEsMyc,
         false, // shouldStakeEsMyc,
         false, // shouldStakeMultiplierPoints,
-        shouldClaimWeth || shouldConvertWeth || shouldBuyMlpWithEth,
-        shouldConvertWeth,
-        shouldBuyMlpWithEth,
+        shouldBuyMlpWithEth, // shouldClaimWeth,
+        false, // shouldConvertWeth,
+        shouldBuyMlpWithEth, // shouldBuyMlpWithEth
       ],
       {
         sentMsg: "Compound submitted!",
@@ -161,180 +161,93 @@ function CompoundModal(props) {
       }
     )
       .then(async (res) => {
-        setIsVisible(false);
+        if (shouldClaimEsMyc) {
+          await res.wait();
+          depositEsMyc();
+        } else {
+          setIsVisible(false);
+        }
       })
       .finally(() => {
         setIsCompounding(false);
       });
   };
 
-  const toggleConvertWeth = (value) => {
-    if (value) {
-      setShouldClaimWeth(true);
-      setShouldBuyMlpWithEth(false);
-    }
-    setShouldConvertWeth(value);
-  };
+  const depositEsMyc = async () => {
+    setIsDepositing(true);
+    const contract = new ethers.Contract(vesterAddress, Vester.abi, library.getSigner());
+    const esMyc = new ethers.Contract(esMycAddress, Token.abi, library.getSigner());
+    const balance = await esMyc.balanceOf(account);
 
-  const toggleBuyMlp = (value) => {
-    if (value) {
-      setShouldClaimWeth(true);
-      setShouldConvertWeth(false);
-    }
-    setShouldBuyMlpWithEth(value);
+    callContract(chainId, contract, "deposit", [balance], {
+      sentMsg: "Deposit submitted!",
+      failMsg: "Deposit failed!",
+      successMsg: "Deposited!",
+      setPendingTxns,
+    })
+      .then(async (res) => {
+        setIsVisible(false);
+      })
+      .finally(() => {
+        setIsDepositing(false);
+      });
   };
 
   return (
     <div className="StakeModal">
       <Modal isVisible={isVisible} setIsVisible={setIsVisible} label="Compound Rewards">
         <div className="CompoundModal-menu">
-          <div>
-            <Checkbox isChecked={shouldClaimMyc} setIsChecked={setShouldClaimMyc}>
-              <Text>Claim MYC Rewards</Text>
-            </Checkbox>
-          </div>
-          <div>
-            <Checkbox isChecked={shouldClaimEsMyc} setIsChecked={setShouldClaimEsMyc}>
-              <Text>Claim esMYC Rewards</Text>
-            </Checkbox>
-          </div>
-          <div>
-            <Checkbox
-              isChecked={shouldClaimWeth}
-              setIsChecked={setShouldClaimWeth}
-              disabled={shouldConvertWeth || shouldBuyMlpWithEth}
-            >
-              <Text>Claim</Text> {wrappedTokenSymbol} <Text>Rewards</Text>
-            </Checkbox>
-          </div>
-          <div>
-            <Checkbox isChecked={shouldConvertWeth} setIsChecked={toggleConvertWeth}>
-              <Text>Convert</Text> {wrappedTokenSymbol} <Text>to</Text> {nativeTokenSymbol}
-            </Checkbox>
-          </div>
-          <div>
-            <Checkbox isChecked={shouldBuyMlpWithEth} setIsChecked={toggleBuyMlp}>
-              <Text>Buy MLP with</Text> {wrappedTokenSymbol}
-            </Checkbox>
-          </div>
-        </div>
-        <div className="Exchange-swap-button-container">
-          <button className="App-cta Exchange-swap-button" onClick={onClickPrimary} disabled={!isPrimaryEnabled()}>
-            <Text>{getPrimaryText()}</Text>
-          </button>
-        </div>
-      </Modal>
-    </div>
-  );
-}
-
-function ClaimModal(props) {
-  const {
-    isVisible,
-    setIsVisible,
-    rewardRouterAddress,
-    library,
-    chainId,
-    setPendingTxns,
-    nativeTokenSymbol,
-    wrappedTokenSymbol,
-  } = props;
-  const [isClaiming, setIsClaiming] = useState(false);
-
-  const [shouldClaimMyc, setShouldClaimMyc] = useLocalStorageSerializeKey(
-    [chainId, "StakeV2-compound-should-claim-myc"],
-    true
-  );
-
-  const [shouldClaimEsMyc, setShouldClaimEsMyc] = useLocalStorageSerializeKey(
-    [chainId, "StakeV2-claim-should-claim-esMyc"],
-    true
-  );
-
-  const [shouldClaimWeth, setShouldClaimWeth] = useLocalStorageSerializeKey(
-    [chainId, "StakeV2-claim-should-claim-weth"],
-    true
-  );
-  const [shouldConvertWeth, setShouldConvertWeth] = useLocalStorageSerializeKey(
-    [chainId, "StakeV2-claim-should-convert-weth"],
-    true
-  );
-
-  const isPrimaryEnabled = () => {
-    return !isClaiming;
-  };
-
-  const getPrimaryText = () => {
-    if (isClaiming) {
-      return `Claiming...`;
-    }
-    return "Claim";
-  };
-
-  const onClickPrimary = () => {
-    setIsClaiming(true);
-
-    const contract = new ethers.Contract(rewardRouterAddress, RewardRouter.abi, library.getSigner());
-    callContract(
-      chainId,
-      contract,
-      "handleRewards",
-      [
-        shouldClaimMyc, // shouldClaimMYC,
-        false, // shouldStakeMYC
-        shouldClaimEsMyc, // shouldClaimEsMyc,
-        false, // shouldStakeEsMyc
-        false, // shouldStakeMultiplierPoints
-        shouldClaimWeth,
-        shouldConvertWeth,
-        false, // shouldBuyTlpWithEth
-      ],
-      {
-        sentMsg: "Claim submitted.",
-        failMsg: "Claim failed.",
-        successMsg: "Claim completed!",
-        setPendingTxns,
-      }
-    )
-      .then(async (res) => {
-        setIsVisible(false);
-      })
-      .finally(() => {
-        setIsClaiming(false);
-      });
-  };
-
-  const toggleConvertWeth = (value) => {
-    if (value) {
-      setShouldClaimWeth(true);
-    }
-    setShouldConvertWeth(value);
-  };
-
-  return (
-    <div className="StakeModal">
-      <Modal isVisible={isVisible} setIsVisible={setIsVisible} label="Claim Rewards">
-        <div className="CompoundModal-menu">
-          <div>
-            <Checkbox isChecked={shouldClaimMyc} setIsChecked={setShouldClaimMyc}>
-              <Text>Claim MYC Rewards</Text>
-            </Checkbox>
-          </div>
-          <div>
-            <Checkbox isChecked={shouldClaimEsMyc} setIsChecked={setShouldClaimEsMyc}>
-              <Text>Claim esMYC Rewards</Text>
-            </Checkbox>
-          </div>
-          <div>
-            <Checkbox isChecked={shouldClaimWeth} setIsChecked={setShouldClaimWeth} disabled={shouldConvertWeth}>
-              <Text>Claim</Text> {wrappedTokenSymbol} <Text>Rewards</Text>
-            </Checkbox>
-          </div>
-          <div>
-            <Checkbox isChecked={shouldConvertWeth} setIsChecked={toggleConvertWeth}>
-              <Text>Convert</Text> {wrappedTokenSymbol} <Text>to</Text> {nativeTokenSymbol}
-            </Checkbox>
-          </div>
+          <StakeV2Styled.ModalRow>
+            <StakeV2Styled.ModalRowHeader>
+              <Text>Claim Vested</Text> MYC
+            </StakeV2Styled.ModalRowHeader>
+            {shouldClaimMyc && (
+              <>
+                <StakeV2Styled.ModalRowText large inline>
+                  {formatKeyAmount(processedData, "mlpVesterRewards", 18, 4)} MYC
+                </StakeV2Styled.ModalRowText>{" "}
+                <StakeV2Styled.ModalRowText inline secondary>
+                  (${formatKeyAmount(processedData, "mlpVesterRewardsUsd", USD_DECIMALS, 4)})
+                </StakeV2Styled.ModalRowText>
+              </>
+            )}
+            <Toggle isChecked={shouldClaimMyc} handleToggle={setShouldClaimMyc} />
+          </StakeV2Styled.ModalRow>
+          <StakeV2Styled.ModalRow>
+            <StakeV2Styled.ModalRowHeader>
+              <Text>Claim and vest</Text> esMYC <Text>Rewards</Text>
+            </StakeV2Styled.ModalRowHeader>
+            {shouldClaimEsMyc && (
+              <>
+                <StakeV2Styled.ModalRowText inline large>
+                  {formatKeyAmount(processedData, "stakedMlpTrackerRewards", 18, 4)} esMYC
+                </StakeV2Styled.ModalRowText>{" "}
+                <StakeV2Styled.ModalRowText inline secondary>
+                  ($
+                  {formatKeyAmount(processedData, "stakedMlpTrackerRewardsUsd", USD_DECIMALS, 2, true)})
+                </StakeV2Styled.ModalRowText>
+              </>
+            )}
+            <Toggle isChecked={shouldClaimEsMyc} handleToggle={setShouldClaimEsMyc} />
+          </StakeV2Styled.ModalRow>
+          <StakeV2Styled.ModalRow>
+            <StakeV2Styled.ModalRowHeader>
+              <Text>Buy MLP with</Text> {wrappedTokenSymbol} <Text>Rewards</Text>
+            </StakeV2Styled.ModalRowHeader>
+            {shouldBuyMlpWithEth && (
+              <>
+                <StakeV2Styled.ModalRowText large inline>
+                  {formatKeyAmount(processedData, "feeMlpTrackerRewards", 18, 4)} {nativeTokenSymbol} (
+                  {wrappedTokenSymbol})
+                </StakeV2Styled.ModalRowText>{" "}
+                <StakeV2Styled.ModalRowText inline secondary>
+                  ($
+                  {formatKeyAmount(processedData, "feeMlpTrackerRewardsUsd", USD_DECIMALS, 2, true)})
+                </StakeV2Styled.ModalRowText>
+              </>
+            )}
+            <Toggle isChecked={shouldBuyMlpWithEth} handleToggle={setShouldBuyMlpWithEth} />
+          </StakeV2Styled.ModalRow>
         </div>
         <div className="Exchange-swap-button-container">
           <button className="App-cta Exchange-swap-button" onClick={onClickPrimary} disabled={!isPrimaryEnabled()}>
@@ -564,7 +477,15 @@ function VesterWithdrawModal(props) {
   );
 }
 
-export default function StakeV2({ setPendingTxns, connectWallet, trackAction }) {
+export default function StakeV2({
+  setPendingTxns,
+  connectWallet,
+  trackAction,
+  savedSlippageAmount,
+  infoTokens,
+  trackPageWithTraits,
+  analytics,
+}) {
   const { active, library, account } = useWeb3React();
   const { chainId } = useChainId();
 
@@ -733,11 +654,7 @@ export default function StakeV2({ setPendingTxns, connectWallet, trackAction }) 
     mycSupply
   );
 
-  const mmApr = useMarketMakingApr(chainId, processedData.mlpSupplyUsd);
-  if (mmApr) {
-    processedData.mmApr = mmApr;
-    processedData.mlpAprTotal = processedData.mlpAprTotal.add(mmApr);
-  }
+  const stakingApr = useStakingApr(mycPrice, nativeTokenPrice);
 
   let totalRewardTokens;
   if (processedData && processedData.bnMycInFeeMyc && processedData.bonusMycInFeeMyc) {
@@ -754,7 +671,7 @@ export default function StakeV2({ setPendingTxns, connectWallet, trackAction }) 
     earnMsg = (
       <div>
         <Text>You are earning</Text> {nativeTokenSymbol} <Text>rewards with</Text>{" "}
-        {formatAmount(totalRewardTokensAndMlp, 18, 2, true)} MLP
+        {formatAmount(processedData, MLP_DECIMALS, 2, true)} MLP
         <Text>tokens.</Text>
       </div>
     );
@@ -861,23 +778,28 @@ export default function StakeV2({ setPendingTxns, connectWallet, trackAction }) 
         nativeTokenSymbol={nativeTokenSymbol}
         library={library}
         chainId={chainId}
+        processedData={processedData}
+        vesterAddress={mlpVesterAddress}
+        stakedMlpTrackerAddress={stakedMlpTrackerAddress}
+        esMycAddress={esMycAddress}
       />
       <ClaimModal
         active={active}
-        account={account}
         setPendingTxns={setPendingTxns}
+        connectWallet={connectWallet}
+        library={library}
+        chainId={chainId}
         isVisible={isClaimModalVisible}
         setIsVisible={setIsClaimModalVisible}
         rewardRouterAddress={rewardRouterAddress}
-        totalVesterRewards={processedData.totalVesterRewards}
         wrappedTokenSymbol={wrappedTokenSymbol}
         nativeTokenSymbol={nativeTokenSymbol}
-        library={library}
-        chainId={chainId}
+        processedData={processedData}
       />
-      <div className="StakeV2-content">
-        <div className="StakeV2-cards">
-          <div>
+
+      <StakeV2Styled.StakeV2Content className="StakeV2-content">
+        <StakeV2Styled.StakeV2Cards className="StakeV2-cards">
+          <StakeV2Styled.StakeV2Card>
             <div className="Page-title-section">
               <div className="Page-title">
                 <Text>Earn</Text>
@@ -903,163 +825,165 @@ export default function StakeV2({ setPendingTxns, connectWallet, trackAction }) 
                 </div>
               )}
             </div>
-            <div className="App-card">
-              <div className="App-card-title">
+            <StakeV2Styled.Card>
+              <StakeV2Styled.CardTitle className="App-card-title">
                 <img src={mlp40Icon} alt="mlp40Icon" />
                 MLP ({chainName})
-              </div>
-              <StakeV2Styled.RewardsBanner>
-                <StakeV2Styled.RewardsBannerRow>
-                  <StakeV2Styled.RewardsBannerText secondary>
-                    <Text>Rewards</Text>
-                  </StakeV2Styled.RewardsBannerText>
-                  <div>
-                    <StakeV2Styled.RewardsBannerTextWrap>
-                      <StakeV2Styled.RewardsBannerText large inline>
-                        {formatKeyAmount(processedData, "feeMlpTrackerRewards", 18, 4)} {nativeTokenSymbol} (
-                        {wrappedTokenSymbol})
-                      </StakeV2Styled.RewardsBannerText>{" "}
-                      <StakeV2Styled.RewardsBannerText inline>
-                        ($
-                        {formatKeyAmount(processedData, "feeMlpTrackerRewardsUsd", USD_DECIMALS, 2, true)})
-                      </StakeV2Styled.RewardsBannerText>
-                    </StakeV2Styled.RewardsBannerTextWrap>
-                    <StakeV2Styled.RewardsBannerTextWrap>
-                      <StakeV2Styled.RewardsBannerText large inline>
-                        {formatKeyAmount(processedData, "stakedMlpTrackerRewards", 18, 4)} esMYC
-                      </StakeV2Styled.RewardsBannerText>{" "}
-                      <StakeV2Styled.RewardsBannerText inline>
-                        ($
-                        {formatKeyAmount(processedData, "stakedMlpTrackerRewardsUsd", USD_DECIMALS, 2, true)})
-                      </StakeV2Styled.RewardsBannerText>
-                    </StakeV2Styled.RewardsBannerTextWrap>
-                  </div>
-                </StakeV2Styled.RewardsBannerRow>
-                <StakeV2Styled.RewardsBannerRow>
-                  <StakeV2Styled.RewardsBannerText secondary>
-                    <Text>Market Making APR</Text>
-                  </StakeV2Styled.RewardsBannerText>
-                  <StakeV2Styled.RewardsBannerText large inline>
-                    <Tooltip
-                      handle={`${formatKeyAmount(processedData, "mmApr", 2, 2, true)}%`}
-                      position="right-bottom"
-                      renderContent={() => (
-                        <Text>
-                          Market Making APR is sourced from the spread of the traded markets and is realised by MLP
-                          holders through the appreciation of the MLP token.
-                        </Text>
-                      )}
-                    />
-                  </StakeV2Styled.RewardsBannerText>
-                </StakeV2Styled.RewardsBannerRow>
-                <StakeV2Styled.RewardsBannerRow>
-                  <StakeV2Styled.RewardsBannerText secondary>
-                    <Text>Total APR</Text>
-                  </StakeV2Styled.RewardsBannerText>
-                  <StakeV2Styled.RewardsBannerText large inline>
-                    <Tooltip
-                      handle={`${formatKeyAmount(processedData, "mlpAprTotal", 2, 2, true)}%`}
-                      position="right-bottom"
-                      renderContent={() => {
-                        return (
-                          <>
-                            <div className="Tooltip-row">
-                              <span className="label">
-                                {nativeTokenSymbol} ({wrappedTokenSymbol}) APR
-                              </span>
-                              <span>{formatKeyAmount(processedData, "mlpAprForNativeToken", 2, 2, true)}%</span>
-                            </div>
-                            <div className="Tooltip-row">
-                              <span className="label">
-                                <Text>esMYC</Text> APR
-                              </span>
-                              <span>{formatKeyAmount(processedData, "mlpAprForEsMyc", 2, 2, true)}%</span>
-                            </div>
-                            <div className="Tooltip-row">
-                              <span className="label">
-                                <Text>Market Making</Text> APR
-                              </span>
-                              <span>{formatKeyAmount(processedData, "mmApr", 2, 2, true)}%</span>
-                            </div>
-                          </>
-                        );
-                      }}
-                    />
-                  </StakeV2Styled.RewardsBannerText>
-                </StakeV2Styled.RewardsBannerRow>
-              </StakeV2Styled.RewardsBanner>
-              <div className="App-card-content">
-                <div className="App-card-row">
-                  <div className="label">
-                    <Text>Price</Text>
-                  </div>
-                  <div>${formatKeyAmount(processedData, "mlpPrice", USD_DECIMALS, 3, true)}</div>
-                </div>
-                <div className="App-card-row">
-                  <div className="label">
-                    <Text>Wallet</Text>
-                  </div>
-                  <div>
-                    {formatKeyAmount(processedData, "mlpBalance", MLP_DECIMALS, 2, true)} <Text>MLP</Text> ($
-                    {formatKeyAmount(processedData, "mlpBalanceUsd", USD_DECIMALS, 2, true)})
-                  </div>
-                </div>
-                <div className="App-card-row">
-                  <div className="label">
-                    <Text>Staked</Text>
-                  </div>
-                  <div>
-                    {formatKeyAmount(processedData, "mlpBalance", MLP_DECIMALS, 2, true)} <Text>MLP</Text> ($
-                    {formatKeyAmount(processedData, "mlpBalanceUsd", USD_DECIMALS, 2, true)})
-                  </div>
-                </div>
-                <div className="App-card-divider"></div>
-                <div className="App-card-row">
-                  <div className="label">
-                    <Text>Total Staked</Text>
-                  </div>
-                  <div>
-                    {formatKeyAmount(processedData, "mlpSupply", 18, 2, true)} <Text>MLP</Text> ($
-                    {formatKeyAmount(processedData, "mlpSupplyUsd", USD_DECIMALS, 2, true)})
-                  </div>
-                </div>
-                <div className="App-card-row">
-                  <div className="label">
-                    <Text>Total Supply</Text>
-                  </div>
-                  <div>
-                    {formatKeyAmount(processedData, "mlpSupply", 18, 2, true)} <Text>MLP</Text> ($
-                    {formatKeyAmount(processedData, "mlpSupplyUsd", USD_DECIMALS, 2, true)})
-                  </div>
-                </div>
-                <div className="App-card-divider"></div>
-                <div className="App-card-options">
-                  <Link className="App-button-option App-card-option" to="/buy_mlp">
-                    <Text>Buy MLP</Text>
-                  </Link>
-                  <Link className="App-button-option App-card-option" to="/buy_mlp#redeem">
-                    <Text>Sell MLP</Text>
-                  </Link>
-                  {active && (
-                    <button className="App-button-option App-card-option" onClick={() => showMlpCompoundModal()}>
-                      <Text>Compound</Text>
-                    </button>
-                  )}
-                  {active && (
-                    <button className="App-button-option App-card-option" onClick={() => showMlpClaimModal()}>
-                      <Text>Claim</Text>
-                    </button>
-                  )}
-                  {!active && (
-                    <button className="App-button-option App-card-option" onClick={() => connectWallet()}>
-                      <Text>Connect Wallet</Text>
-                    </button>
-                  )}
-                </div>
-              </div>
-            </div>
-          </div>
-          <div>
+              </StakeV2Styled.CardTitle>
+              <MlpPriceChart chainId={chainId} mlpPrice={processedData.mlpPrice} />
+              <StakeV2Styled.MlpInfo>
+                <StakeV2Styled.RewardsBanner>
+                  <StakeV2Styled.RewardsBannerRow>
+                    <StakeV2Styled.RewardsBannerText large>
+                      <Text>Statistics</Text>
+                    </StakeV2Styled.RewardsBannerText>
+                  </StakeV2Styled.RewardsBannerRow>
+                  <StakeV2Styled.RewardsBannerRow>
+                    <div className="App-card-row">
+                      <div className="label">
+                        <Text>Total APR</Text>
+                      </div>
+                      <div>
+                        <Tooltip
+                          handle={`${formatKeyAmount(processedData, "mlpAprTotal", 2, 2, true)}%`}
+                          position="right-bottom"
+                          renderContent={() => {
+                            return (
+                              <>
+                                <div className="Tooltip-row">
+                                  <span className="label">
+                                    {nativeTokenSymbol} ({wrappedTokenSymbol}) <Text>APR</Text>
+                                  </span>
+                                  <span>{formatKeyAmount(processedData, "mlpAprForNativeToken", 2, 2, true)}%</span>
+                                </div>
+                                <div className="Tooltip-row">
+                                  <span className="label">
+                                    esMYC <Text>APR</Text>
+                                  </span>
+                                  <span>{formatKeyAmount(processedData, "mlpAprForEsMyc", 2, 2, true)}%</span>
+                                </div>
+                              </>
+                            );
+                          }}
+                        />
+                      </div>
+                    </div>
+                  </StakeV2Styled.RewardsBannerRow>
+                  <StakeV2Styled.RewardsBannerRow>
+                    <div className="App-card-row">
+                      <div className="label">
+                        <Text>Price</Text>
+                      </div>
+                      <div>${formatKeyAmount(processedData, "mlpPrice", USD_DECIMALS, 3, true)}</div>
+                    </div>
+                    <div className="App-card-row">
+                      <div className="label">
+                        <Text>Wallet</Text>
+                      </div>
+                      <div>
+                        {formatKeyAmount(processedData, "mlpBalance", MLP_DECIMALS, 2, true)} MLP ($
+                        {formatKeyAmount(processedData, "mlpBalanceUsd", USD_DECIMALS, 2, true)})
+                      </div>
+                    </div>
+                    <div className="App-card-row">
+                      <div className="label">
+                        <Text>Staked</Text>
+                      </div>
+                      <div>
+                        {formatKeyAmount(processedData, "mlpBalance", MLP_DECIMALS, 2, true)} MLP ($
+                        {formatKeyAmount(processedData, "mlpBalanceUsd", USD_DECIMALS, 2, true)})
+                      </div>
+                    </div>
+                  </StakeV2Styled.RewardsBannerRow>
+                  <StakeV2Styled.RewardsBannerRow>
+                    <div className="App-card-row">
+                      <div className="label">
+                        <Text>Total Staked</Text>
+                      </div>
+                      <div>
+                        {formatKeyAmount(processedData, "mlpSupply", 18, 2, true)} MLP ($
+                        {formatKeyAmount(processedData, "mlpSupplyUsd", USD_DECIMALS, 2, true)})
+                      </div>
+                    </div>
+                    <div className="App-card-row">
+                      <div className="label">
+                        <Text>Total Supply</Text>
+                      </div>
+                      <div>
+                        {formatKeyAmount(processedData, "mlpSupply", 18, 2, true)} MLP ($
+                        {formatKeyAmount(processedData, "mlpSupplyUsd", USD_DECIMALS, 2, true)})
+                      </div>
+                    </div>
+                  </StakeV2Styled.RewardsBannerRow>
+                  <StakeV2Styled.Buttons>
+                    <Link className="App-button-option App-card-option" to="/buy_mlp">
+                      <Text>Buy</Text> MLP
+                    </Link>
+                    <Link className="App-button-option App-card-option" to="/buy_mlp#redeem">
+                      <Text>Sell</Text> MLP
+                    </Link>
+                  </StakeV2Styled.Buttons>
+                </StakeV2Styled.RewardsBanner>
+                <StakeV2Styled.RewardsBanner>
+                  <StakeV2Styled.RewardsBannerRow>
+                    <StakeV2Styled.RewardsBannerText large>
+                      <Text>Rewards</Text>
+                    </StakeV2Styled.RewardsBannerText>
+                  </StakeV2Styled.RewardsBannerRow>
+                  <StakeV2Styled.RewardsBannerRow>
+                    <div className="App-card-row">
+                      <div className="label">
+                        {nativeTokenSymbol} <Text>Rewards</Text>
+                      </div>
+                      <div>
+                        <StakeV2Styled.RewardsBannerTextWrap>
+                          <StakeV2Styled.RewardsBannerText large>
+                            {formatKeyAmount(processedData, "feeMlpTrackerRewards", 18, 4)} {nativeTokenSymbol}
+                          </StakeV2Styled.RewardsBannerText>{" "}
+                          <StakeV2Styled.RewardsBannerText secondary>
+                            ($
+                            {formatKeyAmount(processedData, "feeMlpTrackerRewardsUsd", USD_DECIMALS, 2, true)})
+                          </StakeV2Styled.RewardsBannerText>
+                        </StakeV2Styled.RewardsBannerTextWrap>
+                      </div>
+                    </div>
+                    <div className="App-card-row">
+                      <div className="label">
+                        esMYC <Text>Rewards</Text>
+                      </div>
+                      <StakeV2Styled.RewardsBannerTextWrap>
+                        <StakeV2Styled.RewardsBannerText large>
+                          {formatKeyAmount(processedData, "stakedMlpTrackerRewards", 18, 4)} esMYC
+                        </StakeV2Styled.RewardsBannerText>{" "}
+                        <StakeV2Styled.RewardsBannerText secondary>
+                          ($
+                          {formatKeyAmount(processedData, "stakedMlpTrackerRewardsUsd", USD_DECIMALS, 2, true)})
+                        </StakeV2Styled.RewardsBannerText>
+                      </StakeV2Styled.RewardsBannerTextWrap>
+                    </div>
+                  </StakeV2Styled.RewardsBannerRow>
+                  <StakeV2Styled.Buttons>
+                    {active && (
+                      <button className="App-button-option App-card-option" onClick={() => showMlpClaimModal()}>
+                        <Text>Claim</Text>
+                      </button>
+                    )}
+                    {active && (
+                      <button className="App-button-option App-card-option" onClick={() => showMlpCompoundModal()}>
+                        <Text>Compound</Text>
+                      </button>
+                    )}
+                    {!active && (
+                      <button className="App-button-option App-card-option" onClick={() => connectWallet()}>
+                        <Text>Connect Wallet</Text>
+                      </button>
+                    )}
+                  </StakeV2Styled.Buttons>
+                </StakeV2Styled.RewardsBanner>
+              </StakeV2Styled.MlpInfo>
+            </StakeV2Styled.Card>
+          </StakeV2Styled.StakeV2Card>
+          <StakeV2Styled.StakeV2Card>
             <div className="Page-title-section">
               <div className="Page-title">
                 <Text>Vest</Text>
@@ -1078,15 +1002,15 @@ export default function StakeV2({ setPendingTxns, connectWallet, trackAction }) 
                 <Text>before using the vaults.</Text>
               </div>
             </div>
-            <div className="App-card StakeV2-myc-card">
-              <div className="App-card-title">
+            <StakeV2Styled.Card>
+              <StakeV2Styled.CardTitle className="App-card-title">
                 <img src={myc40Icon} alt="myc40Icon" />
-                <Text>esMYC Vault</Text>
-              </div>
-              <StakeV2Styled.RewardsBanner>
-                <StakeV2Styled.RewardsBannerRow>
-                  <StakeV2Styled.RewardsBannerText secondary>
-                    <Text>Staked Tokens</Text>
+                esMYC <Text>Vault</Text>
+              </StakeV2Styled.CardTitle>
+              <StakeV2Styled.VestingInfo>
+                <StakeV2Styled.StakedTokens>
+                  <StakeV2Styled.RewardsBannerText secondary large>
+                    <Text>Vesting Tokens</Text>
                   </StakeV2Styled.RewardsBannerText>
                   <div>
                     <StakeV2Styled.RewardsBannerTextWrap>
@@ -1099,90 +1023,101 @@ export default function StakeV2({ setPendingTxns, connectWallet, trackAction }) 
                       </StakeV2Styled.RewardsBannerText>
                     </StakeV2Styled.RewardsBannerTextWrap>
                   </div>
-                </StakeV2Styled.RewardsBannerRow>
-              </StakeV2Styled.RewardsBanner>
-              <div className="App-card-content">
-                <div className="App-card-row">
-                  <div className="label">
-                    <Text>Reserved for Vesting</Text>
+                </StakeV2Styled.StakedTokens>
+                <StakeV2Styled.StakingBannerRow>
+                  <div className="App-card-row">
+                    <div className="label">
+                      <Text>Vesting Status</Text>
+                    </div>
+                    <div>
+                      <Tooltip
+                        handle={`${formatKeyAmount(vestingData, "mlpVesterClaimSum", 18, 4, true)} / ${formatKeyAmount(
+                          vestingData,
+                          "mlpVesterVestedAmount",
+                          18,
+                          4,
+                          true
+                        )}`}
+                        position="right-bottom"
+                        renderContent={() => {
+                          return (
+                            <>
+                              {formatKeyAmount(vestingData, "mlpVesterClaimSum", 18, 4, true)}{" "}
+                              <Text>tokens have been converted to MYC from</Text>&nbsp;
+                              {formatKeyAmount(vestingData, "mlpVesterVestedAmount", 18, 4, true)}{" "}
+                              <Text>esMYC deposited for vesting.</Text>
+                            </>
+                          );
+                        }}
+                      />
+                    </div>
                   </div>
-                  <div>
-                    {formatKeyAmount(vestingData, "mlpVesterPairAmount", 18, 2, true)} /{" "}
-                    {formatAmount(totalRewardTokens, 18, 2, true)}
-                  </div>
-                </div>
-                <div className="App-card-row">
-                  <div className="label">
-                    <Text>Vesting Status</Text>
-                  </div>
-                  <div>
-                    <Tooltip
-                      handle={`${formatKeyAmount(vestingData, "mlpVesterClaimSum", 18, 4, true)} / ${formatKeyAmount(
-                        vestingData,
-                        "mlpVesterVestedAmount",
-                        18,
-                        4,
-                        true
-                      )}`}
-                      position="right-bottom"
-                      renderContent={() => {
-                        return (
+                  <div className="App-card-row">
+                    <div className="label">
+                      <Text>Claimable</Text>
+                    </div>
+                    <div>
+                      <Tooltip
+                        handle={`${formatKeyAmount(vestingData, "mlpVesterClaimable", 18, 4, true)} MYC`}
+                        position="right-bottom"
+                        renderContent={() => (
                           <>
-                            {formatKeyAmount(vestingData, "mlpVesterClaimSum", 18, 4, true)}{" "}
-                            <Text>tokens have been converted to MYC from the</Text>&nbsp;
-                            {formatKeyAmount(vestingData, "mlpVesterVestedAmount", 18, 4, true)}{" "}
-                            <Text>esMYC deposited for vesting.</Text>
+                            {formatKeyAmount(vestingData, "mlpVesterClaimable", 18, 4, true)} MYC{" "}
+                            <Text>tokens can be claimed, use the options under the Earn section to claim them.</Text>
                           </>
-                        );
-                      }}
-                    />
+                        )}
+                      />
+                    </div>
                   </div>
-                </div>
-                <div className="App-card-row">
-                  <div className="label">
-                    <Text>Claimable</Text>
-                  </div>
-                  <div>
-                    <Tooltip
-                      handle={`${formatKeyAmount(vestingData, "mlpVesterClaimable", 18, 4, true)} MYC`}
-                      position="right-bottom"
-                      renderContent={() => (
-                        <>
-                          {formatKeyAmount(vestingData, "mlpVesterClaimable", 18, 4, true)}{" "}
-                          <Text>MYC tokens can be claimed, use the options under the Earn section to claim them.</Text>
-                        </>
-                      )}
-                    />
-                  </div>
-                </div>
-                <div className="App-card-divider"></div>
-                <div className="App-card-options">
-                  {!active && (
-                    <button className="App-button-option App-card-option" onClick={() => connectWallet()}>
-                      <Text>Connect Wallet</Text>
-                    </button>
+                  <StakeV2Styled.Buttons>
+                    {!active && (
+                      <button className="App-button-option App-card-option" onClick={() => connectWallet()}>
+                        <Text>Connect Wallet</Text>
+                      </button>
+                    )}
+                    {active && (
+                      <button className="App-button-option App-card-option" onClick={() => showMycVesterDepositModal()}>
+                        <Text>Deposit</Text>
+                      </button>
+                    )}
+                    {active && (
+                      <button
+                        className="App-button-option App-card-option"
+                        onClick={() => showMycVesterWithdrawModal()}
+                      >
+                        <Text>Withdraw</Text>
+                      </button>
+                    )}
+                  </StakeV2Styled.Buttons>
+                </StakeV2Styled.StakingBannerRow>
+                <StakeV2Styled.StakingBannerRow borderTop>
+                  <StakeV2Styled.RewardsBannerText large title>
+                    MYC/esMYC <Text>Staking</Text>
+                  </StakeV2Styled.RewardsBannerText>
+                  <StakeV2Styled.RewardsBannerText secondary title>
+                    <Text>Stake MYC</Text> <Text>or</Text> esMYC <Text>to receive interest in</Text> ETH
+                  </StakeV2Styled.RewardsBannerText>
+                  {stakingApr && (
+                    <div className="App-card-row">
+                      <div className="label">
+                        <Text>Staking</Text> APR
+                      </div>
+                      <div>{stakingApr}%</div>
+                    </div>
                   )}
-                  {active && (
-                    <button className="App-button-option App-card-option" onClick={() => showMycVesterDepositModal()}>
-                      <Text>Deposit</Text>
-                    </button>
-                  )}
-                  {active && (
-                    <button className="App-button-option App-card-option" onClick={() => showMycVesterWithdrawModal()}>
-                      <Text>Withdraw</Text>
-                    </button>
-                  )}
-                  <a href="https://lend.mycelium.xyz" target="_blank" rel="noopener noreferrer">
-                    <button className="App-button-option App-card-option">
-                      MYC <Text>Lending</Text>
-                    </button>
-                  </a>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+                  <StakeV2Styled.Buttons>
+                    <a href="https://stake.mycelium.xyz" target="_blank" rel="noopener noreferrer">
+                      <button className="App-button-option App-card-option">
+                        MYC/esMYC <Text>Staking</Text>
+                      </button>
+                    </a>
+                  </StakeV2Styled.Buttons>
+                </StakeV2Styled.StakingBannerRow>
+              </StakeV2Styled.VestingInfo>
+            </StakeV2Styled.Card>
+          </StakeV2Styled.StakeV2Card>
+        </StakeV2Styled.StakeV2Cards>
+      </StakeV2Styled.StakeV2Content>
     </div>
   );
 }

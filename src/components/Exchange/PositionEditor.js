@@ -21,9 +21,8 @@ import {
   getLiquidationPrice,
   approveTokens,
   getUserTokenBalances,
-  convertStringToFloat,
-  getAnalyticsEventStage,
 } from "../../Helpers";
+import { getAnalyticsEventStage } from "../../utils/analytics";
 import { getContract } from "../../Addresses";
 import Tab from "../Tab/Tab";
 import Modal from "../Modal/Modal";
@@ -32,6 +31,8 @@ import { callContract } from "../../Api";
 import PositionRouter from "../../abis/PositionRouter.json";
 import Token from "../../abis/Token.json";
 import { Text } from "../Translation/Text";
+import { convertStringToFloat } from "../../utils/common";
+import { getMaxLeverage } from "./LeverageInput";
 
 const DEPOSIT = "Deposit";
 const WITHDRAW = "Withdraw";
@@ -207,8 +208,9 @@ export default function PositionEditor(props) {
       return "Min leverage: 1.1x";
     }
 
-    if (nextLeverageExcludingPnl && nextLeverageExcludingPnl.gt(30.5 * BASIS_POINTS_DIVISOR)) {
-      return "Max leverage: 30x";
+    const maxLeverage = getMaxLeverage(position.indexToken.symbol);
+    if (nextLeverageExcludingPnl && nextLeverageExcludingPnl.gt(maxLeverage * BASIS_POINTS_DIVISOR)) {
+      return `Max leverage: ${maxLeverage}x`;
     }
   };
 

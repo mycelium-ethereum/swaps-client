@@ -57,29 +57,36 @@ export function RoundDropdown(props) {
             </Menu.Button>
             <div className="hide-overflow">
               <Menu.Items as="div" className="menu-items">
-                {allRoundsRewardsData
-                  .sort((a, b) => b.round - a.round)
-                  .map((rewardRound, index) => (
-                    <Menu.Item>
-                      <div
-                        className="menu-item large"
-                        onClick={() => {
-                          let selectedRound = parseFloat(rewardRound?.round);
-                          if (index === 0) {
-                            selectedRound = "latest";
-                          }
-                          setSelectedRound(selectedRound);
-                          trackAction &&
-                            trackAction("Button clicked", {
-                              buttonName: "Select rewards round",
-                              weekNo: selectedRound,
-                            });
-                        }}
-                      >
-                        <Text>Round</Text> {parseFloat(rewardRound?.round) + 1}
-                      </div>
-                    </Menu.Item>
-                  ))}
+                {allRoundsRewardsData &&
+                  allRoundsRewardsData
+                    .sort((a, b) => b.round - a.round)
+                    .map((rewardRound, index) => (
+                      <Menu.Item>
+                        <div
+                          className="menu-item large"
+                          onClick={() => {
+                            let selectedRound = parseFloat(rewardRound?.round);
+                            if (index === 0) {
+                              selectedRound = "latest";
+                            }
+                            setSelectedRound(selectedRound);
+                            trackAction &&
+                              trackAction("Button clicked", {
+                                buttonName: "Select rewards round",
+                                weekNo: selectedRound,
+                              });
+                          }}
+                        >
+                          {rewardRound?.customRoundText ? (
+                            rewardRound.customRoundText
+                          ) : (
+                            <>
+                              <Text>Round</Text> {parseFloat(rewardRound?.round) + 1}
+                            </>
+                          )}
+                        </div>
+                      </Menu.Item>
+                    ))}
               </Menu.Items>
             </div>
           </>

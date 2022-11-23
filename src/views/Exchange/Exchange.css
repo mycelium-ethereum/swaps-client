@@ -1,8 +1,10 @@
 .Exchange {
-  /* max-width: 155rem */
-  max-width: 1550px;
   margin: auto;
   justify-content: space-between;
+}
+
+.Exchange.default-container {
+  max-width: 1700px;
 }
 
 .Exchange-list-tab-container {
@@ -46,6 +48,10 @@
   grid-gap: 1rem;
   padding-top: 3rem;
   color: var(--text-secondary);
+  transition: padding-top 0.3s ease;
+}
+.Exchange.ReferralsBannerActive .Exchange-content {
+  padding-top: 4rem;
 }
 
 .Exchange.page-layout .footer {
@@ -236,7 +242,6 @@
 
 .ExchangeChart {
   position: relative;
-  height: 32rem;
 }
 
 .ExchangeChart-main-price {
@@ -520,6 +525,12 @@ table.Exchange-list th {
   border-top: 1px solid var(--cell-stroke);
   margin-top: 1rem;
   padding-top: 1rem;
+}
+
+.Exchange-info-row.bottom-line {
+  border-bottom: 1px solid var(--cell-stroke);
+  margin-bottom: 1rem;
+  padding-bottom: 1rem;
 }
 
 .Exchange-info-label-button {
@@ -889,46 +900,71 @@ table.Exchange-list-small td {
   padding-top: 2rem;
   height: 5rem;
 }
-.Merge-countdown {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  background: var(--background-gradient);
-  border: 1px solid var(--cell-highlight);
+
+/* LIGHTWEIGHT CHART */
+.ExchangeChart-border {
+  border: 1px solid var(--cell-stroke);
   border-radius: 4px;
-  padding: 8px 16px 12px;
+  overflow: hidden;
+}
+.LightweightChart-container {
+  position: relative;
+  /* max-width: 798px; */
+}
+.LightweightChart {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1;
+
   width: 100%;
-  margin-top: 16px;
+  height: 100%;
 }
-.Merge-countdown span.merge-started-text {
-  font-size: 20px;
-  font-weight: bold;
-  padding-top: 4px;
-  text-align: center;
-}
-.Merge-countdown > span {
-  font-size: 10px;
-}
-.Countdown-timer {
-  display: flex;
-  font-size: 30px;
-}
-.Countdown-section {
-  display: flex;
-  flex-direction: column;
-  margin-right: 12px;
-}
-.Countdown-section:last-of-type {
-  margin-right: 0;
-}
-.Countdown-section span:nth-child(1) {
-  font-size: 40px;
-  font-weight: bold;
-}
-.Countdown-section span:nth-child(2) {
-  font-size: 10px;
+.LightweightChart + .CandleStats {
+  position: absolute;
+  left: -15px;
+  top: 10px;
 }
 
+/* ADVANCED CHART */
+.ExchangeChart-top-controls {
+  display: flex;
+  margin: 16px 0;
+  justify-content: space-between;
+}
+.ChartContainer {
+  position: relative;
+  flex-grow: 1;
+}
+.LightweightChart-container,
+.ChartContainer .Chart {
+  height: 426px;
+}
+.ChartContainer .Overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  background-color: var(--background-primary);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+}
+.ChartContainer .Overlay svg {
+  width: 60px;
+  height: 60px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+.ChartContainer .Overlay.active {
+  pointer-events: auto;
+  opacity: 1;
+}
 @media (max-width: 1640px) {
   .App-box.large,
   .Exchange-list.large {
@@ -941,12 +977,12 @@ table.Exchange-list-small td {
 }
 
 @media (max-width: 1500px) {
-  .Exchange-swap-box {
-    width: 25rem;
-  }
 }
 
-@media (max-width: 1100px) {
+@media (max-width: 1160px) {
+  .LightweightChart + .CandleStats {
+    left: 20px;
+  }
   .Exchange-swap-box {
     width: auto;
   }
@@ -978,9 +1014,15 @@ table.Exchange-list-small td {
   .Exchange-swap-placeholder {
     display: none;
   }
+  .LightweightChart-container .ChartContainer .Chart {
+    height: 318px;
+  }
 
-  .ExchangeChart {
-    height: 25rem;
+  .ExchangeChart.AdvancedTv .ExchangeChart-bottom-controls {
+    width: 38.75px;
+  }
+  .ExchangeChart.AdvancedTv .ExchangeChart-bottom-controls:hover {
+    width: 193.75px;
   }
 
   .Exchange-content {
@@ -1049,6 +1091,12 @@ table.Exchange-list-small td {
   }
 }
 
+/* Added padding for Referrals comp */
+@media (max-width: 1000px) {
+  .Exchange.ReferralsBannerActive .Exchange-content {
+    padding-top: 10rem;
+  }
+}
 @media (max-width: 700px) {
   .PositionEditor .Modal-content {
     width: 90vw;
@@ -1066,9 +1114,13 @@ table.Exchange-list-small td {
   .ExchangeChart-additional-info {
     display: none;
   }
-
   .Exchange-content {
-    padding-top: 1rem;
+    padding-top: 0rem;
+  }
+
+  /* Added padding for Referrals comp */
+  .Exchange.ReferralsBannerActive .Exchange-content {
+    padding-top: 8rem;
   }
 
   .Exchange-swap-box .TokenSelector .Modal {
@@ -1079,8 +1131,28 @@ table.Exchange-list-small td {
     padding: 1rem;
   }
 }
-@media (max-width: 700px) {
-  .Countdown-section span:nth-child(1) {
-    font-size: 30px;
+@media (max-width: 480px) {
+  .ExchangeChart-top-controls {
+    flex-direction: column;
+  }
+  .ExchangeChart-top-controls,
+  .Tab.block {
+    margin-bottom: 16px;
+  }
+}
+
+@media (max-width: 370px) {
+  .ExchangeChart-top-inner div:not(:first-child),
+  .ExchangeChart-top-inner div:not(:first-child) div {
+    font-size: 10px;
+  }
+  .ExchangeChart.AdvancedTv .ExchangeChart-top {
+    display: flex;
+    align-items: center;
+  }
+  .ExchangeChart-top-inner {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
   }
 }
