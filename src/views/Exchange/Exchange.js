@@ -251,8 +251,8 @@ export function getPositions(
         delta: position.pendingDelta,
         totalFees: position.totalFees,
         hasProfit: position.hasProfit,
-        collateral: position.collateral
-      })
+        collateral: position.collateral,
+      });
 
       position.hasProfitAfterFees = hasProfitAfterFees;
       position.pendingDeltaAfterFees = pendingDeltaAfterFees;
@@ -913,7 +913,7 @@ export const Exchange = forwardRef((props, ref) => {
   return (
     <>
       <SEO description="Trade with liquidity, leverage, low fees. Trade with Mycelium. Trade Perpetual Swaps and Perpetual Pools on Ethereum scaling solution, Arbitrum with liquid markets for BTC, ETH, LINK, UNI, CRV, FXS, & BAL." />
-      <div className="Exchange default-container ReferralsBannerActive">
+      <div className="Exchange default-container">
         <div className="Exchange-content">
           <div className="Exchange-left">
             <div className="ExchangeChart tv">
