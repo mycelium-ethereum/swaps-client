@@ -26,23 +26,27 @@ const languages = [
     useInterFont: false,
   },
   {
-    name: "Hindi (हिन्दी)",
+    name: "Hindi (हिन्दी) - coming soon",
     lang: "hi",
+    comingSoon: true,
     useInterFont: false,
   },
   {
-    name: "Korean (한국인)",
+    name: "Korean (한국인) - coming soon",
     lang: "ko",
+    comingSoon: true,
     useInterFont: false,
   },
   {
-    name: "Russian (русский)",
+    name: "Russian (русский) - coming soon",
     lang: "ru",
+    comingSoon: true,
     useInterFont: true,
   },
   {
-    name: "Spanish (español)",
+    name: "Spanish (español) - coming soon",
     lang: "es",
+    comingSoon: true,
     useInterFont: true,
   },
 ];
@@ -100,7 +104,7 @@ export default function LanguageDropdown({ currentLang, setCurrentLang }) {
       </DropdownButton>
       <LinkMenu open={isOpen} isLanguageDropdown>
         {languages.map((item) => (
-          <MenuItem key={item.name} onClick={handleLanguageClick} lang={item.lang}>
+          <MenuItem key={item.name} onClick={handleLanguageClick} lang={item.lang} disabled={item.comingSoon}>
             {item.name}
           </MenuItem>
         ))}
@@ -109,8 +113,8 @@ export default function LanguageDropdown({ currentLang, setCurrentLang }) {
   );
 }
 
-const MenuItem = ({ lang, onClick, children }) => (
-  <ListItem>
+const MenuItem = ({ lang, onClick, disabled, children }) => (
+  <ListItem disabled={disabled}>
     <button onClick={() => onClick(lang)}>{children}</button>
   </ListItem>
 );

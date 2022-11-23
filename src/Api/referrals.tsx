@@ -131,7 +131,7 @@ async function getCodeOwnersData(chainId: ChainId, account: string, codes: strin
 }
 
 export function useUserCodesOnAllChain(account: string) {
-  const [data, setData] = useState(null);
+  const [data, setData] = useState<any>(null);
   const query = gql(
     `{
       referralCodes (
@@ -246,7 +246,7 @@ export function useCodeOwner(library: Library, chainId: ChainId, account: string
 }
 
 export function useReferralsData(chainId: ChainId, account: string) {
-  const [data, setData] = useState(null);
+  const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const ownerOnOtherChain = useUserCodesOnAllChain(account);
   useEffect(() => {
@@ -323,8 +323,8 @@ export function useReferralsData(chainId: ChainId, account: string) {
         },
       })
       .then((res) => {
-        const rebateDistributions = [];
-        const discountDistributions = [];
+        const rebateDistributions: any = [];
+        const discountDistributions: any = [];
         res.data.distributions.forEach((d: any) => {
           const item = {
             timestamp: parseInt(d.timestamp),
@@ -356,7 +356,7 @@ export function useReferralsData(chainId: ChainId, account: string) {
 
         function getCumulativeStats(data = []) {
           return data.reduce(
-            (acc, cv) => {
+            (acc, cv: any) => {
               acc.totalRebateUsd = acc.totalRebateUsd.add(cv.totalRebateUsd);
               acc.volume = acc.volume.add(cv.volume);
               acc.discountUsd = acc.discountUsd.add(cv.discountUsd);

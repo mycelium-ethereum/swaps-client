@@ -160,7 +160,7 @@ export default function Sidebar({ sidebarVisible, setSidebarVisible }) {
             </BottomMenuItem>
             <SocialLinksMenu>
               {socialLinks.map((item) => (
-                <a href={item.path} target="_blank" rel="noopener noreferrer">
+                <a key={item.path} href={item.path} target="_blank" rel="noopener noreferrer">
                   <item.icon title={item.name} />
                 </a>
               ))}

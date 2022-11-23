@@ -14,6 +14,7 @@ import { Switch, Route, NavLink, useLocation } from "react-router-dom";
 import { ThemeProvider } from "@tracer-protocol/tracer-ui";
 import { useAnalytics } from "./segmentAnalytics";
 import { getTokens, getWhitelistedTokens } from "./data/Tokens";
+import translations from "./data/translations.json";
 
 import {
   SLIPPAGE_BPS_KEY,
@@ -1195,17 +1196,15 @@ function App() {
   }
 
   const cacheProvider = {
-    get: (language, key) => ((JSON.parse(localStorage.getItem("translations")) || {})[key] || {})[language],
+    get: (language, key) => ((translations || {})[key] || {})[language],
     set: (language, key, value) => {
-      const existing = JSON.parse(localStorage.getItem("translations")) || {
+      const existing = translations || {
         [key]: {},
       };
       existing[key] = { ...existing[key], [language]: value };
       localStorage.setItem("translations", JSON.stringify(existing));
     },
   };
-
-  console.log(JSON.parse(localStorage.getItem("translations")));
 
   return (
     <SWRConfig value={{ refreshInterval: 5000 }}>

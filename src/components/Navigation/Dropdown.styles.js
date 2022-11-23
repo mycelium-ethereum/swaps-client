@@ -63,7 +63,7 @@ export const LinkMenu = styled.ul(
   left: 0;
   padding: 0;
   border-radius: 4px;
-  width: 180px;
+  width: 160px;
   border: 1px solid var(--action-active);
   background: var(--background-gradient);
   overflow: hidden;
@@ -88,10 +88,10 @@ export const LinkMenu = styled.ul(
 `
 );
 
-export const ListItem = styled.li`
+export const ListItem = styled.li(
+  (props) => `
   display: flex;
   align-items: center;
-  height: 40px;
   width: 100%;
   border-bottom: 1px solid var(--action-active);
   padding: 0;
@@ -107,9 +107,10 @@ export const ListItem = styled.li`
     display: flex;
     width: 100%;
     height: 100%;
+    text-align: left;
     align-items: center;
     font-size: 14px;
-    padding: 0 16px;
+    padding: 10px 16px;
     background: none;
     border: 0;
     color: white;
@@ -128,4 +129,12 @@ export const ListItem = styled.li`
   @media (max-width: 1280px) {
     display: block;
   }
-`;
+
+  ${
+    props.disabled &&
+    `opacity: 0.5;
+    pointer-events: none;
+    `
+  }
+`
+);
