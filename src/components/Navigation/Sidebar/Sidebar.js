@@ -133,7 +133,7 @@ export default function Sidebar({ sidebarVisible, setSidebarVisible }) {
               <a href="https://stake.mycelium.xyz" target="_blank" rel="noopener noreferrer">
                 <MycStakingIcon />{" "}
                 <span>
-                  <Text>MYC Staking</Text>
+                  MYC <Text>Staking</Text>
                 </span>
               </a>
             </MenuItem>
@@ -155,7 +155,7 @@ export default function Sidebar({ sidebarVisible, setSidebarVisible }) {
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                <DocsIcon /> Docs
+                <DocsIcon /> <Text>Docs</Text>
               </a>
             </BottomMenuItem>
             <SocialLinksMenu>

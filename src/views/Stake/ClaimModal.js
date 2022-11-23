@@ -2,11 +2,7 @@ import React, { useState } from "react";
 
 import { ethers } from "ethers";
 
-import {
-  useLocalStorageSerializeKey,
-  USD_DECIMALS,
-  formatKeyAmount,
-} from "../../Helpers";
+import { useLocalStorageSerializeKey, USD_DECIMALS, formatKeyAmount } from "../../Helpers";
 
 import { callContract } from "../../Api";
 
@@ -15,6 +11,8 @@ import RewardRouter from "../../abis/RewardRouter.json";
 import * as StakeV2Styled from "./StakeV2Styles";
 import Toggle from "../../components/Toggle/Toggle";
 import Modal from "../../components/Modal/Modal";
+
+import { Text } from "src/components/Translation/Text";
 
 export default function ClaimModal(props) {
   const {
@@ -80,7 +78,7 @@ export default function ClaimModal(props) {
       return error;
     }
     if (isClaiming) {
-      return 'Claiming...'
+      return "Claiming...";
     }
     return "Claim";
   };
@@ -99,8 +97,7 @@ export default function ClaimModal(props) {
 
     await claimRewards();
 
-    setIsVisible(false)
-    ;
+    setIsVisible(false);
   };
 
   const claimRewards = async () => {
@@ -149,9 +146,9 @@ export default function ClaimModal(props) {
         <div className="CompoundModal-menu">
           <StakeV2Styled.ModalRow>
             <StakeV2Styled.ModalRowHeader>
-              Claim Vested MYC 
+              <Text>Claim Vested</Text> MYC
             </StakeV2Styled.ModalRowHeader>
-            {shouldClaimMyc &&
+            {shouldClaimMyc && (
               <>
                 <StakeV2Styled.ModalRowText large inline>
                   {formatKeyAmount(processedData, "mlpVesterRewards", 18, 4, true)} MYC
@@ -160,14 +157,14 @@ export default function ClaimModal(props) {
                   (${formatKeyAmount(processedData, "mlpVesterRewardsUsd", USD_DECIMALS, 4, true)})
                 </StakeV2Styled.ModalRowText>
               </>
-            }
+            )}
             <Toggle isChecked={shouldClaimMyc} handleToggle={setShouldClaimMyc} />
           </StakeV2Styled.ModalRow>
           <StakeV2Styled.ModalRow>
             <StakeV2Styled.ModalRowHeader>
-              Claim esMYC Rewards
+              <Text>Claim</Text> esMYC <Text>Rewards</Text>
             </StakeV2Styled.ModalRowHeader>
-            {shouldClaimEsMyc &&
+            {shouldClaimEsMyc && (
               <>
                 <StakeV2Styled.ModalRowText inline large>
                   {formatKeyAmount(processedData, "stakedMlpTrackerRewards", 18, 4)} esMYC
@@ -177,14 +174,14 @@ export default function ClaimModal(props) {
                   {formatKeyAmount(processedData, "stakedMlpTrackerRewardsUsd", USD_DECIMALS, 2, true)})
                 </StakeV2Styled.ModalRowText>
               </>
-            }
+            )}
             <Toggle isChecked={shouldClaimEsMyc} handleToggle={setShouldClaimEsMyc} />
           </StakeV2Styled.ModalRow>
           <StakeV2Styled.ModalRow>
             <StakeV2Styled.ModalRowHeader>
-              Claim {wrappedTokenSymbol} Rewards
+              <Text>Claim</Text> {wrappedTokenSymbol} <Text>Rewards</Text>
             </StakeV2Styled.ModalRowHeader>
-            {shouldClaimWeth && 
+            {shouldClaimWeth && (
               <>
                 <StakeV2Styled.ModalRowText large inline>
                   {formatKeyAmount(processedData, "feeMlpTrackerRewards", 18, 4)} {nativeTokenSymbol} (
@@ -195,19 +192,20 @@ export default function ClaimModal(props) {
                   {formatKeyAmount(processedData, "feeMlpTrackerRewardsUsd", USD_DECIMALS, 2, true)})
                 </StakeV2Styled.ModalRowText>
               </>
-            }
+            )}
             <Toggle isChecked={shouldClaimWeth} handleToggle={setShouldClaimWeth} disabled={shouldConvertWeth} />
           </StakeV2Styled.ModalRow>
           <StakeV2Styled.ModalRow>
             <StakeV2Styled.ModalRowHeader>
-              Convert {wrappedTokenSymbol} to {nativeTokenSymbol}
+              <Text>Convert</Text>
+              {wrappedTokenSymbol} -&gt; {nativeTokenSymbol}
             </StakeV2Styled.ModalRowHeader>
             <Toggle isChecked={shouldConvertWeth} handleToggle={toggleConvertWeth} />
           </StakeV2Styled.ModalRow>
         </div>
         <div className="Exchange-swap-button-container">
           <button className="App-cta Exchange-swap-button" onClick={onClickPrimary} disabled={!isPrimaryEnabled()}>
-            {getPrimaryText()}
+            <Text>{getPrimaryText()}</Text>
           </button>
         </div>
       </Modal>

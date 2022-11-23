@@ -1,6 +1,7 @@
 import React from "react";
 import cx from "classnames";
 import * as Styles from "./ViewSwitchTriple.styles";
+import { Text } from "../Translation/Text";
 
 export default function ViewSwitchTriple(props) {
   const { switchView, currentView, views, children } = props;
@@ -17,7 +18,7 @@ export default function ViewSwitchTriple(props) {
               switchView(view);
             }}
           >
-            {view}
+            <Text>{view}</Text>
           </Styles.ViewOption>
         ))}
       </Styles.ViewSwitch>

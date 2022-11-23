@@ -78,8 +78,12 @@ const CommissionsHeader = () => (
 
 const LeaderboardHeader = () => (
   <div className="Page-title-section mt-0">
-    <div className="Page-title">Commissions Leaderboard</div>
-    <div className="Page-description">Distribute a referral code and earn commissions on referred volume.</div>
+    <div className="Page-title">
+      <Text>Commissions Leaderboard</Text>
+    </div>
+    <div className="Page-description">
+      <Text>Distribute a referral code and earn commissions on referred volume.</Text>
+    </div>
   </div>
 );
 

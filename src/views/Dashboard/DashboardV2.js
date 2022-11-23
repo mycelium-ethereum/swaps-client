@@ -472,7 +472,11 @@ export default function DashboardV2() {
                     <TooltipComponent
                       handle={`$${formatAmount(tvl, USD_DECIMALS, 0, true)}`}
                       position="right-bottom"
-                      renderContent={() => `Assets Under Management: MYC staked (All chains) + MLP pool (${chainName})`}
+                      renderContent={() => (
+                        <>
+                          <Text>Assets Under Management: MYC staked + MLP pool</Text> ({chainName})
+                        </>
+                      )}
                     />
                   </div>
                 </div>

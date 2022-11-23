@@ -15,6 +15,7 @@ import { ThemeProvider } from "@tracer-protocol/tracer-ui";
 import { useAnalytics } from "./segmentAnalytics";
 import { getTokens, getWhitelistedTokens } from "./data/Tokens";
 import translations from "./data/translations.json";
+import { getLanguageFromUrl, changeLanguage, getLanguageFromLocalStorage } from "./utils/translation";
 
 import {
   SLIPPAGE_BPS_KEY,
@@ -151,6 +152,7 @@ function inPreviewMode() {
 
 const arbWsProvider = new ethers.providers.WebSocketProvider(getDefaultArbitrumRpcUrl(true));
 const arbTestnetWsProvider = new ethers.providers.JsonRpcProvider("https://goerli-rollup.arbitrum.io/rpc/");
+const defaultLang = "en";
 
 function getWsProvider(active, chainId) {
   if (!active) {
@@ -1180,12 +1182,22 @@ function PreviewApp() {
 
 function App() {
   const [hasConsented, setConsented] = useState(false);
-  const [currentLang, setCurrentLang] = useState("en");
+  const [currentLang, setCurrentLang] = useState(defaultLang);
 
   useEffect(() => {
     const consentAcknowledged = localStorage.getItem("consentAcknowledged") === "true";
     setConsented(consentAcknowledged);
   }, []);
+
+  // Check if previous language selection is stored in local storage or URL param
+  useEffect(() => {
+    const urlLang = getLanguageFromUrl();
+    const localStorageLang = getLanguageFromLocalStorage();
+    if (urlLang || localStorageLang) {
+      changeLanguage(urlLang || localStorageLang);
+      setCurrentLang(urlLang || localStorageLang);
+    }
+  }, [setCurrentLang]);
 
   if (inPreviewMode()) {
     return (
@@ -1215,7 +1227,7 @@ function App() {
         <ThemeProvider>
           <Translator
             cacheProvider={cacheProvider}
-            from="en"
+            from={defaultLang}
             to={currentLang}
             googleApiKey={process.env.REACT_APP_GCP_PRIVATE_KEY}
           >

@@ -167,7 +167,9 @@ export default function Leaderboard(props) {
 
   return (
     <LeaderboardContainer hidden={currentView === "Personal"}>
-      <Title>Your rewards</Title>
+      <Title>
+        <Text>Your rewards</Text>
+      </Title>
       <PersonalRewardsTableContainer>
         {userAccount && userRoundData && userRoundData.position ? (
           <RewardsTableWrapper>

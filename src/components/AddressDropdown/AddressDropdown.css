@@ -29,6 +29,7 @@
   position: absolute;
   left: 0;
   top: calc(100% + 0.5rem);
+  width: 100%;
   min-width: 10rem;
   transform-origin: top right;
   border-radius: 4px;
@@ -50,7 +51,6 @@
   line-height: 150%;
   border-bottom: 1px solid var(--cell-highlight);
   transition: background-color 0.3s ease;
-  height: 40px;
   width: 100%;
   transition: background-color 0.3s ease;
   background-color: transparent;

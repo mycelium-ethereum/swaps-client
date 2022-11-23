@@ -9,7 +9,7 @@ import { RoundDropdown } from "../../components/RewardsRoundSelect/RewardsRoundS
 import { decodeReferralCode } from "../../Api/referrals";
 import { competitionPodiumContent } from "./presets";
 import { numberToOrdinal } from "../../utils/common";
-
+import { Text } from "../../components/Translation/Text";
 
 const TABLE_HEADINGS = [
   "Rank",
@@ -21,7 +21,7 @@ const TABLE_HEADINGS = [
   "Rewards (USD)",
 ];
 
-const COMPETITION_ROUND = '7';
+const COMPETITION_ROUND = "7";
 
 export default function ReferralLeaderboard(props) {
   const [isPodiumShown, setIsPodiumShown] = useState(true);
@@ -50,9 +50,7 @@ export default function ReferralLeaderboard(props) {
     }
   });
 
-  const modifiedRewardsMessage = [COMPETITION_ROUND].includes(selectedRound)
-    ? "Competition Round"
-    : rewardsMessage;
+  const modifiedRewardsMessage = [COMPETITION_ROUND].includes(selectedRound) ? "Competition Round" : rewardsMessage;
 
   return (
     <>
@@ -94,7 +92,13 @@ export default function ReferralLeaderboard(props) {
       <UserStatsRow userRoundData={userRoundData} />
       <Styles.FlexBetweenContainer>
         <Styles.LeaderboardTitle>
-          <img src={liveIcon} alt="Live" /> <span className="green">Live&nbsp;</span> <span>Referrals Leaderboard</span>
+          <img src={liveIcon} alt="Live" />{" "}
+          <span className="green">
+            <Text>Live</Text>&nbsp;
+          </span>{" "}
+          <span>
+            <Text>Referrals Leaderboard</Text>
+          </span>
         </Styles.LeaderboardTitle>
         <RoundDropdown
           allRoundsRewardsData={modifiedAllRoundsRewardsData}
@@ -108,7 +112,9 @@ export default function ReferralLeaderboard(props) {
           <thead>
             <tr>
               {TABLE_HEADINGS.map((heading) => (
-                <Styles.RewardsTableHeading>{heading}</Styles.RewardsTableHeading>
+                <Styles.RewardsTableHeading>
+                  <Text>{heading}</Text>
+                </Styles.RewardsTableHeading>
               ))}
             </tr>
           </thead>
@@ -138,7 +144,12 @@ const TableRow = ({ row, isUserRow, isTable }) => (
     <Styles.TableCell>{numberToOrdinal(row.position)}</Styles.TableCell>
     <Styles.TableCell>{row.referralCode ? decodeReferralCode(row.referralCode) : `-`}</Styles.TableCell>
     <Styles.TableCell className="tier">
-      <span>{`Tier ${getTierIdDisplay(row.tier)}`}</span> <span>{`${TIER_DISCOUNT_INFO[row.tier]}% discount`}</span>
+      <span>
+        <Text>Tier</Text> {`${getTierIdDisplay(row.tier)}`}
+      </span>{" "}
+      <span>
+        {`${TIER_DISCOUNT_INFO[row.tier]}%`} <Text>discount</Text>
+      </span>
     </Styles.TableCell>
     <Styles.TableCell>{row.tradersReferred}</Styles.TableCell>
     <Styles.TableCell>{row.numberOfTrades}</Styles.TableCell>
@@ -149,14 +160,18 @@ const TableRow = ({ row, isUserRow, isTable }) => (
 
 const UserStatsRow = ({ userRoundData }) => (
   <>
-    <span>Your rewards</span>
+    <span>
+      <Text>Your rewards</Text>
+    </span>
     <Styles.RewardsTableContainer>
       {userRoundData?.position ? (
         <Styles.RewardsTable>
           <thead>
             <tr>
               {TABLE_HEADINGS.map((heading) => (
-                <Styles.RewardsTableHeading>{heading}</Styles.RewardsTableHeading>
+                <Styles.RewardsTableHeading>
+                  <Text>{heading}</Text>
+                </Styles.RewardsTableHeading>
               ))}
             </tr>
           </thead>
@@ -165,7 +180,9 @@ const UserStatsRow = ({ userRoundData }) => (
           </tbody>
         </Styles.RewardsTable>
       ) : (
-        <Styles.NoData>No rewards data available</Styles.NoData>
+        <Styles.NoData>
+          <Text>No rewards data available</Text>
+        </Styles.NoData>
       )}
     </Styles.RewardsTableContainer>
   </>

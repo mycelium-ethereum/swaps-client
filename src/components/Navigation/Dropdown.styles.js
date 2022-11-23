@@ -91,7 +91,7 @@ export const LinkMenu = styled.ul(
 );
 
 export const NavLinkMenu = styled(LinkMenu)`
-  width: 180px;
+  min-width: 180px;
   @media (min-width: 1281px) {
     display: none;
   }
@@ -118,6 +118,7 @@ export const ListItem = styled.li(
   padding: 0;
   transition: background-color 0.3s ease;
   background-color: transparent;
+  white-space: nowrap;
 
   &:hover {
     background-color: var(--action-stroke);

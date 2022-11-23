@@ -18,10 +18,6 @@ export function changeLanguage(language: string = "") {
     window.localStorage.setItem("selectedLang", language);
     window.history.replaceState(null, "", `?lang=${language}`);
   }
-  else {
-    window.localStorage.removeItem("selectedLang");
-    window.history.replaceState(null, "", window.location.pathname);
-  }
 }
 
 export function changeFontFromLanguage(usesInterFont: boolean) {

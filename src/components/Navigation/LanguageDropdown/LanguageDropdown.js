@@ -78,24 +78,22 @@ export default function LanguageDropdown({ currentLang, setCurrentLang, isMobile
     const urlLang = getLanguageFromUrl();
     const localStorageLang = getLanguageFromLocalStorage();
     if (urlLang) {
-      const label = languages.filter((item) => item.lang === urlLang)[0]?.name || "English";
+      const label = languages.find((item) => item.lang === urlLang)?.nativeName || "English";
       setCurrentLangLabel(label);
     } else if (localStorageLang) {
-      const label = languages.filter((item) => item.lang === localStorageLang)[0]?.name || "English";
+      const label = languages.find((item) => item.lang === localStorageLang)?.nativeName || "English";
       setCurrentLangLabel(label);
     }
-    setCurrentLang && setCurrentLang(urlLang || localStorageLang);
-  }, [setCurrentLang]);
+  }, []);
 
   useEffect(() => {
-    if (currentLang && currentLang !== "en") {
+    if (currentLang?.length && currentLang !== "en") {
       changeLanguage(currentLang);
-      const languageItem = languages.filter((item) => item.lang === currentLang)[0];
-      const label = languageItem?.name || "English";
+      const languageItem = languages.find((item) => item.lang === currentLang);
       changeFontFromLanguage(languageItem?.useInterFont);
+      const label = languages.find((item) => item.lang === currentLang)?.nativeName || "English";
       setCurrentLangLabel(label);
-    } else {
-      changeLanguage();
+    } else if (currentLang?.length && currentLang === "en") {
       setCurrentLangLabel("English");
       changeFontFromLanguage(true);
     }

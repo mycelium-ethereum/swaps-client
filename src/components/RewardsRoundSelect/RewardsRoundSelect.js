@@ -78,10 +78,10 @@ export function RoundDropdown(props) {
                           }}
                         >
                           {rewardRound?.customRoundText ? (
-                            rewardRound.customRoundText
+                            <Text>rewardRound.customRoundText</Text>
                           ) : (
                             <>
-                              <Text>Round</Text> {parseFloat(rewardRound?.round) + 1}
+                              <Text>Round {parseFloat(rewardRound?.round) + 1}</Text>
                             </>
                           )}
                         </div>
