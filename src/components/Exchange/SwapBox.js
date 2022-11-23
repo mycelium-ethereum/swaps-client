@@ -311,22 +311,89 @@ export default function SwapBox(props) {
 
   const fromTokenInfo = getTokenInfo(infoTokens, fromTokenAddress);
   const toTokenInfo = getTokenInfo(infoTokens, toTokenAddress);
-  const toTokenAvailableUsd = toTokenInfo.availableUsd;
-
-  const renderAvailableLongLiquidity = () => {
-    if (!isLong) {
-      return null;
-    }
-
-    return (
-      <div className="Exchange-info-row">
-        <div className="Exchange-info-label">Available Liquidity</div>
-        <div className="align-right">{formatAmount(toTokenAvailableUsd, USD_DECIMALS, 2, true)}</div>
-      </div>
-    );
-  };
 
   const hasMaxAvailableShort = isShort && toTokenInfo.maxAvailableShort && toTokenInfo.maxAvailableShort.gt(0);
+
+  const renderAvailableLiquidity = () => {
+    if (!isLong && hasMaxAvailableShort) {
+      return (
+        <div className="Exchange-info-row">
+          <div className="Exchange-info-label">Available Liquidity</div>
+          <div className="align-right">
+            <Tooltip
+              handle={`${formatAmount(toTokenInfo.maxAvailableShort, USD_DECIMALS, 2, true)}`}
+              position="right-bottom"
+              renderContent={() => {
+                return (
+                  <>
+                    Max {toTokenInfo.symbol} short capacity: $
+                    {formatAmount(toTokenInfo.maxGlobalShortSize, USD_DECIMALS, 2, true)}
+                    <br />
+                    <br />
+                    Current {toTokenInfo.symbol} shorts: $
+                    {formatAmount(toTokenInfo.globalShortSize, USD_DECIMALS, 2, true)}
+                    <br />
+                  </>
+                );
+              }}
+            ></Tooltip>
+          </div>
+        </div>
+      )
+    } else if (isLong) {
+      return (
+        <div className="Exchange-info-row">
+          <div className="Exchange-info-label">Available Liquidity</div>
+          <div className="align-right">
+            <Tooltip
+              handle={`$${formatAmount(toTokenInfo.maxAvailableLong, USD_DECIMALS, 2, true)}`}
+              position="right-bottom"
+              renderContent={() => {
+                return (
+                  <>
+                    Max {toTokenInfo.symbol} long capacity: $
+                    {formatAmount(toTokenInfo.maxLongCapacity, USD_DECIMALS, 0, true)}
+                    <br />
+                    <br />
+                    Current {toTokenInfo.symbol} longs: $
+                    {formatAmount(toTokenInfo.guaranteedUsd, USD_DECIMALS, 0, true)}
+                    <br />
+                  </>
+                );
+              }}
+            ></Tooltip>
+          </div>
+        </div>
+      );
+    } else if (isSwap) {
+      return (
+        <div className="Exchange-info-row">
+          <div className="Exchange-info-label">Available Liquidity</div>
+          <div className="align-right al-swap">
+            <Tooltip
+              handle={`$${formatAmount(maxSwapAmountUsd, USD_DECIMALS, 2, true)}`}
+              position="right-bottom"
+              renderContent={() => {
+                return (
+                  <>
+                    {`Max ${fromTokenInfo.symbol} in: `}
+                    {formatAmount(maxFromTokenIn, fromTokenInfo.decimals, 0, true)} {fromTokenInfo.symbol} (${formatAmount(maxFromTokenInUSD, USD_DECIMALS, 0, true)})
+                    <br />
+                    <br />
+                    {`Max ${toTokenInfo.symbol} out: `}
+                    {formatAmount(maxToTokenOut, toTokenInfo.decimals, 0, true)} {toTokenInfo.symbol} (${formatAmount(maxToTokenOutUSD, USD_DECIMALS, 0, true)})
+                    <br />
+                  </>
+                );
+              }}
+            />
+          </div>
+        </div>
+      )
+    } // else
+    return null
+  };
+
 
   const fromBalance = fromTokenInfo ? fromTokenInfo.balance : bigNumberify(0);
   const toBalance = toTokenInfo ? toTokenInfo.balance : bigNumberify(0);
@@ -372,6 +439,48 @@ export default function SwapBox(props) {
     }
     return ratio;
   }, [triggerRatioValue, triggerRatioInverted]);
+
+  const maxToTokenOut = useMemo(() => {
+    const value = toTokenInfo.availableAmount?.gt(toTokenInfo.poolAmount?.sub(toTokenInfo.bufferAmount))
+      ? toTokenInfo.poolAmount?.sub(toTokenInfo.bufferAmount)
+      : toTokenInfo.availableAmount;
+
+    if (!value) {
+      return bigNumberify(0);
+    }
+
+    return value.gt(0) ? value : bigNumberify(0);
+  }, [toTokenInfo]);
+
+  const maxToTokenOutUSD = useMemo(() => {
+    return getUsd(maxToTokenOut, toTokenAddress, false, infoTokens);
+  }, [maxToTokenOut, toTokenAddress, infoTokens]);
+
+  const maxFromTokenInUSD = useMemo(() => {
+    const value = fromTokenInfo.maxUsdgAmount
+      ?.sub(fromTokenInfo.usdgAmount)
+      .mul(expandDecimals(1, USD_DECIMALS))
+      .div(expandDecimals(1, USDG_DECIMALS));
+
+    if (!value) {
+      return bigNumberify(0);
+    }
+
+    return value.gt(0) ? value : bigNumberify(0);
+  }, [fromTokenInfo]);
+
+  const maxFromTokenIn = useMemo(() => {
+    if (!fromTokenInfo.maxPrice) {
+      return bigNumberify(0);
+    }
+    return maxFromTokenInUSD?.mul(expandDecimals(1, fromTokenInfo.decimals)).div(fromTokenInfo.maxPrice).toString();
+  }, [maxFromTokenInUSD, fromTokenInfo]);
+
+  let maxSwapAmountUsd = bigNumberify(0);
+
+  if (maxToTokenOutUSD && maxFromTokenInUSD) {
+    maxSwapAmountUsd = maxToTokenOutUSD.lt(maxFromTokenInUSD) ? maxToTokenOutUSD : maxFromTokenInUSD;
+  }
 
   useEffect(() => {
     if (
@@ -732,7 +841,7 @@ export default function SwapBox(props) {
       toTokenInfo.availableAmount &&
       toAmount.gt(toTokenInfo.availableAmount)
     ) {
-      return ["Insufficient liquidity"];
+      return ["Insufficient liquidity: exceeds available"];
     }
     if (
       !isWrapOrUnwrap &&
@@ -741,7 +850,8 @@ export default function SwapBox(props) {
       toTokenInfo.poolAmount &&
       toTokenInfo.bufferAmount.gt(toTokenInfo.poolAmount.sub(toAmount))
     ) {
-      return ["Insufficient liquidity"];
+      console.log(toTokenInfo.poolAmount.toString(), toTokenInfo.bufferAmount.toString())
+      return ["Insufficient liquidity: exceeds buffer"];
     }
 
     if (
@@ -2270,6 +2380,7 @@ export default function SwapBox(props) {
               {getExchangeRateDisplay(getExchangeRate(fromTokenInfo, toTokenInfo), fromToken, toToken)}
             </ExchangeInfoRow>
           )}
+          {renderAvailableLiquidity()}
         </div>
       )}
       {(isLong || isShort) && (
@@ -2376,31 +2487,7 @@ export default function SwapBox(props) {
               </Tooltip>
             </div>
           </div>
-          {renderAvailableLongLiquidity()}
-          {hasMaxAvailableShort && (
-            <div className="Exchange-info-row">
-              <div className="Exchange-info-label">Available Liquidity</div>
-              <div className="align-right">
-                <Tooltip
-                  handle={`${formatAmount(toTokenInfo.maxAvailableShort, USD_DECIMALS, 2, true)}`}
-                  position="right-bottom"
-                  renderContent={() => {
-                    return (
-                      <>
-                        Max {toTokenInfo.symbol} short capacity: $
-                        {formatAmount(toTokenInfo.maxGlobalShortSize, USD_DECIMALS, 2, true)}
-                        <br />
-                        <br />
-                        Current {toTokenInfo.symbol} shorts: $
-                        {formatAmount(toTokenInfo.globalShortSize, USD_DECIMALS, 2, true)}
-                        <br />
-                      </>
-                    );
-                  }}
-                ></Tooltip>
-              </div>
-            </div>
-          )}
+          {renderAvailableLiquidity()}
         </div>
       )}
       <div className="Exchange-swap-market-box App-box App-box-border">
