@@ -12,6 +12,8 @@ import RewardRouter from "../../abis/RewardRouter.json";
 import RewardReader from "../../abis/RewardReader.json";
 import Token from "../../abis/Token.json";
 import MlpManager from "../../abis/MlpManager.json";
+import { WalletBalance, Divider, TokenAmountRow } from "../../components/Stake/Sections";
+import { CompatibleTokenEnum, TokenSizeEnum } from "../../components/Stake/types";
 
 import { ethers } from "ethers";
 import {
@@ -36,13 +38,10 @@ import {
   getStakingData,
   getProcessedData,
   getPageTitle,
+  expandDecimals,
+  ETH_DECIMALS,
 } from "../../Helpers";
-import {
-  callContract,
-  useMYCPrice,
-  useStakingApr,
-  useTotalMYCSupply,
-} from "../../Api";
+import { callContract, useMYCPrice, useStakingApr, useStakingBalances, useTotalMYCSupply } from "../../Api";
 import { getConstant } from "../../Constants";
 
 import useSWR from "swr";
@@ -59,6 +58,7 @@ import SEO from "../../components/Common/SEO";
 import ClaimModal from "./ClaimModal";
 import Toggle from "../../components/Toggle/Toggle";
 import MlpPriceChart from "./MlpPriceChart";
+import { ZERO_BN } from "src/components/Stake/presets";
 
 function CompoundModal(props) {
   const {
@@ -641,6 +641,8 @@ export default function StakeV2({
   );
 
   const stakingApr = useStakingApr(mycPrice, nativeTokenPrice);
+  const tempAddress = "0x9c69a8Cb88B3b8D6fC6976ee3C5B6fbCC92178C7";
+  const { mycBalance, esMycBalance, rewardsEarned } = useStakingBalances(tempAddress);
 
   let totalRewardTokens;
   if (processedData && processedData.bnMycInFeeMyc && processedData.bonusMycInFeeMyc) {
@@ -784,7 +786,7 @@ export default function StakeV2({
 
       <StakeV2Styled.StakeV2Content className="StakeV2-content">
         <StakeV2Styled.StakeV2Cards className="StakeV2-cards">
-          <StakeV2Styled.StakeV2Card>
+          <StakeV2Styled.StakeV2Card className="two-thirds">
             <div className="Page-title-section">
               <div className="Page-title">Earn</div>
               <div className="Page-description">
@@ -796,7 +798,9 @@ export default function StakeV2({
                 >
                   MLP
                 </a>{" "}
-                to earn rewards. Read the Terms of Use{" "}
+                to earn rewards.
+                <br />
+                Read the Terms of Use{" "}
                 <a href="https://mycelium.xyz/rewards-terms-of-use" target="_blank" rel="noopener noreferrer">
                   here
                 </a>
@@ -940,132 +944,206 @@ export default function StakeV2({
               </StakeV2Styled.MlpInfo>
             </StakeV2Styled.Card>
           </StakeV2Styled.StakeV2Card>
-          <StakeV2Styled.StakeV2Card>
-            <div className="Page-title-section">
-              <div className="Page-title">Vest</div>
-              <div className="Page-description">
-                Convert esMYC tokens to MYC tokens.
-                <br />
-                Please read the{" "}
-                <a
-                  href="https://swaps.docs.mycelium.xyz/protocol-design/mycelium-liquidity-pool-mlp/mlp-rewards/esmyc-escrowed-myc"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  vesting details
-                </a>{" "}
-                before using the vaults.
+          <div>
+            <StakeV2Styled.StakeV2Card>
+              <div className="Page-title-section">
+                <div className="Page-title">Stake MYC or esMYC</div>
+                <div className="Page-description">
+                  MYC and esMYC holders can stake their tokens and earn interest rewards. Read the terms and conditions{" "}
+                  <a href="https://stake.mycelium.xyz/" target="_blank" rel="noopener noreferrer">
+                    here (TBA)
+                  </a>
+                  .
+                </div>
               </div>
-            </div>
-            <StakeV2Styled.Card>
-              <StakeV2Styled.CardTitle className="App-card-title">
-                <img src={myc40Icon} alt="myc40Icon" />
-                esMYC Vault
-              </StakeV2Styled.CardTitle>
-              <StakeV2Styled.VestingInfo>
-                <StakeV2Styled.StakedTokens>
-                  <StakeV2Styled.RewardsBannerText secondary large>
-                    Vesting Tokens
-                  </StakeV2Styled.RewardsBannerText>
-                  <div>
-                    <StakeV2Styled.RewardsBannerTextWrap>
-                      <StakeV2Styled.RewardsBannerText large inline>
-                        {formatKeyAmount(vestingData, "mlpVesterVestedAmount", 18, 4, true)} esMYC
-                      </StakeV2Styled.RewardsBannerText>{" "}
-                      <StakeV2Styled.RewardsBannerText inline>
-                        ($
-                        {formatKeyAmount(processedData, "mlpVesterVestedAmountUsd", USD_DECIMALS, 2, true)})
-                      </StakeV2Styled.RewardsBannerText>
-                    </StakeV2Styled.RewardsBannerTextWrap>
-                  </div>
-                </StakeV2Styled.StakedTokens>
-                <StakeV2Styled.StakingBannerRow>
-                  <div className="App-card-row">
-                    <div className="label">Vesting Status</div>
-                    <div>
-                      <Tooltip
-                        handle={`${formatKeyAmount(vestingData, "mlpVesterClaimSum", 18, 4, true)} / ${formatKeyAmount(
-                          vestingData,
-                          "mlpVesterVestedAmount",
-                          18,
-                          4,
-                          true
-                        )}`}
-                        position="right-bottom"
-                        renderContent={() => {
-                          return (
-                            <>
-                              {formatKeyAmount(vestingData, "mlpVesterClaimSum", 18, 4, true)} tokens have been
-                              converted to MYC from the&nbsp;
-                              {formatKeyAmount(vestingData, "mlpVesterVestedAmount", 18, 4, true)} esMYC deposited for
-                              vesting.
-                            </>
-                          );
-                        }}
-                      />
+              <StakeV2Styled.Card>
+                <StakeV2Styled.VestingInfo>
+                  <StakeV2Styled.StakingBannerRow>
+                    <div className="App-card-row">
+                      <div className="label">Wallet</div>
+                      <div>
+                        <StakeV2Styled.FlexRowEnd>
+                          <WalletBalance
+                            walletAmount={mycBalance || ZERO_BN}
+                            mycUsdPrice={mycPrice || ZERO_BN}
+                            selectedToken={CompatibleTokenEnum.MYC}
+                          />
+                          <StakeV2Styled.StakingButton onClick={() => showMycVesterDepositModal()}>
+                            Stake
+                          </StakeV2Styled.StakingButton>
+                        </StakeV2Styled.FlexRowEnd>
+                        <StakeV2Styled.FlexRowEnd>
+                          <WalletBalance
+                            walletAmount={esMycBalance.div(expandDecimals(1, ETH_DECIMALS)) || ZERO_BN}
+                            mycUsdPrice={mycPrice || ZERO_BN}
+                            selectedToken={CompatibleTokenEnum.esMYC}
+                          />
+                          <StakeV2Styled.StakingButton onClick={() => showMycVesterDepositModal()}>
+                            Stake
+                          </StakeV2Styled.StakingButton>
+                        </StakeV2Styled.FlexRowEnd>
+                      </div>
                     </div>
-                  </div>
-                  <div className="App-card-row">
-                    <div className="label">Claimable</div>
+                    <StakeV2Styled.Divider />
+                    <div className="App-card-row">
+                      <div className="label">Staked</div>
+                      <div>
+                        <StakeV2Styled.FlexRowEnd>
+                          <WalletBalance
+                            walletAmount={mycBalance || ZERO_BN}
+                            mycUsdPrice={mycPrice || ZERO_BN}
+                            selectedToken={CompatibleTokenEnum.MYC}
+                          />
+                          <StakeV2Styled.StakingButton onClick={() => showMycVesterDepositModal()}>
+                            Withdraw
+                          </StakeV2Styled.StakingButton>
+                        </StakeV2Styled.FlexRowEnd>
+                        <StakeV2Styled.FlexRowEnd>
+                          <WalletBalance
+                            bottomBorder
+                            walletAmount={esMycBalance || ZERO_BN}
+                            mycUsdPrice={mycPrice || ZERO_BN}
+                            selectedToken={CompatibleTokenEnum.esMYC}
+                          />
+                          <StakeV2Styled.StakingButton onClick={() => showMycVesterDepositModal()}>
+                            Withdraw
+                          </StakeV2Styled.StakingButton>
+                        </StakeV2Styled.FlexRowEnd>
+                      </div>
+                    </div>
+                  </StakeV2Styled.StakingBannerRow>
+                  {stakingApr && (
+                    <StakeV2Styled.StakingBannerRow borderTop>
+                      <div className="App-card-row">
+                        <div className="label">APR</div>
+                        <div>
+                          <b>{stakingApr}%</b>
+                        </div>
+                      </div>
+                    </StakeV2Styled.StakingBannerRow>
+                  )}
+                  <StakeV2Styled.StakedTokens>
+                    <StakeV2Styled.FlexRowBetween>
+                      <span>Claimable Rewards</span>
+                      <TokenAmountRow
+                        tokenAmount={rewardsEarned.div(expandDecimals(1, ETH_DECIMALS)) || ZERO_BN}
+                        selectedToken={CompatibleTokenEnum.ETH}
+                        tokenSize={TokenSizeEnum.lg}
+                      />
+                    </StakeV2Styled.FlexRowBetween>
+                  </StakeV2Styled.StakedTokens>
+                </StakeV2Styled.VestingInfo>
+              </StakeV2Styled.Card>
+            </StakeV2Styled.StakeV2Card>
+            <StakeV2Styled.StakeV2Card>
+              <div className="Page-title-section">
+                <div className="Page-title">Vest</div>
+                <div className="Page-description">
+                  Convert esMYC tokens to MYC tokens.
+                  <br />
+                  Please read the{" "}
+                  <a
+                    href="https://swaps.docs.mycelium.xyz/protocol-design/mycelium-liquidity-pool-mlp/mlp-rewards/esmyc-escrowed-myc"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    vesting details
+                  </a>{" "}
+                  before using the vaults.
+                </div>
+              </div>
+              <StakeV2Styled.Card>
+                <StakeV2Styled.CardTitle className="App-card-title">
+                  <img src={myc40Icon} alt="myc40Icon" />
+                  esMYC Vault
+                </StakeV2Styled.CardTitle>
+                <StakeV2Styled.VestingInfo>
+                  <StakeV2Styled.StakedTokens>
+                    <StakeV2Styled.RewardsBannerText secondary>Vesting Tokens</StakeV2Styled.RewardsBannerText>
                     <div>
-                      <Tooltip
-                        handle={`${formatKeyAmount(vestingData, "mlpVesterClaimable", 18, 4, true)} MYC`}
-                        position="right-bottom"
-                        renderContent={() =>
-                          `${formatKeyAmount(
+                      <StakeV2Styled.RewardsBannerTextWrap>
+                        <StakeV2Styled.RewardsBannerText inline>
+                          {formatKeyAmount(vestingData, "mlpVesterVestedAmount", 18, 4, true)} esMYC
+                        </StakeV2Styled.RewardsBannerText>{" "}
+                        <StakeV2Styled.RewardsBannerText inline>
+                          ($
+                          {formatKeyAmount(processedData, "mlpVesterVestedAmountUsd", USD_DECIMALS, 2, true)})
+                        </StakeV2Styled.RewardsBannerText>
+                      </StakeV2Styled.RewardsBannerTextWrap>
+                    </div>
+                  </StakeV2Styled.StakedTokens>
+                  <StakeV2Styled.StakingBannerRow>
+                    <div className="App-card-row">
+                      <div className="label">Vesting Status</div>
+                      <div>
+                        <Tooltip
+                          handle={`${formatKeyAmount(
                             vestingData,
-                            "mlpVesterClaimable",
+                            "mlpVesterClaimSum",
                             18,
                             4,
                             true
-                          )} MYC tokens can be claimed, use the options under the Earn section to claim them.`
-                        }
-                      />
+                          )} / ${formatKeyAmount(vestingData, "mlpVesterVestedAmount", 18, 4, true)}`}
+                          position="right-bottom"
+                          renderContent={() => {
+                            return (
+                              <>
+                                {formatKeyAmount(vestingData, "mlpVesterClaimSum", 18, 4, true)} tokens have been
+                                converted to MYC from the&nbsp;
+                                {formatKeyAmount(vestingData, "mlpVesterVestedAmount", 18, 4, true)} esMYC deposited for
+                                vesting.
+                              </>
+                            );
+                          }}
+                        />
+                      </div>
                     </div>
-                  </div>
-                  <StakeV2Styled.Buttons>
-                    {!active && (
-                      <button className="App-button-option App-card-option" onClick={() => connectWallet()}>
-                        Connect Wallet
-                      </button>
-                    )}
-                    {active && (
-                      <button className="App-button-option App-card-option" onClick={() => showMycVesterDepositModal()}>
-                        Deposit
-                      </button>
-                    )}
-                    {active && (
-                      <button
-                        className="App-button-option App-card-option"
-                        onClick={() => showMycVesterWithdrawModal()}
-                      >
-                        Withdraw
-                      </button>
-                    )}
-                  </StakeV2Styled.Buttons>
-                </StakeV2Styled.StakingBannerRow>
-                <StakeV2Styled.StakingBannerRow borderTop>
-                  <StakeV2Styled.RewardsBannerText large title>
-                    MYC/esMYC Staking
-                  </StakeV2Styled.RewardsBannerText>
-                  <StakeV2Styled.RewardsBannerText secondary title>
-                    Stake MYC or esMYC to receive interest in ETH
-                  </StakeV2Styled.RewardsBannerText>
-                  {stakingApr && (
                     <div className="App-card-row">
-                      <div className="label">Staking APR</div>
-                      <div>{stakingApr}%</div>
+                      <div className="label">Claimable</div>
+                      <div>
+                        <Tooltip
+                          handle={`${formatKeyAmount(vestingData, "mlpVesterClaimable", 18, 4, true)} MYC`}
+                          position="right-bottom"
+                          renderContent={() =>
+                            `${formatKeyAmount(
+                              vestingData,
+                              "mlpVesterClaimable",
+                              18,
+                              4,
+                              true
+                            )} MYC tokens can be claimed, use the options under the Earn section to claim them.`
+                          }
+                        />
+                      </div>
                     </div>
-                  )}
-                  <StakeV2Styled.Buttons>
-                    <a href="https://stake.mycelium.xyz" target="_blank" rel="noopener noreferrer">
-                      <button className="App-button-option App-card-option">MYC/esMYC Staking</button>
-                    </a>
-                  </StakeV2Styled.Buttons>
-                </StakeV2Styled.StakingBannerRow>
-              </StakeV2Styled.VestingInfo>
-            </StakeV2Styled.Card>
-          </StakeV2Styled.StakeV2Card>
+                    <StakeV2Styled.Buttons>
+                      {!active && (
+                        <button className="App-button-option App-card-option" onClick={() => connectWallet()}>
+                          Connect Wallet
+                        </button>
+                      )}
+                      {active && (
+                        <button
+                          className="App-button-option App-card-option"
+                          onClick={() => showMycVesterDepositModal()}
+                        >
+                          Deposit
+                        </button>
+                      )}
+                      {active && (
+                        <button
+                          className="App-button-option App-card-option"
+                          onClick={() => showMycVesterWithdrawModal()}
+                        >
+                          Withdraw
+                        </button>
+                      )}
+                    </StakeV2Styled.Buttons>
+                  </StakeV2Styled.StakingBannerRow>
+                </StakeV2Styled.VestingInfo>
+              </StakeV2Styled.Card>
+            </StakeV2Styled.StakeV2Card>
+          </div>
         </StakeV2Styled.StakeV2Cards>
       </StakeV2Styled.StakeV2Content>
     </div>
