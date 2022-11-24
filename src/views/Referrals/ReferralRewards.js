@@ -18,7 +18,7 @@ export default function Rewards (props) {
     allRoundsRewardsData,
     latestRound,
     isClaiming,
-    handleClaim,
+    setIsClaimModalOpen,
     timeTillRewards,
     rewardsMessage,
     setSelectedRound,
@@ -56,7 +56,7 @@ export default function Rewards (props) {
         {active && <RewardsButton
           className={'App-cta large'}
           disabled={!userRoundData?.totalReward || userRoundData.totalReward.eq(0) || isClaiming || hasClaimed || hasClaimed === undefined || latestRound}
-          onClick={handleClaim}
+          onClick={() => setIsClaimModalOpen(true)}
         >
           Claim WETH
         </RewardsButton>}

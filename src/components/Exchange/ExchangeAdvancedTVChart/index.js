@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useMemo, useCallback } from "react";
 import cx from "classnames";
 import { widget } from "@mycelium-swaps-interface/charting_library";
-import { generateDataFeed, supportedResolutions } from "../../../Api/TradingView";
+import { dataFeed, supportedResolutions } from "../../../Api/TradingView";
+import {newPriceEmitter} from "src/Api/TradingView/newPriceEmitter";
 
 const getLanguageFromURL = () => {
   const regex = new RegExp("[\\?&]lang=([^&#]*)");
@@ -11,18 +12,20 @@ const getLanguageFromURL = () => {
 
 const convertLightweightChartPeriod = (period) => {
   switch (period) {
+    case "1m":
+      return supportedResolutions[0]; // 1
     case "5m":
-      return supportedResolutions[0]; // 5
+      return supportedResolutions[1]; // 5
     case "15m":
-      return supportedResolutions[1]; // 15
+      return supportedResolutions[2]; // 15
     case "1h":
-      return supportedResolutions[2]; //60
+      return supportedResolutions[3]; //60
     case "4h":
-      return supportedResolutions[3]; // 240
+      return supportedResolutions[4]; // 240
     case "1d":
-      return supportedResolutions[4]; // D
+      return supportedResolutions[5]; // D
     default:
-      return supportedResolutions[3]; // 240
+      return supportedResolutions[4]; // 240
   }
 };
 
@@ -61,20 +64,12 @@ export default function ExchangeAdvancedTVChart(props) {
   );
   const [tvWidget, setTvWidget] = useState(null);
   const [showChart, setShowChart] = useState(false);
-  const [prevPeriod, setPrevPeriod] = useState(period);
-  const [prevToken, setPrevToken] = useState(null);
-  const [prevPriceDataLength, setPrevPriceDataLength] = useState(0);
-
-  const dataFeed = useMemo(() => generateDataFeed(priceData), [priceData]);
 
   const createChart = useCallback(() => {
-    const advancedChartPeriod = convertLightweightChartPeriod(period);
     const widgetOptions = {
       ...defaultProps,
-      symbol: `${chartToken?.address}:${chartToken?.symbol}/USD`,
       debug: false,
       datafeed: dataFeed,
-      interval: advancedChartPeriod,
       container: "tv_chart_container",
       library_path: "/charting_library/",
       locale: getLanguageFromURL() || "en",
@@ -85,9 +80,7 @@ export default function ExchangeAdvancedTVChart(props) {
         "go_to_date",
         "header_resolutions",
       ],
-      chartToken: chartToken,
       enabled_features: [],
-      timeframe: TIMEFRAME[period],
       overrides: {
         "paneProperties.backgroundType": "solid",
         "paneProperties.background": "#000a00",
@@ -136,67 +129,40 @@ export default function ExchangeAdvancedTVChart(props) {
       const tvWidget = new widget(widgetOptions);
       tvWidget.onChartReady(() => {
         setShowChart(true);
+        setTvWidget(tvWidget);
       });
-      setTvWidget(tvWidget);
     } catch (error) {
       console.error(error);
     }
-  }, [chartToken, dataFeed, defaultProps, period]);
+  }, []);
 
   // Create chart
   useEffect(() => {
-    if (!tvWidget && priceData?.length && chartToken) {
+    if (!tvWidget) {
       createChart();
     }
-  }, [chartToken, priceData, tvWidget, createChart]);
-
-  // Update chart on period change
-  useEffect(() => {
-    if (tvWidget && prevPeriod !== period && priceData?.length !== prevPriceDataLength && priceData?.length > 0) {
-      setPrevPeriod(period);
-      setPrevPriceDataLength(priceData.length);
-      setShowChart(false);
-      setTimeout(() => {
-        if (tvWidget) {
-          tvWidget.remove();
-          setTvWidget(null);
-        }
-        createChart();
-      }, 300); // Wait for overlay animation to complete
-    }
-  }, [period, prevPeriod, tvWidget, createChart, prevPriceDataLength, priceData?.length]);
-
-  // Recreate chart on token change
-  useEffect(() => {
-    if (showChart && tvWidget && priceData?.length !== prevPriceDataLength && prevToken !== chartToken?.address) {
-      setShowChart(false);
-      setPrevToken(chartToken?.address);
-      setTimeout(() => {
-        if (tvWidget) {
-          tvWidget.remove();
-          setTvWidget(null);
-        }
-        createChart();
-      }, 300); // Wait for overlay animation to complete
-    }
-  }, [
-    showChart,
-    prevToken,
-    tvWidget,
-    priceData,
-    chartToken?.address,
-    chartToken?.symbol,
-    period,
-    createChart,
-    prevPriceDataLength,
-  ]);
+  }, [tvWidget]);
 
   useEffect(() => {
-    if (!priceData) {
-      tvWidget.remove();
-      setTvWidget(null);
+    if (tvWidget && tvWidget.activeChart && period && chartToken?.symbol) {
+      const advancedChartPeriod = convertLightweightChartPeriod(period);
+      const resetChart = async () => {
+        setShowChart(false);
+        tvWidget.activeChart().setSymbol(`Swaps:${chartToken.symbol}/USD`);
+        tvWidget.activeChart().setResolution(advancedChartPeriod, () => {
+          setShowChart(true);
+        })
+      }
+      resetChart()
     }
-  }, [tvWidget, priceData]);
+  }, [tvWidget, period, chartToken?.symbol])
+
+  useEffect(() => {
+    if (tvWidget && priceData && showChart && priceData.length >= 1) {
+      const lastBar = priceData[priceData.length - 1];
+      newPriceEmitter.emit('update', lastBar)
+    }
+  }, [tvWidget, showChart, priceData])
 
   if (!priceData || !chartToken) {
     return null;
