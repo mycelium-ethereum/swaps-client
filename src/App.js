@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useCallback, useRef, useMemo } from "react";
 import { SWRConfig } from "swr";
 import { ethers } from "ethers";
 
@@ -12,6 +12,7 @@ import { Switch, Route, NavLink, useLocation } from "react-router-dom";
 import { ThemeProvider } from "@tracer-protocol/tracer-ui";
 import { useAnalytics } from "./segmentAnalytics";
 import { getTokens, getWhitelistedTokens } from "./data/Tokens";
+import { getServerUrl } from "src/lib";
 
 import {
   SLIPPAGE_BPS_KEY,
@@ -710,6 +711,64 @@ function FullApp() {
     [chainId, active]
   );
 
+  const { data: currentRewardRound, error: failedFetchingRoundRewards } = useSWR(
+    [getServerUrl(chainId, "/tradingRewards"), "latest"],
+    {
+      fetcher: (url, round) => fetch(`${url}&round=${round}`).then((res) => res.json()),
+    }
+  );
+
+  const [leaderboardData, setLeaderboardData] = useState([]);
+
+  // Get volume, position and reward from user round data
+  const userPosition = useMemo(() => {
+    if (!leaderboardData) {
+      return undefined;
+    }
+    const leaderBoardIndex = leaderboardData?.findIndex(
+      (trader) => trader.user_address.toLowerCase() === account?.toLowerCase()
+    );
+    return leaderBoardIndex + 1;
+  }, [account, leaderboardData]);
+
+  useEffect(() => {
+    if (!currentRewardRound || !!currentRewardRound?.message) {
+      return undefined;
+    }
+    const traders = currentRewardRound.rewards
+      ?.sort((a, b) => b.volume - a.volume)
+      .map((trader) => {
+        const positionReward = ethers.BigNumber.from(trader.reward);
+        const degenReward = ethers.BigNumber.from(trader.degen_reward);
+
+        return {
+          ...trader,
+          totalReward: positionReward.add(degenReward),
+          positionReward,
+          degenReward,
+        };
+      }); // Sort traders by highest to lowest in volume
+    setLeaderboardData(traders);
+  }, [currentRewardRound]);
+
+  const updateLeaderboardOptimistically = (volumeToAdd) => {
+    const _leaderboardData = [...leaderboardData];
+    const currentUser = _leaderboardData.find(
+      (trader) => trader?.user_address?.toLowerCase() === account?.toLowerCase()
+    );
+    if (currentUser) {
+      currentUser.volume = ethers.BigNumber.from(currentUser.volume).add.ethers.BigNumber.from(volumeToAdd).toString();
+    } else {
+      _leaderboardData.push({
+        user_address: account,
+        volume: volumeToAdd,
+        reward: 0,
+        degen_reward: 0,
+      });
+    }
+    setLeaderboardData(_leaderboardData);
+  };
+
   return (
     <>
       <div
@@ -883,6 +942,7 @@ function FullApp() {
                 trackAction={trackAction}
                 analytics={analytics}
                 sidebarVisible={sidebarVisible}
+                updateLeaderboardOptimistically={updateLeaderboardOptimistically}
               />
             </Route>
             <Route exact path="/dashboard">

@@ -1,6 +1,7 @@
 import { useEffect, useRef } from "react";
 import { NavLink } from "react-router-dom";
-import { Link } from "react-router-dom";
+// import { Link } from "react-router-dom";
+import { LiveLeaderboard } from "src/components/Navigation/Sidebar/LiveLeaderboard";
 import {
   MenuContainer,
   SideMenu,
@@ -13,13 +14,13 @@ import {
   CopyrightYear,
   LegalMenu,
   FixedContainer,
-  EventBox,
-  EventHeader,
-  EventContent,
-  EventGraphic,
-  ViewNowButton,
-  EventDescription,
-  EventTitle,
+  // EventBox,
+  // EventHeader,
+  // EventContent,
+  // EventGraphic,
+  // ViewNowButton,
+  // EventDescription,
+  // EventTitle,
 } from "./Sidebar.styles";
 
 import { ReactComponent as TradeIcon } from "../../../img/nav/trade.svg";
@@ -147,6 +148,7 @@ export default function Sidebar({ sidebarVisible, setSidebarVisible }) {
                 <DocsIcon /> Docs
               </a>
             </BottomMenuItem>
+            <LiveLeaderboard />
             <SocialLinksMenu>
               {socialLinks.map((item) => (
                 <a href={item.path} target="_blank" rel="noopener noreferrer">

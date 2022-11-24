@@ -1,22 +1,15 @@
 import styled from "styled-components";
 import { NavLink } from "react-router-dom";
 
-export const LeaderboardContainer = styled.div(
-  (props) => `
-    position: fixed;
-    top: 60px;
-    right: 16px;
-    width: 388px;
-    padding: 12px 16px;
-    border-radius: 4px;
-    border: 1px solid var(--cell-stroke);
-    background: linear-gradient(119.04deg, #003100 -3.31%, rgba(0, 49, 0, 0) 76.25%), #000a00;
-    z-index: 998;
-    transition: opacity 0.3s ease;
-    pointer-events: ${props.isActive ? "all" : "none"};
-    opacity: ${props.isActive ? 1 : 0};
-  `
-);
+export const LeaderboardContainer = styled.div`
+  width: 388px;
+  padding: 12px 16px;
+  border-radius: 4px;
+  border: 1px solid var(--cell-stroke);
+  background: rgba(0, 49, 0, 0.4);
+  z-index: 998;
+  transition: opacity 0.3s ease;
+`;
 
 export const LeaderboardHeader = styled.div`
   display: flex;

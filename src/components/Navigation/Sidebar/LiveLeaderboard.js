@@ -1,23 +1,19 @@
-import { useEffect, useMemo, useState } from "react";
+import { useMemo } from "react";
 import { ethers } from "ethers";
 import { useWeb3React } from "@web3-react/core";
 import Jazzicon, { jsNumberForAddress } from "react-jazzicon";
 import Davatar from "@davatar/react";
-import { useENS, truncateMiddleEthAddress, formatAmount, USD_DECIMALS } from "../../Helpers";
-import liveIcon from "../../img/live.svg";
-import closeIcon from "../../img/close.svg";
-import { ReactComponent as PositionIndicator } from "../../img/position-indicator.svg";
+import { useENS, truncateMiddleEthAddress, formatAmount, useChainId, USD_DECIMALS } from "../../../Helpers";
+import { ReactComponent as PositionIndicator } from "../../../img/position-indicator.svg";
 import * as Styles from "./LiveLeaderboard.styles";
+import liveIcon from "../../../img/live.svg";
 
 const ARBISCAN_URL = "https://arbiscan.io/address/";
-const VISIBLE_DURATION = 5000;
 const MIN_PERCENTAGE = 4;
 const MAX_PERCENTAGE = 98;
 let timeout;
 
-export default function LiveLeaderboard(props) {
-  const { userPosition, leaderboardData, fivePercentOfFees, isVisible, setIsVisible } = props;
-  const [isCountdownTriggered, setIsCountdownTriggered] = useState(false);
+export const LiveLeaderboard = ({ leaderboardData, userPosition }) => {
   const { account } = useWeb3React();
   const { ensName } = useENS(account);
 
@@ -74,25 +70,13 @@ export default function LiveLeaderboard(props) {
     }
   };
 
-  useEffect(() => {
-    if (isVisible && !isCountdownTriggered) {
-      timeout = setTimeout(() => {
-        setIsVisible(false);
-        setIsCountdownTriggered(true);
-      }, VISIBLE_DURATION);
-    }
-  }, [isVisible, isCountdownTriggered, setIsVisible]);
-
   return (
-    <Styles.LeaderboardContainer isActive={isVisible && userPosition} onMouseEnter={clearTimeout(timeout)}>
+    <Styles.LeaderboardContainer onMouseEnter={clearTimeout(timeout)}>
       <Styles.LeaderboardHeader>
         <Styles.FlexContainer>
           <img src={liveIcon} alt="Live" />
           <span className="green">Live</span> Leaderboard
         </Styles.FlexContainer>
-        <Styles.CloseButton onClick={() => setIsVisible(false)}>
-          <Styles.CloseIcon src={closeIcon} alt="Close" />
-        </Styles.CloseButton>
       </Styles.LeaderboardHeader>
       <Styles.LeaderboardBody>
         {userPosition &&
@@ -116,11 +100,8 @@ export default function LiveLeaderboard(props) {
         userPercentage={userPercentage === 0 && leaderboardData.length === 1 ? MAX_PERCENTAGE : userPercentage}
       />
       <Styles.BottomContainer>
-        {differenceBetweenUserAndTopFive && fivePercentOfFees && (
-          <AmountToTopFive
-            fivePercentOfFees={fivePercentOfFees}
-            differenceBetweenUserAndTopFive={differenceBetweenUserAndTopFive}
-          />
+        {differenceBetweenUserAndTopFive && (
+          <AmountToTopFive differenceBetweenUserAndTopFive={differenceBetweenUserAndTopFive} />
         )}
         <Styles.ViewLeaderboardButton exact to="/rewards#leaderboard">
           View Leaderboard
@@ -128,7 +109,7 @@ export default function LiveLeaderboard(props) {
       </Styles.BottomContainer>
     </Styles.LeaderboardContainer>
   );
-}
+};
 
 const TableRow = ({ position, opacity, isUserRow, user_address, volume, ensName }) => (
   <Styles.UserRow opacity={opacity} isUser={isUserRow}>
@@ -170,11 +151,10 @@ const ProgressToTopFive = ({ userPercentage }) => (
   </Styles.ProgressBarContainer>
 );
 
-const AmountToTopFive = ({ differenceBetweenUserAndTopFive, fivePercentOfFees }) => (
+const AmountToTopFive = ({ differenceBetweenUserAndTopFive }) => (
   <Styles.AmountText>
     <span>
-      Trade <b>${formatAmount(differenceBetweenUserAndTopFive, USD_DECIMALS, 2, true)}</b> to share in
-      <br /> <b>${formatAmount(fivePercentOfFees, USD_DECIMALS, 2, true)}</b> rewards
+      Trade <b>${formatAmount(differenceBetweenUserAndTopFive, USD_DECIMALS, 2, true)}</b> to unlock Top 5% Rewards
     </span>
   </Styles.AmountText>
 );
