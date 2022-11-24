@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
-import { NavLink } from "react-router-dom";
-// import { Link } from "react-router-dom";
+import { NavLink, Link, useLocation } from "react-router-dom";
 import { LiveLeaderboard } from "src/components/Navigation/Sidebar/LiveLeaderboard";
+import { useWeb3React } from "@web3-react/core";
 import {
   MenuContainer,
   SideMenu,
@@ -14,13 +14,13 @@ import {
   CopyrightYear,
   LegalMenu,
   FixedContainer,
-  // EventBox,
-  // EventHeader,
-  // EventContent,
-  // EventGraphic,
-  // ViewNowButton,
-  // EventDescription,
-  // EventTitle,
+  EventBox,
+  EventHeader,
+  EventContent,
+  EventGraphic,
+  TradeNowButton,
+  EventDescription,
+  EventTitle,
 } from "./Sidebar.styles";
 
 import { ReactComponent as TradeIcon } from "../../../img/nav/trade.svg";
@@ -39,7 +39,7 @@ import { ReactComponent as DiscordIcon } from "../../../img/nav/discord.svg";
 import { ReactComponent as PullTabSvg } from "../../../img/nav/pull-tab.svg";
 // import { ReactComponent as TranslateIcon } from "../../../img/nav/translate.svg";
 import graphic from "../../../img/nav/event-graphic.png";
-
+import liveIcon from "../../../img/nav/live.svg";
 import logoImg from "../../../img/logo_MYC.svg";
 
 const navTopLinks = [
@@ -93,7 +93,9 @@ const socialLinks = [
   },
 ];
 
-export default function Sidebar({ sidebarVisible, setSidebarVisible }) {
+export default function Sidebar({ sidebarVisible, setSidebarVisible, userPosition, leaderboardData }) {
+  const { active } = useWeb3React();
+  const location = useLocation();
   const yearRef = useRef(null);
 
   const setYear = () => {
@@ -112,7 +114,7 @@ export default function Sidebar({ sidebarVisible, setSidebarVisible }) {
       </PullTab>
       <SideMenu visible={sidebarVisible}>
         <Logo visible={sidebarVisible}>
-          <NavLink exact className="App-header-link-main" to="/">
+          <NavLink className="App-header-link-main" to="/">
             <img src={logoImg} alt="Perpetual Swaps Logo" />
           </NavLink>
         </Logo>
@@ -139,6 +141,26 @@ export default function Sidebar({ sidebarVisible, setSidebarVisible }) {
                 </a>
               </MenuItem>
             </NavMenu>
+            {active && userPosition > 0 ? (
+              <LiveLeaderboard userPosition={userPosition} leaderboardData={leaderboardData} />
+            ) : (
+              <EventBox>
+                <EventHeader>
+                  <span>TRADING LEADERBOARD</span>
+                  <span>
+                    <img src={liveIcon} alt="live" />
+                    &nbsp;LIVE
+                  </span>
+                </EventHeader>
+                <EventContent>
+                  <EventGraphic src={graphic} />
+                  <EventTitle>Optimising your trades with Mycelium.</EventTitle>
+                  <EventDescription>Trade Now to join the Leaderboard</EventDescription>
+                  <Link to="/">{location?.pathname !== "/" && <TradeNowButton>Trade Now</TradeNowButton>}</Link>
+                </EventContent>
+              </EventBox>
+            )}
+
             <BottomMenuItem>
               <a
                 href="https://swaps.docs.mycelium.xyz/perpetual-swaps/mycelium-perpetual-swaps"
@@ -148,7 +170,6 @@ export default function Sidebar({ sidebarVisible, setSidebarVisible }) {
                 <DocsIcon /> Docs
               </a>
             </BottomMenuItem>
-            <LiveLeaderboard />
             <SocialLinksMenu>
               {socialLinks.map((item) => (
                 <a href={item.path} target="_blank" rel="noopener noreferrer">

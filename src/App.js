@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef, useMemo } from "react";
+import React, { useState, useEffect, useCallback, useRef, useMemo } from "react";
 import { SWRConfig } from "swr";
 import { ethers } from "ethers";
 
@@ -120,7 +120,7 @@ import PageNotFound from "./views/PageNotFound/PageNotFound";
 import useSWR from "swr";
 import LinkDropdown from "./components/Navigation/LinkDropdown/LinkDropdown";
 import Sidebar from "./components/Navigation/Sidebar/Sidebar";
-import EventModal from "./components/EventModal/EventModal";
+// import EventModal from "./components/EventModal/EventModal";
 import AppDropdown from "./components/AppDropdown/AppDropdown";
 import { useInfoTokens } from "./hooks/useInfoTokens";
 // import { Banner, BannerContent } from "./components/Banner/Banner";
@@ -728,6 +728,7 @@ function FullApp() {
     const leaderBoardIndex = leaderboardData?.findIndex(
       (trader) => trader.user_address.toLowerCase() === account?.toLowerCase()
     );
+
     return leaderBoardIndex + 1;
   }, [account, leaderboardData]);
 
@@ -756,15 +757,20 @@ function FullApp() {
     const currentUser = _leaderboardData.find(
       (trader) => trader?.user_address?.toLowerCase() === account?.toLowerCase()
     );
+    // If user exists, update volume
     if (currentUser) {
-      currentUser.volume = ethers.BigNumber.from(currentUser.volume).add.ethers.BigNumber.from(volumeToAdd).toString();
-    } else {
-      _leaderboardData.push({
+      currentUser.volume = ethers.BigNumber.from(currentUser.volume).add(ethers.BigNumber.from(volumeToAdd).toString());
+    }
+    // Otherwise insert at the end of the list after users without volume
+    else {
+      const firstUserIndexWithoutVolume = leaderboardData.findIndex((trader) => trader?.volume === "0");
+      const userItem = {
         user_address: account,
         volume: volumeToAdd,
         reward: 0,
         degen_reward: 0,
-      });
+      };
+      _leaderboardData.splice(firstUserIndexWithoutVolume, 0, userItem);
     }
     setLeaderboardData(_leaderboardData);
   };
@@ -1032,7 +1038,12 @@ function FullApp() {
             </Route>
           </Switch>
         </div>
-        <Sidebar sidebarVisible={sidebarVisible} setSidebarVisible={setSidebarVisible} />
+        <Sidebar
+          sidebarVisible={sidebarVisible}
+          setSidebarVisible={setSidebarVisible}
+          userPosition={userPosition}
+          leaderboardData={leaderboardData}
+        />
         {/* <Footer /> */}
       </div>
       <ToastContainer

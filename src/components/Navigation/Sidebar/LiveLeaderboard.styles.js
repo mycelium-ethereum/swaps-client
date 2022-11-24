@@ -1,38 +1,50 @@
+import { Link } from "react-router-dom";
 import styled from "styled-components";
-import { NavLink } from "react-router-dom";
+
+export const ArbiscanLink = styled.a.attrs({
+  target: "_blank",
+  rel: "noreferrer noopener",
+})`
+  display: block;
+  text-decoration: none;
+  margin-bottom: 4px;
+
+  &:last-of-type {
+    margin-bottom: 0;
+  }
+`;
 
 export const LeaderboardContainer = styled.div`
-  width: 388px;
-  padding: 12px 16px;
+  position: relative;
+  margin: 16px;
   border-radius: 4px;
   border: 1px solid var(--cell-stroke);
-  background: rgba(0, 49, 0, 0.4);
-  z-index: 998;
-  transition: opacity 0.3s ease;
+  overflow: hidden;
+  font-size: 12px;
 `;
 
 export const LeaderboardHeader = styled.div`
+  position: relative;
   display: flex;
-  align-items: center;
   justify-content: space-between;
-  font-weight: bold;
-  width: 100%;
-  margin-bottom: 8px;
-  .green {
-    color: var(--action-active);
-    display: inline-block;
-    margin-right: 8px;
-  }
-  img {
-    width: 27px;
-    height: 20px;
-    margin-right: 8px;
+  z-index: 1;
+  border-top-left-radius: 4px;
+  border-top-right-radius: 4px;
+  padding: 6px 8px;
+  color: var(--background-primary);
+  font-size: 8px;
+  line-height: 12px;
+  font-weight: 600;
+  font-family: "Inter", sans-serif;
+  background-color: var(--light-green);
+  > span {
+    display: flex;
+    align-items: center;
   }
 `;
 
 export const LeaderboardBody = styled.div`
-  margin-bottom: 40px;
-  padding-right: 24px;
+  padding: 4px 4px 8px;
 `;
 
 export const FlexContainer = styled.div`
@@ -58,8 +70,7 @@ export const UserRow = styled.div(
     align-items: center;
     width: 100%;
     opacity: ${props.opacity};
-    margin-bottom: 4px;
-    min-height: 40px;
+    min-height: 29px;
     filter: ${props.isUser ? "drop-shadow(0px 0px 10px rgba(9, 130, 0, 0.6))" : "none"};
     background: ${props.isUser ? "linear-gradient(111.31deg, #003000 23.74%, rgba(0, 48, 0, 0) 99.29%)" : "none"};
     ${Position} {
@@ -80,8 +91,9 @@ export const Position = styled.span`
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-height: 40px;
-  width: 80px;
+  min-height: 29px;
+  width: 40px;
+  min-width: 40px;
   border-top-left-radius: 4px;
   border-bottom-left-radius: 4px;
 `;
@@ -89,7 +101,7 @@ export const Position = styled.span`
 export const UserAddress = styled.span`
   display: inline-flex;
   align-items: center;
-  padding: 0 30px 0 16px;
+  padding-left: 16px;
   height: 100%;
 `;
 
@@ -98,13 +110,11 @@ export const Volume = styled.span`
   align-items: center;
   padding-right: 5px;
   height: 100%;
+  padding-right: 12px;
 `;
 
 export const UserDetails = styled.div`
   margin-left: 8px;
-  a {
-    text-decoration: none;
-  }
   span {
     display: block;
   }
@@ -125,7 +135,7 @@ export const BorderOutline = styled.div`
   border-width: 1px;
   border-left-width: 0;
   border-style: solid;
-  height: 40px;
+  height: 29px;
 `;
 
 export const ProgressBarContainer = styled.div`
@@ -210,36 +220,33 @@ export const FivePercentIndicator = styled(Indicator)`
 
 export const BoldPercentage = styled.span`
   font-weight: bold;
-  font-size: 12px;
 `;
 
 export const BottomContainer = styled.div`
   display: flex;
-  flex-direction: column;
-  justify-content: center;
   align-items: center;
   justify-content: space-between;
+  padding: 8px 9px 10px 16px;
+  border-top: 1px solid var(--cell-stroke);
 `;
 
-export const ViewLeaderboardButton = styled(NavLink)`
+export const TradeNowButton = styled(Link)`
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0 20px;
+  padding: 0 14px;
   white-space: nowrap;
-  height: 40px;
+  height: 27px;
   background-color: var(--action-active);
-  border-radius: 4px;
+  border-radius: 3px;
   border: none;
   transition: background-color 0.3s ease;
   color: white;
   text-decoration: none;
-  margin-top: 16px;
+  margin-left: 16px;
   &:hover {
     background-color: var(--cell-stroke);
   }
 `;
 
-export const AmountText = styled.div`
-  text-align: center;
-`;
+export const AmountText = styled.div``;

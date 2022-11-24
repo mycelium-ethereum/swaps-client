@@ -3,17 +3,19 @@ import { ethers } from "ethers";
 import { useWeb3React } from "@web3-react/core";
 import Jazzicon, { jsNumberForAddress } from "react-jazzicon";
 import Davatar from "@davatar/react";
-import { useENS, truncateMiddleEthAddress, formatAmount, useChainId, USD_DECIMALS } from "../../../Helpers";
-import { ReactComponent as PositionIndicator } from "../../../img/position-indicator.svg";
+import { useENS, truncateMiddleEthAddress, formatAmount, USD_DECIMALS } from "../../../Helpers";
+// import { ReactComponent as PositionIndicator } from "../../../img/position-indicator.svg";
 import * as Styles from "./LiveLeaderboard.styles";
-import liveIcon from "../../../img/live.svg";
+import liveIcon from "../../../img/nav/live.svg";
+import { useLocation } from "react-router-dom";
 
 const ARBISCAN_URL = "https://arbiscan.io/address/";
-const MIN_PERCENTAGE = 4;
-const MAX_PERCENTAGE = 98;
-let timeout;
+// const MIN_UI_PERCENTAGE = 10;
+// const MAX_UI_PERCENTAGE = 91.3;
+const BOTTOM_PERCENT = 95;
 
 export const LiveLeaderboard = ({ leaderboardData, userPosition }) => {
+  const location = useLocation();
   const { account } = useWeb3React();
   const { ensName } = useENS(account);
 
@@ -71,12 +73,13 @@ export const LiveLeaderboard = ({ leaderboardData, userPosition }) => {
   };
 
   return (
-    <Styles.LeaderboardContainer onMouseEnter={clearTimeout(timeout)}>
+    <Styles.LeaderboardContainer>
       <Styles.LeaderboardHeader>
-        <Styles.FlexContainer>
-          <img src={liveIcon} alt="Live" />
-          <span className="green">Live</span> Leaderboard
-        </Styles.FlexContainer>
+        <span>TRADING LEADERBOARD</span>
+        <span>
+          <img src={liveIcon} alt="live" />
+          &nbsp;LIVE
+        </span>
       </Styles.LeaderboardHeader>
       <Styles.LeaderboardBody>
         {userPosition &&
@@ -96,65 +99,74 @@ export const LiveLeaderboard = ({ leaderboardData, userPosition }) => {
             );
           })}
       </Styles.LeaderboardBody>
-      <ProgressToTopFive
-        userPercentage={userPercentage === 0 && leaderboardData.length === 1 ? MAX_PERCENTAGE : userPercentage}
-      />
+      {/* <ProgressToTopFive
+        userPercentage={
+          userPercentage === 0 || leaderboardData.length === 1 || userPercentage > MAX_UI_PERCENTAGE
+            ? MAX_UI_PERCENTAGE
+            : userPercentage
+        }
+      /> */}
       <Styles.BottomContainer>
-        {differenceBetweenUserAndTopFive && (
-          <AmountToTopFive differenceBetweenUserAndTopFive={differenceBetweenUserAndTopFive} />
+        {differenceBetweenUserAndTopFive && userPercentage >= 0 && (
+          <AmountToTopFive
+            differenceBetweenUserAndTopFive={differenceBetweenUserAndTopFive}
+            userPercentage={userPercentage}
+          />
         )}
-        <Styles.ViewLeaderboardButton exact to="/rewards#leaderboard">
-          View Leaderboard
-        </Styles.ViewLeaderboardButton>
+        {location?.pathname !== "/" && <Styles.TradeNowButton to="/">Trade Now</Styles.TradeNowButton>}
       </Styles.BottomContainer>
     </Styles.LeaderboardContainer>
   );
 };
 
 const TableRow = ({ position, opacity, isUserRow, user_address, volume, ensName }) => (
-  <Styles.UserRow opacity={opacity} isUser={isUserRow}>
-    <Styles.Position>#{position}</Styles.Position>
-    <Styles.BorderOutline>
-      <Styles.UserAddress>
-        {ensName ? (
-          <Davatar size={24} address={user_address} />
-        ) : (
-          <Jazzicon diameter={24} seed={jsNumberForAddress(user_address)} />
-        )}
-        <Styles.UserDetails>
-          <a href={`${ARBISCAN_URL}${user_address}`} rel="noopener noreferrer" target="_blank">
+  <Styles.ArbiscanLink href={`${ARBISCAN_URL}${user_address}`} rel="noopener noreferrer" target="_blank">
+    <Styles.UserRow opacity={opacity} isUser={isUserRow}>
+      <Styles.Position>#{position}</Styles.Position>
+      <Styles.BorderOutline>
+        <Styles.UserAddress>
+          {ensName ? (
+            <Davatar size={16} address={user_address} />
+          ) : (
+            <Jazzicon diameter={16} seed={jsNumberForAddress(user_address)} />
+          )}
+          <Styles.UserDetails>
             <span>{truncateMiddleEthAddress(user_address)}</span>
-          </a>
-          <span>{ensName}</span>
-        </Styles.UserDetails>
-      </Styles.UserAddress>
-      <Styles.Volume>${formatAmount(volume, USD_DECIMALS, 2, true)}</Styles.Volume>
-    </Styles.BorderOutline>
-  </Styles.UserRow>
+            <span>{ensName}</span>
+          </Styles.UserDetails>
+        </Styles.UserAddress>
+        <Styles.Volume>${formatAmount(volume, USD_DECIMALS, 2, true)}</Styles.Volume>
+      </Styles.BorderOutline>
+    </Styles.UserRow>
+  </Styles.ArbiscanLink>
 );
 
-const ProgressToTopFive = ({ userPercentage }) => (
-  <Styles.ProgressBarContainer>
-    <Styles.ProgressBar />
-    <Styles.UserIndicator percent={userPercentage === 0 ? MIN_PERCENTAGE : userPercentage}>
-      <PositionIndicator />
-      <Styles.IndicatorBar />
-      <Styles.IndicatorLabel>You</Styles.IndicatorLabel>
-    </Styles.UserIndicator>
-    <Styles.FivePercentIndicator>
-      <PositionIndicator />
-      <Styles.IndicatorBar />
-      <Styles.IndicatorLabel>
-        Top <Styles.BoldPercentage>5%</Styles.BoldPercentage>
-      </Styles.IndicatorLabel>
-    </Styles.FivePercentIndicator>
-  </Styles.ProgressBarContainer>
-);
+// const ProgressToTopFive = ({ userPercentage }) => (
+//   <Styles.ProgressBarContainer>
+//     <Styles.ProgressBar />
+//     <Styles.UserIndicator percent={userPercentage === 0 || isNaN(userPercentage) ? MIN_UI_PERCENTAGE : userPercentage}>
+//       <PositionIndicator />
+//       <Styles.IndicatorBar />
+//       <Styles.IndicatorLabel>You</Styles.IndicatorLabel>
+//     </Styles.UserIndicator>
+//     <Styles.FivePercentIndicator>
+//       <PositionIndicator />
+//       <Styles.IndicatorBar />
+//       <Styles.IndicatorLabel>
+//         Top <Styles.BoldPercentage>5%</Styles.BoldPercentage>
+//       </Styles.IndicatorLabel>
+//     </Styles.FivePercentIndicator>
+//   </Styles.ProgressBarContainer>
+// );
 
-const AmountToTopFive = ({ differenceBetweenUserAndTopFive }) => (
+const AmountToTopFive = ({ differenceBetweenUserAndTopFive, userPercentage }) => (
   <Styles.AmountText>
-    <span>
-      Trade <b>${formatAmount(differenceBetweenUserAndTopFive, USD_DECIMALS, 2, true)}</b> to unlock Top 5% Rewards
-    </span>
+    {userPercentage >= BOTTOM_PERCENT ? (
+      <span>You are in the top 5%! Keep trading to hold your position.</span>
+    ) : (
+      <span>
+        Trade <b>${formatAmount(differenceBetweenUserAndTopFive, USD_DECIMALS, 2, true)}</b> to unlock Top 5% Rewards
+      </span>
+    )}
   </Styles.AmountText>
 );
