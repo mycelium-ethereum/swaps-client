@@ -184,7 +184,7 @@ export const ReferralData = styled.div`
 
 export const StyledReferralPage = styled.div`
   align-items: center;
-  padding-top: 3rem;
+  padding-top: 1rem;
   max-width: 1000px;
   ${ReferralData}, ${AccountBanner}, .Page-title-section {
     width: 100%;
@@ -400,7 +400,6 @@ export const CopyButton = styled.button`
   }
 `;
 
-
 export const ReferralsClaimModalRow = styled.div`
   display: grid;
   grid-gap: 1rem;
@@ -413,4 +412,4 @@ export const ReferralsClaimModalRow = styled.div`
     color: var(--text-primary);
     text-align: right;
   }
-`
+`;

@@ -133,7 +133,7 @@ export const RewardsData = styled.div`
 
 export const StyledRewardsPage = styled.div`
   align-items: center;
-  padding-top: 3rem;
+  padding-top: 1rem;
   ${RewardsData}, ${AccountBanner}, .Page-title-section {
     width: 100%;
   }
