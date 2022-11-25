@@ -1133,14 +1133,14 @@ export function useUserStakingBalances(address) {
   const stakingAddress = getContract(ARBITRUM, "MYCStakingRewards");
 
   const { data: userMycBalance } = useSWR(
-    [`useStakingBalances:balanceOf(MYC):${ARBITRUM}`, ARBITRUM, stakingAddress, "balanceOf", address],
+    [`useStakingBalances:balanceOf(MYC):${ARBITRUM}`, ARBITRUM, mycTokenAddress, "balanceOf", address],
     {
       fetcher: fetcher(undefined, Token),
     }
   );
 
   const { data: userEsMycBalance } = useSWR(
-    [`useStakingBalances:balanceOf(esMYC):${ARBITRUM}`, ARBITRUM, stakingAddress, "balanceOf", address],
+    [`useStakingBalances:balanceOf(esMYC):${ARBITRUM}`, ARBITRUM, esMycTokenAddress, "balanceOf", address],
     {
       fetcher: fetcher(undefined, Token),
     }
