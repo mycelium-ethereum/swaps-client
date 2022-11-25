@@ -852,7 +852,6 @@ export default function SwapBox(props) {
       toTokenInfo.poolAmount &&
       toTokenInfo.bufferAmount.gt(toTokenInfo.poolAmount.sub(toAmount))
     ) {
-      console.log(toTokenInfo.poolAmount.toString(), toTokenInfo.bufferAmount.toString());
       return ["Insufficient liquidity: exceeds buffer"];
     }
 
