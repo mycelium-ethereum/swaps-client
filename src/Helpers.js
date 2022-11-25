@@ -67,12 +67,12 @@ export function getFallbackArbitrumRpcUrl(useWebsocket) {
   return "https://arb1.arbitrum.io/rpc";
 }
 export function getDefaultArbitrumRpcUrl(useWebsocket) {
-  if (alchemyWhitelistedDomains.includes(window.location.host)) {
+  // if (alchemyWhitelistedDomains.includes(window.location.host)) {
     if (useWebsocket) {
       return process.env.REACT_APP_ARBITRUM_ONE_RPC_WSS;
     }
     return process.env.REACT_APP_ARBITRUM_ONE_RPC;
-  }
+  // }
   return getFallbackArbitrumRpcUrl(useWebsocket);
 }
 
@@ -83,18 +83,20 @@ export function getFallbackArbitrumGoerliRpcUrl(useWebsocket) {
   return "https://goerli-rollup.arbitrum.io/rpc";
 }
 export function getDefaultArbitrumGoerliRpcUrl(useWebsocket) {
-  if (alchemyWhitelistedDomains.includes(window.location.host)) {
+  // if (alchemyWhitelistedDomains.includes(window.location.host)) {
     if (useWebsocket) {
       return process.env.REACT_APP_ARBITRUM_GOERLI_RPC_WSS;
     }
     return process.env.REACT_APP_ARBITRUM_GOERLI_RPC;
-  }
+  // }
   return getFallbackArbitrumGoerliRpcUrl(useWebsocket);
 }
 
 const ETHEREUM_RPC_PROVIDERS = ["https://cloudflare-eth.com"];
 const ARBITRUM_RPC_PROVIDERS = [getDefaultArbitrumRpcUrl()];
+console.log(ARBITRUM_RPC_PROVIDERS);
 const ARBITRUM_GOERLI_RPC_PROVIDERS = [getDefaultArbitrumGoerliRpcUrl()];
+console.log(ARBITRUM_GOERLI_RPC_PROVIDERS);
 
 export function getChainName(chainId) {
   return CHAIN_NAMES_MAP[chainId];
