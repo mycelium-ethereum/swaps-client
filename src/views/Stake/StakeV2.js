@@ -12,9 +12,8 @@ import RewardRouter from "../../abis/RewardRouter.json";
 import RewardReader from "../../abis/RewardReader.json";
 import Token from "../../abis/Token.json";
 import MlpManager from "../../abis/MlpManager.json";
-import { WalletBalance, Divider, TokenAmountRow } from "../../components/Stake/Sections";
-import { CompatibleTokenEnum, TokenSizeEnum } from "../../components/Stake/types";
-
+import { USD_PRICE_PRECISION, WalletBalance } from "../../components/Stake/Sections";
+import { CompatibleTokenEnum } from "../../components/Stake/types";
 import { ethers } from "ethers";
 import {
   helperToast,
@@ -41,7 +40,14 @@ import {
   expandDecimals,
   ETH_DECIMALS,
 } from "../../Helpers";
-import { callContract, useMYCPrice, useStakingApr, useStakingBalances, useTotalMYCSupply } from "../../Api";
+import {
+  callContract,
+  useMYCPrice,
+  useStakingApr,
+  useUserStakingBalances,
+  useStakingValues,
+  useTotalMYCSupply,
+} from "../../Api";
 import { getConstant } from "../../Constants";
 
 import useSWR from "swr";
@@ -59,6 +65,7 @@ import ClaimModal from "./ClaimModal";
 import Toggle from "../../components/Toggle/Toggle";
 import MlpPriceChart from "./MlpPriceChart";
 import { ZERO_BN } from "src/components/Stake/presets";
+import { formatNumberWithCommas, parseBigNumberToFloat } from "src/utils/common";
 
 function CompoundModal(props) {
   const {
@@ -641,8 +648,10 @@ export default function StakeV2({
   );
 
   const stakingApr = useStakingApr(mycPrice, nativeTokenPrice);
-  const tempAddress = "0x9c69a8Cb88B3b8D6fC6976ee3C5B6fbCC92178C7";
-  const { mycBalance, esMycBalance, rewardsEarned } = useStakingBalances(tempAddress);
+  const tempAddress = "0xD9CF99Cf1E381703313F65DF16B17e0C1942EAe9";
+  const { userMycBalance, userEsMycBalance, userStakedMycBalance, userStakedEsMycBalance, rewardsEarned } =
+    useUserStakingBalances(tempAddress);
+  const { isPaused, totalStaked, depositCap } = useStakingValues();
 
   let totalRewardTokens;
   if (processedData && processedData.bnMycInFeeMyc && processedData.bonusMycInFeeMyc) {
@@ -964,8 +973,8 @@ export default function StakeV2({
                       <div>
                         <StakeV2Styled.FlexRowEnd>
                           <WalletBalance
-                            walletAmount={mycBalance || ZERO_BN}
-                            mycUsdPrice={mycPrice || ZERO_BN}
+                            walletAmount={userMycBalance || ZERO_BN}
+                            tokenUsdPrice={mycPrice || ZERO_BN}
                             selectedToken={CompatibleTokenEnum.MYC}
                           />
                           <StakeV2Styled.StakingButton onClick={() => showMycVesterDepositModal()}>
@@ -974,8 +983,8 @@ export default function StakeV2({
                         </StakeV2Styled.FlexRowEnd>
                         <StakeV2Styled.FlexRowEnd>
                           <WalletBalance
-                            walletAmount={esMycBalance.div(expandDecimals(1, ETH_DECIMALS)) || ZERO_BN}
-                            mycUsdPrice={mycPrice || ZERO_BN}
+                            walletAmount={userEsMycBalance || ZERO_BN}
+                            tokenUsdPrice={mycPrice || ZERO_BN}
                             selectedToken={CompatibleTokenEnum.esMYC}
                           />
                           <StakeV2Styled.StakingButton onClick={() => showMycVesterDepositModal()}>
@@ -990,8 +999,8 @@ export default function StakeV2({
                       <div>
                         <StakeV2Styled.FlexRowEnd>
                           <WalletBalance
-                            walletAmount={mycBalance || ZERO_BN}
-                            mycUsdPrice={mycPrice || ZERO_BN}
+                            walletAmount={userStakedMycBalance || ZERO_BN}
+                            tokenUsdPrice={mycPrice || ZERO_BN}
                             selectedToken={CompatibleTokenEnum.MYC}
                           />
                           <StakeV2Styled.StakingButton onClick={() => showMycVesterDepositModal()}>
@@ -1000,9 +1009,8 @@ export default function StakeV2({
                         </StakeV2Styled.FlexRowEnd>
                         <StakeV2Styled.FlexRowEnd>
                           <WalletBalance
-                            bottomBorder
-                            walletAmount={esMycBalance || ZERO_BN}
-                            mycUsdPrice={mycPrice || ZERO_BN}
+                            walletAmount={userStakedEsMycBalance || ZERO_BN}
+                            tokenUsdPrice={mycPrice || ZERO_BN}
                             selectedToken={CompatibleTokenEnum.esMYC}
                           />
                           <StakeV2Styled.StakingButton onClick={() => showMycVesterDepositModal()}>
@@ -1013,7 +1021,7 @@ export default function StakeV2({
                     </div>
                   </StakeV2Styled.StakingBannerRow>
                   {stakingApr && (
-                    <StakeV2Styled.StakingBannerRow borderTop>
+                    <StakeV2Styled.StakingBannerRow>
                       <div className="App-card-row">
                         <div className="label">APR</div>
                         <div>
@@ -1022,16 +1030,81 @@ export default function StakeV2({
                       </div>
                     </StakeV2Styled.StakingBannerRow>
                   )}
-                  <StakeV2Styled.StakedTokens>
+                  <StakeV2Styled.StakedTokens borderTop wrap>
                     <StakeV2Styled.FlexRowBetween>
                       <span>Claimable Rewards</span>
-                      <TokenAmountRow
-                        tokenAmount={rewardsEarned.div(expandDecimals(1, ETH_DECIMALS)) || ZERO_BN}
-                        selectedToken={CompatibleTokenEnum.ETH}
-                        tokenSize={TokenSizeEnum.lg}
-                      />
+                      <StakeV2Styled.FlexRowEnd>
+                        <WalletBalance
+                          large
+                          walletAmount={rewardsEarned?.div(expandDecimals(1, ETH_DECIMALS)) || ZERO_BN}
+                          tokenUsdPrice={nativeTokenPrice || ZERO_BN}
+                          selectedToken={CompatibleTokenEnum.ETH}
+                        />
+                        <StakeV2Styled.Subtitle></StakeV2Styled.Subtitle>
+                      </StakeV2Styled.FlexRowEnd>
                     </StakeV2Styled.FlexRowBetween>
+                    <StakeV2Styled.ClaimButtonContainer>
+                      <StakeV2Styled.StakingButton onClick={() => showMycVesterDepositModal()} fullWidth whiteText>
+                        Claim Rewards Now
+                      </StakeV2Styled.StakingButton>
+                    </StakeV2Styled.ClaimButtonContainer>
                   </StakeV2Styled.StakedTokens>
+                  <StakeV2Styled.StakingBannerRow>
+                    <StakeV2Styled.FlexRowBetween>
+                      <StakeV2Styled.Subtitle white>Total Staked</StakeV2Styled.Subtitle>
+                      <StakeV2Styled.Subtitle white>Vault Capacity</StakeV2Styled.Subtitle>
+                    </StakeV2Styled.FlexRowBetween>
+                    <StakeV2Styled.VaultCapacityBackdrop>
+                      {totalStaked && depositCap && (
+                        <StakeV2Styled.VaultCapacityBar width={(totalStaked / depositCap) * 100} />
+                      )}
+                    </StakeV2Styled.VaultCapacityBackdrop>
+                    <StakeV2Styled.FlexRowBetween>
+                      {totalStaked && (
+                        <StakeV2Styled.FlexRowCol>
+                          <span>
+                            <b>{formatNumberWithCommas(parseFloat(ethers.utils.formatUnits(totalStaked)), 0)}</b>
+                          </span>
+                          <StakeV2Styled.Subtitle>
+                            $
+                            {formatNumberWithCommas(
+                              parseFloat(
+                                ethers.utils.formatUnits(
+                                  mycPrice.mul(totalStaked).div(expandDecimals(1, USD_PRICE_PRECISION))
+                                )
+                              ),
+                              2
+                            )}
+                          </StakeV2Styled.Subtitle>
+                        </StakeV2Styled.FlexRowCol>
+                      )}
+                      {depositCap && (
+                        <StakeV2Styled.FlexRowColEnd>
+                          <span>
+                            <b>{formatNumberWithCommas(parseFloat(ethers.utils.formatUnits(depositCap)), 0)}</b>
+                          </span>
+                          <StakeV2Styled.Subtitle>
+                            $
+                            {formatNumberWithCommas(
+                              parseFloat(
+                                ethers.utils.formatUnits(
+                                  mycPrice.mul(depositCap).div(expandDecimals(1, USD_PRICE_PRECISION))
+                                )
+                              ),
+                              2
+                            )}
+                          </StakeV2Styled.Subtitle>
+                        </StakeV2Styled.FlexRowColEnd>
+                      )}
+                    </StakeV2Styled.FlexRowBetween>
+                    <StakeV2Styled.Divider />
+                    <StakeV2Styled.FlexRowBetweenCenter noMargin>
+                      <span>Buy MYC</span>
+                      <StakeV2Styled.OutgoingLink href="https://app.1inch.io/#/42161/unified/swap/USDC/0xc74fe4c715510ec2f8c61d70d397b32043f55abe">
+                        <StakeV2Styled.StakingButton fullWidth>Buy on 1inch</StakeV2Styled.StakingButton>
+                      </StakeV2Styled.OutgoingLink>
+                    </StakeV2Styled.FlexRowBetweenCenter>
+                  </StakeV2Styled.StakingBannerRow>
                 </StakeV2Styled.VestingInfo>
               </StakeV2Styled.Card>
             </StakeV2Styled.StakeV2Card>

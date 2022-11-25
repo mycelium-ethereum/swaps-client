@@ -69,13 +69,18 @@ export const VestingInfo = styled.div`
   font-size: 16px;
 `;
 
-export const StakedTokens = styled.div`
+export const StakedTokens = styled.div(
+  (props) => `
   display: flex;
   border-bottom: 1px solid var(--cell-stroke);
   background: var(--cell-gradient);
   justify-content: space-between;
   padding: 1rem;
-`;
+
+  border-top: ${({ borderTop }) => (borderTop ? "1px solid var(--cell-stroke)" : "none")};
+  flex-wrap: ${props.wrap ? "wrap" : "nowrap"};
+`
+);
 
 export const RewardsBanner = styled.div`
   background: var(--cell-gradient);
@@ -191,6 +196,15 @@ export const SpreadCaptureDescription = styled.div`
 `;
 
 // Staking card styles
+export const ClaimButtonContainer = styled.div`
+  width: 100%;
+`;
+
+export const FlexRowCol = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+
 export const FlexRowColEnd = styled.div`
   display: flex;
   flex-direction: column;
@@ -211,25 +225,37 @@ export const FlexRowBetween = styled.div`
   display: flex;
   justify-content: space-between;
   margin-bottom: 8px;
+  width: 100%;
 `;
 
-export const AmountRow = styled.div`
+export const FlexRowBetweenCenter = styled(FlexRowBetween)(
+  (props) => `
+  align-items: center;
+  margin-bottom: ${props.noMargin ? 0 : "8px"};
+`
+);
+
+export const AmountRow = styled.div(
+  (props) => `
   display: flex;
   font-weight: bold;
-  font-size: 14px;
-  line-height: 21px;
+  font-size: ${props.large ? "20px" : "16px"};
+  line-height: ${props.large ? "24px" : "21px"};
 
   > img {
     margin-left: 8px;
     margin-right: 4px;
   }
-`;
+`
+);
 
-export const Subtitle = styled.span`
+export const Subtitle = styled.span(
+  (props) => `
   font-size: 12px;
   line-height: 18px;
-  color: var(--text-secondary);
-`;
+  color: ${props.white ? "white" : "var(--text-secondary)"};
+`
+);
 
 export const Divider = styled.hr`
   border-color: var(--cell-stroke);
@@ -237,22 +263,55 @@ export const Divider = styled.hr`
   width: 100%;
 `;
 
-export const StakingButton = styled.button`
+export const OutgoingLink = styled.a.attrs({
+  target: "_blank",
+  rel: "noreferrer noopener",
+})`
+  text-decoration: none;
+`;
+
+export const StakingButton = styled.button(
+  (props) => `
   border: 1px solid var(--action-active);
   background-color: transparent;
   height: 32px;
-  width: 100px;
+  width: ${props.fullWidth ? "100%" : "100px"};
+  padding: 0 ${props.fullWidth ? "22px" : "8px"};
   border-radius: 4px;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--action-active);
-  margin-left: 12px;
+  color: ${props.whiteText ? "white" : "var(--action-active)"};
+  margin-left: ${props.fullWidth ? "0" : "12px"};
   font-size: 16px;
   transition: all 0.3s ease;
+  text-decoration: none;
 
   &:hover {
     background-color: var(--action-hover);
     box-shadow: var(--action-shadow);
   }
+`
+);
+
+export const VaultCapacityBackdrop = styled.div`
+  position: relative;
+  width: 100%;
+  height: 4px;
+  border-radius: 4px;
+  overflow: hidden;
+  background-color: var(--action-inactive);
+  margin: 8px 0;
 `;
+
+export const VaultCapacityBar = styled.div(
+  (props) => `
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: ${props.width ? props.width : 0}%;
+  height: 100%;
+  transition: width 0.3s ease;
+  background-color: var(--action-active);
+`
+);

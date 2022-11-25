@@ -1127,22 +1127,36 @@ export function useStakingApr(mycPrice, ethPrice) {
   return stakingApr;
 }
 
-export function useStakingBalances(address) {
+export function useUserStakingBalances(address) {
   const mycTokenAddress = getContract(ARBITRUM, "MYC");
   const esMycTokenAddress = getContract(ARBITRUM, "ES_MYC");
   const stakingAddress = getContract(ARBITRUM, "MYCStakingRewards");
 
-  const { data: mycBalance } = useSWR(
-    [`useStakingBalances:balanceOf(MYC):${ARBITRUM}`, ARBITRUM, mycTokenAddress, "balanceOf", address],
+  const { data: userMycBalance } = useSWR(
+    [`useStakingBalances:balanceOf(MYC):${ARBITRUM}`, ARBITRUM, stakingAddress, "balanceOf", address],
     {
       fetcher: fetcher(undefined, Token),
     }
   );
 
-  const { data: esMycBalance } = useSWR(
-    [`useStakingBalances:balanceOf(esMYC):${ARBITRUM}`, ARBITRUM, esMycTokenAddress, "balanceOf", address],
+  const { data: userEsMycBalance } = useSWR(
+    [`useStakingBalances:balanceOf(esMYC):${ARBITRUM}`, ARBITRUM, stakingAddress, "balanceOf", address],
     {
       fetcher: fetcher(undefined, Token),
+    }
+  );
+
+  const { data: userStakedMycBalance } = useSWR(
+    [`useStakingBalances:depositBalances(MYC):${ARBITRUM}`, ARBITRUM, stakingAddress, "depositBalances", address],
+    {
+      fetcher: fetcher(undefined, RewardsTracker, mycTokenAddress),
+    }
+  );
+
+  const { data: userStakedEsMycBalance } = useSWR(
+    [`useStakingBalances:depositBalances(esMYC):${ARBITRUM}`, ARBITRUM, stakingAddress, "depositBalances", address],
+    {
+      fetcher: fetcher(undefined, RewardsTracker, esMycTokenAddress),
     }
   );
 
@@ -1153,9 +1167,50 @@ export function useStakingBalances(address) {
     }
   );
 
-  console.log(rewardsEarned);
+  return { userMycBalance, userEsMycBalance, userStakedMycBalance, userStakedEsMycBalance, rewardsEarned };
+}
 
-  return { mycBalance, esMycBalance, rewardsEarned };
+export function useStakingValues() {
+  const mycTokenAddress = getContract(ARBITRUM, "MYC");
+  const esMycTokenAddress = getContract(ARBITRUM, "ES_MYC");
+  const stakingAddress = getContract(ARBITRUM, "MYCStakingRewards");
+
+  const { data: isPaused } = useSWR(
+    [`useStakingValues:inPrivateStakingMode:${ARBITRUM}`, ARBITRUM, stakingAddress, "inPrivateStakingMode"],
+    {
+      fetcher: fetcher(undefined, RewardsTracker),
+    }
+  );
+
+  const { data: totalStaked } = useSWR(
+    [`useStakingValues:totalSupply:${ARBITRUM}`, ARBITRUM, stakingAddress, "totalSupply"],
+    {
+      fetcher: fetcher(undefined, RewardsTracker),
+    }
+  );
+
+  const { data: depositCap } = useSWR(
+    [`useStakingValues:depositCap:${ARBITRUM}`, ARBITRUM, stakingAddress, "depositCap"],
+    {
+      fetcher: fetcher(undefined, RewardsTracker),
+    }
+  );
+
+  // const { data: totalMycDeposited } = useSWR(
+  //   [`useStakingValues:totalDepositSupply(MYC):${ARBITRUM}`, ARBITRUM, stakingAddress, "totalDepositSupply"],
+  //   {
+  //     fetcher: fetcher(undefined, RewardsTracker, mycTokenAddress),
+  //   }
+  // );
+
+  // const { data: totalEsMycDeposited } = useSWR(
+  //   [`useStakingValues:totalDepositSupply(MYC):${ARBITRUM}`, ARBITRUM, stakingAddress, "totalDepositSupply"],
+  //   {
+  //     fetcher: fetcher(undefined, RewardsTracker, esMycTokenAddress),
+  //   }
+  // );
+
+  return { isPaused, totalStaked, depositCap };
 }
 
 export function useTotalStaked() {
