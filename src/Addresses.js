@@ -62,6 +62,8 @@ const CONTRACTS = {
     FeeDistributorReader: "0x55ce0A81b697f1eff846e8a56D3f303A5BE490b1",
     MerkleDistributor: "0xEC503757C71440A7c82B6BB2d689bC4d191bC75d",
     MerkleDistributorReader: "0xbB097d322D793ecd03721538d906d0C450d3839C",
+
+    MYCStakingRewards: "0x32Ff08751299a13A4a47Aff8841f1cC6eE287b9F", // v2 staking
   },
   42161: {
     // arbitrum mainnet
@@ -116,7 +118,7 @@ const CONTRACTS = {
     MerkleDistributorReader: "0xbB097d322D793ecd03721538d906d0C450d3839C",
 
     LentMYC: "0x9B225FF56C48671d4D04786De068Ed8b88b672d6",
-    MYCStakingRewards: "0xF9B003Ee160dA9677115Ad3c5bd6BB6dADcB2F93" // v2 staking
+    MYCStakingRewards: "0xF9B003Ee160dA9677115Ad3c5bd6BB6dADcB2F93", // v2 staking
   },
 };
 

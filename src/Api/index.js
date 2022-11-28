@@ -1127,41 +1127,44 @@ export function useStakingApr(mycPrice, ethPrice) {
   return stakingApr;
 }
 
-export function useUserStakingBalances(address) {
-  const mycTokenAddress = getContract(ARBITRUM, "MYC");
-  const esMycTokenAddress = getContract(ARBITRUM, "ES_MYC");
-  const stakingAddress = getContract(ARBITRUM, "MYCStakingRewards");
+export function useUserStakingBalances(address, chainId) {
+  // Cannot update MYC and ES_MYC addresses in case of breaking functions on testnet elsewhere
+  const TESTNET_MYC_CONTRACT = "0x46873E80daf930265B7E5419BBC266cC2880ff8c";
+  const TESTNET_ES_MYC_CONTRACT = "0x4897Dca24BcB50014456bcBBc59A2D6530FadCeB";
+  const mycTokenAddress = chainId === ARBITRUM_GOERLI ? TESTNET_MYC_CONTRACT : getContract(chainId, "MYC");
+  const esMycTokenAddress = chainId === ARBITRUM_GOERLI ? TESTNET_ES_MYC_CONTRACT : getContract(chainId, "ES_MYC");
+  const stakingAddress = getContract(chainId, "MYCStakingRewards");
 
   const { data: userMycBalance } = useSWR(
-    [`useStakingBalances:balanceOf(MYC):${ARBITRUM}`, ARBITRUM, mycTokenAddress, "balanceOf", address],
+    [`useStakingBalances:balanceOf(MYC):${chainId}`, chainId, mycTokenAddress, "balanceOf", address],
     {
       fetcher: fetcher(undefined, Token),
     }
   );
 
   const { data: userEsMycBalance } = useSWR(
-    [`useStakingBalances:balanceOf(esMYC):${ARBITRUM}`, ARBITRUM, esMycTokenAddress, "balanceOf", address],
+    [`useStakingBalances:balanceOf(esMYC):${chainId}`, chainId, esMycTokenAddress, "balanceOf", address],
     {
       fetcher: fetcher(undefined, Token),
     }
   );
 
   const { data: userStakedMycBalance } = useSWR(
-    [`useStakingBalances:depositBalances(MYC):${ARBITRUM}`, ARBITRUM, stakingAddress, "depositBalances", address],
+    [`useStakingBalances:depositBalances(MYC):${chainId}`, chainId, stakingAddress, "depositBalances", address],
     {
       fetcher: fetcher(undefined, RewardsTracker, mycTokenAddress),
     }
   );
 
   const { data: userStakedEsMycBalance } = useSWR(
-    [`useStakingBalances:depositBalances(esMYC):${ARBITRUM}`, ARBITRUM, stakingAddress, "depositBalances", address],
+    [`useStakingBalances:depositBalances(esMYC):${chainId}`, chainId, stakingAddress, "depositBalances", address],
     {
       fetcher: fetcher(undefined, RewardsTracker, esMycTokenAddress),
     }
   );
 
   const { data: rewardsEarned } = useSWR(
-    [`useStakingBalances:claimable:${ARBITRUM}`, ARBITRUM, stakingAddress, "claimable", address],
+    [`useStakingBalances:claimable:${chainId}`, chainId, stakingAddress, "claimable", address],
     {
       fetcher: fetcher(undefined, RewardsTracker),
     }
@@ -1170,41 +1173,41 @@ export function useUserStakingBalances(address) {
   return { userMycBalance, userEsMycBalance, userStakedMycBalance, userStakedEsMycBalance, rewardsEarned };
 }
 
-export function useStakingValues() {
-  const mycTokenAddress = getContract(ARBITRUM, "MYC");
-  const esMycTokenAddress = getContract(ARBITRUM, "ES_MYC");
-  const stakingAddress = getContract(ARBITRUM, "MYCStakingRewards");
+export function useStakingValues(chainId) {
+  // const mycTokenAddress = getContract(chainId, "MYC");
+  // const esMycTokenAddress = getContract(chainId, "ES_MYC");
+  const stakingAddress = getContract(chainId, "MYCStakingRewards");
 
   const { data: isPaused } = useSWR(
-    [`useStakingValues:inPrivateStakingMode:${ARBITRUM}`, ARBITRUM, stakingAddress, "inPrivateStakingMode"],
+    [`useStakingValues:inPrivateStakingMode:${chainId}`, chainId, stakingAddress, "inPrivateStakingMode"],
     {
       fetcher: fetcher(undefined, RewardsTracker),
     }
   );
 
   const { data: totalStaked } = useSWR(
-    [`useStakingValues:totalSupply:${ARBITRUM}`, ARBITRUM, stakingAddress, "totalSupply"],
+    [`useStakingValues:totalSupply:${chainId}`, chainId, stakingAddress, "totalSupply"],
     {
       fetcher: fetcher(undefined, RewardsTracker),
     }
   );
 
   const { data: depositCap } = useSWR(
-    [`useStakingValues:depositCap:${ARBITRUM}`, ARBITRUM, stakingAddress, "depositCap"],
+    [`useStakingValues:depositCap:${chainId}`, chainId, stakingAddress, "depositCap"],
     {
       fetcher: fetcher(undefined, RewardsTracker),
     }
   );
 
   // const { data: totalMycDeposited } = useSWR(
-  //   [`useStakingValues:totalDepositSupply(MYC):${ARBITRUM}`, ARBITRUM, stakingAddress, "totalDepositSupply"],
+  //   [`useStakingValues:totalDepositSupply(MYC):${chainId}`, chainId, stakingAddress, "totalDepositSupply"],
   //   {
   //     fetcher: fetcher(undefined, RewardsTracker, mycTokenAddress),
   //   }
   // );
 
   // const { data: totalEsMycDeposited } = useSWR(
-  //   [`useStakingValues:totalDepositSupply(MYC):${ARBITRUM}`, ARBITRUM, stakingAddress, "totalDepositSupply"],
+  //   [`useStakingValues:totalDepositSupply(MYC):${chainId}`, chainId, stakingAddress, "totalDepositSupply"],
   //   {
   //     fetcher: fetcher(undefined, RewardsTracker, esMycTokenAddress),
   //   }

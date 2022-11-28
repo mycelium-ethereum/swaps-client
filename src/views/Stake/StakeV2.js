@@ -8,6 +8,7 @@ import Tooltip from "../../components/Tooltip/Tooltip";
 import Vault from "../../abis/Vault.json";
 import ReaderV2 from "../../abis/ReaderV2.json";
 import Vester from "../../abis/Vester.json";
+import RewardTracker from "../../abis/RewardTracker.json";
 import RewardRouter from "../../abis/RewardRouter.json";
 import RewardReader from "../../abis/RewardReader.json";
 import Token from "../../abis/Token.json";
@@ -39,6 +40,7 @@ import {
   getPageTitle,
   expandDecimals,
   ETH_DECIMALS,
+  ARBITRUM_GOERLI,
 } from "../../Helpers";
 import {
   callContract,
@@ -66,6 +68,11 @@ import Toggle from "../../components/Toggle/Toggle";
 import MlpPriceChart from "./MlpPriceChart";
 import { ZERO_BN } from "src/components/Stake/presets";
 import { formatNumberWithCommas, parseBigNumberToFloat } from "src/utils/common";
+
+const MYC_TOKEN = "MYC";
+const ES_MYC_TOKEN = "esMYC";
+const STAKE = "Stake";
+const WITHDRAW = "Withdraw";
 
 function CompoundModal(props) {
   const {
@@ -423,6 +430,211 @@ function VesterDepositModal(props) {
   );
 }
 
+function StakingModal(props) {
+  const {
+    active,
+    stakeAction,
+    isVisible,
+    setIsVisible,
+    chainId,
+    mycBalance,
+    esMycBalance,
+    stakedMyc,
+    stakedEsMyc,
+    value,
+    setValue,
+    selectedToken,
+    stakingAddress,
+    setPendingTxns,
+  } = props;
+  const [isApproving, setIsApproving] = useState(false);
+
+  const [isTransacting, setIsTransacting] = useState(false);
+  const { library, account } = useWeb3React();
+
+  // Cannot update MYC and ES_MYC addresses in Addresses.js in case of breaking functions on testnet elsewhere
+  const MYC_CONTRACT = {
+    [ARBITRUM]: getContract(chainId, "MYC"),
+    [ARBITRUM_GOERLI]: "0x46873E80daf930265B7E5419BBC266cC2880ff8c",
+  };
+
+  const ES_MYC_CONTRACT = {
+    [ARBITRUM]: getContract(chainId, "ES_MYC"),
+    [ARBITRUM_GOERLI]: "0x4897Dca24BcB50014456bcBBc59A2D6530FadCeB",
+  };
+
+  const STAKABLE_TOKENS = {
+    [MYC_TOKEN]: { balance: mycBalance || ZERO_BN, staked: stakedMyc || ZERO_BN, contract: MYC_CONTRACT[chainId] },
+    [ES_MYC_TOKEN]: {
+      balance: esMycBalance || ZERO_BN,
+      staked: stakedEsMyc || ZERO_BN,
+      contract: ES_MYC_CONTRACT[chainId],
+    },
+  };
+
+  const maxAmount = STAKABLE_TOKENS[selectedToken][stakeAction === STAKE ? "balance" : "staked"];
+
+  const selectedTokenAddress = STAKABLE_TOKENS[selectedToken].contract;
+
+  const { data: ethBalance } = useSWR([library, "getBalance", account, "latest"], {
+    fetcher: (library, method, ...params) => library[method](...params),
+  });
+
+  const { data: tokenAllowance } = useSWR(
+    active && [active, chainId, selectedTokenAddress, "allowance", account, stakingAddress],
+    {
+      fetcher: fetcher(library, Token),
+    }
+  );
+
+  const needApproval = tokenAllowance && tokenAllowance.eq(0);
+
+  let amount = parseValue(value, 18);
+
+  const getError = () => {
+    if (ethBalance?.eq(0)) {
+      return ["Not enough ETH for gas"];
+    }
+
+    if (STAKABLE_TOKENS[selectedToken].balance.eq(0)) {
+      return `Insufficient ${selectedToken} balance`;
+    }
+
+    if (!amount || amount.eq(0)) {
+      return "Enter an amount";
+    }
+    if (amount && amount.gt(maxAmount)) {
+      return "Max amount exceeded";
+    }
+  };
+
+  const onClickPrimary = () => {
+    if (needApproval) {
+      approveTokens({
+        setIsApproving,
+        library,
+        tokenAddress: selectedTokenAddress,
+        spender: stakingAddress,
+        chainId,
+      });
+      return;
+    }
+    setIsTransacting(true);
+    const contract = new ethers.Contract(stakingAddress, RewardTracker.abi, library.getSigner());
+    if (stakeAction === STAKE) {
+      callContract(chainId, contract, "stake", [selectedTokenAddress, amount], {
+        sentMsg: `Stake ${selectedToken} submitted!`,
+        failMsg: `Staking ${selectedToken} failed!`,
+        successMsg: `Staked!`,
+        setPendingTxns,
+      })
+        .then(async (res) => {
+          setIsVisible(false);
+        })
+        .finally(() => {
+          setIsTransacting(false);
+        });
+    }
+    if (stakeAction === WITHDRAW) {
+      callContract(chainId, contract, "unstake", [selectedTokenAddress, amount], {
+        sentMsg: `Unstake ${selectedToken} submitted!`,
+        failMsg: `Unstaking ${selectedToken} failed!`,
+        successMsg: `Unstaked!`,
+        setPendingTxns,
+      })
+        .then(async (res) => {
+          setIsVisible(false);
+        })
+        .finally(() => {
+          setIsTransacting(false);
+        });
+    }
+  };
+
+  const isPrimaryEnabled = () => {
+    const error = getError();
+    if (error) {
+      return false;
+    }
+    if (isTransacting) {
+      return false;
+    }
+    if (!isApproving) {
+      return true;
+    }
+    return true;
+  };
+
+  const getPrimaryText = () => {
+    const error = getError();
+    if (error) {
+      return error;
+    }
+    if (isApproving) {
+      return `Approving ${selectedToken}...`;
+    }
+    if (needApproval) {
+      return `Approve ${selectedToken}`;
+    }
+    if (isTransacting && stakeAction === STAKE) {
+      return "Staking...";
+    }
+    if (isTransacting && stakeAction === WITHDRAW) {
+      return "Unstaking...";
+    }
+    return stakeAction === STAKE ? `Stake ${selectedToken}` : `Unstake ${selectedToken}`;
+  };
+
+  return (
+    <div className="StakeModal">
+      <Modal
+        isVisible={isVisible}
+        setIsVisible={setIsVisible}
+        label={`${stakeAction} ${selectedToken}`}
+        className="non-scrollable"
+      >
+        <div className="Exchange-swap-section">
+          <div className="Exchange-swap-section-top">
+            <div className="muted">
+              <div className="Exchange-swap-usd">{stakeAction}</div>
+            </div>
+            <div className="muted align-right clickable" onClick={() => setValue(formatAmountFree(maxAmount, 18, 18))}>
+              Max: {formatAmount(maxAmount, 18, 4, true)}
+            </div>
+          </div>
+          <div className="Exchange-swap-section-bottom">
+            <div>
+              <input
+                type="number"
+                placeholder="0.0"
+                className="Exchange-swap-input"
+                value={value}
+                onChange={(e) => setValue(e.target.value)}
+              />
+            </div>
+            <div className="PositionEditor-token-symbol">{selectedToken}</div>
+          </div>
+        </div>
+        <div className="VesterDepositModal-info-rows">
+          <div className="Exchange-info-row">
+            <div className="Exchange-info-label">Currently Staking</div>
+            <div className="align-right">
+              <span>
+                {formatAmount(STAKABLE_TOKENS[selectedToken].staked, 18, 4, true)} {selectedToken}
+              </span>
+            </div>
+          </div>
+        </div>
+        <div className="Exchange-swap-button-container">
+          <button className="App-cta Exchange-swap-button" onClick={onClickPrimary} disabled={!isPrimaryEnabled()}>
+            {getPrimaryText()}
+          </button>
+        </div>
+      </Modal>
+    </div>
+  );
+}
+
 function VesterWithdrawModal(props) {
   const { isVisible, setIsVisible, chainId, title, library, vesterAddress, setPendingTxns } = props;
   const [isWithdrawing, setIsWithdrawing] = useState(false);
@@ -485,6 +697,7 @@ export default function StakeV2({
   const chainName = getChainName(chainId);
 
   const [isVesterDepositModalVisible, setIsVesterDepositModalVisible] = useState(false);
+  const [isStakingModalVisible, setIsStakingModalVisible] = useState(false);
   const [vesterDepositTitle, setVesterDepositTitle] = useState("");
   const [vesterDepositStakeTokenLabel, setVesterDepositStakeTokenLabel] = useState("");
   const [vesterDepositMaxAmount, setVesterDepositMaxAmount] = useState("");
@@ -497,6 +710,10 @@ export default function StakeV2({
   const [vesterDepositReserveAmount, setVesterDepositReserveAmount] = useState("");
   const [vesterDepositMaxReserveAmount, setVesterDepositMaxReserveAmount] = useState("");
   const [vesterDepositAddress, setVesterDepositAddress] = useState("");
+
+  const [tokenToStake, setTokenToStake] = useState(MYC_TOKEN);
+  const [amountToStake, setAmountToStake] = useState("");
+  const [stakeAction, setStakeAction] = useState(STAKE);
 
   const [isVesterWithdrawModalVisible, setIsVesterWithdrawModalVisible] = useState(false);
   const [vesterWithdrawTitle, setVesterWithdrawTitle] = useState(false);
@@ -527,6 +744,8 @@ export default function StakeV2({
 
   const mycVesterAddress = getContract(chainId, "MycVester");
   const mlpVesterAddress = getContract(chainId, "MlpVester");
+
+  const stakingAddress = getContract(chainId, "MYCStakingRewards");
 
   const vesterAddresses = [mycVesterAddress, mlpVesterAddress];
 
@@ -648,10 +867,10 @@ export default function StakeV2({
   );
 
   const stakingApr = useStakingApr(mycPrice, nativeTokenPrice);
-  const tempAddress = "0xD9CF99Cf1E381703313F65DF16B17e0C1942EAe9";
+  // const tempAddress = "0xD9CF99Cf1E381703313F65DF16B17e0C1942EAe9";
   const { userMycBalance, userEsMycBalance, userStakedMycBalance, userStakedEsMycBalance, rewardsEarned } =
-    useUserStakingBalances(tempAddress);
-  const { isPaused, totalStaked, depositCap } = useStakingValues();
+    useUserStakingBalances(account, chainId);
+  const { isPaused, totalStaked, depositCap } = useStakingValues(chainId);
 
   let totalRewardTokens;
   if (processedData && processedData.bnMycInFeeMyc && processedData.bonusMycInFeeMyc) {
@@ -732,6 +951,12 @@ export default function StakeV2({
     setVesterWithdrawAddress(mlpVesterAddress);
   };
 
+  const stakeToken = (token, action) => {
+    setTokenToStake(token);
+    setStakeAction(action);
+    setIsStakingModalVisible(true);
+  };
+
   return (
     <div className="StakeV2 Page page-layout default-container">
       <VesterDepositModal
@@ -791,6 +1016,24 @@ export default function StakeV2({
         wrappedTokenSymbol={wrappedTokenSymbol}
         nativeTokenSymbol={nativeTokenSymbol}
         processedData={processedData}
+      />
+      <StakingModal
+        stakeAction={stakeAction}
+        active={active}
+        isVisible={isStakingModalVisible}
+        setIsVisible={setIsStakingModalVisible}
+        chainId={chainId}
+        stakeTokenLabel={vesterDepositStakeTokenLabel}
+        mycBalance={userMycBalance}
+        esMycBalance={userEsMycBalance}
+        stakedMyc={userStakedMycBalance}
+        stakedEsMyc={userStakedEsMycBalance}
+        selectedToken={tokenToStake}
+        value={amountToStake}
+        setValue={setAmountToStake}
+        stakingAddress={stakingAddress}
+        setPendingTxns={setPendingTxns}
+        isPaused={isPaused}
       />
 
       <StakeV2Styled.StakeV2Content className="StakeV2-content">
@@ -977,7 +1220,7 @@ export default function StakeV2({
                             tokenUsdPrice={mycPrice || ZERO_BN}
                             selectedToken={CompatibleTokenEnum.MYC}
                           />
-                          <StakeV2Styled.StakingButton onClick={() => showMycVesterDepositModal()}>
+                          <StakeV2Styled.StakingButton onClick={() => stakeToken(MYC_TOKEN, STAKE)}>
                             Stake
                           </StakeV2Styled.StakingButton>
                         </StakeV2Styled.FlexRowEnd>
@@ -987,7 +1230,7 @@ export default function StakeV2({
                             tokenUsdPrice={mycPrice || ZERO_BN}
                             selectedToken={CompatibleTokenEnum.esMYC}
                           />
-                          <StakeV2Styled.StakingButton onClick={() => showMycVesterDepositModal()}>
+                          <StakeV2Styled.StakingButton onClick={() => stakeToken(ES_MYC_TOKEN, STAKE)}>
                             Stake
                           </StakeV2Styled.StakingButton>
                         </StakeV2Styled.FlexRowEnd>
@@ -1003,7 +1246,7 @@ export default function StakeV2({
                             tokenUsdPrice={mycPrice || ZERO_BN}
                             selectedToken={CompatibleTokenEnum.MYC}
                           />
-                          <StakeV2Styled.StakingButton onClick={() => showMycVesterDepositModal()}>
+                          <StakeV2Styled.StakingButton onClick={() => stakeToken(MYC_TOKEN, WITHDRAW)}>
                             Withdraw
                           </StakeV2Styled.StakingButton>
                         </StakeV2Styled.FlexRowEnd>
@@ -1013,7 +1256,7 @@ export default function StakeV2({
                             tokenUsdPrice={mycPrice || ZERO_BN}
                             selectedToken={CompatibleTokenEnum.esMYC}
                           />
-                          <StakeV2Styled.StakingButton onClick={() => showMycVesterDepositModal()}>
+                          <StakeV2Styled.StakingButton onClick={() => stakeToken(ES_MYC_TOKEN, WITHDRAW)}>
                             Withdraw
                           </StakeV2Styled.StakingButton>
                         </StakeV2Styled.FlexRowEnd>
@@ -1060,7 +1303,7 @@ export default function StakeV2({
                       )}
                     </StakeV2Styled.VaultCapacityBackdrop>
                     <StakeV2Styled.FlexRowBetween>
-                      {totalStaked && (
+                      {totalStaked && mycPrice && (
                         <StakeV2Styled.FlexRowCol>
                           <span>
                             <b>{formatNumberWithCommas(parseFloat(ethers.utils.formatUnits(totalStaked)), 0)}</b>
@@ -1078,7 +1321,7 @@ export default function StakeV2({
                           </StakeV2Styled.Subtitle>
                         </StakeV2Styled.FlexRowCol>
                       )}
-                      {depositCap && (
+                      {depositCap && mycPrice && (
                         <StakeV2Styled.FlexRowColEnd>
                           <span>
                             <b>{formatNumberWithCommas(parseFloat(ethers.utils.formatUnits(depositCap)), 0)}</b>
