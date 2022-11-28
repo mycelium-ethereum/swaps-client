@@ -69,9 +69,9 @@ export function getFallbackArbitrumRpcUrl(useWebsocket) {
 export function getDefaultArbitrumRpcUrl(useWebsocket) {
   if (alchemyWhitelistedDomains.includes(window.location.host)) {
     if (useWebsocket) {
-      return "wss://arb-mainnet.g.alchemy.com/v2/SKz5SvTuqIVjE38XsFsy0McZbgfFPOng";
+      return process.env.REACT_APP_ARBITRUM_ONE_RPC_WSS;
     }
-    return "https://arb-mainnet.g.alchemy.com/v2/SKz5SvTuqIVjE38XsFsy0McZbgfFPOng";
+    return process.env.REACT_APP_ARBITRUM_ONE_RPC;
   }
   return getFallbackArbitrumRpcUrl(useWebsocket);
 }
@@ -85,9 +85,9 @@ export function getFallbackArbitrumGoerliRpcUrl(useWebsocket) {
 export function getDefaultArbitrumGoerliRpcUrl(useWebsocket) {
   if (alchemyWhitelistedDomains.includes(window.location.host)) {
     if (useWebsocket) {
-      return "wss://arb-goerli.g.alchemy.com/v2/sI8AlA8NGlqAZR_28jfPm9JPQQqmsN4U";
+      return process.env.REACT_APP_ARBITRUM_GOERLI_RPC_WSS;
     }
-    return "https://arb-goerli.g.alchemy.com/v2/sI8AlA8NGlqAZR_28jfPm9JPQQqmsN4U";
+    return process.env.REACT_APP_ARBITRUM_GOERLI_RPC;
   }
   return getFallbackArbitrumGoerliRpcUrl(useWebsocket);
 }
