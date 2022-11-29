@@ -40,33 +40,16 @@ export default function BuyMlp(props) {
               <Text>Buy / Sell</Text> MLP
             </div>
             <div className="Page-description">
-              <Text>Purchase</Text>{" "}
-              <a
-                href="https://swaps.docs.mycelium.xyz/protocol-design/mycelium-liquidity-pool-mlp/mlp-token"
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={() =>
-                  props.trackAction &&
-                  props.trackAction("Button clicked", {
-                    buttonName: "MLP tokens link",
-                  })
-                }
-              >
-                MLP <Text>tokens</Text>
-              </a>{" "}
-              <Text>to earn</Text> {nativeTokenSymbol} <Text>fees from swaps and leverages trading.</Text>
+              <Text>Purchase MLP tokens to earn {nativeTokenSymbol} fees from swaps and leverages trading.</Text>
               <br />
               <Text>Note that there is a minimum holding time of 15 minutes after a purchase.</Text>
               <br />
-              <Text>View</Text>{" "}
               <Link to="/earn">
-                <Text>staking</Text>
+                <Text>View staking page.</Text>
               </Link>{" "}
-              <Text>page. Read the Terms of Use</Text>{" "}
               <a href="https://mycelium.xyz/rewards-terms-of-use" target="_blank" rel="noopener noreferrer">
-                <Text>here</Text>
+                <Text>Terms of Use here.</Text>
               </a>
-              .
             </div>
           </div>
         </div>

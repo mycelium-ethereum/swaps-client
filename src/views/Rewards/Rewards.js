@@ -37,11 +37,10 @@ const PersonalHeader = () => (
     </div>
     <div className="Page-description">
       <Text>Be in the top 5% of traders to earn weekly rewards.</Text>
-      <br /> <Text>Read the Terms of Use</Text>{" "}
+      <br />
       <a href="https://mycelium.xyz/rewards-terms-of-use" target="_blank" rel="noopener noreferrer">
-        <Text>here</Text>
+        <Text>Terms of Use here.</Text>
       </a>
-      .
     </div>
   </div>
 );

@@ -1324,7 +1324,9 @@ export default function MlpSwap(props) {
                           });
                       }}
                     >
-                      <Text>{isBuying ? "Buy with" : "Sell for"}</Text> {token.symbol}
+                      <Text>
+                        {isBuying ? `Buy with ${token.symbol}` : `Sell for ${token.symbol}`}
+                      </Text>
                     </button>
                   </td>
                 </tr>
@@ -1494,12 +1496,12 @@ export default function MlpSwap(props) {
                   <div className="App-card-options">
                     {isBuying && (
                       <button className="App-button-option App-card-option" onClick={() => selectToken(token)}>
-                        <Text>Buy with</Text> {token.symbol}
+                        <Text>Buy with {token.symbol}</Text>
                       </button>
                     )}
                     {!isBuying && (
                       <button className="App-button-option App-card-option" onClick={() => selectToken(token)}>
-                        <Text>Sell for</Text> {token.symbol}
+                        <Text>Sell for {token.symbol}</Text>
                       </button>
                     )}
                   </div>

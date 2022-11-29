@@ -2678,8 +2678,8 @@ __metadata:
 
 "@mycelium-swaps-interface/charting_library@file:./public/charting_library/::locator=mycelium-swaps-interface%40workspace%3A.":
   version: 0.0.0
-  resolution: "@mycelium-swaps-interface/charting_library@file:./public/charting_library/#./public/charting_library/::hash=faaf15&locator=mycelium-swaps-interface%40workspace%3A."
-  checksum: d3fd675fd9e1675422e80b8dbfe9b323898f23ecd89fe9e6615077372f027e01c9b766272240c53a52e80c6b66a01e27d76d2008a277016d4ba679c1838b0f77
+  resolution: "@mycelium-swaps-interface/charting_library@file:./public/charting_library/#./public/charting_library/::hash=417396&locator=mycelium-swaps-interface%40workspace%3A."
+  checksum: ea135e1d987abe1579dae4b7e83763f7daa968489f0977b6cd91ebc219e5027f04d6a781ca21479455027b479db0370590540851da4917efa1092c8284cb05e0
   languageName: node
   linkType: hard
 

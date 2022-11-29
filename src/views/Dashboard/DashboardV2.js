@@ -450,7 +450,8 @@ export default function DashboardV2() {
               )}
             </div>
             <div className="Page-description">
-              {chainName} <Text>Total Stats start from</Text> {totalStatsStartDate}.<br />
+              {chainName} <Text>Total Stats start from {totalStatsStartDate}.</Text>
+              <br />
               <Text>See detailed analytics</Text>{" "}
               <a href="https://analytics.mycelium.xyz" target="_blank" rel="noopener noreferrer">
                 <Text>here.</Text>

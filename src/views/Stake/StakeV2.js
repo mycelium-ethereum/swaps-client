@@ -813,11 +813,10 @@ export default function StakeV2({
                 >
                   MLP
                 </a>{" "}
-                <Text>to earn rewards. Read the Terms of Use</Text>{" "}
+                <Text>to earn rewards.</Text>{" "}
                 <a href="https://mycelium.xyz/rewards-terms-of-use" target="_blank" rel="noopener noreferrer">
-                  <Text>here</Text>
+                  <Text>Terms of Use here.</Text>
                 </a>
-                .
               </div>
               {earnMsg && (
                 <div className="Page-description">
@@ -991,15 +990,13 @@ export default function StakeV2({
               <div className="Page-description">
                 <Text>Convert esMYC tokens to MYC tokens.</Text>
                 <br />
-                <Text>Please read the </Text>
                 <a
                   href="https://swaps.docs.mycelium.xyz/protocol-design/mycelium-liquidity-pool-mlp/mlp-rewards/esmyc-escrowed-myc"
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  <Text>vesting details</Text>
-                </a>{" "}
-                <Text>before using the vaults.</Text>
+                  <Text>Terms and conditions here.</Text>
+                </a>
               </div>
             </div>
             <StakeV2Styled.Card>
@@ -1095,7 +1092,7 @@ export default function StakeV2({
                     MYC/esMYC <Text>Staking</Text>
                   </StakeV2Styled.RewardsBannerText>
                   <StakeV2Styled.RewardsBannerText secondary title>
-                    <Text>Stake MYC</Text> <Text>or</Text> esMYC <Text>to receive interest in</Text> ETH
+                    <Text>Stake MYC or esMYC to receive interest in ETH</Text>
                   </StakeV2Styled.RewardsBannerText>
                   {stakingApr && (
                     <div className="App-card-row">

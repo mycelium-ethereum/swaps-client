@@ -265,7 +265,7 @@
   },
   "By continuing to browse, you agree to the storing of cookies on your device to enhance your site experience and for analytical purposes. By clicking ‘Accept’, you agree to the placement and use of cookies as described in our": {
     "ja": "当サイトの閲覧を継続することで、ウェブサイトのパフォーマンスやサービスの向上、改善のためにCookieを保存することに同意したことになります。 同意する をクリックすることで、Cookie の配置と使用に同意したことになります。",
-    "zh-CN": "继续浏览，即表示您同意在您的设备上存储 cookie，以增强您的网站体验并用于分析目的。点击“接受”，即表示您同意按照我们的描述放置和使用 cookie"
+    "zh-CN": "继续浏览，即表示您同意在您的设备上存储 cookie，以增强您的网站体验并用于分析目的。点击 “接受” ，即表示您同意按照我们的描述放置和使用 cookie"
   },
   "The slippage amount can be configured under Settings, found by clicking on your address at the top right of the page after connecting your wallet.": {
     "ja": "スリッページは、ウォレット接続後、ページ右上にあるアドレスをクリックして表示される 設定 で設定できます。",
@@ -276,8 +276,8 @@
     "zh-CN": "最大值"
   },
   "Balance:": {
-    "ja": "残高",
-    "zh-CN": "余额"
+    "ja": "残高:",
+    "zh-CN": "余额:"
   },
   "No trades yet": {
     "ja": "まだ取引がありません",
@@ -793,7 +793,7 @@
   },
   "Available": {
     "ja": "利用可能",
-    "zh-CN": "可用的"
+    "zh-CN": "可用额度"
   },
   "Fees may vary depending on which asset you use to buy MLP.": {
     "ja": "手数料は、MLPの購入に使用するアセットによって異なる場合があります。",
@@ -1085,7 +1085,7 @@
   },
   "Claim trading fee rebates here.": {
     "ja": "リーベイツ取引手数料はこちらでご請求下さい。",
-    "zh-CN": "在此处索取交易费贴现。"
+    "zh-CN": "在此处领取交易费贴现。"
   },
   "Enter Referral Code": {
     "ja": "紹介コードを入力",
@@ -1378,5 +1378,65 @@
   "Connect to wallet to view your rewards": {
     "ja": "ウォレットに接続して報酬を表示",
     "zh-CN": "连接到钱包以查看您的奖励"
+  },
+  "The Ethereum Merge is now in progress.": {
+    "ja": "イーサリアムのマージは現在進行中。",
+    "zh-CN": ""
+  },
+  "Stake MYC or esMYC to receive interest in ETH": {
+    "ja": "",
+    "zh-CN": "质押 MYC 或 esMYC 获得 ETH \n"
+  },
+  "Buy with ETH": {
+    "ja": "",
+    "zh-CN": "用 ETH 购买"
+  },
+  "Buy with UNI": {
+    "ja": "",
+    "zh-CN": "用 UNI 购买"
+  },
+  "Buy with USDC": {
+    "ja": "",
+    "zh-CN": "用 USDC 购买"
+  },
+  "Buy with BAL": {
+    "ja": "",
+    "zh-CN": "用 BAL 购买"
+  },
+  "Buy with LINK": {
+    "ja": "",
+    "zh-CN": "用 LINK 购买"
+  },
+  "Buy with FXS": {
+    "ja": "",
+    "zh-CN": "用 FXS 购买"
+  },
+  "Buy with BTC": {
+    "ja": "",
+    "zh-CN": "用 BTC 购买"
+  },
+  "Buy with USDT": {
+    "ja": "",
+    "zh-CN": "用 USDT 购买"
+  },
+  "Buy with CRV": {
+    "ja": "",
+    "zh-CN": "用 CRV 购买"
+  },
+  "Buy with DAI": {
+    "ja": "",
+    "zh-CN": "用 DAI 购买"
+  },
+  "Buy with FRAX": {
+    "ja": "",
+    "zh-CN": "用 FRAX 购买"
+  },
+  "Live": {
+    "ja": "",
+    "zh-CN": "实时"
+  },
+  "Number of Trades": {
+    "ja": "",
+    "zh-CN": "交易笔数"
   }
 }

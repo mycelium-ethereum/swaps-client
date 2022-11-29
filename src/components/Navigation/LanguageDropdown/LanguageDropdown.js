@@ -17,7 +17,7 @@ const languages = [
   },
   {
     name: "Chinese",
-    nativeName: "中國人",
+    nativeName: "中文 (简体)",
     lang: "zh-CN",
     useInterFont: false,
   },
