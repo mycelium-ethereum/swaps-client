@@ -270,6 +270,8 @@ export const SpreadCaptureDescription = styled.div`
 
 // Staking card styles
 export const ClaimButtonContainer = styled.div`
+  display: flex;
+  justify-content: center;
   width: 100%;
 `;
 
@@ -361,6 +363,7 @@ export const StakingButton = styled.button(
   background-color: transparent;
   height: 32px;
   width: ${props.fullWidth ? "100%" : "100px"};
+  ${props.fullWidth ? "max-width: 300px" : ""};
   padding: 0 ${props.fullWidth ? "22px" : "8px"};
   border-radius: 4px;
   display: flex;
