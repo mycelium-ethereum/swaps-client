@@ -1,5 +1,6 @@
 import styled from "styled-components";
 
+const xl = "1280px";
 const lg = "1080px";
 const sm = "550px";
 
@@ -36,10 +37,72 @@ export const StakeV2Card = styled.div`
   }
 `;
 
-export const Card = styled.div`
+export const Card = styled.div(
+  (props) => `
   border: 1px solid var(--cell-stroke);
   border-radius: 4px;
-`;
+
+  @media (max-width: ${xl}) {
+    &.Staking {
+      .App-card-row.break {
+        grid-template-columns: 1fr;
+        ${FlexRowEnd} {
+          margin-top: 8px;
+          justify-content: space-between;
+        }
+        ${FlexColEnd} {
+          align-items: flex-start;
+        }
+      }
+      ${StakedTokens} {
+        ${FlexRowBetween} {
+          flex-direction: column;
+          align-items: flex-start;
+          > span {
+            margin-bottom: 8px;
+          }
+          ${FlexColEnd} {
+            align-items: flex-start;
+          }
+        }
+      }
+    }
+  }
+  @media (max-width: ${lg}) {
+    &.Staking {
+      .App-card-row.break {
+        grid-template-columns: 1fr auto;
+      }
+    }
+  }
+  @media (max-width: ${sm}) {
+    &.Staking {
+      .App-card-row.break {
+        grid-template-columns: 1fr;
+        ${FlexRowEnd} {
+          margin-top: 8px;
+          justify-content: space-between;
+        }
+        ${FlexColEnd} {
+          align-items: flex-start;
+        }
+      }
+      ${StakedTokens} {
+        ${FlexRowBetween} {
+          flex-direction: column;
+          align-items: flex-start;
+          > span {
+            margin-bottom: 8px;
+          }
+          ${FlexColEnd} {
+            align-items: flex-start;
+          }
+        }
+      }
+    }
+  }
+`
+);
 
 export const CardTitle = styled.div`
   padding: 0.75rem 1rem;
@@ -200,12 +263,16 @@ export const ClaimButtonContainer = styled.div`
   width: 100%;
 `;
 
+export const FlexRow = styled.div`
+  display: flex;
+`;
+
 export const FlexRowCol = styled.div`
   display: flex;
   flex-direction: column;
 `;
 
-export const FlexRowColEnd = styled.div`
+export const FlexColEnd = styled.div`
   display: flex;
   flex-direction: column;
   align-items: flex-end;
@@ -249,6 +316,14 @@ export const AmountRow = styled.div(
 `
 );
 
+export const Amount = styled.span(
+  (props) => `
+  font-size: 14px;
+  line-height: 21px;
+  font-weight: bold;
+`
+);
+
 export const Subtitle = styled.span(
   (props) => `
   font-size: 12px;
@@ -283,6 +358,7 @@ export const StakingButton = styled.button(
   justify-content: center;
   color: ${props.whiteText ? "white" : "var(--action-active)"};
   margin-left: ${props.fullWidth ? "0" : "12px"};
+  ${props.marginRight ? `margin-right: 12px;` : ""}
   font-size: 16px;
   transition: all 0.3s ease;
   text-decoration: none;

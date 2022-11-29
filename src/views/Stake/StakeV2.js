@@ -67,12 +67,13 @@ import ClaimModal from "./ClaimModal";
 import Toggle from "../../components/Toggle/Toggle";
 import MlpPriceChart from "./MlpPriceChart";
 import { ZERO_BN } from "src/components/Stake/presets";
-import { formatNumberWithCommas, parseBigNumberToFloat } from "src/utils/common";
+import { formatNumberWithCommas, parseBigNumberToString } from "src/utils/common";
+import { TokenIcon } from "src/components/Stake/TokenIcon";
 
 const MYC_TOKEN = "MYC";
 const ES_MYC_TOKEN = "esMYC";
 const STAKE = "Stake";
-const WITHDRAW = "Withdraw";
+const UNSTAKE = "Unstake";
 
 function CompoundModal(props) {
   const {
@@ -446,6 +447,7 @@ function StakingModal(props) {
     selectedToken,
     stakingAddress,
     setPendingTxns,
+    isPaused,
   } = props;
   const [isApproving, setIsApproving] = useState(false);
 
@@ -506,6 +508,9 @@ function StakingModal(props) {
     if (amount && amount.gt(maxAmount)) {
       return "Max amount exceeded";
     }
+    if (isPaused) {
+      return "Staking paused";
+    }
   };
 
   const onClickPrimary = () => {
@@ -535,7 +540,7 @@ function StakingModal(props) {
           setIsTransacting(false);
         });
     }
-    if (stakeAction === WITHDRAW) {
+    if (stakeAction === UNSTAKE) {
       callContract(chainId, contract, "unstake", [selectedTokenAddress, amount], {
         sentMsg: `Unstake ${selectedToken} submitted!`,
         failMsg: `Unstaking ${selectedToken} failed!`,
@@ -562,6 +567,9 @@ function StakingModal(props) {
     if (!isApproving) {
       return true;
     }
+    if (!isPaused) {
+      return false;
+    }
     return true;
   };
 
@@ -579,7 +587,7 @@ function StakingModal(props) {
     if (isTransacting && stakeAction === STAKE) {
       return "Staking...";
     }
-    if (isTransacting && stakeAction === WITHDRAW) {
+    if (isTransacting && stakeAction === UNSTAKE) {
       return "Unstaking...";
     }
     return stakeAction === STAKE ? `Stake ${selectedToken}` : `Unstake ${selectedToken}`;
@@ -623,6 +631,113 @@ function StakingModal(props) {
                 {formatAmount(STAKABLE_TOKENS[selectedToken].staked, 18, 4, true)} {selectedToken}
               </span>
             </div>
+          </div>
+        </div>
+        <div className="Exchange-swap-button-container">
+          <button className="App-cta Exchange-swap-button" onClick={onClickPrimary} disabled={!isPrimaryEnabled()}>
+            {getPrimaryText()}
+          </button>
+        </div>
+      </Modal>
+    </div>
+  );
+}
+
+function ClaimStakingRewardsModal(props) {
+  const { isVisible, setIsVisible, chainId, rewardsEarned, value, setValue, setPendingTxns, stakingAddress } = props;
+
+  const [isTransacting, setIsTransacting] = useState(false);
+  const { library, account } = useWeb3React();
+
+  const { data: ethBalance } = useSWR([library, "getBalance", account, "latest"], {
+    fetcher: (library, method, ...params) => library[method](...params),
+  });
+
+  let amount = parseValue(value, 18);
+
+  const maxAmount = rewardsEarned;
+
+  const getError = () => {
+    if (ethBalance?.eq(0)) {
+      return ["Not enough ETH for gas"];
+    }
+
+    if (!amount || amount.eq(0)) {
+      return "Enter an amount";
+    }
+    if (amount && amount.gt(maxAmount)) {
+      return "Max amount exceeded";
+    }
+  };
+
+  const onClickPrimary = () => {
+    setIsTransacting(true);
+    const contract = new ethers.Contract(stakingAddress, RewardTracker.abi, library.getSigner());
+
+    callContract(chainId, contract, "claim", [account], {
+      sentMsg: `Claim submitted!`,
+      failMsg: `Claim failed!`,
+      successMsg: `Claimed!`,
+      setPendingTxns,
+    })
+      .then(async (res) => {
+        setIsVisible(false);
+      })
+      .finally(() => {
+        setIsTransacting(false);
+      });
+  };
+
+  const isPrimaryEnabled = () => {
+    const error = getError();
+    if (error) {
+      return false;
+    }
+    if (isTransacting) {
+      return false;
+    }
+    return true;
+  };
+
+  const getPrimaryText = () => {
+    const error = getError();
+    if (error) {
+      return error;
+    }
+    if (isTransacting) {
+      return "Claiming...";
+    }
+    return `Claim`;
+  };
+
+  return (
+    <div className="StakeModal">
+      <Modal
+        isVisible={isVisible}
+        setIsVisible={setIsVisible}
+        label="Claim Interest Rewards in WETH"
+        className="non-scrollable"
+      >
+        <div className="Exchange-swap-section">
+          <div className="Exchange-swap-section-top">
+            <div className="muted">
+              <div className="Exchange-swap-usd">Claim</div>
+            </div>
+            <div className="muted align-right clickable" onClick={() => setValue(formatAmountFree(maxAmount, 18, 18))}>
+              Max: {formatAmount(maxAmount, 18, 4, true)}
+            </div>
+          </div>
+          <div className="Exchange-swap-section-bottom">
+            <div>
+              <input
+                type="number"
+                placeholder="0.0"
+                className="Exchange-swap-input"
+                value={value}
+                onChange={(e) => setValue(e.target.value)}
+              />
+            </div>
+            <div className="PositionEditor-token-symbol">WETH</div>
           </div>
         </div>
         <div className="Exchange-swap-button-container">
@@ -697,7 +812,6 @@ export default function StakeV2({
   const chainName = getChainName(chainId);
 
   const [isVesterDepositModalVisible, setIsVesterDepositModalVisible] = useState(false);
-  const [isStakingModalVisible, setIsStakingModalVisible] = useState(false);
   const [vesterDepositTitle, setVesterDepositTitle] = useState("");
   const [vesterDepositStakeTokenLabel, setVesterDepositStakeTokenLabel] = useState("");
   const [vesterDepositMaxAmount, setVesterDepositMaxAmount] = useState("");
@@ -711,9 +825,13 @@ export default function StakeV2({
   const [vesterDepositMaxReserveAmount, setVesterDepositMaxReserveAmount] = useState("");
   const [vesterDepositAddress, setVesterDepositAddress] = useState("");
 
+  const [isStakingModalVisible, setIsStakingModalVisible] = useState(false);
   const [tokenToStake, setTokenToStake] = useState(MYC_TOKEN);
   const [amountToStake, setAmountToStake] = useState("");
   const [stakeAction, setStakeAction] = useState(STAKE);
+
+  const [isClaimStakingRewardsModalVisible, setIsClaimStakingRewardsModalVisible] = useState(false);
+  const [amountToClaim, setAmountToClaim] = useState("");
 
   const [isVesterWithdrawModalVisible, setIsVesterWithdrawModalVisible] = useState(false);
   const [vesterWithdrawTitle, setVesterWithdrawTitle] = useState(false);
@@ -868,8 +986,14 @@ export default function StakeV2({
 
   const stakingApr = useStakingApr(mycPrice, nativeTokenPrice);
   // const tempAddress = "0xD9CF99Cf1E381703313F65DF16B17e0C1942EAe9";
-  const { userMycBalance, userEsMycBalance, userStakedMycBalance, userStakedEsMycBalance, rewardsEarned } =
-    useUserStakingBalances(account, chainId);
+  const {
+    userMycBalance,
+    userEsMycBalance,
+    userStakedMycBalance,
+    userStakedEsMycBalance,
+    rewardsEarned,
+    cumulativeRewards,
+  } = useUserStakingBalances(account, chainId);
   const { isPaused, totalStaked, depositCap } = useStakingValues(chainId);
 
   let totalRewardTokens;
@@ -957,6 +1081,8 @@ export default function StakeV2({
     setIsStakingModalVisible(true);
   };
 
+  const claimRewards = () => setIsClaimStakingRewardsModalVisible(true);
+
   return (
     <div className="StakeV2 Page page-layout default-container">
       <VesterDepositModal
@@ -1035,6 +1161,16 @@ export default function StakeV2({
         setPendingTxns={setPendingTxns}
         isPaused={isPaused}
       />
+      <ClaimStakingRewardsModal
+        isVisible={isClaimStakingRewardsModalVisible}
+        setIsVisible={setIsClaimStakingRewardsModalVisible}
+        chainId={chainId}
+        rewardsEarned={rewardsEarned}
+        value={amountToClaim}
+        setValue={setAmountToClaim}
+        setPendingTxns={setPendingTxns}
+        stakingAddress={stakingAddress}
+      />
 
       <StakeV2Styled.StakeV2Content className="StakeV2-content">
         <StakeV2Styled.StakeV2Cards className="StakeV2-cards">
@@ -1101,31 +1237,26 @@ export default function StakeV2({
                   <StakeV2Styled.RewardsBannerRow>
                     <div className="App-card-row">
                       <div className="label">Price</div>
-                      <div>${formatKeyAmount(processedData, "mlpPrice", USD_DECIMALS, 3, true)}</div>
+                      <StakeV2Styled.FlexColEnd>
+                        <StakeV2Styled.Amount>
+                          ${formatKeyAmount(processedData, "mlpPrice", USD_DECIMALS, 3, true)}
+                        </StakeV2Styled.Amount>
+                        <span>MLP</span>
+                      </StakeV2Styled.FlexColEnd>
                     </div>
                     <div className="App-card-row">
                       <div className="label">Wallet</div>
-                      <div>
-                        {formatKeyAmount(processedData, "mlpBalance", MLP_DECIMALS, 2, true)} MLP ($
-                        {formatKeyAmount(processedData, "mlpBalanceUsd", USD_DECIMALS, 2, true)})
-                      </div>
-                    </div>
-                    <div className="App-card-row">
-                      <div className="label">Staked</div>
-                      <div>
-                        {formatKeyAmount(processedData, "mlpBalance", MLP_DECIMALS, 2, true)} MLP ($
-                        {formatKeyAmount(processedData, "mlpBalanceUsd", USD_DECIMALS, 2, true)})
-                      </div>
+                      <StakeV2Styled.FlexColEnd>
+                        <StakeV2Styled.Amount>
+                          {formatKeyAmount(processedData, "mlpBalance", MLP_DECIMALS, 2, true)} MLP
+                        </StakeV2Styled.Amount>
+                        <StakeV2Styled.Subtitle>
+                          ${formatKeyAmount(processedData, "mlpBalanceUsd", USD_DECIMALS, 2, true)} USD
+                        </StakeV2Styled.Subtitle>
+                      </StakeV2Styled.FlexColEnd>
                     </div>
                   </StakeV2Styled.RewardsBannerRow>
                   <StakeV2Styled.RewardsBannerRow>
-                    <div className="App-card-row">
-                      <div className="label">Total Staked</div>
-                      <div>
-                        {formatKeyAmount(processedData, "mlpSupply", 18, 2, true)} MLP ($
-                        {formatKeyAmount(processedData, "mlpSupplyUsd", USD_DECIMALS, 2, true)})
-                      </div>
-                    </div>
                     <div className="App-card-row">
                       <div className="label">Total Supply</div>
                       <div>
@@ -1175,23 +1306,23 @@ export default function StakeV2({
                       </StakeV2Styled.RewardsBannerTextWrap>
                     </div>
                   </StakeV2Styled.RewardsBannerRow>
-                  <StakeV2Styled.Buttons>
+                  <StakeV2Styled.FlexRowBetween>
                     {active && (
-                      <button className="App-button-option App-card-option" onClick={() => showMlpClaimModal()}>
+                      <StakeV2Styled.StakingButton whiteText onClick={() => showMlpClaimModal()} marginRight fullWidth>
                         Claim
-                      </button>
+                      </StakeV2Styled.StakingButton>
                     )}
                     {active && (
-                      <button className="App-button-option App-card-option" onClick={() => showMlpCompoundModal()}>
+                      <StakeV2Styled.StakingButton whiteText onClick={() => showMlpClaimModal()} fullWidth>
                         Compound
-                      </button>
+                      </StakeV2Styled.StakingButton>
                     )}
                     {!active && (
                       <button className="App-button-option App-card-option" onClick={() => connectWallet()}>
                         Connect Wallet
                       </button>
                     )}
-                  </StakeV2Styled.Buttons>
+                  </StakeV2Styled.FlexRowBetween>
                 </StakeV2Styled.RewardsBanner>
               </StakeV2Styled.MlpInfo>
             </StakeV2Styled.Card>
@@ -1208,10 +1339,10 @@ export default function StakeV2({
                   .
                 </div>
               </div>
-              <StakeV2Styled.Card>
+              <StakeV2Styled.Card className="Staking">
                 <StakeV2Styled.VestingInfo>
                   <StakeV2Styled.StakingBannerRow>
-                    <div className="App-card-row">
+                    <div className="App-card-row break">
                       <div className="label">Wallet</div>
                       <div>
                         <StakeV2Styled.FlexRowEnd>
@@ -1237,7 +1368,7 @@ export default function StakeV2({
                       </div>
                     </div>
                     <StakeV2Styled.Divider />
-                    <div className="App-card-row">
+                    <div className="App-card-row break">
                       <div className="label">Staked</div>
                       <div>
                         <StakeV2Styled.FlexRowEnd>
@@ -1246,7 +1377,7 @@ export default function StakeV2({
                             tokenUsdPrice={mycPrice || ZERO_BN}
                             selectedToken={CompatibleTokenEnum.MYC}
                           />
-                          <StakeV2Styled.StakingButton onClick={() => stakeToken(MYC_TOKEN, WITHDRAW)}>
+                          <StakeV2Styled.StakingButton onClick={() => stakeToken(MYC_TOKEN, UNSTAKE)}>
                             Withdraw
                           </StakeV2Styled.StakingButton>
                         </StakeV2Styled.FlexRowEnd>
@@ -1256,7 +1387,7 @@ export default function StakeV2({
                             tokenUsdPrice={mycPrice || ZERO_BN}
                             selectedToken={CompatibleTokenEnum.esMYC}
                           />
-                          <StakeV2Styled.StakingButton onClick={() => stakeToken(ES_MYC_TOKEN, WITHDRAW)}>
+                          <StakeV2Styled.StakingButton onClick={() => stakeToken(ES_MYC_TOKEN, UNSTAKE)}>
                             Withdraw
                           </StakeV2Styled.StakingButton>
                         </StakeV2Styled.FlexRowEnd>
@@ -1279,22 +1410,46 @@ export default function StakeV2({
                       <StakeV2Styled.FlexRowEnd>
                         <WalletBalance
                           large
-                          walletAmount={rewardsEarned?.div(expandDecimals(1, ETH_DECIMALS)) || ZERO_BN}
+                          walletAmount={rewardsEarned || ZERO_BN}
                           tokenUsdPrice={nativeTokenPrice || ZERO_BN}
-                          selectedToken={CompatibleTokenEnum.ETH}
+                          selectedToken={CompatibleTokenEnum.WETH}
+                          decimals={6}
                         />
-                        <StakeV2Styled.Subtitle></StakeV2Styled.Subtitle>
                       </StakeV2Styled.FlexRowEnd>
                     </StakeV2Styled.FlexRowBetween>
                     <StakeV2Styled.ClaimButtonContainer>
-                      <StakeV2Styled.StakingButton onClick={() => showMycVesterDepositModal()} fullWidth whiteText>
+                      <StakeV2Styled.StakingButton onClick={claimRewards} fullWidth whiteText>
                         Claim Rewards Now
                       </StakeV2Styled.StakingButton>
                     </StakeV2Styled.ClaimButtonContainer>
                   </StakeV2Styled.StakedTokens>
+                  {cumulativeRewards && (
+                    <StakeV2Styled.StakingBannerRow>
+                      <div className="App-card-row break">
+                        <div className="label">Total Rewards</div>
+                        <div>
+                          <span>
+                            <b>{parseBigNumberToString(cumulativeRewards, 6)} WETH</b>
+                          </span>
+                          <StakeV2Styled.Subtitle>
+                            {" "}
+                            $
+                            {formatNumberWithCommas(
+                              parseFloat(
+                                parseBigNumberToString(
+                                  nativeTokenPrice.mul(cumulativeRewards).div(expandDecimals(1, USD_PRICE_PRECISION)),
+                                  2
+                                )
+                              )
+                            )}
+                          </StakeV2Styled.Subtitle>
+                        </div>
+                      </div>
+                    </StakeV2Styled.StakingBannerRow>
+                  )}
                   <StakeV2Styled.StakingBannerRow>
                     <StakeV2Styled.FlexRowBetween>
-                      <StakeV2Styled.Subtitle white>Total Staked</StakeV2Styled.Subtitle>
+                      <StakeV2Styled.Subtitle white>Total Staked (MYC & esMYC)</StakeV2Styled.Subtitle>
                       <StakeV2Styled.Subtitle white>Vault Capacity</StakeV2Styled.Subtitle>
                     </StakeV2Styled.FlexRowBetween>
                     <StakeV2Styled.VaultCapacityBackdrop>
@@ -1322,7 +1477,7 @@ export default function StakeV2({
                         </StakeV2Styled.FlexRowCol>
                       )}
                       {depositCap && mycPrice && (
-                        <StakeV2Styled.FlexRowColEnd>
+                        <StakeV2Styled.FlexColEnd>
                           <span>
                             <b>{formatNumberWithCommas(parseFloat(ethers.utils.formatUnits(depositCap)), 0)}</b>
                           </span>
@@ -1337,12 +1492,15 @@ export default function StakeV2({
                               2
                             )}
                           </StakeV2Styled.Subtitle>
-                        </StakeV2Styled.FlexRowColEnd>
+                        </StakeV2Styled.FlexColEnd>
                       )}
                     </StakeV2Styled.FlexRowBetween>
                     <StakeV2Styled.Divider />
                     <StakeV2Styled.FlexRowBetweenCenter noMargin>
-                      <span>Buy MYC</span>
+                      <StakeV2Styled.FlexRow>
+                        Buy <TokenIcon token="MYC" size="lg" />
+                        MYC
+                      </StakeV2Styled.FlexRow>
                       <StakeV2Styled.OutgoingLink href="https://app.1inch.io/#/42161/unified/swap/USDC/0xc74fe4c715510ec2f8c61d70d397b32043f55abe">
                         <StakeV2Styled.StakingButton fullWidth>Buy on 1inch</StakeV2Styled.StakingButton>
                       </StakeV2Styled.OutgoingLink>

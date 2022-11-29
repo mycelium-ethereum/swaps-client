@@ -1136,41 +1136,61 @@ export function useUserStakingBalances(address, chainId) {
   const stakingAddress = getContract(chainId, "MYCStakingRewards");
 
   const { data: userMycBalance } = useSWR(
-    [`useStakingBalances:balanceOf(MYC):${chainId}`, chainId, mycTokenAddress, "balanceOf", address],
+    address ? [`useStakingBalances:balanceOf(MYC):${chainId}`, chainId, mycTokenAddress, "balanceOf", address] : null,
     {
       fetcher: fetcher(undefined, Token),
     }
   );
 
   const { data: userEsMycBalance } = useSWR(
-    [`useStakingBalances:balanceOf(esMYC):${chainId}`, chainId, esMycTokenAddress, "balanceOf", address],
+    address
+      ? [`useStakingBalances:balanceOf(esMYC):${chainId}`, chainId, esMycTokenAddress, "balanceOf", address]
+      : null,
     {
       fetcher: fetcher(undefined, Token),
     }
   );
 
   const { data: userStakedMycBalance } = useSWR(
-    [`useStakingBalances:depositBalances(MYC):${chainId}`, chainId, stakingAddress, "depositBalances", address],
+    address
+      ? [`useStakingBalances:depositBalances(MYC):${chainId}`, chainId, stakingAddress, "depositBalances", address]
+      : null,
     {
       fetcher: fetcher(undefined, RewardsTracker, mycTokenAddress),
     }
   );
 
   const { data: userStakedEsMycBalance } = useSWR(
-    [`useStakingBalances:depositBalances(esMYC):${chainId}`, chainId, stakingAddress, "depositBalances", address],
+    address
+      ? [`useStakingBalances:depositBalances(esMYC):${chainId}`, chainId, stakingAddress, "depositBalances", address]
+      : null,
     {
       fetcher: fetcher(undefined, RewardsTracker, esMycTokenAddress),
     }
   );
 
   const { data: rewardsEarned } = useSWR(
-    [`useStakingBalances:claimable:${chainId}`, chainId, stakingAddress, "claimable", address],
+    address ? [`useStakingBalances:claimable:${chainId}`, chainId, stakingAddress, "claimable", address] : null,
     {
       fetcher: fetcher(undefined, RewardsTracker),
     }
   );
 
-  return { userMycBalance, userEsMycBalance, userStakedMycBalance, userStakedEsMycBalance, rewardsEarned };
+  const { data: cumulativeRewards } = useSWR(
+    address ? [`useStakingBalances:claimable:${chainId}`, chainId, stakingAddress, "cumulativeRewards", address] : null,
+    {
+      fetcher: fetcher(undefined, RewardsTracker),
+    }
+  );
+
+  return {
+    userMycBalance,
+    userEsMycBalance,
+    userStakedMycBalance,
+    userStakedEsMycBalance,
+    rewardsEarned,
+    cumulativeRewards,
+  };
 }
 
 export function useStakingValues(chainId) {

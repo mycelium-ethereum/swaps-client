@@ -27,7 +27,7 @@ export const roundUpTime = (time: number, period: Period) => {
   return (Number(time / offset) * offset) + offset;
 }
 
-export function parseBigNumberToFloat(bn: BigNumber, decimals = 0): string {
+export function parseBigNumberToString(bn: BigNumber, decimals = 0): string {
   if (!bn) return "-";
   return parseFloat(ethers.utils.formatUnits(bn)).toFixed(decimals);
 }

@@ -3,7 +3,7 @@ import { FC } from "react";
 import * as StakeV2Styled from "src/views/Stake/StakeV2Styles";
 import { TokenIcon } from "src/components/Stake/TokenIcon";
 import { CompatibleToken, TokenSize, TokenSizeEnum } from "src/components/Stake/types";
-import { convertStringToFloat, parseBigNumberToFloat } from "src/utils/common";
+import { convertStringToFloat, parseBigNumberToString, formatNumberWithCommas } from "src/utils/common";
 import { expandDecimals } from "src/Helpers";
 
 interface WalletBalanceProps {
@@ -12,6 +12,8 @@ interface WalletBalanceProps {
   tokenUsdPrice: BigNumber;
   selectedToken: CompatibleToken;
   tokenSize: TokenSize;
+  tokenDecimals?: number;
+  decimals?: number;
 }
 
 export const USD_PRICE_PRECISION = 30;
@@ -22,19 +24,26 @@ export const WalletBalance: FC<WalletBalanceProps> = ({
   tokenUsdPrice,
   selectedToken,
   tokenSize = TokenSizeEnum.lg,
+  decimals = 2,
 }) => (
   <>
-    <StakeV2Styled.FlexRowColEnd>
+    <StakeV2Styled.FlexColEnd>
       <TokenAmountRow
         large={large}
-        tokenAmount={parseBigNumberToFloat(walletAmount, 2)}
+        tokenAmount={parseBigNumberToString(walletAmount, decimals)}
         selectedToken={selectedToken}
         tokenSize={tokenSize}
+        decimals={decimals}
       />
       <StakeV2Styled.Subtitle>
-        ${parseBigNumberToFloat(tokenUsdPrice.mul(walletAmount).div(expandDecimals(1, USD_PRICE_PRECISION)), 2)}
+        $
+        {formatNumberWithCommas(
+          parseFloat(
+            parseBigNumberToString(tokenUsdPrice.mul(walletAmount).div(expandDecimals(1, USD_PRICE_PRECISION)), 2)
+          )
+        )}
       </StakeV2Styled.Subtitle>
-    </StakeV2Styled.FlexRowColEnd>
+    </StakeV2Styled.FlexColEnd>
   </>
 );
 
@@ -43,13 +52,20 @@ interface TokenAmountRowProps {
   tokenAmount: string;
   selectedToken: CompatibleToken;
   tokenSize: TokenSize;
+  decimals?: number;
 }
 
-export const TokenAmountRow: FC<TokenAmountRowProps> = ({ large, tokenAmount, selectedToken, tokenSize }) => (
+export const TokenAmountRow: FC<TokenAmountRowProps> = ({
+  large,
+  tokenAmount,
+  selectedToken,
+  tokenSize,
+  decimals = 2,
+}) => (
   <>
     {/* @ts-ignore-next-line */}
     <StakeV2Styled.AmountRow large={large}>
-      <span>{convertStringToFloat(tokenAmount.toString(), 2)}</span>
+      <span>{convertStringToFloat(tokenAmount.toString(), decimals)}</span>
       <TokenIcon token={selectedToken} size={tokenSize as TokenSize} />
       <span>{selectedToken}</span>
     </StakeV2Styled.AmountRow>
