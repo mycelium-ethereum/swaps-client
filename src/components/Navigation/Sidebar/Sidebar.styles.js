@@ -6,7 +6,7 @@ export const SideMenu = styled.aside(
   font-family: "aileron", sans-serif;
   background: var(--background-primary);
   height: 100vh;
-  background: linear-gradient(83.12deg, rgba(9, 130, 0, 0.5) -208.54%, rgba(9, 130, 0, 0) 159.09%), rgba(0, 0, 0, 0.9);
+  background: rgba(0, 0, 0, 0.9);
   border-right: 1px solid var(--action-active);
   overflow: hidden;
   transition: width 0.3s ease, opacity 0.3s ease;
