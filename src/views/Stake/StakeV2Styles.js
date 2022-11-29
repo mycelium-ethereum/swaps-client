@@ -1,5 +1,6 @@
 import styled from "styled-components";
 
+const xxl = "1460px";
 const xl = "1280px";
 const lg = "1080px";
 const sm = "550px";
@@ -42,7 +43,7 @@ export const Card = styled.div(
   border: 1px solid var(--cell-stroke);
   border-radius: 4px;
 
-  @media (max-width: ${xl}) {
+ @media only screen and (max-width: ${xxl}) and (min-width: ${xl}) {
     &.Staking {
       .App-card-row.break {
         grid-template-columns: 1fr;
@@ -98,6 +99,13 @@ export const Card = styled.div(
             align-items: flex-start;
           }
         }
+      }
+      .total-rewards .App-card-row > div:not(.label) {
+        padding-top: 8px;
+        text-align: left;
+      }
+      .total-rewards {
+        border-bottom: 1px solid var(--cell-stroke);
       }
     }
   }
@@ -306,7 +314,7 @@ export const AmountRow = styled.div(
   (props) => `
   display: flex;
   font-weight: bold;
-  font-size: ${props.large ? "20px" : "16px"};
+  font-size: ${props.large ? "20px" : "14px"};
   line-height: ${props.large ? "24px" : "21px"};
 
   > img {

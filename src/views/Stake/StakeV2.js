@@ -1259,10 +1259,14 @@ export default function StakeV2({
                   <StakeV2Styled.RewardsBannerRow>
                     <div className="App-card-row">
                       <div className="label">Total Supply</div>
-                      <div>
-                        {formatKeyAmount(processedData, "mlpSupply", 18, 2, true)} MLP ($
-                        {formatKeyAmount(processedData, "mlpSupplyUsd", USD_DECIMALS, 2, true)})
-                      </div>
+                      <StakeV2Styled.FlexColEnd>
+                        <StakeV2Styled.Amount>
+                          {formatKeyAmount(processedData, "mlpSupply", MLP_DECIMALS, 2, true)} MLP
+                        </StakeV2Styled.Amount>
+                        <StakeV2Styled.Subtitle>
+                          ${formatKeyAmount(processedData, "mlpSupplyUsd", USD_DECIMALS, 2, true)} USD
+                        </StakeV2Styled.Subtitle>
+                      </StakeV2Styled.FlexColEnd>
                     </div>
                   </StakeV2Styled.RewardsBannerRow>
                   <StakeV2Styled.Buttons>
@@ -1286,10 +1290,9 @@ export default function StakeV2({
                           <StakeV2Styled.RewardsBannerText large>
                             {formatKeyAmount(processedData, "feeMlpTrackerRewards", 18, 4)} {nativeTokenSymbol}
                           </StakeV2Styled.RewardsBannerText>{" "}
-                          <StakeV2Styled.RewardsBannerText secondary>
-                            ($
-                            {formatKeyAmount(processedData, "feeMlpTrackerRewardsUsd", USD_DECIMALS, 2, true)})
-                          </StakeV2Styled.RewardsBannerText>
+                          <StakeV2Styled.Subtitle>
+                            ${formatKeyAmount(processedData, "feeMlpTrackerRewardsUsd", USD_DECIMALS, 2, true)} USD
+                          </StakeV2Styled.Subtitle>
                         </StakeV2Styled.RewardsBannerTextWrap>
                       </div>
                     </div>
@@ -1299,10 +1302,9 @@ export default function StakeV2({
                         <StakeV2Styled.RewardsBannerText large>
                           {formatKeyAmount(processedData, "stakedMlpTrackerRewards", 18, 4)} esMYC
                         </StakeV2Styled.RewardsBannerText>{" "}
-                        <StakeV2Styled.RewardsBannerText secondary>
-                          ($
-                          {formatKeyAmount(processedData, "stakedMlpTrackerRewardsUsd", USD_DECIMALS, 2, true)})
-                        </StakeV2Styled.RewardsBannerText>
+                        <StakeV2Styled.Subtitle>
+                          ${formatKeyAmount(processedData, "stakedMlpTrackerRewardsUsd", USD_DECIMALS, 2, true)} USD
+                        </StakeV2Styled.Subtitle>
                       </StakeV2Styled.RewardsBannerTextWrap>
                     </div>
                   </StakeV2Styled.RewardsBannerRow>
@@ -1333,8 +1335,12 @@ export default function StakeV2({
                 <div className="Page-title">Stake MYC or esMYC</div>
                 <div className="Page-description">
                   MYC and esMYC holders can stake their tokens and earn interest rewards. Read the terms and conditions{" "}
-                  <a href="https://stake.mycelium.xyz/" target="_blank" rel="noopener noreferrer">
-                    here (TBA)
+                  <a
+                    href="https://mycelium.xyz/legal/terms-and-conditions/staking"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    here
                   </a>
                   .
                 </div>
@@ -1406,7 +1412,7 @@ export default function StakeV2({
                   )}
                   <StakeV2Styled.StakedTokens borderTop wrap>
                     <StakeV2Styled.FlexRowBetween>
-                      <span>Claimable Rewards</span>
+                      <span>Claimable Rewards&nbsp;</span>
                       <StakeV2Styled.FlexRowEnd>
                         <WalletBalance
                           large
@@ -1424,7 +1430,7 @@ export default function StakeV2({
                     </StakeV2Styled.ClaimButtonContainer>
                   </StakeV2Styled.StakedTokens>
                   {cumulativeRewards && (
-                    <StakeV2Styled.StakingBannerRow>
+                    <StakeV2Styled.StakingBannerRow className="total-rewards">
                       <div className="App-card-row break">
                         <div className="label">Total Rewards</div>
                         <div>
@@ -1535,15 +1541,14 @@ export default function StakeV2({
                   <StakeV2Styled.StakedTokens>
                     <StakeV2Styled.RewardsBannerText secondary>Vesting Tokens</StakeV2Styled.RewardsBannerText>
                     <div>
-                      <StakeV2Styled.RewardsBannerTextWrap>
-                        <StakeV2Styled.RewardsBannerText inline>
+                      <StakeV2Styled.FlexColEnd>
+                        <StakeV2Styled.Amount>
                           {formatKeyAmount(vestingData, "mlpVesterVestedAmount", 18, 4, true)} esMYC
-                        </StakeV2Styled.RewardsBannerText>{" "}
-                        <StakeV2Styled.RewardsBannerText inline>
-                          ($
-                          {formatKeyAmount(processedData, "mlpVesterVestedAmountUsd", USD_DECIMALS, 2, true)})
-                        </StakeV2Styled.RewardsBannerText>
-                      </StakeV2Styled.RewardsBannerTextWrap>
+                        </StakeV2Styled.Amount>
+                        <StakeV2Styled.Subtitle>
+                          ${formatKeyAmount(processedData, "mlpVesterVestedAmountUsd", USD_DECIMALS, 2, true)} USD
+                        </StakeV2Styled.Subtitle>
+                      </StakeV2Styled.FlexColEnd>
                     </div>
                   </StakeV2Styled.StakedTokens>
                   <StakeV2Styled.StakingBannerRow>
