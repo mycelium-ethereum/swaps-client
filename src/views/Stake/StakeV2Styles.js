@@ -101,6 +101,8 @@ export const Card = styled.div(
         }
       }
       .total-rewards .App-card-row > div:not(.label) {
+        display: flex;
+        flex-direction: column;
         padding-top: 8px;
         text-align: left;
       }
