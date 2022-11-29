@@ -27,10 +27,10 @@
 
 .menu-items {
   position: absolute;
-  right: 0;
+  left: 0;
   top: calc(100% + 0.5rem);
-  min-width: 10rem;
   width: 100%;
+  min-width: 10rem;
   transform-origin: top right;
   border-radius: 4px;
   background: var(--background-gradient);
@@ -51,10 +51,6 @@
   line-height: 150%;
   border-bottom: 1px solid var(--cell-highlight);
   transition: background-color 0.3s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 40px;
   width: 100%;
   transition: background-color 0.3s ease;
   background-color: transparent;

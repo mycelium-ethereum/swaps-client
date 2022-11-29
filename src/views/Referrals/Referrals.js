@@ -35,6 +35,7 @@ import {
 } from "../../Api/referrals";
 import useSWR from "swr";
 import { ethers } from "ethers";
+import { Text } from "../../components/Translation/Text";
 import { useLocation } from "react-router-dom";
 import MerkleDistributor from "../../abis/MerkleDistributor.json";
 import MerkleDistributorReader from "../../abis/MerkleDistributorReader.json";
@@ -55,22 +56,34 @@ export function isRecentReferralCodeNotExpired(referralCodeInfo) {
 
 const RebatesHeader = () => (
   <div className="Page-title-section mt-0">
-    <div className="Page-title">Trader Referrals</div>
-    <div className="Page-description">Claim trading fee rebates here.</div>
+    <div className="Page-title">
+      <Text>Trader Referrals</Text>
+    </div>
+    <div className="Page-description">
+      <Text>Claim trading fee rebates here.</Text>
+    </div>
   </div>
 );
 
 const CommissionsHeader = () => (
   <div className="Page-title-section mt-0">
-    <div className="Page-title">Referral Commissions</div>
-    <div className="Page-description">Claim referral commissions here.</div>
+    <div className="Page-title">
+      <Text>Referral Commissions</Text>
+    </div>
+    <div className="Page-description">
+      <Text>Claim referral commissions here.</Text>
+    </div>
   </div>
 );
 
 const LeaderboardHeader = () => (
   <div className="Page-title-section mt-0">
-    <div className="Page-title">Commissions Leaderboard</div>
-    <div className="Page-description">Distribute a referral code and earn commissions on referred volume.</div>
+    <div className="Page-title">
+      <Text>Commissions Leaderboard</Text>
+    </div>
+    <div className="Page-description">
+      <Text>Distribute a referral code and earn commissions on referred volume.</Text>
+    </div>
   </div>
 );
 
@@ -183,12 +196,14 @@ export default function Referral(props) {
         successMsg: "Claim completed!",
         setPendingTxns,
       }
-    ).then(async (res) => {
+    )
+      .then(async (res) => {
         await res.wait();
         setIsClaimModalOpen(false);
-    }).finally(() => {
-      setIsClaiming(false);
-    })
+      })
+      .finally(() => {
+        setIsClaiming(false);
+      });
   }
 
   // Fetch all week data from server

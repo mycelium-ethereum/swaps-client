@@ -22,6 +22,8 @@ import {
   EventTitle,
 } from "./Sidebar.styles";
 
+import { Text } from "src/components/Translation/Text";
+
 import { ReactComponent as TradeIcon } from "../../../img/nav/trade.svg";
 import { ReactComponent as DashboardIcon } from "../../../img/nav/dashboard.svg";
 import { ReactComponent as EarnIcon } from "../../../img/nav/earn.svg";
@@ -120,13 +122,19 @@ export default function Sidebar({ sidebarVisible, setSidebarVisible }) {
             {navTopLinks.map((item) => (
               <MenuItem key={item.name}>
                 <NavLink activeClassName="active" exact className="App-header-link-main" to={item.path}>
-                  <item.icon /> <span>{item.name}</span>
+                  <item.icon />{" "}
+                  <span>
+                    <Text>{item.name}</Text>
+                  </span>
                 </NavLink>
               </MenuItem>
             ))}
             <MenuItem>
               <a href="https://stake.mycelium.xyz" target="_blank" rel="noopener noreferrer">
-                <MycStakingIcon /> <span>MYC Staking</span>
+                <MycStakingIcon />{" "}
+                <span>
+                  MYC <Text>Staking</Text>
+                </span>
               </a>
             </MenuItem>
           </NavMenu>
@@ -134,7 +142,10 @@ export default function Sidebar({ sidebarVisible, setSidebarVisible }) {
             <NavMenu noPadding>
               <MenuItem yellow>
                 <a href="https://analytics.mycelium.xyz" target="_blank" rel="noopener noreferrer">
-                  <AnalyticsIcon /> <span>Analytics</span>
+                  <AnalyticsIcon />{" "}
+                  <span>
+                    <Text>Analytics</Text>
+                  </span>
                 </a>
               </MenuItem>
             </NavMenu>
@@ -144,22 +155,22 @@ export default function Sidebar({ sidebarVisible, setSidebarVisible }) {
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                <DocsIcon /> Docs
+                <DocsIcon /> <Text>Docs</Text>
               </a>
             </BottomMenuItem>
             <SocialLinksMenu>
               {socialLinks.map((item) => (
-                <a href={item.path} target="_blank" rel="noopener noreferrer">
+                <a key={item.path} href={item.path} target="_blank" rel="noopener noreferrer">
                   <item.icon title={item.name} />
                 </a>
               ))}
             </SocialLinksMenu>
             <LegalMenu>
               <a href="https://mycelium.xyz/privacy-policy" target="_blank" rel="noopener noreferrer">
-                Privacy Policy
+                <Text>Privacy Policy</Text>
               </a>
               <a href="https://mycelium.xyz/terms-of-use" target="_blank" rel="noopener noreferrer">
-                Terms of Use
+                <Text>Terms of Use</Text>
               </a>
             </LegalMenu>
             <CopyrightYear ref={yearRef} />

@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { Text } from "../Translation/Text";
 import "./ConsentModal.css";
 import close from "../../img/close.svg";
 
@@ -32,23 +33,27 @@ function ConsentModal({ hasConsented, setConsented }) {
       </button>
       <div className="ConsentModal-text">
         <p>
-          <b>We use cookies on this site to enhance your user experience.</b>
+          <b>
+            <Text>We use cookies on this site to enhance your user experience.</Text>
+          </b>
         </p>
         <p>
-          By continuing to browse, you agree to the storing of cookies on your device to enhance your site experience
-          and for analytical purposes. By clicking ‘Accept’, you agree to the placement and use of cookies as described
-          in our{" "}
+          <Text>
+            By continuing to browse, you agree to the storing of cookies on your device to enhance your site experience
+            and for analytical purposes. By clicking ‘Accept’, you agree to the placement and use of cookies as
+            described in our
+          </Text>{" "}
           <a href="https://www.tracer.finance/privacy-policy/" rel="noopener noreferrer" target="_blank">
-            Privacy Policy
+            <Text>Privacy Policy</Text>
           </a>
           .
         </p>
         <div className="ConsentModal-buttons">
           <button className="default-btn read-more" onClick={handleAccept}>
-            Accept
+            <Text>Accept</Text>
           </button>
           <button className="default-btn read-more" onClick={handleReject}>
-            Reject
+            <Text>Reject</Text>
           </button>
         </div>
       </div>

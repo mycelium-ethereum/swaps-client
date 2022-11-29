@@ -20,7 +20,8 @@ import OrderBook from "./abis/OrderBook.json";
 import { getWhitelistedTokens, isValidToken } from "./data/Tokens";
 import ComingSoonTooltip from "./components/Tooltip/ComingSoon";
 import { isAddress } from "ethers/lib/utils";
-import { copyToClipboard } from './utils/common';
+import { Text } from "./components/Translation/Text";
+import { copyToClipboard } from "./utils/common";
 import {
   REFERRAL_CODE_QUERY_PARAMS,
   CURRENT_PROVIDER_LOCALSTORAGE_KEY,
@@ -2078,9 +2079,9 @@ export function approveTokens({
       const txUrl = getExplorerUrl(chainId) + "tx/" + res.hash;
       helperToast.success(
         <div>
-          Approval submitted!{" "}
+          <Text>Approval submitted!</Text>{" "}
           <a href={txUrl} target="_blank" rel="noopener noreferrer">
-            View status.
+            <Text>View status.</Text>
           </a>
           <br />
         </div>
@@ -2107,18 +2108,18 @@ export function approveTokens({
       ) {
         failMsg = (
           <div>
-            There is not enough ETH in your account on Arbitrum to send this transaction.
+            <Text>There is not enough ETH in your account on Arbitrum to send this transaction.</Text>
             <br />
             <br />
             <a href={"https://arbitrum.io/bridge-tutorial/"} target="_blank" rel="noopener noreferrer">
-              Bridge ETH to Arbitrum
+              <Text>Bridge ETH to Arbitrum</Text>
             </a>
           </div>
         );
       } else if (e.message?.includes("User denied transaction signature")) {
-        failMsg = "Approval was cancelled.";
+        failMsg = <Text>Approval was cancelled.</Text>;
       } else {
-        failMsg = "Approval failed.";
+        failMsg = <Text>Approval failed.</Text>;
       }
       helperToast.error(failMsg);
     })
@@ -2197,7 +2198,7 @@ export const switchNetwork = async (chainId, active) => {
       method: "wallet_switchEthereumChain",
       params: [{ chainId: chainIdHex }],
     });
-    helperToast.success("Connected to " + getChainName(chainId));
+    helperToast.success(<Text>Connected to {getChainName(chainId)}</Text>);
     return getChainName(chainId);
   } catch (ex) {
     // https://docs.metamask.io/guide/rpc-api.html#other-rpc-methods
@@ -2218,10 +2219,10 @@ export const getWalletConnectHandler = (activate, deactivate, setActivatingConne
     setActivatingConnector(walletConnect);
     activate(walletConnect, (ex) => {
       if (ex instanceof UnsupportedChainIdError) {
-        helperToast.error("Unsupported chain. Switch to Arbitrum network on your wallet and try again");
+        helperToast.error(<Text>Unsupported chain. Switch to Arbitrum network on your wallet and try again</Text>);
         console.warn(ex);
       } else if (!(ex instanceof UserRejectedRequestErrorWalletConnect)) {
-        helperToast.error(ex.message);
+        helperToast.error(<Text>{ex.message}</Text>);
         console.warn(ex);
       }
       clearWalletConnectData();
@@ -2239,20 +2240,22 @@ export const getInjectedHandler = (activate) => {
       if (e instanceof UnsupportedChainIdError) {
         helperToast.error(
           <div>
-            <div>Your wallet is not connected to {getChainName(chainId)}.</div>
+            <div>
+              <Text>Your wallet is not connected to</Text> {getChainName(chainId)}.
+            </div>
             <br />
             <div className="clickable underline margin-bottom" onClick={() => switchNetwork(chainId, true)}>
-              Switch to {getChainName(chainId)}
+              <Text>Switch to</Text> {getChainName(chainId)}
             </div>
             <div className="clickable underline" onClick={() => switchNetwork(chainId, true)}>
-              Add {getChainName(chainId)}
+              <Text>Add</Text> {getChainName(chainId)}
             </div>
           </div>
         );
         return;
       }
       const errString = e.message ?? e.toString();
-      helperToast.error(errString);
+      helperToast.error(<Text>{errString}</Text>);
     });
   };
   return fn;

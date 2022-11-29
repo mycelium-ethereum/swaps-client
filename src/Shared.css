@@ -6,15 +6,18 @@ body,
   margin: 0;
   padding: 0;
   color: white;
-  font-family: "Inter";
   letter-spacing: 0.5px;
   font-size: 15.5px;
   background-color: var(--background-primary);
+  font-family: "Noto Sans";
+}
+
+body.inter-font * {
+  font-family: "Inter" !important;
 }
 
 * {
   box-sizing: border-box;
-  font-family: "Inter";
 }
 
 ::-webkit-scrollbar {
@@ -119,7 +122,6 @@ input {
   background: none;
   border: none;
   padding: 0.8rem;
-  font-family: "Inter";
   text-overflow: ellipsis;
   white-space: nowrap;
   overflow: hidden;
@@ -128,7 +130,6 @@ input {
 button {
   outline: none;
   cursor: pointer;
-  font-family: "Inter";
 }
 
 button:disabled,

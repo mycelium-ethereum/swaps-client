@@ -19,10 +19,9 @@ import {
   calculatePositionDelta,
   getSpread,
 } from "../../Helpers";
+import { Text } from "../Translation/Text";
 
-import {
-  SLIPPAGE_BPS_KEY
-} from '../../config/localstorage';
+import { SLIPPAGE_BPS_KEY } from "../../config/localstorage";
 
 import { getConstant } from "../../Constants";
 import { getContract } from "../../Addresses";
@@ -193,7 +192,7 @@ export default function ConfirmationBox(props) {
     if (spread && spread.isHigh) {
       return (
         <div className="Confirmation-box-warning">
-          The spread is > 1%, please ensure the trade details are acceptable before comfirming
+          <Text>The spread is &gt; 1%, please ensure the trade details are acceptable before comfirming</Text>
         </div>
       );
     }
@@ -207,7 +206,7 @@ export default function ConfirmationBox(props) {
     if (isSwap) {
       return (
         <div className="Confirmation-box-warning">
-          Fees are high to swap from {fromToken.symbol} to {toToken.symbol}.
+          <Text>Fees are high to swap from</Text> {fromToken.symbol} <Text>to</Text> {toToken.symbol}.
         </div>
       );
     }
@@ -219,8 +218,8 @@ export default function ConfirmationBox(props) {
     const collateralToken = getToken(chainId, collateralTokenAddress);
     return (
       <div className="Confirmation-box-warning">
-        Fees are high to swap from {fromToken.symbol} to {collateralToken.symbol}. <br />
-        {collateralToken.symbol} is needed for collateral.
+        <Text>Fees are high to swap from</Text> {fromToken.symbol} <Text>to</Text> {collateralToken.symbol}. <br />
+        {collateralToken.symbol} <Text>is needed for collateral.</Text>
       </div>
     );
   }, [feeBps, isSwap, collateralTokenAddress, chainId, fromToken.symbol, toToken.symbol, orderOption]);
@@ -239,12 +238,13 @@ export default function ConfirmationBox(props) {
           const profitPrice = getProfitPrice(existingPosition.markPrice, existingPosition);
           return (
             <div className="Confirmation-box-warning">
-              Increasing this position at the current price will forfeit a pending profit of {existingPosition.deltaStr}
+              <Text>Increasing this position at the current price will forfeit a pending profit of</Text>{" "}
+              {existingPosition.deltaStr}
               .<br />
               <br />
-              Profit price: {existingPosition.isLong ? ">" : "<"} ${formatAmount(profitPrice, USD_DECIMALS, 2, true)}.
-              This rule only applies for the next {getTimeRemaining(minProfitExpiration)}, until{" "}
-              {formatDateTime(minProfitExpiration)}.
+              <Text>Profit price:</Text> {existingPosition.isLong ? ">" : "<"} $
+              {formatAmount(profitPrice, USD_DECIMALS, 2, true)}.<Text>This rule only applies for the next</Text>{" "}
+              {getTimeRemaining(minProfitExpiration)}, <Text>until</Text> {formatDateTime(minProfitExpiration)}.
             </div>
           );
         }
@@ -254,10 +254,10 @@ export default function ConfirmationBox(props) {
             const profitPrice = getProfitPrice(existingPosition.markPrice, existingPosition);
             return (
               <div className="Confirmation-box-warning">
-                This order will forfeit a profit of {existingPosition.deltaStr}.<br />
-                Profit price: {existingPosition.isLong ? ">" : "<"} ${formatAmount(profitPrice, USD_DECIMALS, 2, true)}.
-                This rule only applies for the next {getTimeRemaining(minProfitExpiration)}, until{" "}
-                {formatDateTime(minProfitExpiration)}.
+                <Text>This order will forfeit a profit of</Text> {existingPosition.deltaStr}.<br />
+                <Text>Profit price:</Text> {existingPosition.isLong ? ">" : "<"} $
+                {formatAmount(profitPrice, USD_DECIMALS, 2, true)}.<Text>This rule only applies for the next</Text>{" "}
+                {getTimeRemaining(minProfitExpiration)}, <Text>until</Text> {formatDateTime(minProfitExpiration)}.
               </div>
             );
           }
@@ -266,8 +266,10 @@ export default function ConfirmationBox(props) {
 
       return (
         <div className="Confirmation-box-warning">
-          A minimum price change of 1.5% is required for a position to be in profit. This only applies for the first{" "}
-          {MIN_PROFIT_TIME / 60 / 60} hours after increasing a position.
+          <Text>
+            A minimum price change of 1.5% is required for a position to be in profit. This only applies for the first
+          </Text>{" "}
+          {MIN_PROFIT_TIME / 60 / 60} <Text>hours after increasing a position.</Text>
         </div>
       );
     }
@@ -286,8 +288,8 @@ export default function ConfirmationBox(props) {
     );
     return (
       <div className="Confirmation-box-warning">
-        You have an active Limit Order to Increase {existingOrder.isLong ? "Long" : "Short"} {sizeInToken}{" "}
-        {indexToken.symbol} (${formatAmount(existingOrder.sizeDelta, USD_DECIMALS, 2, true)}) at price $
+        <Text>You have an active Limit Order to Increase</Text> {existingOrder.isLong ? "Long" : "Short"} {sizeInToken}{" "}
+        {indexToken.symbol} (${formatAmount(existingOrder.sizeDelta, USD_DECIMALS, 2, true)}) <Text>at price</Text> $
         {formatAmount(existingOrder.triggerPrice, USD_DECIMALS, 2, true)}
       </div>
     );
@@ -299,12 +301,12 @@ export default function ConfirmationBox(props) {
       return (
         <div className="Confirmation-box-main">
           <div>
-            Pay&nbsp;{formatAmount(fromAmount, fromToken.decimals, 4, true)} {fromToken.symbol} ($
+            <Text>Pay</Text>&nbsp;{formatAmount(fromAmount, fromToken.decimals, 4, true)} {fromToken.symbol} ($
             {formatAmount(fromUsdMin, USD_DECIMALS, 2, true)})
           </div>
           <div className="Confirmation-box-main-icon"></div>
           <div>
-            Receive&nbsp;{formatAmount(toAmount, toToken.decimals, 4, true)} {toToken.symbol} ($
+            <Text>Receive</Text>&nbsp;{formatAmount(toAmount, toToken.decimals, 4, true)} {toToken.symbol} ($
             {formatAmount(toUsdMax, USD_DECIMALS, 2, true)})
           </div>
         </div>
@@ -314,12 +316,12 @@ export default function ConfirmationBox(props) {
     return (
       <div className="Confirmation-box-main">
         <span>
-          Pay&nbsp;{formatAmount(fromAmount, fromToken.decimals, 4, true)} {fromToken.symbol} ($
+          <Text>Pay</Text>&nbsp;{formatAmount(fromAmount, fromToken.decimals, 4, true)} {fromToken.symbol} ($
           {formatAmount(fromUsdMin, USD_DECIMALS, 2, true)})
         </span>
         <div className="Confirmation-box-main-icon"></div>
         <div>
-          {isLong ? "Long" : "Short"}&nbsp;
+          <Text>{isLong ? "Long" : "Short"}</Text>&nbsp;
           {formatAmount(toAmount, toToken.decimals, 4, true)} {toToken.symbol} ($
           {formatAmount(toUsdMax, USD_DECIMALS, 2, true)})
         </div>
@@ -393,11 +395,13 @@ export default function ConfirmationBox(props) {
               {formatAmount(availableLiquidity, token.decimals, token.isStable ? 0 : 2, true)} {token.symbol}
             </>
           }
-          renderContent={() =>
-            isLiquidityRisk
-              ? "There may not be sufficient liquidity to execute your order when the price conditions are met"
-              : "The order will only execute if the price conditions are met and there is sufficient liquidity"
-          }
+          renderContent={() => (
+            <Text>
+              {isLiquidityRisk
+                ? "There may not be sufficient liquidity to execute your order when the price conditions are met"
+                : "The order will only execute if the price conditions are met and there is sufficient liquidity"}
+            </Text>
+          )}
         />
       </ExchangeInfoRow>
     );
@@ -414,7 +418,9 @@ export default function ConfirmationBox(props) {
           {hasPendingProfit && isMarketOrder && (
             <div className="PositionEditor-accept-profit-warning">
               <Checkbox isChecked={isProfitWarningAccepted} setIsChecked={setIsProfitWarningAccepted}>
-                <span className="muted">Forfeit profit</span>
+                <span className="muted">
+                  <Text>Forfeit profit</Text>
+                </span>
               </Checkbox>
             </div>
           )}
@@ -453,12 +459,12 @@ export default function ConfirmationBox(props) {
               renderContent={() => {
                 return (
                   <>
-                    Your position's collateral after deducting fees.
+                    <Text>Your position's collateral after deducting fees.</Text>
                     <br />
                     <br />
-                    Pay amount: ${formatAmount(fromUsdMin, USD_DECIMALS, 2, true)}
+                    <Text>Pay amount:</Text> ${formatAmount(fromUsdMin, USD_DECIMALS, 2, true)}
                     <br />
-                    Fees: ${formatAmount(feesUsd, USD_DECIMALS, 2, true)}
+                    <Text>Fees:</Text> ${formatAmount(feesUsd, USD_DECIMALS, 2, true)}
                     <br />
                   </>
                 );
@@ -501,11 +507,13 @@ export default function ConfirmationBox(props) {
               renderContent={() => {
                 return (
                   <>
-                    You can change this in the settings menu on the top right of the page.
+                    <Text>You can change this in the settings menu on the top right of the page.</Text>
                     <br />
                     <br />
-                    Note that a low allowed slippage, e.g. less than 0.5%, may result in failed orders if prices are
-                    volatile.
+                    <Text>
+                      Note that a low allowed slippage, e.g. less than 0.5%, may result in failed orders if prices are
+                      volatile.
+                    </Text>
                   </>
                 );
               }}
@@ -514,7 +522,9 @@ export default function ConfirmationBox(props) {
           {isMarketOrder && (
             <div className="PositionEditor-allow-higher-slippage">
               <Checkbox isChecked={isHigherSlippageAllowed} setIsChecked={setIsHigherSlippageAllowed}>
-                <span className="muted">Allow up to 1% slippage</span>
+                <span className="muted">
+                  <Text>Allow up to 1% slippage</Text>
+                </span>
               </Checkbox>
             </div>
           )}
@@ -573,7 +583,9 @@ export default function ConfirmationBox(props) {
           </ExchangeInfoRow>
           {!isMarketOrder && (
             <div className="Exchange-info-row">
-              <div className="Exchange-info-label">Limit Price</div>
+              <div className="Exchange-info-label">
+                <Text>Limit Price</Text>
+              </div>
               <div className="align-right">{getExchangeRateDisplay(triggerRatio, fromTokenInfo, toTokenInfo)}</div>
             </div>
           )}
@@ -583,7 +595,9 @@ export default function ConfirmationBox(props) {
             </ExchangeInfoRow>
           )}
           <div className="Exchange-info-row">
-            <div className="Exchange-info-label">Fees</div>
+            <div className="Exchange-info-label">
+              <Text>Fees</Text>
+            </div>
             <div className="align-right">
               {formatAmount(feeBps, 2, 2, true)}% ({formatAmount(fees, fromTokenInfo.decimals, 4, true)}{" "}
               {fromTokenInfo.symbol}: ${formatAmount(feesUsd, USD_DECIMALS, 2, true)})
@@ -592,13 +606,17 @@ export default function ConfirmationBox(props) {
           {renderExecutionFee()}
           {fromTokenUsd && (
             <div className="Exchange-info-row">
-              <div className="Exchange-info-label">{fromTokenInfo.symbol} Price</div>
+              <div className="Exchange-info-label">
+                {fromTokenInfo.symbol} <Text>Price</Text>
+              </div>
               <div className="align-right">{fromTokenUsd} USD</div>
             </div>
           )}
           {toTokenUsd && (
             <div className="Exchange-info-row">
-              <div className="Exchange-info-label">{toTokenInfo.symbol} Price</div>
+              <div className="Exchange-info-label">
+                {toTokenInfo.symbol} <Text>Price</Text>
+              </div>
               <div className="align-right">{toTokenUsd} USD</div>
             </div>
           )}
@@ -644,7 +662,7 @@ export default function ConfirmationBox(props) {
             className="App-cta Confirmation-box-button"
             disabled={!isPrimaryEnabled()}
           >
-            {getPrimaryText()}
+            <Text>{getPrimaryText()}</Text>
           </button>
         </div>
       </Modal>

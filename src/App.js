@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useCallback, useRef } from "react";
 import { SWRConfig } from "swr";
 import { ethers } from "ethers";
+import { Translator } from "react-auto-translate";
+import { Text } from "./components/Translation/Text";
 
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -12,6 +14,8 @@ import { Switch, Route, NavLink, useLocation } from "react-router-dom";
 import { ThemeProvider } from "@tracer-protocol/tracer-ui";
 import { useAnalytics } from "./segmentAnalytics";
 import { getTokens, getWhitelistedTokens } from "./data/Tokens";
+import translations from "./data/translations.json";
+import { getLanguageFromUrl, changeLanguage, getLanguageFromLocalStorage } from "./utils/translation";
 
 import {
   SLIPPAGE_BPS_KEY,
@@ -119,10 +123,10 @@ import PageNotFound from "./views/PageNotFound/PageNotFound";
 import useSWR from "swr";
 import LinkDropdown from "./components/Navigation/LinkDropdown/LinkDropdown";
 import Sidebar from "./components/Navigation/Sidebar/Sidebar";
+import LanguageDropdown from "./components/Navigation/LanguageDropdown/LanguageDropdown";
 import EventModal from "./components/EventModal/EventModal";
 import AppDropdown from "./components/AppDropdown/AppDropdown";
 import { useInfoTokens } from "./hooks/useInfoTokens";
-// import { Banner, BannerContent } from "./components/Banner/Banner";
 
 if ("ethereum" in window) {
   window.ethereum.autoRefreshOnNetworkChange = false;
@@ -148,6 +152,7 @@ function inPreviewMode() {
 
 const arbWsProvider = new ethers.providers.WebSocketProvider(getDefaultArbitrumRpcUrl(true));
 const arbTestnetWsProvider = new ethers.providers.JsonRpcProvider("https://goerli-rollup.arbitrum.io/rpc/");
+const defaultLang = "en";
 
 function getWsProvider(active, chainId) {
   if (!active) {
@@ -163,31 +168,6 @@ function getWsProvider(active, chainId) {
 }
 
 function AppHeaderLinks({ small, openSettings, clickCloseIcon, trackAction }) {
-  if (inPreviewMode()) {
-    return (
-      <div className="App-header-links preview">
-        <div className="App-header-link-container App-header-link-home">
-          <NavLink activeClassName="active" exact to="/">
-            HOME
-          </NavLink>
-        </div>
-        <div className="App-header-link-container">
-          <NavLink activeClassName="active" to="/earn">
-            EARN
-          </NavLink>
-        </div>
-        <div className="App-header-link-container">
-          <a
-            href="https://swaps.docs.mycelium.xyz/perpetual-swaps/mycelium-perpetual-swaps"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            ABOUT
-          </a>
-        </div>
-      </div>
-    );
-  }
   return (
     <div className="App-header-links">
       {small && (
@@ -211,27 +191,27 @@ function AppHeaderLinks({ small, openSettings, clickCloseIcon, trackAction }) {
       )}
       <div className="App-header-link-container">
         <NavLink exact activeClassName="active" to="/dashboard">
-          Dashboard
+          <Text>Dashboard</Text>
         </NavLink>
       </div>
       <div className="App-header-link-container">
         <NavLink exact activeClassName="active" to="/earn">
-          Earn
+          <Text>Earn</Text>
         </NavLink>
       </div>
       <div className="App-header-link-container">
         <NavLink exact activeClassName="active" to="/buy_mlp">
-          Buy
+          <Text>Buy</Text>
         </NavLink>
       </div>
       <div className="App-header-link-container">
         <NavLink exact activeClassName="active" to="/rewards">
-          Rewards
+          <Text>Rewards</Text>
         </NavLink>
       </div>
       <div className="App-header-link-container">
         <NavLink exact activeClassName="active" to="/referrals">
-          Referrals
+          <Text>Referrals</Text>
         </NavLink>
       </div>
       <div className="App-header-link-container">
@@ -240,14 +220,14 @@ function AppHeaderLinks({ small, openSettings, clickCloseIcon, trackAction }) {
           target="_blank"
           rel="noopener noreferrer"
         >
-          Docs
+          <Text>Docs</Text>
         </a>
       </div>
       {small && (
         <div className="App-header-link-container">
           {/* eslint-disable-next-line */}
           <a href="#" onClick={openSettings}>
-            Settings
+            <Text>Settings</Text>
           </a>
         </div>
       )}
@@ -262,6 +242,8 @@ function AppHeaderUser({
   showNetworkSelectorModal,
   disconnectAccountAndCloseSettings,
   trackAction,
+  currentLang,
+  setCurrentLang,
 }) {
   const { chainId } = useChainId();
   const { active, account } = useWeb3React();
@@ -288,6 +270,7 @@ function AppHeaderUser({
   if (!active) {
     return (
       <div className="App-header-user">
+        <LanguageDropdown currentLang={currentLang} setCurrentLang={setCurrentLang} />
         {showSelector && (
           <NetworkSelector
             options={networkOptions}
@@ -308,7 +291,7 @@ function AppHeaderUser({
           }}
           imgSrc={connectWalletImg}
         >
-          {small ? "Connect" : "Connect Wallet"}
+          <Text>{small ? "Connect" : "Connect Wallet"}</Text>
         </ConnectWalletButton>
         <AppDropdown />
       </div>
@@ -319,6 +302,7 @@ function AppHeaderUser({
 
   return (
     <div className="App-header-user">
+      <LanguageDropdown currentLang={currentLang} setCurrentLang={setCurrentLang} />
       {showSelector && (
         <NetworkSelector
           options={networkOptions}
@@ -347,7 +331,8 @@ function AppHeaderUser({
   );
 }
 
-function FullApp() {
+function FullApp(props) {
+  const { currentLang, setCurrentLang } = props;
   const location = useLocation();
   const [sidebarVisible, setSidebarVisible] = useState(false);
   const [loggedInTracked, setLoggedInTracked] = useState(false);
@@ -411,13 +396,13 @@ function FullApp() {
     if (!hasMetaMaskWalletExtension()) {
       helperToast.error(
         <div>
-          MetaMask not detected.
+          MetaMask <Text>not detected.</Text>
           <br />
           <br />
           <a href="https://metamask.io" target="_blank" rel="noopener noreferrer">
-            Install MetaMask
+            <Text>Install</Text> MetaMask
           </a>
-          {userOnMobileDevice ? ", and use MYC with its built-in browser" : " to start using MYC"}.
+          <Text>{userOnMobileDevice ? ", and use MYC with its built-in browser" : " to start using MYC"}</Text>.
         </div>
       );
       return false;
@@ -428,13 +413,13 @@ function FullApp() {
     if (!hasCoinBaseWalletExtension()) {
       helperToast.error(
         <div>
-          Coinbase Wallet not detected.
+          <Text>Coinbase Wallet not detected.</Text>
           <br />
           <br />
           <a href="https://www.coinbase.com/wallet" target="_blank" rel="noopener noreferrer">
-            Install Coinbase Wallet
+            <Text>Install Coinbase Wallet</Text>
           </a>
-          {userOnMobileDevice ? ", and use MYC with its built-in browser" : " to start using MYC"}.
+          <Text>{userOnMobileDevice ? ", and use MYC with its built-in browser" : " to start using MYC"}</Text>.
         </div>
       );
       return false;
@@ -524,17 +509,17 @@ function FullApp() {
     if (slippageError === "") {
       const slippage = parseFloat(slippageAmount);
       if (isNaN(slippage)) {
-        helperToast.error("Invalid slippage value");
+        helperToast.error(<Text>Invalid slippage value</Text>);
         return;
       }
       if (slippage > 5) {
-        helperToast.error("Slippage should be less than 5%");
+        helperToast.error(<Text>Slippage should be less than 5%</Text>);
         return;
       }
 
       const basisPoints = (slippage * BASIS_POINTS_DIVISOR) / 100;
       if (parseInt(basisPoints) !== parseFloat(basisPoints)) {
-        helperToast.error("Max slippage precision is 0.01%");
+        helperToast.error(<Text>Max slippage precision is 0.01%</Text>);
         return;
       }
 
@@ -573,9 +558,9 @@ function FullApp() {
             const txUrl = getExplorerUrl(chainId) + "tx/" + pendingTxn.hash;
             helperToast.error(
               <div>
-                Txn failed.{" "}
+                <Text>Transaction failed</Text>.{" "}
                 <a href={txUrl} target="_blank" rel="noopener noreferrer">
-                  View
+                  <Text>View</Text>
                 </a>
                 <br />
               </div>
@@ -587,7 +572,7 @@ function FullApp() {
               <div>
                 {pendingTxn.message}{" "}
                 <a href={txUrl} target="_blank" rel="noopener noreferrer">
-                  View
+                  <Text>View</Text>
                 </a>
                 <br />
               </div>
@@ -713,7 +698,7 @@ function FullApp() {
   return (
     <>
       <div
-        className={cx("App ReferralsBannerActive", {
+        className={cx("App", {
           "full-width": sidebarVisible,
         })}
       >
@@ -781,6 +766,8 @@ function FullApp() {
                   setWalletModalVisible={setWalletModalVisible}
                   showNetworkSelectorModal={showNetworkSelectorModal}
                   trackAction={trackAction}
+                  currentLang={currentLang}
+                  setCurrentLang={setCurrentLang}
                 />
               </div>
             </div>
@@ -818,15 +805,18 @@ function FullApp() {
                       setWalletModalVisible={setWalletModalVisible}
                       showNetworkSelectorModal={showNetworkSelectorModal}
                       trackAction={trackAction}
+                      currentLang={currentLang}
+                      setCurrentLang={setCurrentLang}
                     />
                   </div>
                   {location?.pathname !== "/" && (
                     <div className="App-header-user-link Trade-btn-mobile">
                       <NavLink exact activeClassName="active" className="default-btn trade-link" to="/">
-                        Trade
+                        <Text>Trade</Text>
                       </NavLink>
                     </div>
                   )}
+                  <LanguageDropdown currentLang={currentLang} setCurrentLang={setCurrentLang} isMobile />
                   <AppDropdown isMobile />
                   {/* Hamburger menu */}
                   <button className="App-header-menu-icon-block" onClick={() => setIsDrawerVisible(!isDrawerVisible)}>
@@ -883,6 +873,7 @@ function FullApp() {
                 trackAction={trackAction}
                 analytics={analytics}
                 sidebarVisible={sidebarVisible}
+                currentLang={currentLang}
               />
             </Route>
             <Route exact path="/dashboard">
@@ -954,19 +945,6 @@ function FullApp() {
             <Route exact path="/actions">
               <Actions trackAction={trackAction} />
             </Route>
-            {/*
-            <Route exact path="/begin_account_transfer">
-              <BeginAccountTransfer setPendingTxns={setPendingTxns} />
-            </Route>
-            <Route exact path="/complete_account_transfer/:sender/:receiver">
-              <CompleteAccountTransfer setPendingTxns={setPendingTxns} />
-            </Route>
-            <Route exact path="/debug">
-              <Debug />
-            </Route>
-            <Route exact path="/referral-terms">
-              <ReferralTerms />
-            </Route> */}
             <Route path="*">
               <PageNotFound />
             </Route>
@@ -1048,7 +1026,9 @@ function FullApp() {
           }}
         >
           <img src={coinbaseImg} alt="Coinbase Wallet" />
-          <div>Coinbase Wallet</div>
+          <div>
+            Coinbase <Text>Wallet</Text>
+          </div>
         </button>
         <button
           className="Wallet-btn WalletConnect-btn"
@@ -1068,7 +1048,9 @@ function FullApp() {
         label="Settings"
       >
         <div className="App-settings-row">
-          <div>Allowed Slippage</div>
+          <div>
+            <Text>Allowed Slippage</Text>
+          </div>
           <div className="App-slippage-tolerance-input-container">
             <input
               type="number"
@@ -1084,12 +1066,12 @@ function FullApp() {
         </div>
         <div className="Exchange-settings-row">
           <Checkbox isChecked={showPnlAfterFees} setIsChecked={setShowPnlAfterFees}>
-            Display PnL after fees
+            <Text>Display PnL after fees</Text>
           </Checkbox>
         </div>
         <div className="Exchange-settings-row">
           <Checkbox isChecked={isPnlInLeverage} setIsChecked={setIsPnlInLeverage}>
-            Include PnL in leverage display
+            <Text>Include PnL in leverage display</Text>
           </Checkbox>
         </div>
         <button
@@ -1102,7 +1084,7 @@ function FullApp() {
               });
           }}
         >
-          Save
+          <Text>Save</Text>
         </button>
       </Modal>
     </>
@@ -1200,11 +1182,22 @@ function PreviewApp() {
 
 function App() {
   const [hasConsented, setConsented] = useState(false);
+  const [currentLang, setCurrentLang] = useState(defaultLang);
 
   useEffect(() => {
     const consentAcknowledged = localStorage.getItem("consentAcknowledged") === "true";
     setConsented(consentAcknowledged);
   }, []);
+
+  // Check if previous language selection is stored in local storage or URL param
+  useEffect(() => {
+    const urlLang = getLanguageFromUrl();
+    const localStorageLang = getLanguageFromLocalStorage();
+    if (urlLang || localStorageLang) {
+      changeLanguage(urlLang || localStorageLang);
+      setCurrentLang(urlLang || localStorageLang);
+    }
+  }, [setCurrentLang]);
 
   if (inPreviewMode()) {
     return (
@@ -1216,13 +1209,32 @@ function App() {
     );
   }
 
+  const cacheProvider = {
+    get: (language, key) =>
+      ((translations || JSON.parse(localStorage.getItem("translations")) || {})[key] || {})[language],
+    set: (language, key, value) => {
+      const existing = JSON.parse(localStorage.getItem("translations")) || {
+        [key]: {},
+      };
+      existing[key] = { ...existing[key], [language]: value };
+      localStorage.setItem("translations", JSON.stringify(existing));
+    },
+  };
+
   return (
     <SWRConfig value={{ refreshInterval: 5000 }}>
       <Web3ReactProvider getLibrary={getLibrary}>
         <ThemeProvider>
-          <FullApp />
+          <Translator
+            cacheProvider={cacheProvider}
+            from={defaultLang}
+            to={currentLang}
+            googleApiKey={process.env.REACT_APP_GCP_PRIVATE_KEY}
+          >
+            <FullApp currentLang={currentLang} setCurrentLang={setCurrentLang} />
+            <ConsentModal hasConsented={hasConsented} setConsented={setConsented} />
+          </Translator>
         </ThemeProvider>
-        <ConsentModal hasConsented={hasConsented} setConsented={setConsented} />
       </Web3ReactProvider>
     </SWRConfig>
   );

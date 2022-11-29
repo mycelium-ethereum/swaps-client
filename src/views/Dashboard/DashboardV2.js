@@ -2,11 +2,12 @@ import React, { useState, useMemo } from "react";
 import { Link } from "react-router-dom";
 import { useWeb3React } from "@web3-react/core";
 import useSWR from "swr";
+import { ethers } from "ethers";
 import { PieChart, Pie, Cell, Tooltip } from "recharts";
 import TooltipComponent from "../../components/Tooltip/Tooltip";
+import { Text } from "../../components/Translation/Text";
 
 import hexToRgba from "hex-to-rgba";
-import { ethers } from "ethers";
 
 import { getWhitelistedTokens } from "../../data/Tokens";
 import { getFeeHistory, SECONDS_PER_WEEK } from "../../data/Fees";
@@ -263,35 +264,35 @@ export default function DashboardV2() {
         renderContent={() => {
           return (
             <>
-              Current Weight: {formatAmount(currentWeightBps, 2, 2, false)}%<br />
-              Target Weight: {formatAmount(targetWeightBps, 2, 2, false)}%<br />
+              <Text>Current Weight:</Text> {formatAmount(currentWeightBps, 2, 2, false)}%<br />
+              <Text>Target Weight:</Text> {formatAmount(targetWeightBps, 2, 2, false)}%<br />
               <br />
               {currentWeightBps.lt(targetWeightBps) && (
                 <div>
-                  {tokenInfo.symbol} is below its target weight.
+                  {tokenInfo.symbol} <Text>is below its target weight.</Text>
                   <br />
                   <br />
-                  Get lower fees to{" "}
+                  <Text>Get lower fees to </Text>
                   <Link to="/buy_mlp" target="_blank" rel="noopener noreferrer">
-                    buy MLP
+                    <Text>buy MLP</Text>
                   </Link>{" "}
-                  with {tokenInfo.symbol},&nbsp; and to{" "}
+                  <Text>with</Text> {tokenInfo.symbol},&nbsp; <Text>and to</Text>{" "}
                   <Link to="/" target="_blank" rel="noopener noreferrer">
-                    swap
+                    <Text>swap</Text>
                   </Link>{" "}
-                  {tokenInfo.symbol} for other tokens.
+                  {tokenInfo.symbol} <Text>for other tokens</Text>.
                 </div>
               )}
               {currentWeightBps.gt(targetWeightBps) && (
                 <div>
-                  {tokenInfo.symbol} is above its target weight.
+                  {tokenInfo.symbol} <Text>is above its target weight.</Text>
                   <br />
                   <br />
-                  Get lower fees to{" "}
+                  <Text>Get lower fees to </Text>
                   <Link to="/" target="_blank" rel="noopener noreferrer">
-                    swap
+                    <Text>swap</Text>
                   </Link>{" "}
-                  tokens for {tokenInfo.symbol}.
+                  <Text>tokens for</Text> {tokenInfo.symbol}.
                 </div>
               )}
               <br />
@@ -301,7 +302,7 @@ export default function DashboardV2() {
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  More Info
+                  <Text>More Info</Text>
                 </a>
               </div>
             </>
@@ -443,15 +444,17 @@ export default function DashboardV2() {
         <div className="section-title-block">
           <div className="section-title-content">
             <div className="Page-title">
-              Stats {(chainId === ARBITRUM || chainId === ARBITRUM_GOERLI) && (
+              <Text>Stats</Text>{" "}
+              {(chainId === ARBITRUM || chainId === ARBITRUM_GOERLI) && (
                 <img src={arbitrum24Icon} alt="arbitrum24Icon" />
               )}
             </div>
             <div className="Page-description">
-              {chainName} Total Stats start from {totalStatsStartDate}.<br />
-              See detailed analytics{" "}
+              {chainName} <Text>Total Stats start from {totalStatsStartDate}.</Text>
+              <br />
+              <Text>See detailed analytics</Text>{" "}
               <a href="https://analytics.mycelium.xyz" target="_blank" rel="noopener noreferrer">
-                here.
+                <Text>here.</Text>
               </a>
             </div>
           </div>
@@ -459,7 +462,9 @@ export default function DashboardV2() {
         <div className="DashboardV2-content">
           <div className="DashboardV2-cards">
             <div className="App-card">
-              <div className="App-card-title">Overview</div>
+              <div className="App-card-title">
+                <Text>Overview</Text>
+              </div>
               <div className="App-card-divider"></div>
               <div className="App-card-content">
                 <div className="App-card-row">
@@ -468,49 +473,69 @@ export default function DashboardV2() {
                     <TooltipComponent
                       handle={`$${formatAmount(tvl, USD_DECIMALS, 0, true)}`}
                       position="right-bottom"
-                      renderContent={() => `Assets Under Management: MYC staked (All chains) + MLP pool (${chainName})`}
+                      renderContent={() => (
+                        <>
+                          <Text>Assets Under Management: MYC staked + MLP pool</Text> ({chainName})
+                        </>
+                      )}
                     />
                   </div>
                 </div>
 
                 <div className="App-card-row">
-                  <div className="label">MLP Pool</div>
+                  <div className="label">
+                    <Text>MLP Pool</Text>
+                  </div>
                   <div>
                     <TooltipComponent
                       handle={`$${formatAmount(aum, USD_DECIMALS, 0, true)}`}
                       position="right-bottom"
-                      renderContent={() => `Total value of tokens in MLP pool (${chainName})`}
+                      renderContent={() => (
+                        <>
+                          <Text>Total value of tokens in MLP pool</Text> ({chainName})
+                        </>
+                      )}
                     />
                   </div>
                 </div>
                 <div className="App-card-row">
-                  <div className="label">24h Volume</div>
+                  <div className="label">
+                    <Text>24h Volume</Text>
+                  </div>
                   <div>${formatAmount(mycTotalVolume?.oneDayVolume, USD_DECIMALS, 0, true)}</div>
                 </div>
                 <div className="App-card-row">
-                  <div className="label">Long Positions</div>
+                  <div className="label">
+                    <Text>Long Positions</Text>
+                  </div>
                   <div>${formatAmount(totalLongPositionSizes, USD_DECIMALS, 0, true)}</div>
                 </div>
                 <div className="App-card-row">
-                  <div className="label">Short Positions</div>
+                  <div className="label">
+                    <Text>Short Positions</Text>
+                  </div>
                   <div>${formatAmount(totalShortPositionSizes, USD_DECIMALS, 0, true)}</div>
                 </div>
                 {feeHistory.length ? (
                   <div className="App-card-row">
-                    <div className="label">Fees since {formatDate(feeHistory[0].to)}</div>
-                    <div>
-                      ${formatAmount(totalCurrentFees, USD_DECIMALS, 2, true)}
+                    <div className="label">
+                      <Text>Fees since</Text> {formatDate(feeHistory[0].to)}
                     </div>
+                    <div>${formatAmount(totalCurrentFees, USD_DECIMALS, 2, true)}</div>
                   </div>
                 ) : null}
               </div>
             </div>
             <div className="App-card">
-              <div className="App-card-title">Total Stats</div>
+              <div className="App-card-title">
+                <Text>Total Stats</Text>
+              </div>
               <div className="App-card-divider"></div>
               <div className="App-card-content">
                 <div className="App-card-row">
-                  <div className="label">Total Fees</div>
+                  <div className="label">
+                    <Text>Total Fees</Text>
+                  </div>
                   <div>
                     <TooltipComponent
                       position="right-bottom"
@@ -518,16 +543,18 @@ export default function DashboardV2() {
                       handle={`$${formatAmount(totalFees, USD_DECIMALS, 0, true)}`}
                       renderContent={() => (
                         <>
-                          Distributed Fees: ${formatAmount(totalFeesDistributed, USD_DECIMALS, 0, true)}
+                          <Text>Distributed Fees:</Text> ${formatAmount(totalFeesDistributed, USD_DECIMALS, 0, true)}
                           <br />
-                          Spread Capture: ${formatAmount(totalMMFees, USD_DECIMALS, 0, true)}
+                          <Text>Spread Capture:</Text> ${formatAmount(totalMMFees, USD_DECIMALS, 0, true)}
                         </>
                       )}
                     />
                   </div>
                 </div>
                 <div className="App-card-row">
-                  <div className="label">Total Volume</div>
+                  <div className="label">
+                    <Text>Total Volume</Text>
+                  </div>
                   <div>${formatAmount(mycTotalVolume?.totalVolume, USD_DECIMALS, 0, true)}</div>
                 </div>
               </div>
@@ -535,9 +562,11 @@ export default function DashboardV2() {
           </div>
           <div className="Tab-title-section">
             <div className="Page-title">
-              Tokens {chainId === ARBITRUM && <img src={arbitrum24Icon} alt="arbitrum24Icon" />}
+              <Text>Tokens</Text> {chainId === ARBITRUM && <img src={arbitrum24Icon} alt="arbitrum24Icon" />}
             </div>
-            <div className="Page-description">Platform and MLP index tokens.</div>
+            <div className="Page-description">
+              <Text>Platform and MLP index tokens.</Text>
+            </div>
           </div>
           <div className="DashboardV2-token-cards">
             <div className="stats-wrapper stats-wrapper--myc">
@@ -550,8 +579,12 @@ export default function DashboardV2() {
                           <img src={mycToken} alt="mycToken" />
                         </div>
                         <div className="App-card-title-mark-info">
-                          <div className="App-card-title-mark-title">MYC</div>
-                          <div className="App-card-title-mark-subtitle">MYC</div>
+                          <div className="App-card-title-mark-title">
+                            <Text>MYC</Text>
+                          </div>
+                          <div className="App-card-title-mark-subtitle">
+                            <Text>MYC</Text>
+                          </div>
                         </div>
                         <div>
                           <AssetDropdown assetSymbol="MYC" />
@@ -561,7 +594,9 @@ export default function DashboardV2() {
                     <div className="App-card-divider"></div>
                     <div className="App-card-content">
                       <div className="App-card-row">
-                        <div className="label">Price</div>
+                        <div className="label">
+                          <Text>Price</Text>
+                        </div>
                         <div>
                           {!mycPrice && "..."}
                           {mycPrice && (
@@ -571,9 +606,11 @@ export default function DashboardV2() {
                               handle={`$${formatAmount(mycPrice, USD_DECIMALS, 3, true)}`}
                               renderContent={() => (
                                 <>
-                                  Price on Arbitrum: ${formatAmount(mycPriceFromArbitrum, USD_DECIMALS, 4, true)}
+                                  <Text>Price on Arbitrum:</Text> $
+                                  {formatAmount(mycPriceFromArbitrum, USD_DECIMALS, 4, true)}
                                   <br />
-                                  Price on Mainnet: ${formatAmount(mycPriceFromMainnet, USD_DECIMALS, 4, true)}
+                                  <Text>Price on Mainnet:</Text> $
+                                  {formatAmount(mycPriceFromMainnet, USD_DECIMALS, 4, true)}
                                 </>
                               )}
                             />
@@ -581,7 +618,9 @@ export default function DashboardV2() {
                         </div>
                       </div>
                       <div className="App-card-row">
-                        <div className="label">Supply</div>
+                        <div className="label">
+                          <Text>Supply</Text>
+                        </div>
                         <div>
                           <TooltipComponent
                             position="right-bottom"
@@ -589,9 +628,10 @@ export default function DashboardV2() {
                             handle={`${formatAmount(circulatingMYCSupply, MYC_DECIMALS, 0, true)} MYC`}
                             renderContent={() => (
                               <>
-                                Circulating: {formatAmount(circulatingMYCSupply, MYC_DECIMALS, 0, true)} MYC
+                                <Text>Circulating:</Text> {formatAmount(circulatingMYCSupply, MYC_DECIMALS, 0, true)}{" "}
+                                MYC
                                 <br />
-                                Total: {formatAmount(mycSupply, MYC_DECIMALS, 0, true)} MYC
+                                <Text>Total:</Text> {formatAmount(mycSupply, MYC_DECIMALS, 0, true)} MYC
                               </>
                             )}
                           />
@@ -615,14 +655,19 @@ export default function DashboardV2() {
                       </div>
                     </div>*/}
                       <div className="App-card-row">
-                        <div className="label">Market Cap</div>
+                        <div className="label">
+                          <Text>Market Cap</Text>
+                        </div>
                         <div>
                           <TooltipComponent
                             position="right-bottom"
                             className="nowrap"
                             handle={`$${formatAmount(mycMarketCap, USD_DECIMALS, 0, true)}`}
                             renderContent={() => (
-                              <>Fully Diluted: ${formatAmount(mycFullyDilutedMarketCap, USD_DECIMALS, 0, true)}</>
+                              <>
+                                <Text>Fully Diluted:</Text> $
+                                {formatAmount(mycFullyDilutedMarketCap, USD_DECIMALS, 0, true)}
+                              </>
                             )}
                           />
                         </div>
@@ -670,7 +715,7 @@ export default function DashboardV2() {
                           ))}
                         </Pie>
                         <text x={"50%"} y={"50%"} fill="white" textAnchor="middle" dominantBaseline="middle">
-                          Distribution
+                          <Text>Distribution</Text>
                         </text>
                         <Tooltip content={<CustomTooltip />} />
                       </PieChart>
@@ -680,7 +725,9 @@ export default function DashboardV2() {
                 <div className="Button-container">
                   <div className="Staking-btn">
                     <a href="https://stake.mycelium.xyz" target="_blank" rel="noopener noreferrer">
-                      <button className="App-button-option App-card-option">MYC Staking</button>
+                      <button className="App-button-option App-card-option">
+                        <Text>MYC Staking</Text>
+                      </button>
                     </a>
                   </div>
                   <div className="Buy-btn">
@@ -689,7 +736,10 @@ export default function DashboardV2() {
                       target="_blank"
                       rel="noopener noreferrer"
                     >
-                      <button className="App-button-option App-card-option">Buy MYC</button>
+                      <button className="App-button-option App-card-option">
+                        {" "}
+                        <Text>Buy MYC</Text>
+                      </button>
                     </a>
                   </div>
                 </div>
@@ -702,8 +752,12 @@ export default function DashboardV2() {
                         <img src={mlp40Icon} alt="mlp40Icon" />
                       </div>
                       <div className="App-card-title-mark-info">
-                        <div className="App-card-title-mark-title">MLP</div>
-                        <div className="App-card-title-mark-subtitle">MLP</div>
+                        <div className="App-card-title-mark-title">
+                          <Text>MLP</Text>
+                        </div>
+                        <div className="App-card-title-mark-subtitle">
+                          <Text>MLP</Text>
+                        </div>
                       </div>
                       <div>
                         <AssetDropdown assetSymbol="MLP" />
@@ -713,23 +767,33 @@ export default function DashboardV2() {
                   <div className="App-card-divider"></div>
                   <div className="App-card-content">
                     <div className="App-card-row">
-                      <div className="label">Price</div>
+                      <div className="label">
+                        <Text>Price</Text>
+                      </div>
                       <div>${formatAmount(mlpPrice, USD_DECIMALS, 3, true)}</div>
                     </div>
                     <div className="App-card-row">
-                      <div className="label">Supply</div>
+                      <div className="label">
+                        <Text>Supply</Text>
+                      </div>
                       <div>{formatAmount(mlpSupply, MLP_DECIMALS, 0, true)} MLP</div>
                     </div>
                     <div className="App-card-row">
-                      <div className="label">Total Staked</div>
+                      <div className="label">
+                        <Text>Total Staked</Text>
+                      </div>
                       <div>${formatAmount(mlpMarketCap, USD_DECIMALS, 0, true)}</div>
                     </div>
                     <div className="App-card-row">
-                      <div className="label">Market Cap</div>
+                      <div className="label">
+                        <Text>Market Cap</Text>
+                      </div>
                       <div>${formatAmount(mlpMarketCap, USD_DECIMALS, 0, true)}</div>
                     </div>
                     <div className="App-card-row">
-                      <div className="label">Stablecoin Percentage</div>
+                      <div className="label">
+                        <Text>Stablecoin Percentage</Text>
+                      </div>
                       <div>{stablePercentage}%</div>
                     </div>
                   </div>
@@ -769,7 +833,7 @@ export default function DashboardV2() {
                         ))}
                       </Pie>
                       <text x={"50%"} y={"50%"} fill="white" textAnchor="middle" dominantBaseline="middle">
-                        MLP Pool
+                        MLP <Text>Pool</Text>
                       </text>
                       <Tooltip content={<CustomTooltip />} />
                     </PieChart>
@@ -779,17 +843,28 @@ export default function DashboardV2() {
             </div>
             <div className="token-table-wrapper App-card">
               <div className="App-card-title">
-                MLP Index Composition {chainId === ARBITRUM && <img src={arbitrum16Icon} alt="arbitrum16Icon" />}
+                <Text>MLP Index Composition</Text>{" "}
+                {chainId === ARBITRUM && <img src={arbitrum16Icon} alt="arbitrum16Icon" />}
               </div>
               <div className="App-card-divider"></div>
               <table className="token-table">
                 <thead>
                   <tr>
-                    <th>Token</th>
-                    <th>Price</th>
-                    <th>Pool</th>
-                    <th>Weight</th>
-                    <th>Utilization</th>
+                    <th>
+                      <Text>Token</Text>
+                    </th>
+                    <th>
+                      <Text>Price</Text>
+                    </th>
+                    <th>
+                      <Text>Pool</Text>
+                    </th>
+                    <th>
+                      <Text>Weight</Text>
+                    </th>
+                    <th>
+                      <Text>Utilization</Text>
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
@@ -838,11 +913,12 @@ export default function DashboardV2() {
                             renderContent={() => {
                               return (
                                 <>
-                                  Pool Amount: {formatKeyAmount(tokenInfo, "managedAmount", token.decimals, 2, true)}{" "}
-                                  {token.symbol}
+                                  <Text>Pool Amount:</Text>{" "}
+                                  {formatKeyAmount(tokenInfo, "managedAmount", token.decimals, 2, true)} {token.symbol}
                                   <br />
                                   <br />
-                                  Max {tokenInfo.symbol} Capacity: ${formatAmount(maxUsdgAmount, 18, 0, true)}
+                                  <Text>Max</Text> {tokenInfo.symbol} <Text>Capacity:</Text> $
+                                  {formatAmount(maxUsdgAmount, 18, 0, true)}
                                 </>
                               );
                             }}
@@ -881,11 +957,15 @@ export default function DashboardV2() {
                     <div className="App-card-divider"></div>
                     <div className="App-card-content">
                       <div className="App-card-row">
-                        <div className="label">Price</div>
+                        <div className="label">
+                          <Text>Price</Text>
+                        </div>
                         <div>${formatKeyAmount(tokenInfo, "minPrice", USD_DECIMALS, 2, true)}</div>
                       </div>
                       <div className="App-card-row">
-                        <div className="label">Pool</div>
+                        <div className="label">
+                          <Text>Pool</Text>
+                        </div>
                         <div>
                           <TooltipComponent
                             handle={`$${formatKeyAmount(tokenInfo, "managedUsd", USD_DECIMALS, 0, true)}`}
@@ -893,11 +973,12 @@ export default function DashboardV2() {
                             renderContent={() => {
                               return (
                                 <>
-                                  Pool Amount: {formatKeyAmount(tokenInfo, "managedAmount", token.decimals, 2, true)}{" "}
-                                  {token.symbol}
+                                  <Text>Pool Amount:</Text>{" "}
+                                  {formatKeyAmount(tokenInfo, "managedAmount", token.decimals, 2, true)} {token.symbol}
                                   <br />
                                   <br />
-                                  Max {tokenInfo.symbol} Capacity: ${formatAmount(maxUsdgAmount, 18, 0, true)}
+                                  <Text>Max</Text> {tokenInfo.symbol} <Text>Capacity:</Text> $
+                                  {formatAmount(maxUsdgAmount, 18, 0, true)}
                                 </>
                               );
                             }}
@@ -905,11 +986,15 @@ export default function DashboardV2() {
                         </div>
                       </div>
                       <div className="App-card-row">
-                        <div className="label">Weight</div>
+                        <div className="label">
+                          <Text>Weight</Text>
+                        </div>
                         <div>{getWeightText(tokenInfo)}</div>
                       </div>
                       <div className="App-card-row">
-                        <div className="label">Utilization</div>
+                        <div className="label">
+                          <Text>Utilization</Text>
+                        </div>
                         <div>{formatAmount(utilization, 2, 2, false)}%</div>
                       </div>
                     </div>

@@ -86,13 +86,14 @@ a.btn {
 }
 
 .connect-wallet {
-    color: var(--text-navigation);
-    border-color: var(--border-navigation);
-    background: var(--background-navigation)
+  color: var(--text-navigation);
+  border-color: var(--border-navigation);
+  background: var(--background-navigation);
 }
 
 .connect-wallet .btn-label {
   color: inherit;
+  white-space: nowrap;
 }
 
 @media (max-width: 450px) {

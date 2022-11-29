@@ -1,8 +1,8 @@
-import React, { useEffect } from 'react';
-import styled from 'styled-components';
+import React, { useEffect } from "react";
+import styled from "styled-components";
 import Slider, { SliderTooltip } from "rc-slider";
 import "rc-slider/assets/index.css";
-
+import { Text } from "../Translation/Text";
 
 const LeverageSliderHandle = (props: any) => {
   const { value, dragging, index, ...restProps } = props;
@@ -21,7 +21,7 @@ const LeverageSliderHandle = (props: any) => {
 
 const getMarks = (max: number) => {
   if (max >= 50) {
-    return ({
+    return {
       5: "5x",
       10: "10x",
       // 15: "15x",
@@ -32,9 +32,9 @@ const getMarks = (max: number) => {
       40: "40x",
       // 45: "45x",
       50: "50x",
-    })
+    };
   }
-  return ({
+  return {
     2: "2x",
     5: "5x",
     10: "10x",
@@ -42,8 +42,8 @@ const getMarks = (max: number) => {
     20: "20x",
     25: "25x",
     30: "30x",
-  })
-}
+  };
+};
 
 export const MAX_LEVERAGE_BUFFER = 0.5;
 
@@ -52,34 +52,32 @@ export const getMaxLeverage = (symbol: string) => {
     return 50 + MAX_LEVERAGE_BUFFER;
   } // else
   return 30 + MAX_LEVERAGE_BUFFER;
-}
-
+};
 
 export const LeverageInput = ({ value, onChange, max, min, step }) => {
-    const [inputValue, setInputValue] = React.useState(value);
+  const [inputValue, setInputValue] = React.useState(value);
 
-    useEffect(() => {
-        setInputValue(value);
-    }, [value]);
+  useEffect(() => {
+    setInputValue(value);
+  }, [value]);
 
-    const handleInputChange = (e) => {
-        let newValue = parseFloat(e.target.value);
-        newValue = Math.round(newValue * 100) / 100;
+  const handleInputChange = (e) => {
+    let newValue = parseFloat(e.target.value);
+    newValue = Math.round(newValue * 100) / 100;
 
-        if (newValue < min) {
-            onChange(min);
-        } else if (newValue > max) {
-            onChange(max);
-        } else {
-            onChange(newValue);
-        }
+    if (newValue < min) {
+      onChange(min);
+    } else if (newValue > max) {
+      onChange(max);
+    } else {
+      onChange(newValue);
     }
+  };
 
   return (
     <div className="Exchange-leverage-box">
       <InputBox>
-        Leverage Slider
-       
+        <Text>Leverage Slider</Text>
       </InputBox>
       <SliderRow>
         <Slider
@@ -92,15 +90,15 @@ export const LeverageInput = ({ value, onChange, max, min, step }) => {
           value={value}
           defaultValue={value}
         />
-         <Input
+        <Input
           type="number"
           value={inputValue}
-          onChange={e => setInputValue(e.target.value)}
+          onChange={(e) => setInputValue(e.target.value)}
           onBlur={handleInputChange}
           onKeyDown={(e) => {
             if (e.key === "Enter") {
               handleInputChange(e);
-            } else if (['e', 'E', '+', '-'].includes(e.key)) {
+            } else if (["e", "E", "+", "-"].includes(e.key)) {
               e.preventDefault();
             }
           }}
@@ -114,20 +112,20 @@ export const LeverageInput = ({ value, onChange, max, min, step }) => {
 };
 
 const InputBox = styled.label`
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-size: 0.9rem;
-    color: #fff;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.9rem;
+  color: #fff;
 
-    input {
-        border: 1px solid var(--cell-stroke);
-        border-radius: 4px;
-        font-size: 1rem;
-        text-align: right;
-        width: 60px;
-    }
-`
+  input {
+    border: 1px solid var(--cell-stroke);
+    border-radius: 4px;
+    font-size: 1rem;
+    text-align: right;
+    width: 60px;
+  }
+`;
 
 const SliderRow = styled.div`
   display: flex;
@@ -176,13 +174,13 @@ const SliderRow = styled.div`
 `;
 
 const Input = styled.input`
-    margin-left: 16px;
-    border: 1px solid var(--action-active);
-    color: var(--action-active);
-    border-radius: 4px;
-    font-size: 16px;
-    text-align: center;
-    width: 70px;
-    height: 32px; 
-    padding: 2px 6px;
+  margin-left: 16px;
+  border: 1px solid var(--action-active);
+  color: var(--action-active);
+  border-radius: 4px;
+  font-size: 16px;
+  text-align: center;
+  width: 70px;
+  height: 32px;
+  padding: 2px 6px;
 `;

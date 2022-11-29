@@ -6,6 +6,7 @@ import arbitrumIcon from "../../img/ic_arbitrum_16.svg";
 import metamaskIcon from "../../img/ic_metamask_16.svg";
 import { addTokenToMetamask, ICONLINKS, platformTokens, useChainId } from "../../Helpers";
 import { useWeb3React } from "@web3-react/core";
+import { Text } from "../../components/Translation/Text";
 
 function AssetDropdown({ assetSymbol, assetInfo, trackAction }) {
   const { active } = useWeb3React();
@@ -38,7 +39,9 @@ function AssetDropdown({ assetSymbol, assetInfo, trackAction }) {
                 }
               >
                 <img src={coingeckoIcon} alt="Open in Coingecko" />
-                <p>Open in Coingecko</p>
+                <p>
+                  <Text>Open in Coingecko</Text>
+                </p>
               </a>
             )}
           </>
@@ -59,7 +62,9 @@ function AssetDropdown({ assetSymbol, assetInfo, trackAction }) {
                 }
               >
                 <img src={arbitrumIcon} alt="Open in explorer" />
-                <p>Open in Explorer</p>
+                <p>
+                  <Text>Open in Explorer</Text>
+                </p>
               </a>
             )}
           </>
@@ -81,7 +86,9 @@ function AssetDropdown({ assetSymbol, assetInfo, trackAction }) {
                 className="asset-item"
               >
                 <img src={metamaskIcon} alt="Add to Metamask" />
-                <p>Add to Metamask</p>
+                <p>
+                  <Text>Add to Metamask</Text>
+                </p>
               </div>
             )}
           </>

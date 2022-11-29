@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { setTraderReferralCodeByUser, encodeReferralCode, validateReferralCodeExists } from "../../Api/referrals";
 import { REFERRAL_CODE_REGEX } from "../../config/referrals";
 import { getCodeError } from "../../utils/referrals";
+import { Text } from "../../components/Translation/Text";
 import useDebounce from "../../hooks/useDebounce";
 import * as Styles from "./Referrals.styles";
 
@@ -15,7 +16,7 @@ export default function EnterCodeModal(props) {
     referralCodeInString,
     pendingTxns,
     setPendingTxns,
-    isEdit
+    isEdit,
   } = props;
 
   const [referralCodeExists, setReferralCodeExists] = useState(true);
@@ -26,19 +27,21 @@ export default function EnterCodeModal(props) {
   const editModalRef = useRef(null);
   const debouncedEditReferralCode = useDebounce(referralCode, 300);
 
-  const messages = isEdit ? {
-    modalTitle: 'Edit Referral Code',
-    successMsg: 'Referral code updated!',
-    failMsg: 'Referral code update failed.',
-    buttonSubmitting: 'Updating...',
-    button: 'Update'
-  } : {
-    modalTitle: 'Enter Referral Code',
-    successMsg: 'Referral code added!',
-    failMsg: 'Adding referral code failed.',
-    buttonSubmitting: 'Submitting...',
-    button: 'Submit'
-  }
+  const messages = isEdit
+    ? {
+        modalTitle: "Edit Referral Code",
+        successMsg: "Referral code updated!",
+        failMsg: "Referral code update failed.",
+        buttonSubmitting: "Updating...",
+        button: "Update",
+      }
+    : {
+        modalTitle: "Enter Referral Code",
+        successMsg: "Referral code added!",
+        failMsg: "Adding referral code failed.",
+        buttonSubmitting: "Submitting...",
+        button: "Submit",
+      };
 
   const close = () => {
     if (!isSubmitting) {
@@ -60,7 +63,7 @@ export default function EnterCodeModal(props) {
         failMsg: messages.failMsg,
         pendingTxns,
         setPendingTxns,
-      })
+      });
       await txn.wait();
       setIsSubmitting(false);
       close();
@@ -68,7 +71,7 @@ export default function EnterCodeModal(props) {
       console.error(err);
       setIsSubmitting(false);
     }
-  }
+  };
   const getPrimaryText = () => {
     if (referralCode === referralCodeInString && !isSubmitting) {
       return "Referral Code is same";
@@ -86,8 +89,8 @@ export default function EnterCodeModal(props) {
       return `Referral Code does not exist`;
     }
 
-    return messages.button
-  }
+    return messages.button;
+  };
   const isPrimaryEnabled = () => {
     if (
       debouncedEditReferralCode === "" ||
@@ -100,7 +103,7 @@ export default function EnterCodeModal(props) {
       return false;
     }
     return true;
-  }
+  };
 
   useEffect(() => {
     let cancelled = false;
@@ -125,16 +128,11 @@ export default function EnterCodeModal(props) {
   }, [debouncedEditReferralCode, chainId]);
 
   return (
-    <Styles.CodeModal
-      isVisible={isEnterCodeModalVisible}
-      setIsVisible={close}
-      label={messages.modalTitle}
-    >
+    <Styles.CodeModal isVisible={isEnterCodeModalVisible} setIsVisible={close} label={messages.modalTitle}>
       <Styles.CodeInput
         ref={editModalRef}
         disabled={isSubmitting}
         type="text"
-        placeholder="Enter referral code"
         className={`text-input ${!error && "mb-sm"}`}
         value={referralCode}
         onChange={({ target }) => {
@@ -143,13 +141,13 @@ export default function EnterCodeModal(props) {
           setError(getCodeError(value));
         }}
       />
-      {error && <Styles.ErrorText className="error">{error}</Styles.ErrorText>}
-      <Styles.CodeButton
-        className="default-btn"
-        onClick={handleClickPrimary}
-        disabled={!isPrimaryEnabled()}
-      >
-        {getPrimaryText()}
+      {error && (
+        <Styles.ErrorText className="error">
+          <Text>{error}</Text>
+        </Styles.ErrorText>
+      )}
+      <Styles.CodeButton className="default-btn" onClick={handleClickPrimary} disabled={!isPrimaryEnabled()}>
+        <Text>{getPrimaryText()}</Text>
       </Styles.CodeButton>
     </Styles.CodeModal>
   );

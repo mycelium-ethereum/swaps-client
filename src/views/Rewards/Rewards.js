@@ -19,6 +19,7 @@ import { ethers } from "ethers";
 import TraderRewards from "./TraderRewards";
 import Leaderboard from "./Leaderboard";
 import * as Styles from "./Rewards.styles";
+import { Text } from "../../components/Translation/Text";
 
 import SEO from "../../components/Common/SEO";
 import { getContract } from "../../Addresses";
@@ -31,22 +32,27 @@ import { getServerUrl } from "src/lib";
 
 const PersonalHeader = () => (
   <div className="Page-title-section mt-0">
-    <div className="Page-title">Trader Rewards</div>
+    <div className="Page-title">
+      <Text>Trader Rewards</Text>
+    </div>
     <div className="Page-description">
-      Be in the top 5% of traders to earn weekly rewards.
-      <br /> Read the Terms of Use{" "}
+      <Text>Be in the top 5% of traders to earn weekly rewards.</Text>
+      <br />
       <a href="https://mycelium.xyz/rewards-terms-of-use" target="_blank" rel="noopener noreferrer">
-        here
+        <Text>Terms of Use here.</Text>
       </a>
-      .
     </div>
   </div>
 );
 
 const LeaderboardHeader = () => (
   <div className="Page-title-section mt-0">
-    <div className="Page-title">Rewards Leaderboard</div>
-    <div className="Page-description">User rankings by volume.</div>
+    <div className="Page-title">
+      <Text>Rewards Leaderboard</Text>
+    </div>
+    <div className="Page-description">
+      <Text>User rankings by volume.</Text>
+    </div>
   </div>
 );
 
@@ -282,19 +288,19 @@ export default function Rewards(props) {
     });
     let error;
     if (selectedRound === "latest") {
-      helperToast.error("Cannot claim rewards before round has ended");
+      helperToast.error(<Text>Cannot claim rewards before round has ended</Text>);
       error = true;
     }
     if (!userProof) {
-      helperToast.error("Fetching merkle proof");
+      helperToast.error(<Text>Fetching merkle proof</Text>);
       error = true;
     }
     if (userProof.amount === "0") {
-      helperToast.error(`No rewards for round: ${selectedRound}`);
+      helperToast.error(<Text>No rewards for round: ${selectedRound}</Text>);
       error = true;
     }
     if (!!userProof?.message) {
-      helperToast.error(`Invalid user proof`);
+      helperToast.error(<Text>Invalid user proof</Text>);
       error = true;
     }
     if (error) {

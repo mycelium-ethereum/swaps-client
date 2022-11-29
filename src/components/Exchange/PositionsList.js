@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import cx from "classnames";
+import { Text } from "../Translation/Text";
 
 import Tooltip from "../Tooltip/Tooltip";
 import PositionSeller from "./PositionSeller";
@@ -110,7 +111,11 @@ export default function PositionsList(props) {
   };
 
   const onPositionClick = (position) => {
-    helperToast.success(`${position.isLong ? "Long" : "Short"} ${position.indexToken.symbol} market selected`);
+    helperToast.success(
+      <>
+        <Text>{position.isLong ? "Long" : "Short"}</Text> {position.indexToken.symbol} <Text>market selected</Text>
+      </>
+    );
     setMarket(position.isLong ? LONG : SHORT, position.indexToken.address);
   };
 
@@ -188,10 +193,14 @@ export default function PositionsList(props) {
         <div className="Exchange-list small">
           <div>
             {positions.length === 0 && positionsDataIsLoading && (
-              <div className="Exchange-empty-positions-list-note App-card">Loading...</div>
+              <div className="Exchange-empty-positions-list-note App-card">
+                <Text>Loading...</Text>
+              </div>
             )}
             {positions.length === 0 && !positionsDataIsLoading && (
-              <div className="Exchange-empty-positions-list-note App-card">No open positions</div>
+              <div className="Exchange-empty-positions-list-note App-card">
+                <Text>No open positions</Text>
+              </div>
             )}
             {positions.map((position) => {
               const positionOrders = getOrdersForPosition(position, orders, nativeTokenAddress);
@@ -205,7 +214,11 @@ export default function PositionsList(props) {
                   .mul(position.size)
                   .mul(24)
                   .div(FUNDING_RATE_PRECISION);
-                borrowFeeText = `Borrow Fee / Day: $${formatAmount(borrowFeeRate, USD_DECIMALS, 2)}`;
+                borrowFeeText = (
+                  <>
+                    <Text>Borrow Fee / Day:</Text> ${formatAmount(borrowFeeRate, USD_DECIMALS, 2)}
+                  </>
+                );
               }
 
               return (
@@ -216,7 +229,9 @@ export default function PositionsList(props) {
                   <div className="App-card-divider"></div>
                   <div className="App-card-content">
                     <div className="App-card-row">
-                      <div className="label">Leverage</div>
+                      <div className="label">
+                        <Text>Leverage</Text>
+                      </div>
                       <div>
                         {formatAmount(position.leverage, 4, 2, true)}x&nbsp;
                         <span
@@ -225,16 +240,20 @@ export default function PositionsList(props) {
                             negative: !position.isLong,
                           })}
                         >
-                          {position.isLong ? "Long" : "Short"}
+                          <Text>{position.isLong ? "Long" : "Short"}</Text>
                         </span>
                       </div>
                     </div>
                     <div className="App-card-row">
-                      <div className="label">Size</div>
+                      <div className="label">
+                        <Text>Size</Text>
+                      </div>
                       <div>${formatAmount(position.size, USD_DECIMALS, 2, true)}</div>
                     </div>
                     <div className="App-card-row">
-                      <div className="label">Collateral</div>
+                      <div className="label">
+                        <Text>Collateral</Text>
+                      </div>
                       <div>
                         <Tooltip
                           handle={`$${formatAmount(position.collateralAfterFee, USD_DECIMALS, 2, true)}`}
@@ -245,18 +264,21 @@ export default function PositionsList(props) {
                               <>
                                 {position.hasLowCollateral && (
                                   <div>
-                                    WARNING: This position has a low amount of collateral after deducting borrowing
-                                    fees, deposit more collateral to reduce the position's liquidation risk.
+                                    <Text>
+                                      WARNING: This position has a low amount of collateral after deducting borrowing
+                                      fees, deposit more collateral to reduce the position's liquidation risk.
+                                    </Text>
                                     <br />
                                     <br />
                                   </div>
                                 )}
-                                Initial Collateral: ${formatAmount(position.collateral, USD_DECIMALS, 2, true)}
+                                <Text>Initial Collateral:</Text> $
+                                {formatAmount(position.collateral, USD_DECIMALS, 2, true)}
                                 <br />
-                                Borrow Fee: ${formatAmount(position.fundingFee, USD_DECIMALS, 2, true)}
+                                <Text>Borrow Fee:</Text> ${formatAmount(position.fundingFee, USD_DECIMALS, 2, true)}
                                 {borrowFeeText && <div>{borrowFeeText}</div>}
                                 <br />
-                                Use the "Edit" button to deposit or withdraw collateral.
+                                <Text>Use the "Edit" button to deposit or withdraw collateral.</Text>
                               </>
                             );
                           }}
@@ -264,7 +286,9 @@ export default function PositionsList(props) {
                       </div>
                     </div>
                     <div className="App-card-row">
-                      <div className="label">PnL</div>
+                      <div className="label">
+                        <Text>PnL</Text>
+                      </div>
                       <div>
                         <span
                           className={cx("Exchange-list-info-label", {
@@ -278,7 +302,9 @@ export default function PositionsList(props) {
                       </div>
                     </div>
                     <div className="App-card-row">
-                      <div className="label">Net Value</div>
+                      <div className="label">
+                        <Text>Net Value</Text>
+                      </div>
                       <div>
                         <Tooltip
                           handle={`$${formatAmount(position.netValue, USD_DECIMALS, 2, true)}`}
@@ -287,21 +313,26 @@ export default function PositionsList(props) {
                           renderContent={() => {
                             return (
                               <>
-                                Net Value:{" "}
-                                {showPnlAfterFees
-                                  ? "Initial Collateral - Fees + PnL"
-                                  : "Initial Collateral - Borrow Fee + PnL"}
+                                <Text>Net Value:</Text>{" "}
+                                <Text>
+                                  {showPnlAfterFees
+                                    ? "Initial Collateral - Fees + PnL"
+                                    : "Initial Collateral - Borrow Fee + PnL"}
+                                </Text>
                                 <br />
                                 <br />
-                                Initial Collateral: ${formatAmount(position.collateral, USD_DECIMALS, 2, true)}
+                                <Text>Initial Collateral:</Text> $
+                                {formatAmount(position.collateral, USD_DECIMALS, 2, true)}
                                 <br />
-                                PnL: {position.deltaBeforeFeesStr}
+                                <Text>PnL:</Text> {position.deltaBeforeFeesStr}
                                 <br />
-                                Borrow Fee: ${formatAmount(position.fundingFee, USD_DECIMALS, 2, true)}
+                                <Text>Borrow Fee:</Text> ${formatAmount(position.fundingFee, USD_DECIMALS, 2, true)}
                                 <br />
-                                Open + Close fee: ${formatAmount(position.positionFee, USD_DECIMALS, 2, true)}
+                                <Text>Open + Close fee:</Text> $
+                                {formatAmount(position.positionFee, USD_DECIMALS, 2, true)}
                                 <br />
-                                PnL After Fees: {position.deltaAfterFeesStr} ({position.deltaAfterFeesPercentageStr})
+                                <Text>PnL After Fees:</Text> {position.deltaAfterFeesStr} (
+                                {position.deltaAfterFeesPercentageStr})
                               </>
                             );
                           }}
@@ -309,7 +340,9 @@ export default function PositionsList(props) {
                       </div>
                     </div>
                     <div className="App-card-row">
-                      <div className="label">Orders</div>
+                      <div className="label">
+                        <Text>Orders</Text>
+                      </div>
                       <div>
                         {positionOrders.length === 0 && "None"}
                         {positionOrders.map((order) => {
@@ -319,7 +352,10 @@ export default function PositionsList(props) {
                               {order.type === INCREASE ? " +" : " -"}${formatAmount(order.sizeDelta, 30, 2, true)}
                               {order.error && (
                                 <>
-                                  , <span className="negative">{order.error}</span>
+                                  ,{" "}
+                                  <span className="negative">
+                                    <Text>{order.error}</Text>
+                                  </span>
                                 </>
                               )}
                             </div>
@@ -331,15 +367,21 @@ export default function PositionsList(props) {
                   <div className="App-card-divider"></div>
                   <div className="App-card-content">
                     <div className="App-card-row">
-                      <div className="label">Mark Price</div>
+                      <div className="label">
+                        <Text>Mark Price</Text>
+                      </div>
                       <div>${formatAmount(position.markPrice, USD_DECIMALS, 2, true)}</div>
                     </div>
                     <div className="App-card-row">
-                      <div className="label">Entry Price</div>
+                      <div className="label">
+                        <Text>Entry Price</Text>
+                      </div>
                       <div>${formatAmount(position.averagePrice, USD_DECIMALS, 2, true)}</div>
                     </div>
                     <div className="App-card-row">
-                      <div className="label">Liq. Price</div>
+                      <div className="label">
+                        <Text>Liq. Price</Text>
+                      </div>
                       <div>${formatAmount(liquidationPrice, USD_DECIMALS, 2, true)}</div>
                     </div>
                   </div>
@@ -350,14 +392,14 @@ export default function PositionsList(props) {
                       onClick={() => editPosition(position)}
                       disabled={position.size.eq(0) || position.hasPendingChanges}
                     >
-                      Edit
+                      <Text>Edit</Text>
                     </button>
                     <button
                       className="App-button-option App-card-option"
                       onClick={() => sellPosition(position)}
                       disabled={position.size.eq(0) || position.hasPendingChanges}
                     >
-                      Close
+                      <Text>Close</Text>
                     </button>
                   </div>
                 </div>
@@ -370,27 +412,45 @@ export default function PositionsList(props) {
         <table className="Exchange-list large">
           <tbody>
             <tr className="Exchange-list-header">
-              <th>Position</th>
-              <th>Net Value</th>
-              <th>Size</th>
-              <th>Collateral</th>
-              <th>Mark Price</th>
-              <th>Entry Price</th>
-              <th>Liq. Price</th>
+              <th>
+                <Text>Position</Text>
+              </th>
+              <th>
+                <Text>Net Value</Text>
+              </th>
+              <th>
+                <Text>Size</Text>
+              </th>
+              <th>
+                <Text>Collateral</Text>
+              </th>
+              <th>
+                <Text>Mark Price</Text>
+              </th>
+              <th>
+                <Text>Entry Price</Text>
+              </th>
+              <th>
+                <Text>Liq. Price</Text>
+              </th>
               <th></th>
               <th></th>
             </tr>
             {positions.length === 0 && positionsDataIsLoading && (
               <tr>
                 <td colSpan="15">
-                  <div className="Exchange-empty-positions-list-note">Loading...</div>
+                  <div className="Exchange-empty-positions-list-note">
+                    <Text>Loading...</Text>
+                  </div>
                 </td>
               </tr>
             )}
             {positions.length === 0 && !positionsDataIsLoading && (
               <tr>
                 <td colSpan="15">
-                  <div className="Exchange-empty-positions-list-note">No open positions</div>
+                  <div className="Exchange-empty-positions-list-note">
+                    <Text>No open positions</Text>
+                  </div>
                 </td>
               </tr>
             )}
@@ -407,7 +467,11 @@ export default function PositionsList(props) {
                   .mul(position.size)
                   .mul(24)
                   .div(FUNDING_RATE_PRECISION);
-                borrowFeeText = `Borrow Fee / Day: $${formatAmount(borrowFeeRate, USD_DECIMALS, 2)}`;
+                borrowFeeText = (
+                  <>
+                    <Text>Borrow Fee / Day:</Text> ${formatAmount(borrowFeeRate, USD_DECIMALS, 2)}
+                  </>
+                );
               }
 
               return (
@@ -422,7 +486,7 @@ export default function PositionsList(props) {
                         <span className="muted">{formatAmount(position.leverage, 4, 2, true)}x&nbsp;</span>
                       )}
                       <span className={cx({ positive: position.isLong, negative: !position.isLong })}>
-                        {position.isLong ? "Long" : "Short"}
+                        <Text>{position.isLong ? "Long" : "Short"}</Text>
                       </span>
                     </div>
                   </td>
@@ -437,22 +501,27 @@ export default function PositionsList(props) {
                           renderContent={() => {
                             return (
                               <>
-                                Net Value:{" "}
-                                {showPnlAfterFees
-                                  ? "Initial Collateral - Fees + PnL"
-                                  : "Initial Collateral - Borrow Fee + PnL"}
+                                <Text>
+                                  Net Value:{" "}
+                                  {showPnlAfterFees
+                                    ? "Initial Collateral - Fees + PnL"
+                                    : "Initial Collateral - Borrow Fee + PnL"}
+                                </Text>
                                 <br />
                                 <br />
-                                Initial Collateral: ${formatAmount(position.collateral, USD_DECIMALS, 2, true)}
+                                <Text>Initial Collateral:</Text> $
+                                {formatAmount(position.collateral, USD_DECIMALS, 2, true)}
                                 <br />
-                                PnL: {position.deltaBeforeFeesStr}
+                                <Text>PnL:</Text> {position.deltaBeforeFeesStr}
                                 <br />
-                                Borrow Fee: ${formatAmount(position.fundingFee, USD_DECIMALS, 2, true)}
+                                <Text>Borrow Fee:</Text> ${formatAmount(position.fundingFee, USD_DECIMALS, 2, true)}
                                 <br />
-                                Open + Close fee: ${formatAmount(position.positionFee, USD_DECIMALS, 2, true)}
+                                <Text>Open + Close fee:</Text> $
+                                {formatAmount(position.positionFee, USD_DECIMALS, 2, true)}
                                 <br />
                                 <br />
-                                PnL After Fees: {position.deltaAfterFeesStr} ({position.deltaAfterFeesPercentageStr})
+                                <Text>PnL After Fees:</Text> {position.deltaAfterFeesStr} (
+                                {position.deltaAfterFeesPercentageStr})
                               </>
                             );
                           }}
@@ -485,7 +554,9 @@ export default function PositionsList(props) {
                           renderContent={() => {
                             return (
                               <>
-                                <strong>Active Orders</strong>
+                                <strong>
+                                  <Text>Active Orders</Text>
+                                </strong>
                                 {positionOrders.map((order) => {
                                   return (
                                     <div
@@ -498,7 +569,10 @@ export default function PositionsList(props) {
                                       {formatAmount(order.sizeDelta, 30, 2, true)}
                                       {order.error && (
                                         <>
-                                          , <span className="negative">{order.error}</span>
+                                          ,{" "}
+                                          <span className="negative">
+                                            <Text>{order.error}</Text>
+                                          </span>
                                         </>
                                       )}
                                     </div>
@@ -521,18 +595,24 @@ export default function PositionsList(props) {
                           <>
                             {position.hasLowCollateral && (
                               <div>
-                                WARNING: This position has a low amount of collateral after deducting borrowing fees,
-                                deposit more collateral to reduce the position's liquidation risk.
+                                <Text>
+                                  WARNING: This position has a low amount of collateral after deducting borrowing fees,
+                                  deposit more collateral to reduce the position's liquidation risk.
+                                </Text>
                                 <br />
                                 <br />
                               </div>
                             )}
-                            Initial Collateral: ${formatAmount(position.collateral, USD_DECIMALS, 2, true)}
+                            <Text>Initial Collateral:</Text> ${formatAmount(position.collateral, USD_DECIMALS, 2, true)}
                             <br />
-                            Borrow Fee: ${formatAmount(position.fundingFee, USD_DECIMALS, 2, true)}
-                            {borrowFeeText && <div>{borrowFeeText}</div>}
+                            <Text>Borrow Fee:</Text> ${formatAmount(position.fundingFee, USD_DECIMALS, 2, true)}
+                            {borrowFeeText && (
+                              <div>
+                                <Text>{borrowFeeText}</Text>
+                              </div>
+                            )}
                             <br />
-                            Use the "Edit" button to deposit or withdraw collateral.
+                            <Text>Use the "Edit" button to deposit or withdraw collateral.</Text>
                           </>
                         );
                       }}
@@ -546,12 +626,16 @@ export default function PositionsList(props) {
                       renderContent={() => {
                         return (
                           <>
-                            Click on a row to select the position's market, then use the swap box to increase your
-                            position size if needed.
+                            <Text>
+                              Click on a row to select the position's market, then use the swap box to increase your
+                              position size if needed.
+                            </Text>
                             <br />
                             <br />
-                            Use the "Close" button to reduce your position size, or to set stop-loss / take-profit
-                            orders.
+                            <Text>
+                              Use the "Close" button to reduce your position size, or to set stop-loss / take-profit
+                              orders.
+                            </Text>
                           </>
                         );
                       }}
@@ -572,7 +656,7 @@ export default function PositionsList(props) {
                       }}
                       disabled={position.size.eq(0) || position.hasPendingChanges}
                     >
-                      Edit
+                      <Text>Edit</Text>
                     </button>
                   </td>
                   <td>
@@ -584,7 +668,7 @@ export default function PositionsList(props) {
                       }}
                       disabled={position.size.eq(0) || position.hasPendingChanges}
                     >
-                      Close
+                      <Text>Close</Text>
                     </button>
                   </td>
                 </tr>

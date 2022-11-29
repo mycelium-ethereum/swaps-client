@@ -1,4 +1,3 @@
-import React from "react";
 import { truncateMiddleEthAddress, formatAmount, USD_DECIMALS, ETH_DECIMALS } from "../../Helpers";
 import Jazzicon, { jsNumberForAddress } from "react-jazzicon";
 import Davatar from "@davatar/react";
@@ -30,6 +29,7 @@ import {
 } from "./Rewards.styles";
 import { RewardsButton } from "../../Shared.styles";
 import TooltipComponent from "../../components/Tooltip/Tooltip";
+import { Text } from "../../components/Translation/Text";
 
 import degenScore from "../../img/ic_degen.svg";
 
@@ -42,7 +42,9 @@ function RewardsTableWrapper({ className, children }) {
       <RewardsTableHeader>
         <tr>
           {headings.map((heading) => (
-            <RewardsTableHeading key={heading}>{heading}</RewardsTableHeading>
+            <RewardsTableHeading key={heading}>
+              <Text>{heading}</Text>
+            </RewardsTableHeading>
           ))}
         </tr>
       </RewardsTableHeader>
@@ -55,7 +57,9 @@ function TopIndicatorRow({ round }) {
   return (
     <TopFiveRow>
       <TopFiveRowCell colSpan={5} className="">
-        <span>Top {round > 5 ? 5 : 50}% of traders</span>
+        <span>
+          <Text>Top {round > 5 ? 5 : 50}% of traders</Text>
+        </span>
       </TopFiveRowCell>
     </TopFiveRow>
   );
@@ -110,19 +114,20 @@ function TableRow({
         </UserCell>
         <VolumeCell>${formatAmount(volume, USD_DECIMALS, 2, true)}</VolumeCell>
         <RewardCell>
-          {hasDegenReward 
-            ? <TooltipComponent
-                handle={`${formatAmount(totalReward, ETH_DECIMALS, 4, true)} WETH`}
-                renderContent={() => (
-                  <>
-                    Top 50%: {formatAmount(positionReward, ETH_DECIMALS, 6, true)} WETH
-                    <br />
-                    Degen rewards: {formatAmount(degenReward, ETH_DECIMALS, 6, true)} WETH
-                  </>
-                )}
-              />
-            : `${formatAmount(totalReward, ETH_DECIMALS, 4, true)} WETH`
-          }
+          {hasDegenReward ? (
+            <TooltipComponent
+              handle={`${formatAmount(totalReward, ETH_DECIMALS, 4, true)} WETH`}
+              renderContent={() => (
+                <>
+                  <Text>Top 50%</Text>: {formatAmount(positionReward, ETH_DECIMALS, 6, true)} WETH
+                  <br />
+                  <Text>Degen rewards</Text>: {formatAmount(degenReward, ETH_DECIMALS, 6, true)} WETH
+                </>
+              )}
+            />
+          ) : (
+            `${formatAmount(totalReward, ETH_DECIMALS, 4, true)} WETH`
+          )}
           {rewardAmountUsd && ` ($${formatAmount(rewardAmountUsd, USD_DECIMALS, 2, true)})`}
         </RewardCell>
         <ClaimCell
@@ -132,7 +137,7 @@ function TableRow({
         >
           {userRow && !totalReward.eq(0) && !latestRound && hasLoaded && !hasClaimed && !claimDelay && (
             <ClaimButton disabled={isClaiming} onClick={handleClaim}>
-              {isClaiming ? "Claiming WETH" : "Claim WETH"}
+              <Text>{isClaiming ? "Claiming" : "Claim"}</Text> WETH
             </ClaimButton>
           )}
           {userRow && !totalReward.eq(0) && hasLoaded && hasClaimed && <span className="claimed">WETH Claimed</span>}
@@ -162,7 +167,9 @@ export default function Leaderboard(props) {
 
   return (
     <LeaderboardContainer hidden={currentView === "Personal"}>
-      <Title>Your rewards</Title>
+      <Title>
+        <Text>Your rewards</Text>
+      </Title>
       <PersonalRewardsTableContainer>
         {userAccount && userRoundData && userRoundData.position ? (
           <RewardsTableWrapper>
@@ -185,7 +192,9 @@ export default function Leaderboard(props) {
           </RewardsTableWrapper>
         ) : userAccount ? (
           <FullWidthText>
-            <p>No previous trades</p>
+            <p>
+              <Text>No previous trades</Text>
+            </p>
           </FullWidthText>
         ) : (
           <ConnectWalletOverlay>
@@ -202,7 +211,9 @@ export default function Leaderboard(props) {
               </tr>
             </RewardsTableWrapper>
             <ConnectWalletText>
-              <span>Connect to wallet to view your rewards</span>
+              <span>
+                <Text>Connect to wallet to view your rewards</Text>
+              </span>
               <RewardsButton
                 className="App-cta large"
                 onClick={() => {
@@ -213,13 +224,15 @@ export default function Leaderboard(props) {
                     });
                 }}
               >
-                Connect Wallet <WalletIcon src="/icons/wallet.svg" />
+                <Text>Connect Wallet</Text> <WalletIcon src="/icons/wallet.svg" />
               </RewardsButton>
             </ConnectWalletText>
           </ConnectWalletOverlay>
         )}
       </PersonalRewardsTableContainer>
-      <LeaderboardTitle>Leaderboard</LeaderboardTitle>
+      <LeaderboardTitle>
+        <Text>Leaderboard</Text>
+      </LeaderboardTitle>
       <RewardsTableContainer>
         <RewardsTableBorder />
         <ScrollContainer>
@@ -256,11 +269,15 @@ export default function Leaderboard(props) {
             </RewardsTableWrapper>
           ) : (!roundData?.rewards || roundData?.rewards?.length === 0) && selectedRound ? (
             <FullWidthText>
-              <p>No data available for Round {selectedRound}</p>
+              <p>
+                <Text>No data available for Round</Text> {selectedRound}
+              </p>
             </FullWidthText>
           ) : (
             <FullWidthText>
-              <p>Loading round data...</p>
+              <p>
+                <Text>Loading round data...</Text>
+              </p>
             </FullWidthText>
           )}
         </ScrollContainer>

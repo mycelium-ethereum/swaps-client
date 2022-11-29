@@ -13704,6 +13704,7 @@ __metadata:
     prettier: ^2.5.1
     rc-slider: ^9.7.2
     react: ^17.0.1
+    react-auto-translate: ^0.0.6
     react-countdown: ^2.3.3
     react-dom: ^17.0.1
     react-ga4: ^1.4.1
@@ -16072,6 +16073,15 @@ __metadata:
     regenerator-runtime: ^0.13.7
     whatwg-fetch: ^3.4.1
   checksum: 99e52a6b2229c7ca730cfd44ac95640f955be71d144225bd6c24fa47922a742658a371d0a2f0876d732533f1055b7cd7e9d534c89c29f8ca889ecd1b8d15f065
+  languageName: node
+  linkType: hard
+
+"react-auto-translate@npm:^0.0.6":
+  version: 0.0.6
+  resolution: "react-auto-translate@npm:0.0.6"
+  peerDependencies:
+    react: ^16.8.6
+  checksum: 1c72f8ce1509a9aa8982961b3d5f46ea455f79c2f1aed7cf04edfbd2330e8ac7b7199e90003d296caf64bff55486e70a1dad56f7a4ba1f98369d18ce62dad4e5
   languageName: node
   linkType: hard
 

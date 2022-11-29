@@ -8,6 +8,7 @@ import settings from "../../img/ic_settings_16.svg";
 import disconnect from "../../img/ic_sign_out_16.svg";
 import { FaChevronDown } from "react-icons/fa";
 import Davatar from "@davatar/react";
+import { Text } from "../Translation/Text";
 
 function AddressDropdown({ account, accountUrl, disconnectAccountAndCloseSettings, openSettings, trackAction }) {
   const useBreakpoint = createBreakpoint({ L: 600, M: 550, S: 400 });
@@ -32,11 +33,13 @@ function AddressDropdown({ account, accountUrl, disconnectAccountAndCloseSetting
               onClick={() => {
                 copyToClipboard(account);
                 trackAction && trackAction("Button clicked", { buttonName: "Copy Address" });
-                helperToast.success("Address copied to your clipboard");
+                helperToast.success(<Text>Address copied to your clipboard</Text>);
               }}
             >
               <img src={copy} alt="Copy user address" />
-              <p>Copy Address</p>
+              <p>
+                <Text>Copy Address</Text>
+              </p>
             </div>
           </Menu.Item>
           <Menu.Item>
@@ -48,10 +51,11 @@ function AddressDropdown({ account, accountUrl, disconnectAccountAndCloseSetting
               onClick={() => trackAction && trackAction("Button clicked", { buttonName: "View in Explorer" })}
             >
               <img src={externalLink} alt="Open address in explorer" />
-              <p>View in Explorer</p>
+              <p>
+                <Text>View in Explorer</Text>
+              </p>
             </a>
           </Menu.Item>
-
           <Menu.Item>
             <div
               className="menu-item"
@@ -61,7 +65,9 @@ function AddressDropdown({ account, accountUrl, disconnectAccountAndCloseSetting
               }}
             >
               <img src={settings} alt="Open settings" />
-              <p>Settings</p>
+              <p>
+                <Text>Settings</Text>
+              </p>
             </div>
           </Menu.Item>
           <Menu.Item>
@@ -73,7 +79,9 @@ function AddressDropdown({ account, accountUrl, disconnectAccountAndCloseSetting
               }}
             >
               <img src={disconnect} alt="Disconnect the wallet" />
-              <p>Disconnect</p>
+              <p>
+                <Text>Disconnect</Text>
+              </p>
             </div>
           </Menu.Item>
         </Menu.Items>

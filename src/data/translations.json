@@ -1,0 +1,1442 @@
+{
+  "Trade": {
+    "ja": "取引",
+    "zh-CN": "交易"
+  },
+  "Buy": {
+    "ja": "買う",
+    "zh-CN": "买"
+  },
+  "Rewards": {
+    "ja": "報酬",
+    "zh-CN": "奖励"
+  },
+  "Docs": {
+    "ja": "ドキュメント",
+    "zh-CN": "文档"
+  },
+  "Referrals": {
+    "ja": "紹介",
+    "zh-CN": "推荐人"
+  },
+  "Analytics": {
+    "ja": "分析",
+    "zh-CN": "分析"
+  },
+  "Settings": {
+    "ja": "設定",
+    "zh-CN": "设置"
+  },
+  "Connect": {
+    "ja": "接続",
+    "zh-CN": "连接"
+  },
+  "Close": {
+    "ja": "終値",
+    "zh-CN": "关闭"
+  },
+  "Connect Wallet": {
+    "ja": "ウォレットに接続",
+    "zh-CN": "连接钱包"
+  },
+  "Menu": {
+    "ja": "メニュー",
+    "zh-CN": "菜单"
+  },
+  "Earn": {
+    "ja": "獲得する",
+    "zh-CN": "赚取收益"
+  },
+  "Dashboard": {
+    "ja": "ダッシュボード",
+    "zh-CN": "仪表板"
+  },
+  "Leverage Slider": {
+    "ja": "レバレッジスライダー",
+    "zh-CN": "杠杆滑条"
+  },
+  "Trades": {
+    "ja": "取引",
+    "zh-CN": "交易"
+  },
+  "Positions": {
+    "ja": "ポジション",
+    "zh-CN": "仓位"
+  },
+  "Collateral": {
+    "ja": "担保",
+    "zh-CN": "抵押资产"
+  },
+  "Trade The Merge": {
+    "ja": "ザ・マージ取引",
+    "zh-CN": "交易 The Merge "
+  },
+  "Leverage:": {
+    "ja": "レバレッジ",
+    "zh-CN": "杠杆倍率"
+  },
+  "Limit": {
+    "ja": "上限額",
+    "zh-CN": "限额"
+  },
+  "Entry Price": {
+    "ja": "エントリープライス",
+    "zh-CN": "开仓价格"
+  },
+  "Pay": {
+    "ja": "支払い",
+    "zh-CN": "支付"
+  },
+  "Switch to": {
+    "ja": "切り替える",
+    "zh-CN": "切换到"
+  },
+  "Continue": {
+    "ja": "継続",
+    "zh-CN": "继续"
+  },
+  "Size": {
+    "ja": "サイズ",
+    "zh-CN": "仓位大小"
+  },
+  "Position": {
+    "ja": "ポジション",
+    "zh-CN": "仓位"
+  },
+  "24h Change": {
+    "ja": "価格変動(24時間)",
+    "zh-CN": "24小时波动"
+  },
+  "Exit Price": {
+    "ja": "出口価格",
+    "zh-CN": "平仓价格"
+  },
+  "No open positions": {
+    "ja": "ノーポジション",
+    "zh-CN": "无持仓"
+  },
+  "24h High": {
+    "ja": "最高値(24時間)",
+    "zh-CN": "24小时 - 高"
+  },
+  "Fees": {
+    "ja": "手数料",
+    "zh-CN": "费用"
+  },
+  "More Info": {
+    "ja": "もっと読む",
+    "zh-CN": "更多信息"
+  },
+  "Orders": {
+    "ja": "オーダー",
+    "zh-CN": "订单"
+  },
+  "On Mycelium Perpetual Swaps": {
+    "ja": "Mycelium永久スワップ",
+    "zh-CN": "关于 Mycelium 永久掉期合约"
+  },
+  "HOURS": {
+    "ja": "時間",
+    "zh-CN": "小时"
+  },
+  "SECONDS": {
+    "ja": "秒",
+    "zh-CN": "秒"
+  },
+  "Net Value": {
+    "ja": "正味価格",
+    "zh-CN": "净值"
+  },
+  "Useful Links": {
+    "ja": "関連リンク",
+    "zh-CN": "有用的链接"
+  },
+  "Coming Soon": {
+    "ja": "近日公開",
+    "zh-CN": "即将上线"
+  },
+  "24h Low": {
+    "ja": "最安値(24時間)",
+    "zh-CN": "24小时 - 低"
+  },
+  "MINUTES": {
+    "ja": "分",
+    "zh-CN": "分钟"
+  },
+  "Market": {
+    "ja": "市場",
+    "zh-CN": "市场"
+  },
+  "Swap": {
+    "ja": "スワップ",
+    "zh-CN": "兑换"
+  },
+  "Reject": {
+    "ja": "却下",
+    "zh-CN": "拒绝"
+  },
+  "Share on Twitter": {
+    "ja": "ツイッターで共有",
+    "zh-CN": "分享到Twitter"
+  },
+  "Leverage": {
+    "ja": "レバレッジ",
+    "zh-CN": "杠杆倍率"
+  },
+  "Fee-Free Spree": {
+    "ja": "手数料無料キャンペーン",
+    "zh-CN": "免费狂欢"
+  },
+  "Trading guide": {
+    "ja": "取引ガイド",
+    "zh-CN": "交易指南"
+  },
+  "Borrow Fee": {
+    "ja": "借入手数料",
+    "zh-CN": "借款费用"
+  },
+  "Liq. Price": {
+    "ja": "精算価格",
+    "zh-CN": "清算价格"
+  },
+  "Short": {
+    "ja": "空売り",
+    "zh-CN": "看空"
+  },
+  "Terms of Use": {
+    "ja": "利用規約",
+    "zh-CN": "使用条款"
+  },
+  "Long": {
+    "ja": "ロング",
+    "zh-CN": "看多"
+  },
+  "Privacy Policy": {
+    "ja": "プライバシーポリシー",
+    "zh-CN": "隐私政策"
+  },
+  "Available Liquidity": {
+    "ja": "使用可能流動性",
+    "zh-CN": "可用流动性"
+  },
+  "Mark Price": {
+    "ja": "マーク価格",
+    "zh-CN": "标记价格"
+  },
+  "Chart positions": {
+    "ja": "チャートポジション",
+    "zh-CN": "图表显示开仓位置"
+  },
+  "Profits In": {
+    "ja": "利益",
+    "zh-CN": "利润结算"
+  },
+  "If you have an existing position, the position will be closed at XXXXX": {
+    "ja": "既存のポジションがある場合、そのポジションは XXXXX でクローズされます。",
+    "zh-CN": "如果您有持仓，该仓位会被平仓在"
+  },
+  "This exit price will change with the price of the asset.": {
+    "ja": "この出口価格は、資産価格によって変動します。",
+    "zh-CN": "平仓价格将随资产价格而变化。"
+  },
+  "COUNTDOWN TO THE MERGE": {
+    "ja": "「The Merge」のカウントダウン",
+    "zh-CN": "The Merge 倒计时"
+  },
+  "The borrow fee is calculated as (assets borrowed) / (total assets in pool) * 0.01% per hour.": {
+    "ja": "借入手数料は、(借入資産) ÷ (プール内の総資産) × 1 時間あたり 0.01% として計算されます。",
+    "zh-CN": "借入费用计算为（借入资产）/（池中总资产）* 0.01%/小时"
+  },
+  "USD with a max slippage of": {
+    "ja": "USDの最大スリッページ",
+    "zh-CN": "USD, 最大滑点为"
+  },
+  "The position will be opened at XXXX": {
+    "ja": "XXXX でポジションを開きます。",
+    "zh-CN": "仓位建立价格"
+  },
+  "Accept": {
+    "ja": "承認",
+    "zh-CN": "接受"
+  },
+  "We use cookies on this site to enhance your user experience.": {
+    "ja": "このサイトでは、ユーザーエクスペリエンスを向上させるために Cookie を使用しています。",
+    "zh-CN": "我们在本网站上使用 cookie 来增强您的用户体验。"
+  },
+  "By continuing to browse, you agree to the storing of cookies on your device to enhance your site experience and for analytical purposes. By clicking ‘Accept’, you agree to the placement and use of cookies as described in our": {
+    "ja": "当サイトの閲覧を継続することで、ウェブサイトのパフォーマンスやサービスの向上、改善のためにCookieを保存することに同意したことになります。 同意する をクリックすることで、Cookie の配置と使用に同意したことになります。",
+    "zh-CN": "继续浏览，即表示您同意在您的设备上存储 cookie，以增强您的网站体验并用于分析目的。点击 “接受” ，即表示您同意按照我们的描述放置和使用 cookie"
+  },
+  "The slippage amount can be configured under Settings, found by clicking on your address at the top right of the page after connecting your wallet.": {
+    "ja": "スリッページは、ウォレット接続後、ページ右上にあるアドレスをクリックして表示される 設定 で設定できます。",
+    "zh-CN": "滑点金额可以在设置下进行配置，连接钱包后点击页面右上角的地址即可找到。"
+  },
+  "MAX": {
+    "ja": "最大値",
+    "zh-CN": "最大值"
+  },
+  "Balance:": {
+    "ja": "残高:",
+    "zh-CN": "余额:"
+  },
+  "No trades yet": {
+    "ja": "まだ取引がありません",
+    "zh-CN": "无交易"
+  },
+  "Increase": {
+    "ja": "増加",
+    "zh-CN": "增加"
+  },
+  "for": {
+    "ja": "",
+    "zh-CN": "目标资产"
+  },
+  "Decreased": {
+    "ja": "減少",
+    "zh-CN": "减少"
+  },
+  "Price:": {
+    "ja": "価格：",
+    "zh-CN": "价格："
+  },
+  "Order": {
+    "ja": "注文",
+    "zh-CN": "订单"
+  },
+  "No open orders": {
+    "ja": "オープンオーダーはありません",
+    "zh-CN": "没有未结订单"
+  },
+  "Type": {
+    "ja": "種類",
+    "zh-CN": "类型"
+  },
+  "Price": {
+    "ja": "価格",
+    "zh-CN": "价格"
+  },
+  "Max": {
+    "ja": "最大値",
+    "zh-CN": "最大值"
+  },
+  "Current": {
+    "ja": "経常",
+    "zh-CN": "当前的"
+  },
+  "shorts:": {
+    "ja": "空売り：",
+    "zh-CN": "看空仓位"
+  },
+  "short capacity:": {
+    "ja": "空売り容量：",
+    "zh-CN": "空仓容量："
+  },
+  "You can change the \"Profits In\" token above to find lower fees": {
+    "ja": "上記の「利益」トークンを変更して、より低い手数料を見つけることができます。",
+    "zh-CN": "您可以更改上面的“Profits In” 资产类型以找到更低的费用"
+  },
+  "Receive": {
+    "ja": "受領",
+    "zh-CN": "收取"
+  },
+  "Wallet": {
+    "ja": "ウォレット",
+    "zh-CN": "钱包"
+  },
+  "Enter an amount": {
+    "ja": "金額を入力",
+    "zh-CN": "输入金额"
+  },
+  "Loading...": {
+    "ja": "ロード中...",
+    "zh-CN": "正在加载..."
+  },
+  "Initial Collateral:": {
+    "ja": "初期担保:",
+    "zh-CN": "初始抵押物"
+  },
+  "Borrow Fee:": {
+    "ja": "借入手数料：",
+    "zh-CN": "借款费用："
+  },
+  "Borrow Fee / Day:": {
+    "ja": "借入料金/日:",
+    "zh-CN": "借用费/天："
+  },
+  "PnL:": {
+    "ja": "損益:",
+    "zh-CN": "盈亏："
+  },
+  "PnL": {
+    "ja": "損益:",
+    "zh-CN": "盈亏"
+  },
+  "Net Value:": {
+    "ja": "正味価格:",
+    "zh-CN": "净值："
+  },
+  "PnL After Fees:": {
+    "ja": "手数料差引後の損益:",
+    "zh-CN": "费用后盈亏："
+  },
+  "Initial Collateral - Borrow Fee + PnL": {
+    "ja": "初期担保ー借入手数料＋損益",
+    "zh-CN": "初始抵押物 - 借款费用 + 盈亏"
+  },
+  "Open + Close fee:": {
+    "ja": "開設＋解約手数料：",
+    "zh-CN": "开仓平仓费用："
+  },
+  "Use the \"Edit\" button to deposit or withdraw collateral.": {
+    "ja": "「編集」ボタンをクリックし、担保の入金または出金を行ってください。",
+    "zh-CN": "使用“编辑”按钮存入或提取抵押品。"
+  },
+  "Edit": {
+    "ja": "編集",
+    "zh-CN": "编辑"
+  },
+  "Net Value:, ,Initial Collateral - Borrow Fee + PnL": {
+    "ja": "正味価格:, ,初期担保ー借入手数料＋損益",
+    "zh-CN": "净值：, , 初始抵押物 - 借款费用 + 盈亏"
+  },
+  "object Object": {
+    "ja": "",
+    "zh-CN": "对象"
+  },
+  "Click on a row to select the position's market, then use the swap box to increase your position size if needed.": {
+    "ja": "行をクリックしてポジションマーケットを選択し、必要に応じてスワップボックスを使用しポジションサイズを増やしてください。",
+    "zh-CN": "单击一行以选择仓位市场，然后根据需要使用兑换资产栏增加仓位规模"
+  },
+  "Use the \"Close\" button to reduce your position size, or to set stop-loss / take-profit orders.": {
+    "ja": "「閉じる」ボタンを使用し、ポジションサイズを縮小するか、ストップロス/テイクプロフィット注文を設定してください。",
+    "zh-CN": "使用“关闭”按钮来减少您的持仓规模，或设置止损/止盈订单。"
+  },
+  "View in Explorer": {
+    "ja": "エクスプローラーで表示",
+    "zh-CN": "在浏览器中查看"
+  },
+  "Copy Address": {
+    "ja": "アドレスをコピー",
+    "zh-CN": "复制地址"
+  },
+  "Disconnect": {
+    "ja": "切断",
+    "zh-CN": "断开"
+  },
+  "Overview": {
+    "ja": "概要",
+    "zh-CN": "概览"
+  },
+  "Total value of tokens in MLP pool": {
+    "ja": "MLPプールのトークンの総額",
+    "zh-CN": "MLP池中代币总价值"
+  },
+  "24h Volume": {
+    "ja": "24時間出来高",
+    "zh-CN": "24 小时交易量"
+  },
+  "MLP Pool": {
+    "ja": "MLPプール",
+    "zh-CN": "MLP 池"
+  },
+  "Stats": {
+    "ja": "統計",
+    "zh-CN": "统计数据"
+  },
+  "here.": {
+    "ja": "こちら。",
+    "zh-CN": "这里。"
+  },
+  "Long Positions": {
+    "ja": "買いポジション",
+    "zh-CN": "看多仓位"
+  },
+  "See detailed analytics": {
+    "ja": "詳細な分析を表示",
+    "zh-CN": "查看详细分析"
+  },
+  "Total Stats start from": {
+    "ja": "合計統計開始日",
+    "zh-CN": "总体统计开始于"
+  },
+  "Short Positions": {
+    "ja": "売りポジション",
+    "zh-CN": "看空仓位"
+  },
+  "Circulating:": {
+    "ja": "流通:",
+    "zh-CN": "流通："
+  },
+  "Tokens": {
+    "ja": "トークン",
+    "zh-CN": "代币"
+  },
+  "MLP Index Composition": {
+    "ja": "MLP インデックス構成",
+    "zh-CN": "MLP 指数构成"
+  },
+  "Distribution": {
+    "ja": "分布",
+    "zh-CN": "分发"
+  },
+  "Target Weight:": {
+    "ja": "目標ウエイト",
+    "zh-CN": "目标权重"
+  },
+  "MYC Lending": {
+    "ja": "MYCレンディング",
+    "zh-CN": "MYC 放贷"
+  },
+  "Total:": {
+    "ja": "合計：",
+    "zh-CN": "全部的："
+  },
+  "Supply": {
+    "ja": "供給量",
+    "zh-CN": "供给量"
+  },
+  "Token": {
+    "ja": "トークン",
+    "zh-CN": "代币"
+  },
+  "Total Stats": {
+    "ja": "合計統計",
+    "zh-CN": "总体统计"
+  },
+  "swap": {
+    "ja": "スワップ",
+    "zh-CN": "兑换"
+  },
+  "Pool": {
+    "ja": "プール",
+    "zh-CN": "池金额："
+  },
+  "Total Volume": {
+    "ja": "全出来高",
+    "zh-CN": "总交易量"
+  },
+  "Current Weight:": {
+    "ja": "現在のウェイト",
+    "zh-CN": "目前的权重："
+  },
+  "Capacity:": {
+    "ja": "容量：",
+    "zh-CN": "容量："
+  },
+  "MLP": {
+    "ja": "MLP",
+    "zh-CN": "MLP"
+  },
+  "Fully Diluted:": {
+    "ja": "完全希釈化",
+    "zh-CN": "完全稀释："
+  },
+  "Total Staked": {
+    "ja": "合計ステーク",
+    "zh-CN": "总质押"
+  },
+  "Market Cap": {
+    "ja": "時価総額",
+    "zh-CN": "市值"
+  },
+  "Weight": {
+    "ja": "ウェイト",
+    "zh-CN": "权重"
+  },
+  "Distributed Fees:": {
+    "ja": "分配手数料:",
+    "zh-CN": "已分发费用："
+  },
+  "MYC": {
+    "ja": "MYC",
+    "zh-CN": "MYC"
+  },
+  "tokens for": {
+    "ja": "のトークン",
+    "zh-CN": "换取代币"
+  },
+  "Utilization": {
+    "ja": "利用率",
+    "zh-CN": "利用率"
+  },
+  "and to": {
+    "ja": "",
+    "zh-CN": ""
+  },
+  "Stablecoin Percentage": {
+    "ja": "ステーブルコインの比率",
+    "zh-CN": "稳定币百分比"
+  },
+  "is above its target weight.": {
+    "ja": "目標ウエイトを超えています。",
+    "zh-CN": "高于其目标权重。"
+  },
+  "with": {
+    "ja": "と",
+    "zh-CN": "和"
+  },
+  "buy MLP": {
+    "ja": "MLP を購入",
+    "zh-CN": "购买 MLP"
+  },
+  "for other tokens": {
+    "ja": "その他のトークン",
+    "zh-CN": "其他代币"
+  },
+  "is below its target weight.": {
+    "ja": "目標ウエイトを下回っています。",
+    "zh-CN": "低于其目标权重。"
+  },
+  "Get lower fees to XXXX": {
+    "ja": "低料金を受け取る",
+    "zh-CN": "获得更低的费用"
+  },
+  "Total Fees": {
+    "ja": "合計料金",
+    "zh-CN": "总费用"
+  },
+  "Spread Capture:": {
+    "ja": "スプレッドキャプチャ:",
+    "zh-CN": "点差捕获："
+  },
+  "Pool Amount:": {
+    "ja": "プール金額：",
+    "zh-CN": "池金额："
+  },
+  "Platform and MLP index tokens.": {
+    "ja": "プラットフォーム及びMLPインデックス トークン",
+    "zh-CN": "平台和 MLP 指数代币。"
+  },
+  "Price on Mainnet:": {
+    "ja": "メインネット(Mainnet)価格:",
+    "zh-CN": "主网价格："
+  },
+  "Price on Arbitrum:": {
+    "ja": "アービトラム(Arbitrum)価格:",
+    "zh-CN": "Arbitrum 价格："
+  },
+  "Add to Metamask": {
+    "ja": "メタマスク(MetaMask)に追加",
+    "zh-CN": "添加到 Metamask"
+  },
+  "Open in Explorer": {
+    "ja": "エクスプローラーで開く",
+    "zh-CN": "在浏览器中打开"
+  },
+  "Open in Coingecko": {
+    "ja": "コインゲッコ(Coingecko)で開く",
+    "zh-CN": "在 Coingecko 打开"
+  },
+  "Fees since XXXX(DATE)": {
+    "ja": "XXXX(DATE)からの手数料",
+    "zh-CN": "累计费用"
+  },
+  "here": {
+    "ja": "こちら",
+    "zh-CN": "这里"
+  },
+  "to earn rewards. Read the Terms of Use": {
+    "ja": "報酬を獲得するために。利用規約を読む",
+    "zh-CN": "赚取奖励。阅读使用条款"
+  },
+  "Stake": {
+    "ja": "ステーク",
+    "zh-CN": "质押"
+  },
+  "Market Making": {
+    "ja": "マーケットメイク",
+    "zh-CN": "做市商"
+  },
+  "esMYC": {
+    "ja": "esMYC",
+    "zh-CN": "esMYC"
+  },
+  "Staked": {
+    "ja": "ステーク　",
+    "zh-CN": "已质押"
+  },
+  "Total APR": {
+    "ja": "合計総年換算利回り(APR)",
+    "zh-CN": "总年利率"
+  },
+  "Market Making APR": {
+    "ja": "マーケットメイキングAPR",
+    "zh-CN": "做市 APR"
+  },
+  "esMYC Vault": {
+    "ja": "esMYCヴォールト",
+    "zh-CN": "esMYC 金库"
+  },
+  "Claim": {
+    "ja": "請求",
+    "zh-CN": "领取"
+  },
+  "Withdraw": {
+    "ja": "引き出す",
+    "zh-CN": "提取"
+  },
+  "Compound": {
+    "ja": "複利",
+    "zh-CN": "复利"
+  },
+  "before using the vaults.": {
+    "ja": "ヴォールト使用前。",
+    "zh-CN": "在使用金库之前。"
+  },
+  "Lending": {
+    "ja": "レンディング",
+    "zh-CN": "借贷"
+  },
+  "Buy MLP": {
+    "ja": "MLP を購入",
+    "zh-CN": "购买 MLP"
+  },
+  "Vest": {
+    "ja": "VEST",
+    "zh-CN": "归属"
+  },
+  "Deposit": {
+    "ja": "デポジット",
+    "zh-CN": "存入"
+  },
+  "Market Making APR is sourced from the spread of the traded markets and is realised by MLP holders through the appreciation of the MLP token.": {
+    "ja": "マーケットメイキングAPRは、取引市場スプレッドから供給され、MLPトークンの高騰によりMLP所有者によって実現益されます。",
+    "zh-CN": "做市 APR 来源于交易市场的点差，通过 MLP 代币升值给到 MLP 持有者。"
+  },
+  "Please read the": {
+    "ja": "をお読みください",
+    "zh-CN": "请阅读"
+  },
+  "Reserved for Vesting": {
+    "ja": "べスティングを確保",
+    "zh-CN": "预留归属"
+  },
+  "Staked Tokens": {
+    "ja": "ステークトークン",
+    "zh-CN": "质押代币"
+  },
+  "Claimable": {
+    "ja": "請求可能",
+    "zh-CN": "可领取"
+  },
+  "Vesting Status": {
+    "ja": "ベスティング確定状況",
+    "zh-CN": "归属状态"
+  },
+  "Total Supply": {
+    "ja": "総供給量",
+    "zh-CN": "总供应量"
+  },
+  "tokens have been converted to MYC from the": {
+    "ja": "MYCに変換完了",
+    "zh-CN": "代币已转成 MYC"
+  },
+  "vesting details": {
+    "ja": "べスティング詳細",
+    "zh-CN": "归属详情"
+  },
+  "Convert esMYC tokens to MYC tokens.": {
+    "ja": "esMYCトークンからMYCトークンに変換",
+    "zh-CN": "将 esMYC 代币转换为 MYC 代币。"
+  },
+  "Sell MLP": {
+    "ja": "MLPを売る",
+    "zh-CN": "出售 MLP"
+  },
+  "esMYC deposited for vesting.": {
+    "ja": "べスティングのためesMYCをデポジットしました。",
+    "zh-CN": "为归属而存入的 esMYC。"
+  },
+  "MYC tokens can be claimed, use the options under the Earn section to claim them.": {
+    "ja": "MYCトークンは請求可能です。獲得 セクションのオプションにてご請求下さい。",
+    "zh-CN": "可以领取 MYC 代币，使用“赚取”部分下的选项来领取它们。"
+  },
+  "You are earning": {
+    "ja": "を獲得しています",
+    "zh-CN": "正在赚取收益"
+  },
+  "tokens.": {
+    "ja": "トークン",
+    "zh-CN": "代币"
+  },
+  "rewards with": {
+    "ja": "との報酬",
+    "zh-CN": "奖励"
+  },
+  "to earn": {
+    "ja": "獲得する",
+    "zh-CN": "赚取"
+  },
+  "tokens": {
+    "ja": "トークン",
+    "zh-CN": "代币"
+  },
+  "Insurance": {
+    "ja": "保険",
+    "zh-CN": "保险"
+  },
+  "fees from swaps and leverages trading.": {
+    "ja": "スワップおよびレバレッジ取引からの手数料。",
+    "zh-CN": "代币兑换和杠杆交易的费用。"
+  },
+  "page. Read the Terms of Use": {
+    "ja": "ページ。利用規約を読む",
+    "zh-CN": "页。阅读使用条款"
+  },
+  "Save on Fees": {
+    "ja": "手数料削減",
+    "zh-CN": "节省费用"
+  },
+  "Note that there is a minimum holding time of 15 minutes after a purchase.": {
+    "ja": "購入後、最低15分間保留中となりますので、ご注意ください。",
+    "zh-CN": "请注意，购买后至少有 15 分钟的持有时间。"
+  },
+  "Available": {
+    "ja": "利用可能",
+    "zh-CN": "可用额度"
+  },
+  "Fees may vary depending on which asset you use to buy MLP.": {
+    "ja": "手数料は、MLPの購入に使用するアセットによって異なる場合があります。",
+    "zh-CN": "费用可能因您用于购买 MLP 的资产而有所不同。"
+  },
+  "Max Pool Capacity:": {
+    "ja": "最大プール容量:",
+    "zh-CN": "最大池容量："
+  },
+  "Buy with": {
+    "ja": "で購入",
+    "zh-CN": "购买通过"
+  },
+  "Available amount to deposit into MLP.": {
+    "ja": "MLP に入金できる金額。",
+    "zh-CN": "可存入 MLP 的可用金额。"
+  },
+  "Check the \"Save on Fees\" section below to get the lowest fee percentages.": {
+    "ja": "下記の「手数料削減」セクションをご確認いただき、最低の手数料率を取得してください。",
+    "zh-CN": "检查下面的“节省费用”部分以获得最低的费用百分比。"
+  },
+  "Please enter an amount to see fee percentages": {
+    "ja": "手数料(%)を表示するには、金額を入力してください。",
+    "zh-CN": "请输入金额以查看费用百分比"
+  },
+  "Current Pool Amount:": {
+    "ja": "経常プール金額:",
+    "zh-CN": "当前池金额："
+  },
+  "Purchase": {
+    "ja": "購入",
+    "zh-CN": "购买"
+  },
+  "staking": {
+    "ja": "ステーキング",
+    "zh-CN": "质押"
+  },
+  "Buy / Sell": {
+    "ja": "売買",
+    "zh-CN": "买卖"
+  },
+  "View": {
+    "ja": "表示",
+    "zh-CN": "查看"
+  },
+  "Fees will be shown once you have entered an amount in the order form.": {
+    "ja": "注文フォームに金額を入力すると、手数料が表示されます。",
+    "zh-CN": "当在订单中输入金额后，就会显示费用。"
+  },
+  "Enter the amount of MLP you want to purchase in the order form, then check here to compare fees.": {
+    "ja": "オーダーフォームにMLP購入希望金額を入力し、こちらをチェックして料金を比較してください。",
+    "zh-CN": "在订单中输入您要购买的 MLP 数量，然后在此处查看以比较费用。"
+  },
+  "Risk Harbor Insurance for": {
+    "ja": "リスクハーバー保険",
+    "zh-CN": "Risk Harbor 保险"
+  },
+  "Enter the amount of MLP you want to redeem in the order form, then check here to compare fees.": {
+    "ja": "オーダーフォームにMLP交換希望金額を入力し、こちらをチェックして料金を比較してください。",
+    "zh-CN": "在订单表格中输入您要兑换的 MLP 数量，然后在此处查看以比较费用。"
+  },
+  "Fees may vary depending on which asset you sell MLP for.": {
+    "ja": "手数料は、MLPの売却に使用するアセットによって異なる場合があります。",
+    "zh-CN": "费用可能因您出售 MLP 的资产而异。"
+  },
+  "Funds not utilized by current open positions.": {
+    "ja": "現在のオープンポジションで利用されていない資金。",
+    "zh-CN": "持仓未使用的资金。"
+  },
+  "Available:": {
+    "ja": "利用可能：",
+    "zh-CN": "可用的："
+  },
+  "Available amount to withdraw from MLP.": {
+    "ja": "MLP からの出金可能額。",
+    "zh-CN": "可从 MLP 中提取的金额。"
+  },
+  "Reserved": {
+    "ja": "予約済",
+    "zh-CN": "已预留"
+  },
+  "have been reserved for vesting.": {
+    "ja": "ベスティングを確保しました。",
+    "zh-CN": "已预留用于归属。"
+  },
+  "Sell for": {
+    "ja": "売る",
+    "zh-CN": "卖出到"
+  },
+  "Claim MYC Rewards": {
+    "ja": "MYC報酬を請求",
+    "zh-CN": "领取 MYC 奖励"
+  },
+  "Compound Rewards": {
+    "ja": "コンパウンド報酬",
+    "zh-CN": "复利奖励"
+  },
+  "to": {
+    "ja": "へ",
+    "zh-CN": "至"
+  },
+  "Convert": {
+    "ja": "変換",
+    "zh-CN": "兑换"
+  },
+  "Claim esMYC Rewards": {
+    "ja": "esMYC報酬を請求",
+    "zh-CN": "领取 esMYC 奖励"
+  },
+  "Buy MLP with": {
+    "ja": "MLPで購入",
+    "zh-CN": "购买 MLP"
+  },
+  "Compounding...": {
+    "ja": "コンパウンド中...",
+    "zh-CN": "复利..."
+  },
+  "Show error": {
+    "ja": "エラーを表示",
+    "zh-CN": "显示错误"
+  },
+  "Compound failed.": {
+    "ja": "コンパウンド失敗",
+    "zh-CN": "复利失败。"
+  },
+  "Max:": {
+    "ja": "最大:",
+    "zh-CN": "最大限度："
+  },
+  "Vault Capacity": {
+    "ja": "ヴォールト容量",
+    "zh-CN": "金库容量"
+  },
+  "Max Capacity:": {
+    "ja": "最大容量:",
+    "zh-CN": "最大容量："
+  },
+  "Deposited:": {
+    "ja": "入金:",
+    "zh-CN": "已存入："
+  },
+  "Vault Capacity for your Account": {
+    "ja": "アカウント内のヴォールト容量",
+    "zh-CN": "您帐户的金库容量"
+  },
+  "You have not deposited any tokens for vesting.": {
+    "ja": "ベスティング確保のためのトークンのデポジットをしていません。",
+    "zh-CN": "您尚未存入任何用于归属的代币。"
+  },
+  "Position Fee": {
+    "ja": "ポジション手数料",
+    "zh-CN": "持仓费"
+  },
+  "of position size": {
+    "ja": "ポジションサイズ",
+    "zh-CN": "仓位大小"
+  },
+  "Pay:": {
+    "ja": "支払い：",
+    "zh-CN": "支付："
+  },
+  "Long ETH": {
+    "ja": "ロングイーサリアム(ETH)",
+    "zh-CN": "看多 ETH"
+  },
+  "Insufficient MLP balance": {
+    "ja": "MLP残高不足",
+    "zh-CN": "MLP 余额不足"
+  },
+  "Buying...": {
+    "ja": "購入中…",
+    "zh-CN": "购买..."
+  },
+  "Buy failed.": {
+    "ja": "購入失敗。",
+    "zh-CN": "购买失败。"
+  },
+  "Total Volume Traded": {
+    "ja": "全出来高取引",
+    "zh-CN": "总交易量"
+  },
+  "Read the Terms of Use": {
+    "ja": "利用規約を読む",
+    "zh-CN": "阅读使用条款"
+  },
+  "Personal": {
+    "ja": "個人",
+    "zh-CN": "个人"
+  },
+  "Claimable Rewards": {
+    "ja": "獲得可能報酬",
+    "zh-CN": "可领取的奖励"
+  },
+  "Unclaimed Rewards": {
+    "ja": "未請求報酬",
+    "zh-CN": "未领取的奖励"
+  },
+  "No data available for Round": {
+    "ja": "Roundのデータはありません",
+    "zh-CN": "Round 没有可用数据"
+  },
+  "Volume Traded": {
+    "ja": "取引済出来高",
+    "zh-CN": "成交量"
+  },
+  "Rewards data": {
+    "ja": "報酬データ",
+    "zh-CN": "奖励数据"
+  },
+  "Be in the top 50% of traders to earn weekly rewards.": {
+    "ja": "トレーダーの上位50%に入ると、週の報酬を獲得できます。",
+    "zh-CN": "成为前 50% 的交易者，以获得每周奖励。"
+  },
+  "Wallet address": {
+    "ja": "ウォレットアドレス",
+    "zh-CN": "钱包地址"
+  },
+  "Trader Rewards": {
+    "ja": "トレーダー報酬",
+    "zh-CN": "交易者奖励"
+  },
+  "Leaderboard": {
+    "ja": "リーダーボード",
+    "zh-CN": "排行榜"
+  },
+  "Total Rewards": {
+    "ja": "総報酬",
+    "zh-CN": "总奖励"
+  },
+  "No previous trades": {
+    "ja": "過去の取引はありません",
+    "zh-CN": "没有以往交易"
+  },
+  "Volume": {
+    "ja": "出来高",
+    "zh-CN": "交易量"
+  },
+  "User": {
+    "ja": "ユーザー",
+    "zh-CN": "用户"
+  },
+  "Rank": {
+    "ja": "ランク",
+    "zh-CN": "排名"
+  },
+  "rewards": {
+    "ja": "報酬",
+    "zh-CN": "奖励"
+  },
+  "Reward": {
+    "ja": "報酬",
+    "zh-CN": "奖励"
+  },
+  "Top": {
+    "ja": "上位",
+    "zh-CN": "名次"
+  },
+  "Top 50% of traders": {
+    "ja": "上位 50% のトレーダー",
+    "zh-CN": "前 50% 的交易者"
+  },
+  "Round 4": {
+    "ja": "ラウンド 4",
+    "zh-CN": "第四轮"
+  },
+  "Next rewards in": {
+    "ja": "次の報酬",
+    "zh-CN": "下一个奖励"
+  },
+  "User rankings by volume.": {
+    "ja": "出来高別のユーザーランキング",
+    "zh-CN": "用户数量排名。"
+  },
+  "Rewards Leaderboard": {
+    "ja": "報酬リーダーボード",
+    "zh-CN": "奖励排行榜"
+  },
+  "Round": {
+    "ja": "Round",
+    "zh-CN": "轮次"
+  },
+  "Rebates": {
+    "ja": "リーベイツ",
+    "zh-CN": "贴现返佣"
+  },
+  "Total Trading Fee Rebates": {
+    "ja": "合計リーベイツ取引手数料",
+    "zh-CN": "总交易费贴现"
+  },
+  "Claim trading fee rebates here.": {
+    "ja": "リーベイツ取引手数料はこちらでご請求下さい。",
+    "zh-CN": "在此处领取交易费贴现。"
+  },
+  "Enter Referral Code": {
+    "ja": "紹介コードを入力",
+    "zh-CN": "输入推荐人代码"
+  },
+  "Add a referral code below to receive fee discounts.": {
+    "ja": "下記に紹介コードを入力すると手数料が割引されます。",
+    "zh-CN": "在下方添加推荐人代码以获得费用折扣。"
+  },
+  "Enter Code": {
+    "ja": "コードを入力",
+    "zh-CN": "输入代码"
+  },
+  "Commissions": {
+    "ja": "コミッション",
+    "zh-CN": "佣金"
+  },
+  "Trader Referrals": {
+    "ja": "トレーダー紹介",
+    "zh-CN": "交易推荐人"
+  },
+  "Tier Level": {
+    "ja": "Tierレベル",
+    "zh-CN": "层级"
+  },
+  "Tier": {
+    "ja": "Tier",
+    "zh-CN": "层级"
+  },
+  "discount": {
+    "ja": "割引",
+    "zh-CN": "折扣"
+  },
+  "You will receive a XXXX": {
+    "ja": "XXXX を受け取ります。",
+    "zh-CN": "您将收到一份"
+  },
+  "discount on your opening and closing fees, this discount will be claimable fortnightly.": {
+    "ja": "開設＋解約手数料の割引は、隔週で請求できます。",
+    "zh-CN": "您的开户和结账费用折扣，此折扣将每两周申请一次。"
+  },
+  "Claim referral commissions here.": {
+    "ja": "こちらで紹介手数料を請求してください。",
+    "zh-CN": "在此处索取推荐佣金。"
+  },
+  "Referral Commissions": {
+    "ja": "紹介手数料",
+    "zh-CN": "推荐人佣金"
+  },
+  "Total Commissions": {
+    "ja": "コミッション合計",
+    "zh-CN": "总佣金"
+  },
+  "Total Volume Referred": {
+    "ja": "総紹介量",
+    "zh-CN": "总交易量"
+  },
+  "Only letters, numbers and underscores are allowed.": {
+    "ja": "文字、数字、アンダーバーのみ使用できます。",
+    "zh-CN": "只允许使用字母、数字和下划线。"
+  },
+  "The referral code can't be more than 20 characters.": {
+    "ja": "紹介コードは20字以内でご記入ください。",
+    "zh-CN": "推荐代码不能超过 20 个字符。"
+  },
+  "Referral Code does not exist": {
+    "ja": "紹介コードは見つかりませんでした。",
+    "zh-CN": "推荐码不存在"
+  },
+  "Traders Referred": {
+    "ja": "紹介されたトレーダー",
+    "zh-CN": "交易推荐人"
+  },
+  "Referral Code": {
+    "ja": "紹介コード",
+    "zh-CN": "推荐代码"
+  },
+  "Total Commission": {
+    "ja": "合計コミッション",
+    "zh-CN": "总佣金"
+  },
+  "Referral codes": {
+    "ja": "紹介コード",
+    "zh-CN": "推荐人代码"
+  },
+  "Referred Trades": {
+    "ja": "紹介済取引",
+    "zh-CN": "推荐交易"
+  },
+  "commissions": {
+    "ja": "コミッション",
+    "zh-CN": "佣金"
+  },
+  "Create": {
+    "ja": "作成",
+    "zh-CN": "创建"
+  },
+  "commission on referred opening and closing fees, this commission will be claimable fortnightly.": {
+    "ja": "開設＋解約手数料のコミッションは、隔週で請求できます。",
+    "zh-CN": "推荐的开仓和关仓费佣金，该佣金将每两周领取一次。"
+  },
+  "Enter a code": {
+    "ja": "コードを入力",
+    "zh-CN": "输入代码"
+  },
+  "Create Referral Code": {
+    "ja": "紹介コードを作成",
+    "zh-CN": "创建推荐人代码"
+  },
+  "Edit Long ETH": {
+    "ja": "ロングイーサリアム(ETH)を編集",
+    "zh-CN": "编辑多头持仓 ETH"
+  },
+  "Min order: 10 USD": {
+    "ja": "最低注文：10USドルより",
+    "zh-CN": "最小订单：10 美元"
+  },
+  "Min leverage: 1.1x": {
+    "ja": "最低レバレッジ：1.1x",
+    "zh-CN": "最小杠杆：1.1x"
+  },
+  "Allowed Slippage": {
+    "ja": "許容スリッページ",
+    "zh-CN": "允许滑点"
+  },
+  "Trigger": {
+    "ja": "トリガー",
+    "zh-CN": "触发"
+  },
+  "Close Long ETH": {
+    "ja": "ロングイーサリアム(ETH)を閉じる",
+    "zh-CN": "关闭多头持仓 ETH"
+  },
+  "Allow up to 1% slippage": {
+    "ja": "最大1%スリッページを許容",
+    "zh-CN": "允许高达 1% 的滑点"
+  },
+  "You can change this in the settings menu on the top right of the page.": {
+    "ja": "ページの右上にある設定メニューで変更できます。",
+    "zh-CN": "您可以在页面右上角的设置菜单中更改此设置。"
+  },
+  "Closing Fee": {
+    "ja": "クロージングコスト",
+    "zh-CN": "关仓费"
+  },
+  "Note that a low allowed slippage, e.g. less than 0.5%, may result in failed orders if prices are volatile.": {
+    "ja": "許容スリッページが低い場合（例：0.5% 未満）、価格変動の度合いにより、注文が失敗する可能性があります。",
+    "zh-CN": "请注意，允许低滑点，例如低于 0.5%，如果价格波动，可能会导致订单失败。"
+  },
+  "Keep leverage at": {
+    "ja": "レバレッジを維持",
+    "zh-CN": "保持杠杆在"
+  },
+  "Close:": {
+    "ja": "終了/終値",
+    "zh-CN": "关闭："
+  },
+  "Closing...": {
+    "ja": "終了中...",
+    "zh-CN": "关闭..."
+  },
+  "Close failed.": {
+    "ja": "終了失敗",
+    "zh-CN": "关闭失败"
+  },
+  "into": {
+    "ja": "の中へ",
+    "zh-CN": "进入"
+  },
+  "Fees:": {
+    "ja": "手数料:",
+    "zh-CN": "费用"
+  },
+  "Confirm Long": {
+    "ja": "ロングを確定",
+    "zh-CN": "确认多头仓位"
+  },
+  "Pay amount:": {
+    "ja": "支払い金額:",
+    "zh-CN": "支付金额:"
+  },
+  "Spread": {
+    "ja": "スプレッド",
+    "zh-CN": "点差捕获："
+  },
+  "Your position's collateral after deducting fees.": {
+    "ja": "手数料差引後のポジション担保",
+    "zh-CN": "扣费后持仓抵押物"
+  },
+  "Longing...": {
+    "ja": "ロング中...",
+    "zh-CN": "开多中"
+  },
+  "Long failed.": {
+    "ja": "ロング失敗",
+    "zh-CN": "开多失败"
+  },
+  "Approve PPUSD": {
+    "ja": "PPUSDを承認",
+    "zh-CN": "授权 PPUSD"
+  },
+  "Approving PPUSD...": {
+    "ja": "PPUSDを承認中",
+    "zh-CN": "正在授权 PPUSD"
+  },
+  "Approval failed.": {
+    "ja": "承認失敗",
+    "zh-CN": "授权失败"
+  },
+  "Insufficient BTC balance": {
+    "ja": "ビットコイン(BTC)残高不足",
+    "zh-CN": "BTC 余额不足"
+  },
+  "selected in order form": {
+    "ja": "オーダーフォームで選択",
+    "zh-CN": "已选订单参数"
+  },
+  "Insufficient CTM balance": {
+    "ja": "CTM残高不足",
+    "zh-CN": "CTM 余额不足"
+  },
+  "Insufficient USDC balance": {
+    "ja": "USDC残高不足",
+    "zh-CN": "USDC 余额不足"
+  },
+  "Insufficient USDT balance": {
+    "ja": "USDT残高不足",
+    "zh-CN": "USDT 余额不足"
+  },
+  "Claim Rewards": {
+    "ja": "報酬請求",
+    "zh-CN": "领取奖励"
+  },
+  "Insufficient liquidity": {
+    "ja": "流動性不足",
+    "zh-CN": "流动性不足"
+  },
+  "Fetching rewards": {
+    "ja": "報酬取得",
+    "zh-CN": "获取奖励"
+  },
+  "Min. Receive": {
+    "ja": "最小受領額",
+    "zh-CN": "最少收到"
+  },
+  "Confirm Swap": {
+    "ja": "スワップを確定",
+    "zh-CN": "确认兑换"
+  },
+  "Swapping...": {
+    "ja": "スワップ中",
+    "zh-CN": "正在兑换"
+  },
+  "Swap failed.": {
+    "ja": "スワップ失敗。",
+    "zh-CN": "兑换失败"
+  },
+  "Referral link copied to your clipboard": {
+    "ja": "クリップボードに紹介リンクをコピーしました。",
+    "zh-CN": "推荐人链接已复制到剪贴板"
+  },
+  "Claiming...": {
+    "ja": "請求中...",
+    "zh-CN": "正在领取"
+  },
+  "Claim failed.": {
+    "ja": "請求失敗",
+    "zh-CN": "领取失败"
+  },
+  "Fee:": {
+    "ja": "手数料:",
+    "zh-CN": "费用:"
+  },
+  "Long BTC": {
+    "ja": "ロングビットコイン(BTC)",
+    "zh-CN": "看多 BTC"
+  },
+  "XXXX is required for collateral.": {
+    "ja": "担保使用のために XXXX が必要です。",
+    "zh-CN": "要求使用抵押物"
+  },
+  "Insufficient ETH balance": {
+    "ja": "イーサリアム(ETH)残高不足",
+    "zh-CN": "ETH 余额不足"
+  },
+  "Wallet not connected": {
+    "ja": "ウォレットが接続されていません",
+    "zh-CN": "钱包未连接"
+  },
+  "Connect to wallet to view your rewards": {
+    "ja": "ウォレットに接続して報酬を表示",
+    "zh-CN": "连接到钱包以查看您的奖励"
+  },
+  "The Ethereum Merge is now in progress.": {
+    "ja": "イーサリアムのマージは現在進行中。",
+    "zh-CN": ""
+  },
+  "Stake MYC or esMYC to receive interest in ETH": {
+    "ja": "",
+    "zh-CN": "质押 MYC 或 esMYC 获得 ETH \n"
+  },
+  "Buy with ETH": {
+    "ja": "",
+    "zh-CN": "用 ETH 购买"
+  },
+  "Buy with UNI": {
+    "ja": "",
+    "zh-CN": "用 UNI 购买"
+  },
+  "Buy with USDC": {
+    "ja": "",
+    "zh-CN": "用 USDC 购买"
+  },
+  "Buy with BAL": {
+    "ja": "",
+    "zh-CN": "用 BAL 购买"
+  },
+  "Buy with LINK": {
+    "ja": "",
+    "zh-CN": "用 LINK 购买"
+  },
+  "Buy with FXS": {
+    "ja": "",
+    "zh-CN": "用 FXS 购买"
+  },
+  "Buy with BTC": {
+    "ja": "",
+    "zh-CN": "用 BTC 购买"
+  },
+  "Buy with USDT": {
+    "ja": "",
+    "zh-CN": "用 USDT 购买"
+  },
+  "Buy with CRV": {
+    "ja": "",
+    "zh-CN": "用 CRV 购买"
+  },
+  "Buy with DAI": {
+    "ja": "",
+    "zh-CN": "用 DAI 购买"
+  },
+  "Buy with FRAX": {
+    "ja": "",
+    "zh-CN": "用 FRAX 购买"
+  },
+  "Live": {
+    "ja": "",
+    "zh-CN": "实时"
+  },
+  "Number of Trades": {
+    "ja": "",
+    "zh-CN": "交易笔数"
+  }
+}

@@ -1,4 +1,5 @@
 import React from "react";
+import { Text } from "../Translation/Text";
 
 import cx from "classnames";
 
@@ -15,6 +16,7 @@ export default function Tab(props) {
     optionLabels,
     icons,
     trackAction,
+    noTranslate,
     newItem,
   } = props;
   const onClick = (opt) => {
@@ -44,7 +46,7 @@ export default function Tab(props) {
             key={opt}
           >
             {icons && icons[opt] && <img className="Tab-option-icon" src={icons[opt]} alt={option} />}
-            {label}
+            {typeof label === "string" ? noTranslate ? label : <Text>{label}</Text> : label}
           </div>
         );
       })}

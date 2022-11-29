@@ -30,6 +30,7 @@ import { callContract } from "../../Api";
 
 import PositionRouter from "../../abis/PositionRouter.json";
 import Token from "../../abis/Token.json";
+import { Text } from "../Translation/Text";
 import { convertStringToFloat } from "../../utils/common";
 import { getMaxLeverage } from "./LeverageInput";
 
@@ -321,7 +322,11 @@ export default function PositionEditor(props) {
 
     if (shouldRaiseGasError(getTokenInfo(infoTokens, collateralTokenAddress), fromAmount)) {
       setIsSwapping(false);
-      helperToast.error(`Leave at least ${formatAmount(DUST_BNB, 18, 3)} ETH for gas`);
+      helperToast.error(
+        <>
+          <Text>Leave at least</Text> ${formatAmount(DUST_BNB, 18, 3)} <Text>ETH for gas</Text>
+        </>
+      );
       return;
     }
 
@@ -496,15 +501,15 @@ export default function PositionEditor(props) {
                     <div className="muted">
                       {convertedAmountFormatted && (
                         <div className="Exchange-swap-usd">
-                          {isDeposit ? "Deposit" : "Withdraw"}: {convertedAmountFormatted}{" "}
+                          <Text>{isDeposit ? "Deposit" : "Withdraw"}</Text>: {convertedAmountFormatted}{" "}
                           {isDeposit ? "USD" : position.collateralToken.symbol}
                         </div>
                       )}
-                      {!convertedAmountFormatted && `${isDeposit ? "Deposit" : "Withdraw"}`}
+                      {!convertedAmountFormatted && <Text>{isDeposit ? "Deposit" : "Withdraw"}</Text>}
                     </div>
                     {maxAmount && (
                       <div className="muted align-right clickable" onClick={() => setFromValue(maxAmountFormattedFree)}>
-                        Max: {maxAmountFormatted}
+                        <Text>Max:</Text> {maxAmountFormatted}
                       </div>
                     )}
                   </div>
@@ -525,7 +530,7 @@ export default function PositionEditor(props) {
                             setFromValue(maxAmountFormattedFree);
                           }}
                         >
-                          MAX
+                          <Text>MAX</Text>
                         </div>
                       )}
                     </div>
@@ -536,11 +541,15 @@ export default function PositionEditor(props) {
                 </div>
                 <div className="PositionEditor-info-box">
                   <div className="Exchange-info-row">
-                    <div className="Exchange-info-label">Size</div>
+                    <div className="Exchange-info-label">
+                      <Text>Size</Text>
+                    </div>
                     <div className="align-right">{formatAmount(position.size, USD_DECIMALS, 2, true)} USD</div>
                   </div>
                   <div className="Exchange-info-row">
-                    <div className="Exchange-info-label">Collateral</div>
+                    <div className="Exchange-info-label">
+                      <Text>Collateral</Text>
+                    </div>
                     <div className="align-right">
                       {!nextCollateral && <div>${formatAmount(position.collateral, USD_DECIMALS, 2, true)}</div>}
                       {nextCollateral && (
@@ -555,7 +564,9 @@ export default function PositionEditor(props) {
                     </div>
                   </div>
                   <div className="Exchange-info-row">
-                    <div className="Exchange-info-label">Leverage</div>
+                    <div className="Exchange-info-label">
+                      <Text>Leverage</Text>
+                    </div>
                     <div className="align-right">
                       {!nextLeverage && <div>{formatAmount(position.leverage, 4, 2, true)}x</div>}
                       {nextLeverage && (
@@ -570,11 +581,15 @@ export default function PositionEditor(props) {
                     </div>
                   </div>
                   <div className="Exchange-info-row">
-                    <div className="Exchange-info-label">Mark Price</div>
+                    <div className="Exchange-info-label">
+                      <Text>Mark Price</Text>
+                    </div>
                     <div className="align-right">${formatAmount(position.markPrice, USD_DECIMALS, 2, true)}</div>
                   </div>
                   <div className="Exchange-info-row">
-                    <div className="Exchange-info-label">Liq. Price</div>
+                    <div className="Exchange-info-label">
+                      <Text>Liq. Price</Text>
+                    </div>
                     <div className="align-right">
                       {!nextLiquidationPrice && (
                         <div>
@@ -605,7 +620,7 @@ export default function PositionEditor(props) {
                     }}
                     disabled={!isPrimaryEnabled()}
                   >
-                    {getPrimaryText()}
+                    <Text>{getPrimaryText()}</Text>
                   </button>
                 </div>
               </div>

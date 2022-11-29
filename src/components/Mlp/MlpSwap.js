@@ -6,6 +6,7 @@ import useSWR from "swr";
 import { ethers } from "ethers";
 
 import Tab from "../Tab/Tab";
+import { Text } from "../../components/Translation/Text";
 import cx from "classnames";
 
 import { getToken, getTokens, getWhitelistedTokens, getWrappedToken, getNativeToken } from "../../data/Tokens";
@@ -652,7 +653,11 @@ export default function MlpSwap(props) {
   const selectToken = (token) => {
     setAnchorOnSwapAmount(false);
     setSwapTokenAddress(token.address);
-    helperToast.success(`${token.symbol} selected in order form`);
+    helperToast.success(
+      <>
+        {token.symbol} <Text>selected in order form</Text>
+      </>
+    );
   };
 
   let feePercentageText = formatAmount(feeBasisPoints, 2, 2, true, "-");
@@ -784,18 +789,24 @@ export default function MlpSwap(props) {
           <div className="App-card-divider"></div>
           <div className="App-card-content">
             <div className="App-card-row">
-              <div className="label">Price</div>
+              <div className="label">
+                <Text>Price</Text>
+              </div>
               <div className="value">${formatAmount(mlpPrice, USD_DECIMALS, 3, true)}</div>
             </div>
             <div className="App-card-row">
-              <div className="label">Wallet</div>
+              <div className="label">
+                <Text>Wallet</Text>
+              </div>
               <div className="value">
                 {formatAmount(mlpBalance, MLP_DECIMALS, 4, true)} MLP ($
                 {formatAmount(mlpBalanceUsd, USD_DECIMALS, 2, true)})
               </div>
             </div>
             <div className="App-card-row">
-              <div className="label">Staked</div>
+              <div className="label">
+                <Text>Staked</Text>
+              </div>
               <div className="value">
                 {formatAmount(mlpBalance, MLP_DECIMALS, 4, true)} MLP ($
                 {formatAmount(mlpBalanceUsd, USD_DECIMALS, 2, true)})
@@ -806,7 +817,9 @@ export default function MlpSwap(props) {
           <div className="App-card-content Totals-section">
             {!isBuying && (
               <div className="App-card-row">
-                <div className="label">Reserved</div>
+                <div className="label">
+                  <Text>Reserved</Text>
+                </div>
                 <div className="value">
                   <Tooltip
                     handle={`${formatAmount(reservedAmount, 18, 4, true)} MLP ($${formatAmount(
@@ -816,15 +829,19 @@ export default function MlpSwap(props) {
                       true
                     )})`}
                     position="right-bottom"
-                    renderContent={() =>
-                      `${formatAmount(reservedAmount, 18, 4, true)} MLP have been reserved for vesting.`
-                    }
+                    renderContent={() => (
+                      <>
+                        ${formatAmount(reservedAmount, 18, 4, true)} MLP <Text>have been reserved for vesting.</Text>
+                      </>
+                    )}
                   />
                 </div>
               </div>
             )}
             <div className="App-card-row">
-              <div className="label">Total APR</div>
+              <div className="label">
+                <Text>Total APR</Text>
+              </div>
               <div className="value">
                 <Tooltip
                   handle={`${formatAmount(totalApr, 2, 2, true)}%`}
@@ -849,7 +866,9 @@ export default function MlpSwap(props) {
               </div>
             </div>
             <div className="App-card-row">
-              <div className="label">Total Supply</div>
+              <div className="label">
+                <Text>Total Supply</Text>
+              </div>
               <div className="value">
                 {formatAmount(mlpSupply, MLP_DECIMALS, 4, true)} MLP ($
                 {formatAmount(mlpSupplyUsd, USD_DECIMALS, 2, true)})
@@ -863,12 +882,18 @@ export default function MlpSwap(props) {
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    <button className="App-button-option App-card-option Insurance-btn">MLP Insurance</button>
+                    <button className="App-button-option App-card-option Insurance-btn">
+                      MLP <Text>Insurance</Text>
+                    </button>
                   </a>
                 }
                 position="left-top"
                 renderContent={() => {
-                  return <div className="Tooltip-row">Risk Harbor Insurance for fsMLP.</div>;
+                  return (
+                    <div className="Tooltip-row">
+                      <Text>Risk Harbor Insurance for</Text> fsMLP.
+                    </div>
+                  );
                 }}
               />
             </div>
@@ -991,7 +1016,9 @@ export default function MlpSwap(props) {
           )}
           <div>
             <div className="Exchange-info-row">
-              <div className="Exchange-info-label">{feeBasisPoints > 50 ? "WARNING: High Fees" : "Fees"}</div>
+              <div className="Exchange-info-label">
+                <Text>{feeBasisPoints > 50 ? "WARNING: High Fees" : "Fees"}</Text>
+              </div>
               <div className="align-right fee-block">
                 {isBuying && (
                   <Tooltip
@@ -1000,8 +1027,12 @@ export default function MlpSwap(props) {
                     renderContent={() => {
                       return (
                         <>
-                          {feeBasisPoints > 50 && <div>To reduce fees, select a different asset to pay with.</div>}
-                          Check the "Save on Fees" section below to get the lowest fee percentages.
+                          {feeBasisPoints > 50 && (
+                            <div>
+                              <Text>To reduce fees, select a different asset to pay with.</Text>
+                            </div>
+                          )}
+                          <Text>Check the "Save on Fees" section below to get the lowest fee percentages.</Text>
                         </>
                       );
                     }}
@@ -1014,8 +1045,12 @@ export default function MlpSwap(props) {
                     renderContent={() => {
                       return (
                         <>
-                          {feeBasisPoints > 50 && <div>To reduce fees, select a different asset to receive.</div>}
-                          Check the "Save on Fees" section below to get the lowest fee percentages.
+                          {feeBasisPoints > 50 && (
+                            <div>
+                              <Text>To reduce fees, select a different asset to receive.</Text>
+                            </div>
+                          )}
+                          <Text>Check the "Save on Fees" section below to get the lowest fee percentages.</Text>
                         </>
                       );
                     }}
@@ -1049,23 +1084,29 @@ export default function MlpSwap(props) {
               }}
               disabled={!isPrimaryEnabled()}
             >
-              {getPrimaryText()}
+              <Text>{getPrimaryText()}</Text>
             </button>
           </div>
         </div>
       </div>
       <div className="Tab-title-section">
-        <div className="Page-title">Save on Fees</div>
+        <div className="Page-title">
+          <Text>Save on Fees</Text>
+        </div>
         {isBuying && (
           <div className="Page-description">
-            Fees may vary depending on which asset you use to buy MLP.
-            <br /> Enter the amount of MLP you want to purchase in the order form, then check here to compare fees.
+            <Text>Fees may vary depending on which asset you use to buy MLP.</Text>
+            <br />{" "}
+            <Text>
+              Enter the amount of MLP you want to purchase in the order form, then check here to compare fees.
+            </Text>
           </div>
         )}
         {!isBuying && (
           <div className="Page-description">
-            Fees may vary depending on which asset you sell MLP for.
-            <br /> Enter the amount of MLP you want to redeem in the order form, then check here to compare fees.
+            <Text>Fees may vary depending on which asset you sell MLP for.</Text>
+            <br />{" "}
+            <Text>Enter the amount of MLP you want to redeem in the order form, then check here to compare fees.</Text>
           </div>
         )}
       </div>
@@ -1074,42 +1115,54 @@ export default function MlpSwap(props) {
         <table className="token-table">
           <thead>
             <tr>
-              <th>Token</th>
-              <th>Price</th>
+              <th>
+                <Text>Token</Text>
+              </th>
+              <th>
+                <Text>Price</Text>
+              </th>
               <th>
                 {isBuying ? (
                   <Tooltip
-                    handle={"Available"}
+                    handle={<Text>Available</Text>}
                     tooltipIconPosition="right"
                     position="right-bottom text-none"
-                    renderContent={() => "Available amount to deposit into MLP."}
+                    renderContent={() => <Text>Available amount to deposit into MLP.</Text>}
                   />
                 ) : (
                   <Tooltip
-                    handle={"Available"}
+                    handle={<Text>Available</Text>}
                     tooltipIconPosition="right"
                     position="right-bottom text-none"
                     renderContent={() => {
                       return (
                         <>
-                          <div>Available amount to withdraw from MLP.</div>
-                          <div>Funds not utilized by current open positions.</div>
+                          <div>
+                            <Text>Available amount to withdraw from MLP.</Text>
+                          </div>
+                          <div>
+                            <Text>Funds not utilized by current open positions.</Text>
+                          </div>
                         </>
                       );
                     }}
                   />
                 )}
               </th>
-              <th>Wallet</th>
+              <th>
+                <Text>Wallet</Text>
+              </th>
               <th>
                 <Tooltip
-                  handle={"Fees"}
+                  handle={<Text>Fees</Text>}
                   tooltipIconPosition="right"
                   position="right-bottom text-none"
                   renderContent={() => {
                     return (
                       <>
-                        <div>Fees will be shown once you have entered an amount in the order form.</div>
+                        <div>
+                          <Text>Fees will be shown once you have entered an amount in the order form.</Text>
+                        </div>
                       </>
                     );
                   }}
@@ -1183,14 +1236,14 @@ export default function MlpSwap(props) {
                         position="right-bottom"
                         renderContent={() => (
                           <div>
-                            Max pool capacity reached for {tokenInfo.symbol}
+                            <Text>Max pool capacity reached for</Text> {tokenInfo.symbol}
                             <br />
                             <br />
-                            Please mint MLP using another token
+                            <Text>Please mint MLP using another token</Text>
                             <br />
                             <p>
                               <a href={swapUrl} target="_blank" rel="noreferrer">
-                                Swap on {chainId === ARBITRUM ? "Uniswap" : "Trader Joe"}
+                                <Text>Swap on</Text> {chainId === ARBITRUM ? "Uniswap" : "Trader Joe"}
                               </a>
                             </p>
                           </div>
@@ -1237,11 +1290,11 @@ export default function MlpSwap(props) {
                           renderContent={() => {
                             return (
                               <>
-                                Current Pool Amount: ${formatAmount(managedUsd, USD_DECIMALS, 2, true)} (
+                                <Text>Current Pool Amount:</Text> ${formatAmount(managedUsd, USD_DECIMALS, 2, true)} (
                                 {formatKeyAmount(tokenInfo, "poolAmount", token.decimals, 2, true)} {token.symbol})
                                 <br />
                                 <br />
-                                Max Pool Capacity: ${formatAmount(tokenInfo.maxUsdgAmount, 18, 0, true)}
+                                <Text>Max Pool Capacity:</Text> ${formatAmount(tokenInfo.maxUsdgAmount, 18, 0, true)}
                               </>
                             );
                           }}
@@ -1271,7 +1324,9 @@ export default function MlpSwap(props) {
                           });
                       }}
                     >
-                      {isBuying ? "Buy with " + token.symbol : "Sell for " + token.symbol}
+                      <Text>
+                        {isBuying ? `Buy with ${token.symbol}` : `Sell for ${token.symbol}`}
+                      </Text>
                     </button>
                   </td>
                 </tr>
@@ -1334,9 +1389,12 @@ export default function MlpSwap(props) {
                     <Tooltip
                       handle="NA"
                       position="right-bottom"
-                      renderContent={() =>
-                        `Max pool capacity reached for ${tokenInfo.symbol}. Please mint MLP using another token`
-                      }
+                      renderContent={() => (
+                        <>
+                          <Text>Max pool capacity reached for</Text> ${tokenInfo.symbol}.{" "}
+                          <Text>Please mint MLP using another token</Text>
+                        </>
+                      )}
                     />
                   );
                 case (isBuying && !isCapReached) || (!isBuying && managedUsd?.gt(0)):
@@ -1354,7 +1412,9 @@ export default function MlpSwap(props) {
                 <div className="App-card-divider"></div>
                 <div className="App-card-content">
                   <div className="App-card-row">
-                    <div className="label">Price</div>
+                    <div className="label">
+                      <Text>Price</Text>
+                    </div>
                     <div>${formatKeyAmount(tokenInfo, "minPrice", USD_DECIMALS, 2, true)}</div>
                   </div>
                   {isBuying && (
@@ -1363,7 +1423,7 @@ export default function MlpSwap(props) {
                         className="label"
                         handle="Available"
                         position="left-bottom"
-                        renderContent={() => "Available amount to deposit into MLP."}
+                        renderContent={() => <Text>Available amount to deposit into MLP.</Text>}
                       />
                       <div>
                         <Tooltip
@@ -1373,11 +1433,11 @@ export default function MlpSwap(props) {
                           renderContent={() => {
                             return (
                               <>
-                                Current Pool Amount: ${formatAmount(managedUsd, USD_DECIMALS, 2, true)} (
+                                <Text>Current Pool Amount:</Text> ${formatAmount(managedUsd, USD_DECIMALS, 2, true)} (
                                 {formatKeyAmount(tokenInfo, "poolAmount", token.decimals, 2, true)} {token.symbol})
                                 <br />
                                 <br />
-                                Max Pool Capacity: ${formatAmount(tokenInfo.maxUsdgAmount, 18, 0, true)}
+                                <Text>Max Pool Capacity:</Text> ${formatAmount(tokenInfo.maxUsdgAmount, 18, 0, true)}
                               </>
                             );
                           }}
@@ -1393,8 +1453,12 @@ export default function MlpSwap(props) {
                         renderContent={() => {
                           return (
                             <>
-                              <div>Available amount to withdraw from MLP.</div>
-                              <div>Funds not utilized by current open positions.</div>
+                              <div>
+                                <Text>Available amount to withdraw from MLP.</Text>
+                              </div>
+                              <div>
+                                <Text>Funds not utilized by current open positions.</Text>
+                              </div>
                             </>
                           );
                         }}
@@ -1407,7 +1471,9 @@ export default function MlpSwap(props) {
                   )}
 
                   <div className="App-card-row">
-                    <div className="label">Wallet</div>
+                    <div className="label">
+                      <Text>Wallet</Text>
+                    </div>
                     <div>
                       {formatKeyAmount(tokenInfo, "balance", tokenInfo.decimals, 2, true)} {tokenInfo.symbol} ($
                       {formatAmount(balanceUsd, USD_DECIMALS, 2, true)})
@@ -1419,8 +1485,8 @@ export default function MlpSwap(props) {
                         "Fees"
                       ) : (
                         <Tooltip
-                          handle={`Fees`}
-                          renderContent={() => `Please enter an amount to see fee percentages`}
+                          handle={<Text>Fees</Text>}
+                          renderContent={() => <Text>Please enter an amount to see fee percentages</Text>}
                         />
                       )}
                     </div>
@@ -1430,12 +1496,12 @@ export default function MlpSwap(props) {
                   <div className="App-card-options">
                     {isBuying && (
                       <button className="App-button-option App-card-option" onClick={() => selectToken(token)}>
-                        Buy with {token.symbol}
+                        <Text>Buy with {token.symbol}</Text>
                       </button>
                     )}
                     {!isBuying && (
                       <button className="App-button-option App-card-option" onClick={() => selectToken(token)}>
-                        Sell for {token.symbol}
+                        <Text>Sell for {token.symbol}</Text>
                       </button>
                     )}
                   </div>

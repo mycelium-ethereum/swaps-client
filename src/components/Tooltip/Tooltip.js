@@ -1,5 +1,6 @@
 import cx from "classnames";
 import { useCallback, useState, useRef } from "react";
+import { Text } from "../Translation/Text";
 
 import "./Tooltip.css";
 

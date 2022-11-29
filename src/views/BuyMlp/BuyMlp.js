@@ -8,6 +8,7 @@ import "./BuyMlp.css";
 import { getPageTitle, useChainId } from "../../Helpers";
 import { getNativeToken } from "../../data/Tokens";
 import SEO from "../../components/Common/SEO";
+import { Text } from "../../components/Translation/Text";
 
 export default function BuyMlp(props) {
   const { chainId } = useChainId();
@@ -35,31 +36,20 @@ export default function BuyMlp(props) {
             </div>
           */}
           <div className="section-title-content">
-            <div className="Page-title">Buy / Sell MLP</div>
+            <div className="Page-title">
+              <Text>Buy / Sell</Text> MLP
+            </div>
             <div className="Page-description">
-              Purchase{" "}
-              <a
-                href="https://swaps.docs.mycelium.xyz/protocol-design/mycelium-liquidity-pool-mlp/mlp-token"
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={() =>
-                  props.trackAction &&
-                  props.trackAction("Button clicked", {
-                    buttonName: "MLP tokens link",
-                  })
-                }
-              >
-                MLP tokens
-              </a>{" "}
-              to earn {nativeTokenSymbol} fees from swaps and leverages trading.
+              <Text>Purchase MLP tokens to earn {nativeTokenSymbol} fees from swaps and leverages trading.</Text>
               <br />
-              Note that there is a minimum holding time of 15 minutes after a purchase.
+              <Text>Note that there is a minimum holding time of 15 minutes after a purchase.</Text>
               <br />
-              View <Link to="/earn">staking</Link> page. Read the Terms of Use{" "}
+              <Link to="/earn">
+                <Text>View staking page.</Text>
+              </Link>{" "}
               <a href="https://mycelium.xyz/rewards-terms-of-use" target="_blank" rel="noopener noreferrer">
-                here
+                <Text>Terms of Use here.</Text>
               </a>
-              .
             </div>
           </div>
         </div>

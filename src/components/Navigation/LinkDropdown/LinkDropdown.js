@@ -1,8 +1,9 @@
 import { useState, useEffect, useRef } from "react";
-import { DropdownContainer, DropdownButton, LinkMenu, ListItem } from "./LinkDropdown.styles";
+import { DropdownContainer, LinkDropdownButton, LinkMenu, ListItem } from "../Dropdown.styles";
 import { useOutsideClick } from "../../../hooks/useOutsideClick";
 import chevronDown from "../../../img/chevron-down.svg";
 import { NavLink, useLocation } from "react-router-dom";
+import { Text } from "../../Translation/Text";
 
 const navLinks = [
   {
@@ -55,9 +56,9 @@ export default function LinkDropdown() {
 
   return (
     <DropdownContainer ref={containerRef}>
-      <DropdownButton onClick={handleToggle}>
-        {currentItem} <img src={chevronDown} alt="Close" />
-      </DropdownButton>
+      <LinkDropdownButton onClick={handleToggle}>
+        <Text>{currentItem}</Text> <img src={chevronDown} alt="Close" />
+      </LinkDropdownButton>
       <LinkMenu open={isOpen}>
         {navLinks.map((item) => (
           <MenuItem key={item.name} onClick={handleLinkClick} path={item.path}>
@@ -66,12 +67,12 @@ export default function LinkDropdown() {
         ))}
         <ListItem>
           <a href="https://stake.mycelium.xyz" target="_blank" rel="noopener noreferrer">
-            MYC Staking
+            MYC <Text>Staking</Text>
           </a>
         </ListItem>
         <ListItem>
           <a href="https://analytics.mycelium.xyz" target="_blank" rel="noopener noreferrer">
-            Analytics
+            <Text>Analytics</Text>
           </a>
         </ListItem>
         <ListItem>
@@ -80,7 +81,7 @@ export default function LinkDropdown() {
             target="_blank"
             rel="noopener noreferrer"
           >
-            Docs
+            <Text>Docs</Text>
           </a>
         </ListItem>
       </LinkMenu>
@@ -91,7 +92,7 @@ export default function LinkDropdown() {
 const MenuItem = ({ path, onClick, children }) => (
   <ListItem>
     <NavLink activeClassName="active" exact to={path} onClick={() => onClick(children)}>
-      {children}
+      <Text>{children}</Text>
     </NavLink>
   </ListItem>
 );

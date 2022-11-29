@@ -6,7 +6,7 @@ export const DropdownContainer = styled.div(
   (props) => `
   position: relative;
   z-index: 3;
-  @media (min-width: 670px) {
+  @media (min-width: 700px) {
     display: ${props.isMobile ? "none" : "block"};
   }
 `

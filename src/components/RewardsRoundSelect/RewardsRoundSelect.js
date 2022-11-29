@@ -1,8 +1,9 @@
 import React from "react";
 import { Menu } from "@headlessui/react";
-import * as Styles from "./RewardsRoundSelect.styles";
-import { FaChevronDown } from "react-icons/fa";
 import cx from "classnames";
+import { FaChevronDown } from "react-icons/fa";
+import { Text } from "../Translation/Text";
+import * as Styles from "./RewardsRoundSelect.styles";
 
 export default function RewardsRoundSelect({
   timeTillRewards,
@@ -23,7 +24,7 @@ export default function RewardsRoundSelect({
       )}
       {timeTillRewards && (
         <Styles.RewardsRoundNextRewards>
-          Next rewards in <Styles.RewardsRoundCountdown>{timeTillRewards}</Styles.RewardsRoundCountdown>
+          <Text>Next rewards in</Text> <Styles.RewardsRoundCountdown>{timeTillRewards}</Styles.RewardsRoundCountdown>
         </Styles.RewardsRoundNextRewards>
       )}
     </Styles.RewardsRoundSelect>
@@ -50,7 +51,7 @@ export function RoundDropdown(props) {
                   })
                 }
               >
-                {rewardsMessage}
+                <Text>{rewardsMessage}</Text>
                 <FaChevronDown />
               </Styles.RoundSelectButton>
             </Menu.Button>
@@ -76,9 +77,13 @@ export function RoundDropdown(props) {
                               });
                           }}
                         >
-                          {rewardRound?.customRoundText
-                            ? rewardRound.customRoundText
-                            : `Round ${parseFloat(rewardRound?.round) + 1}`}
+                          {rewardRound?.customRoundText ? (
+                            <Text>{rewardRound.customRoundText}</Text>
+                          ) : (
+                            <>
+                              <Text>{`Round ${parseFloat(rewardRound?.round) + 1}`}</Text>
+                            </>
+                          )}
                         </div>
                       </Menu.Item>
                     ))}

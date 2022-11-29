@@ -4,6 +4,7 @@ import { useWeb3React } from "@web3-react/core";
 import useSWR from "swr";
 import { ethers } from "ethers";
 import { useLocalStorage } from "react-use";
+import { Text } from "../../components/Translation/Text";
 
 import {
   FUNDING_RATE_PRECISION,
@@ -78,9 +79,9 @@ function pushSuccessNotification(chainId, message, e) {
   const txUrl = getExplorerUrl(chainId) + "tx/" + transactionHash;
   helperToast.success(
     <div>
-      {message}{" "}
+      <Text>{message}</Text>{" "}
       <a href={txUrl} target="_blank" rel="noopener noreferrer">
-        View
+        <Text>View</Text>
       </a>
     </div>
   );
@@ -98,9 +99,9 @@ function pushErrorNotification(chainId, message, e) {
   const txUrl = getExplorerUrl(chainId) + "tx/" + transactionHash;
   helperToast.error(
     <div>
-      {message}{" "}
+      <Text>{message}</Text>{" "}
       <a href={txUrl} target="_blank" rel="noopener noreferrer">
-        View
+        <Text>View</Text>
       </a>
     </div>
   );
@@ -364,6 +365,7 @@ export const Exchange = forwardRef((props, ref) => {
     trackAction,
     sidebarVisible,
     analytics,
+    currentLang,
   } = props;
 
   const [pendingPositions, setPendingPositions] = useState({});
@@ -801,7 +803,9 @@ export const Exchange = forwardRef((props, ref) => {
           />
           <div className="align-right Exchange-should-show-position-lines">
             <Checkbox isChecked={savedShouldShowPositionLines} setIsChecked={setSavedShouldShowPositionLines}>
-              <span className="muted">Chart positions</span>
+              <span className="muted">
+                <Text>Chart positions</Text>
+              </span>
             </Checkbox>
           </div>
         </div>
@@ -956,17 +960,10 @@ export const Exchange = forwardRef((props, ref) => {
                   />
                 ) : (
                   <ExchangeAdvancedTVChart
-                    infoTokens={infoTokens}
                     chartToken={chartToken}
-                    setChartToken={setChartToken}
                     priceData={priceData}
                     period={period}
-                    setPeriod={setPeriod}
-                    setToTokenAddress={setToTokenAddress}
-                    swapOption={swapOption}
-                    chainId={chainId}
-                    currentAveragePrice={currentAveragePrice}
-                    trackAction={trackAction}
+                    currentLang={currentLang}
                   />
                 )}
               </div>
