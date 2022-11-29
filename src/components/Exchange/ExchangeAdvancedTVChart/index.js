@@ -1,13 +1,13 @@
-import { useState, useEffect, useMemo, useCallback } from "react";
+import React, { useState, useEffect, useMemo, useCallback } from "react";
 import cx from "classnames";
 import { widget } from "@mycelium-swaps-interface/charting_library";
 import { dataFeed, supportedResolutions } from "../../../Api/TradingView";
-import { newPriceEmitter } from "src/Api/TradingView/newPriceEmitter";
+import {newPriceEmitter} from "src/Api/TradingView/newPriceEmitter";
 
 const getLanguageFromURL = () => {
   const regex = new RegExp("[\\?&]lang=([^&#]*)");
   const results = regex.exec(window.location.search);
-  return results && results[1] ? decodeURIComponent(results[1].replace(/\+/g, " ").split("-")[0]) : null;
+  return results === null ? null : decodeURIComponent(results[1].replace(/\+/g, " "));
 };
 
 const convertLightweightChartPeriod = (period) => {
@@ -44,7 +44,7 @@ const DEFAULT_COLOURS = {
 };
 
 export default function ExchangeAdvancedTVChart(props) {
-  const { chartToken, priceData, period, currentLang } = props;
+  const { chartToken, priceData, period } = props;
 
   const defaultProps = useMemo(
     () => ({
@@ -134,16 +134,15 @@ export default function ExchangeAdvancedTVChart(props) {
     } catch (error) {
       console.error(error);
     }
-  }, [defaultProps]);
+  }, []);
 
   // Create chart
   useEffect(() => {
     if (!tvWidget) {
       createChart();
     }
-  }, [tvWidget, createChart]);
+  }, [tvWidget]);
 
-  // Update chart
   useEffect(() => {
     if (tvWidget && tvWidget.activeChart && period && chartToken?.symbol) {
       const advancedChartPeriod = convertLightweightChartPeriod(period);
@@ -152,27 +151,18 @@ export default function ExchangeAdvancedTVChart(props) {
         tvWidget.activeChart().setSymbol(`Swaps:${chartToken.symbol}/USD`);
         tvWidget.activeChart().setResolution(advancedChartPeriod, () => {
           setShowChart(true);
-        });
-      };
-      resetChart();
+        })
+      }
+      resetChart()
     }
-  }, [tvWidget, period, chartToken?.symbol]);
-
-  // Update chart on language change
-  useEffect(() => {
-    setShowChart(false);
-    setTimeout(() => {
-      setTvWidget(null);
-      createChart(currentLang);
-    }, 300);
-  }, [currentLang, createChart]);
+  }, [tvWidget, period, chartToken?.symbol])
 
   useEffect(() => {
     if (tvWidget && priceData && showChart && priceData.length >= 1) {
       const lastBar = priceData[priceData.length - 1];
-      newPriceEmitter.emit("update", lastBar);
+      newPriceEmitter.emit('update', lastBar)
     }
-  }, [tvWidget, showChart, priceData]);
+  }, [tvWidget, showChart, priceData])
 
   if (!priceData || !chartToken) {
     return null;
