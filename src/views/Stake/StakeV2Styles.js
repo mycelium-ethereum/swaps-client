@@ -43,6 +43,12 @@ export const Card = styled.div(
   border: 1px solid var(--cell-stroke);
   border-radius: 4px;
 
+  &.Staking {
+    .total-rewards {
+      border-bottom: 1px solid var(--cell-stroke);
+    }
+  }
+
  @media only screen and (max-width: ${xxl}) and (min-width: ${xl}) {
     &.Staking {
       .App-card-row.break {
@@ -66,6 +72,12 @@ export const Card = styled.div(
             align-items: flex-start;
           }
         }
+      }
+      .total-rewards .App-card-row > div:not(.label) {
+        display: flex;
+        flex-direction: column;
+        padding-top: 8px;
+        text-align: left;
       }
     }
   }
@@ -105,9 +117,6 @@ export const Card = styled.div(
         flex-direction: column;
         padding-top: 8px;
         text-align: left;
-      }
-      .total-rewards {
-        border-bottom: 1px solid var(--cell-stroke);
       }
     }
   }
@@ -363,7 +372,7 @@ export const StakingButton = styled.button(
   background-color: transparent;
   height: 32px;
   width: ${props.fullWidth ? "100%" : "100px"};
-  ${props.fullWidth ? "max-width: 300px" : ""};
+  max-width: 350px;
   padding: 0 ${props.fullWidth ? "22px" : "8px"};
   border-radius: 4px;
   display: flex;

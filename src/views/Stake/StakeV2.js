@@ -1429,7 +1429,7 @@ export default function StakeV2({
                       </StakeV2Styled.StakingButton>
                     </StakeV2Styled.ClaimButtonContainer>
                   </StakeV2Styled.StakedTokens>
-                  {cumulativeRewards && (
+                  {cumulativeRewards && nativeTokenPrice && (
                     <StakeV2Styled.StakingBannerRow className="total-rewards">
                       <div className="App-card-row break">
                         <div className="label">Total Rewards</div>
