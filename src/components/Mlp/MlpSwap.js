@@ -89,6 +89,9 @@ function getStakingData(stakingInfo) {
     };
   }
 
+  // temp hardcode
+  data['stakedMlpTracker'].tokensPerInterval = ethers.utils.parseEther(1)
+
   return data;
 }
 
