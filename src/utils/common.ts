@@ -27,13 +27,13 @@ export const roundUpTime = (time: number, period: Period) => {
   return (Number(time / offset) * offset) + offset;
 }
 
-export function parseBigNumberToString(bn: BigNumber, decimals = 0): string {
-  if (!bn) return "-";
-  return parseFloat(ethers.utils.formatUnits(bn)).toFixed(decimals);
-}
-
 export function convertStringToFloat(str: string, decimals = 0) {
   return parseFloat(str).toFixed(decimals);
+}
+
+export function convertBigNumberToString(bn: BigNumber, decimals = 0): string {
+  if (!bn) return "-";
+  return convertStringToFloat(ethers.utils.formatUnits(bn), decimals);;
 }
 
 export function copyToClipboard(item: string) {
@@ -43,9 +43,3 @@ export function copyToClipboard(item: string) {
 export function shareToTwitter(text: string) {
   window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`, "_blank");
 }
-
-const DEFAULT_DECIMALS = 2
-
-export const formatNumberWithCommas = (value: number, decimals: number = DEFAULT_DECIMALS) =>
-  value !== undefined ? parseFloat(value.toFixed(decimals)).toLocaleString('en-US') : undefined
-

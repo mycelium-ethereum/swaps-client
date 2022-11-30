@@ -3,8 +3,8 @@ import { FC } from "react";
 import * as StakeV2Styled from "src/views/Stake/StakeV2Styles";
 import { TokenIcon } from "src/components/Stake/TokenIcon";
 import { CompatibleToken, TokenSize, TokenSizeEnum } from "src/components/Stake/types";
-import { convertStringToFloat, parseBigNumberToString, formatNumberWithCommas } from "src/utils/common";
-import { expandDecimals } from "src/Helpers";
+import { convertStringToFloat, convertBigNumberToString } from "src/utils/common";
+import { ETH_DECIMALS, expandDecimals, formatAmount, USD_DECIMALS } from "src/Helpers";
 
 interface WalletBalanceProps {
   large?: boolean;
@@ -15,8 +15,6 @@ interface WalletBalanceProps {
   tokenDecimals?: number;
   decimals?: number;
 }
-
-export const USD_PRICE_PRECISION = 30;
 
 export const WalletBalance: FC<WalletBalanceProps> = ({
   large,
@@ -30,18 +28,13 @@ export const WalletBalance: FC<WalletBalanceProps> = ({
     <StakeV2Styled.FlexColEnd>
       <TokenAmountRow
         large={large}
-        tokenAmount={parseBigNumberToString(walletAmount, decimals)}
+        tokenAmount={convertBigNumberToString(walletAmount, decimals)}
         selectedToken={selectedToken}
         tokenSize={tokenSize}
         decimals={decimals}
       />
       <StakeV2Styled.Subtitle>
-        $
-        {formatNumberWithCommas(
-          parseFloat(
-            parseBigNumberToString(tokenUsdPrice.mul(walletAmount).div(expandDecimals(1, USD_PRICE_PRECISION)), 2)
-          )
-        )}
+        ${formatAmount(tokenUsdPrice.mul(walletAmount).div(expandDecimals(1, USD_DECIMALS)), ETH_DECIMALS, 2, true)}
       </StakeV2Styled.Subtitle>
     </StakeV2Styled.FlexColEnd>
   </>

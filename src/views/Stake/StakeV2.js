@@ -13,7 +13,7 @@ import RewardRouter from "../../abis/RewardRouter.json";
 import RewardReader from "../../abis/RewardReader.json";
 import Token from "../../abis/Token.json";
 import MlpManager from "../../abis/MlpManager.json";
-import { USD_PRICE_PRECISION, WalletBalance } from "../../components/Stake/Sections";
+import { WalletBalance } from "../../components/Stake/Sections";
 import { CompatibleTokenEnum } from "../../components/Stake/types";
 import { ethers } from "ethers";
 import {
@@ -39,8 +39,8 @@ import {
   getProcessedData,
   getPageTitle,
   expandDecimals,
-  ETH_DECIMALS,
   ARBITRUM_GOERLI,
+  ETH_DECIMALS,
 } from "../../Helpers";
 import {
   callContract,
@@ -67,7 +67,7 @@ import ClaimModal from "./ClaimModal";
 import Toggle from "../../components/Toggle/Toggle";
 import MlpPriceChart from "./MlpPriceChart";
 import { ZERO_BN } from "src/components/Stake/presets";
-import { formatNumberWithCommas, parseBigNumberToString } from "src/utils/common";
+import { convertBigNumberToString } from "src/utils/common";
 import { TokenIcon } from "src/components/Stake/TokenIcon";
 
 const MYC_TOKEN = "MYC";
@@ -1435,18 +1435,16 @@ export default function StakeV2({
                         <div className="label">Total Rewards</div>
                         <div>
                           <span>
-                            <b>{parseBigNumberToString(cumulativeRewards, 6)} WETH</b>
+                            <b>{convertBigNumberToString(cumulativeRewards, 6)} WETH</b>
                           </span>
                           <StakeV2Styled.Subtitle>
                             {" "}
                             $
-                            {formatNumberWithCommas(
-                              parseFloat(
-                                parseBigNumberToString(
-                                  nativeTokenPrice.mul(cumulativeRewards).div(expandDecimals(1, USD_PRICE_PRECISION)),
-                                  2
-                                )
-                              )
+                            {formatAmount(
+                              nativeTokenPrice.mul(cumulativeRewards).div(expandDecimals(1, USD_DECIMALS)),
+                              ETH_DECIMALS,
+                              2,
+                              true
                             )}
                           </StakeV2Styled.Subtitle>
                         </div>
@@ -1467,17 +1465,15 @@ export default function StakeV2({
                       {totalStaked && mycPrice && (
                         <StakeV2Styled.FlexRowCol>
                           <span>
-                            <b>{formatNumberWithCommas(parseFloat(ethers.utils.formatUnits(totalStaked)), 0)}</b>
+                            <b>{formatAmount(totalStaked, ETH_DECIMALS, 0, true)}</b>
                           </span>
                           <StakeV2Styled.Subtitle>
                             $
-                            {formatNumberWithCommas(
-                              parseFloat(
-                                ethers.utils.formatUnits(
-                                  mycPrice.mul(totalStaked).div(expandDecimals(1, USD_PRICE_PRECISION))
-                                )
-                              ),
-                              2
+                            {formatAmount(
+                              mycPrice.mul(totalStaked).div(expandDecimals(1, USD_DECIMALS)),
+                              ETH_DECIMALS,
+                              2,
+                              true
                             )}
                           </StakeV2Styled.Subtitle>
                         </StakeV2Styled.FlexRowCol>
@@ -1485,17 +1481,15 @@ export default function StakeV2({
                       {depositCap && mycPrice && (
                         <StakeV2Styled.FlexColEnd>
                           <span>
-                            <b>{formatNumberWithCommas(parseFloat(ethers.utils.formatUnits(depositCap)), 0)}</b>
+                            <b>{formatAmount(depositCap, ETH_DECIMALS, 0, true)}</b>
                           </span>
                           <StakeV2Styled.Subtitle>
                             $
-                            {formatNumberWithCommas(
-                              parseFloat(
-                                ethers.utils.formatUnits(
-                                  mycPrice.mul(depositCap).div(expandDecimals(1, USD_PRICE_PRECISION))
-                                )
-                              ),
-                              2
+                            {formatAmount(
+                              mycPrice.mul(depositCap).div(expandDecimals(1, USD_DECIMALS)),
+                              ETH_DECIMALS,
+                              2,
+                              true
                             )}
                           </StakeV2Styled.Subtitle>
                         </StakeV2Styled.FlexColEnd>
