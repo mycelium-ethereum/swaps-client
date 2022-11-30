@@ -842,7 +842,7 @@ export default function MlpSwap(props) {
                           <span>{formatAmount(feeMlpTrackerApr, 2, 2, false)}%</span>
                         </div>
                         <div className="Tooltip-row">
-                          <span className="label">esMYC APR</span>
+                          <span className="label">esMYC APR (historical)</span>
                           <span>{formatAmount(stakedMlpTrackerApr, 2, 2, false)}%</span>
                         </div>
                       </>
