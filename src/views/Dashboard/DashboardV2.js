@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import { useState, useMemo } from "react";
 import { Link } from "react-router-dom";
 import { useWeb3React } from "@web3-react/core";
 import useSWR from "swr";
@@ -9,7 +9,7 @@ import hexToRgba from "hex-to-rgba";
 import { ethers } from "ethers";
 
 import { getWhitelistedTokens } from "../../data/Tokens";
-import { getFeeHistory, SECONDS_PER_WEEK } from "../../data/Fees";
+import { currentFortnight, SECONDS_PER_WEEK } from "../../data/Fees";
 
 import {
   fetcher,
@@ -148,9 +148,10 @@ export default function DashboardV2() {
 
   const allFees = useFees(chainId);
 
-  const feeHistory = getFeeHistory(chainId);
+  // const feeHistory = getFeeHistory(chainId);
 
-  const from = feeHistory[0]?.to;
+  const from = currentFortnight;
+    // feeHistory[0]?.to;
   const to = from + SECONDS_PER_WEEK * 2;
   const currentGraphFees = useFeesSince(chainId, from, to);
   const currentUnclaimedFees = getUnclaimedFees(whitelistedTokenAddresses, infoTokens, fees);
@@ -495,14 +496,12 @@ export default function DashboardV2() {
                   <div className="label">Short Positions</div>
                   <div>${formatAmount(totalShortPositionSizes, USD_DECIMALS, 0, true)}</div>
                 </div>
-                {feeHistory.length ? (
-                  <div className="App-card-row">
-                    <div className="label">Fees since {formatDate(feeHistory[0].to)}</div>
-                    <div>
-                      ${formatAmount(totalCurrentFees, USD_DECIMALS, 2, true)}
-                    </div>
+                <div className="App-card-row">
+                  <div className="label">Fees since {formatDate(currentFortnight)}</div>
+                  <div>
+                    ${formatAmount(totalCurrentFees, USD_DECIMALS, 2, true)}
                   </div>
-                ) : null}
+                </div>
               </div>
             </div>
             <div className="App-card">

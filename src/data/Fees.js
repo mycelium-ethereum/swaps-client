@@ -38,6 +38,10 @@ const FEES = {
   ],
 };
 
+const TWO_WEEKS = SECONDS_PER_WEEK * 2;
+const FORTNIGHT_START = 1662508800;
+export const currentFortnight = FORTNIGHT_START + TWO_WEEKS * Math.floor(((Math.floor(Date.now() / 1000) - FORTNIGHT_START) / TWO_WEEKS))
+
 export function getFeeHistory(chainId) {
   return FEES[chainId].concat([]).reverse();
 }
