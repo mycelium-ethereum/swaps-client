@@ -85,6 +85,7 @@ body,
 
   --text-primary: #fff;
   --text-secondary: #8b968c;
+  --text-tertiary: #004e00;
   /* Same as secondary but unsure what it should be so keeping seperate */
   --text-hover: #8b968c;
   --text-navigation: #fff;

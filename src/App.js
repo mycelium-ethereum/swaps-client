@@ -122,6 +122,7 @@ import Sidebar from "./components/Navigation/Sidebar/Sidebar";
 import EventModal from "./components/EventModal/EventModal";
 import AppDropdown from "./components/AppDropdown/AppDropdown";
 import { useInfoTokens } from "./hooks/useInfoTokens";
+import Portfolio from "./views/Portfolio/Portfolio";
 // import { Banner, BannerContent } from "./components/Banner/Banner";
 
 if ("ethereum" in window) {
@@ -936,6 +937,9 @@ function FullApp() {
                 pendingTxns={pendingTxns}
                 setPendingTxns={setPendingTxns}
               />
+            </Route>
+            <Route exact path="/user/:id">
+              <Portfolio />
             </Route>
             {/*
             <Route exact path="/nft_wallet">
