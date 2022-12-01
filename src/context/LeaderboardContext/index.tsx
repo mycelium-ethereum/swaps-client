@@ -50,6 +50,10 @@ const useValues = () => {
     setLeaderboardData(traders);
   }, [currentRewardRound]);
 
+  const updateLeaderboard = (_leaderboardData: RewardsEntity[]) => {
+    return _leaderboardData.sort((a, b) => parseInt(b.volume) - parseInt(a.volume));
+  };
+
   const updateLeaderboardOptimistically = (volumeToAdd: string) => {
     if (!leaderboardData) {
       return;
@@ -61,6 +65,8 @@ const useValues = () => {
     // If user exists, update volume
     if (currentUser) {
       currentUser.volume = ethers.BigNumber.from(currentUser.volume).add(ethers.BigNumber.from(volumeToAdd).toString());
+      const updatedLeaderboard = updateLeaderboard(_leaderboardData);
+      setLeaderboardData(updatedLeaderboard);
     }
     // Otherwise insert at the end of the list after users without volume
     else {
