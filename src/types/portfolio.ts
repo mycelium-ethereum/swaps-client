@@ -52,4 +52,4 @@ export enum PortfolioPeriodEnum {
   Month = "1M",
 }
 
-export type PortfolioPeriod = PortfolioPeriodEnum["1"] | PortfolioPeriodEnum["7"] | PortfolioPeriodEnum["1"];
+export type PortfolioPeriod = PortfolioPeriodEnum.Day | PortfolioPeriodEnum.Week | PortfolioPeriodEnum.Month;
