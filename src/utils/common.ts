@@ -31,11 +31,6 @@ export function convertStringToFloat(str: string, decimals = 0) {
   return parseFloat(str).toFixed(decimals);
 }
 
-export function convertBigNumberToString(bn: BigNumber, decimals = 0): string {
-  if (!bn) return "-";
-  return convertStringToFloat(ethers.utils.formatUnits(bn), decimals);;
-}
-
 export function copyToClipboard(item: string) {
   navigator.clipboard.writeText(item);
 }

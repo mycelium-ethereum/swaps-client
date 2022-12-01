@@ -7,9 +7,9 @@ export enum CompatibleTokenEnum {
   ETH = 'ETH',
 }
 
-export type TokenSize = "sm" | "lg";
+export type TokenIconSize = "sm" | "lg";
 
-export enum TokenSizeEnum {
+export enum TokenIconSizeEnum {
   sm = "sm",
   lg = "lg",
 }

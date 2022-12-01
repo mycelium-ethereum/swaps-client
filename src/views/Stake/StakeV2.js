@@ -13,7 +13,7 @@ import RewardRouter from "../../abis/RewardRouter.json";
 import RewardReader from "../../abis/RewardReader.json";
 import Token from "../../abis/Token.json";
 import MlpManager from "../../abis/MlpManager.json";
-import { WalletBalance } from "../../components/Stake/Sections";
+import { TokenAmount } from "../../components/Stake/Sections";
 import { CompatibleTokenEnum } from "../../components/Stake/types";
 import { ethers } from "ethers";
 import {
@@ -66,9 +66,8 @@ import SEO from "../../components/Common/SEO";
 import ClaimModal from "./ClaimModal";
 import Toggle from "../../components/Toggle/Toggle";
 import MlpPriceChart from "./MlpPriceChart";
-import { ZERO_BN } from "src/components/Stake/presets";
-import { convertBigNumberToString } from "src/utils/common";
 import { TokenIcon } from "src/components/Stake/TokenIcon";
+import { ZERO_BN } from "src/components/Stake/presets";
 
 const MYC_TOKEN = "MYC";
 const ES_MYC_TOKEN = "esMYC";
@@ -454,16 +453,17 @@ function StakingModal(props) {
   const [isTransacting, setIsTransacting] = useState(false);
   const { library, account } = useWeb3React();
 
-  // Cannot update MYC and ES_MYC addresses in Addresses.js in case of breaking functions on testnet elsewhere
-  const MYC_CONTRACT = {
-    [ARBITRUM]: getContract(chainId, "MYC"),
-    [ARBITRUM_GOERLI]: "0x46873E80daf930265B7E5419BBC266cC2880ff8c",
+  const MYC_CONTRACT_NAME = {
+    [ARBITRUM]: "MYC",
+    [ARBITRUM_GOERLI]: "MYC_V2",
+  };
+  const ES_MYC_CONTRACT_NAME = {
+    [ARBITRUM]: "MYC",
+    [ARBITRUM_GOERLI]: "MYC_V2",
   };
 
-  const ES_MYC_CONTRACT = {
-    [ARBITRUM]: getContract(chainId, "ES_MYC"),
-    [ARBITRUM_GOERLI]: "0x4897Dca24BcB50014456bcBBc59A2D6530FadCeB",
-  };
+  const MYC_CONTRACT = getContract(chainId, MYC_CONTRACT_NAME[chainId]);
+  const ES_MYC_CONTRACT = getContract(chainId, ES_MYC_CONTRACT_NAME[chainId]);
 
   const STAKABLE_TOKENS = {
     [MYC_TOKEN]: { balance: mycBalance || ZERO_BN, staked: stakedMyc || ZERO_BN, contract: MYC_CONTRACT[chainId] },
@@ -1352,9 +1352,9 @@ export default function StakeV2({
                       <div className="label">Wallet</div>
                       <div>
                         <StakeV2Styled.FlexRowEnd>
-                          <WalletBalance
-                            walletAmount={userMycBalance || ZERO_BN}
-                            tokenUsdPrice={mycPrice || ZERO_BN}
+                          <TokenAmount
+                            tokenAmount={userMycBalance}
+                            tokenUsdPrice={mycPrice}
                             selectedToken={CompatibleTokenEnum.MYC}
                           />
                           <StakeV2Styled.StakingButton onClick={() => stakeToken(MYC_TOKEN, STAKE)}>
@@ -1362,9 +1362,9 @@ export default function StakeV2({
                           </StakeV2Styled.StakingButton>
                         </StakeV2Styled.FlexRowEnd>
                         <StakeV2Styled.FlexRowEnd>
-                          <WalletBalance
-                            walletAmount={userEsMycBalance || ZERO_BN}
-                            tokenUsdPrice={mycPrice || ZERO_BN}
+                          <TokenAmount
+                            tokenAmount={userEsMycBalance}
+                            tokenUsdPrice={mycPrice}
                             selectedToken={CompatibleTokenEnum.esMYC}
                           />
                           <StakeV2Styled.StakingButton onClick={() => stakeToken(ES_MYC_TOKEN, STAKE)}>
@@ -1378,9 +1378,9 @@ export default function StakeV2({
                       <div className="label">Staked</div>
                       <div>
                         <StakeV2Styled.FlexRowEnd>
-                          <WalletBalance
-                            walletAmount={userStakedMycBalance || ZERO_BN}
-                            tokenUsdPrice={mycPrice || ZERO_BN}
+                          <TokenAmount
+                            tokenAmount={userStakedMycBalance}
+                            tokenUsdPrice={mycPrice}
                             selectedToken={CompatibleTokenEnum.MYC}
                           />
                           <StakeV2Styled.StakingButton onClick={() => stakeToken(MYC_TOKEN, UNSTAKE)}>
@@ -1388,9 +1388,9 @@ export default function StakeV2({
                           </StakeV2Styled.StakingButton>
                         </StakeV2Styled.FlexRowEnd>
                         <StakeV2Styled.FlexRowEnd>
-                          <WalletBalance
-                            walletAmount={userStakedEsMycBalance || ZERO_BN}
-                            tokenUsdPrice={mycPrice || ZERO_BN}
+                          <TokenAmount
+                            tokenAmount={userStakedEsMycBalance}
+                            tokenUsdPrice={mycPrice}
                             selectedToken={CompatibleTokenEnum.esMYC}
                           />
                           <StakeV2Styled.StakingButton onClick={() => stakeToken(ES_MYC_TOKEN, UNSTAKE)}>
@@ -1414,10 +1414,10 @@ export default function StakeV2({
                     <StakeV2Styled.FlexRowBetween>
                       <span>Claimable Rewards&nbsp;</span>
                       <StakeV2Styled.FlexRowEnd>
-                        <WalletBalance
+                        <TokenAmount
                           large
-                          walletAmount={rewardsEarned || ZERO_BN}
-                          tokenUsdPrice={nativeTokenPrice || ZERO_BN}
+                          tokenAmount={rewardsEarned}
+                          tokenUsdPrice={nativeTokenPrice}
                           selectedToken={CompatibleTokenEnum.WETH}
                           decimals={6}
                         />
@@ -1435,7 +1435,7 @@ export default function StakeV2({
                         <div className="label">Total Rewards</div>
                         <div>
                           <span>
-                            <b>{convertBigNumberToString(cumulativeRewards, 6)} WETH</b>
+                            <b>{formatAmount(cumulativeRewards, ETH_DECIMALS, 6, false)} WETH</b>
                           </span>
                           <StakeV2Styled.Subtitle>
                             {" "}

@@ -1128,11 +1128,18 @@ export function useStakingApr(mycPrice, ethPrice) {
 }
 
 export function useUserStakingBalances(address, chainId) {
-  // Cannot update MYC and ES_MYC addresses in case of breaking functions on testnet elsewhere
-  const TESTNET_MYC_CONTRACT = "0x46873E80daf930265B7E5419BBC266cC2880ff8c";
-  const TESTNET_ES_MYC_CONTRACT = "0x4897Dca24BcB50014456bcBBc59A2D6530FadCeB";
-  const mycTokenAddress = chainId === ARBITRUM_GOERLI ? TESTNET_MYC_CONTRACT : getContract(chainId, "MYC");
-  const esMycTokenAddress = chainId === ARBITRUM_GOERLI ? TESTNET_ES_MYC_CONTRACT : getContract(chainId, "ES_MYC");
+  const MYC_CONTRACT_NAME = {
+    [ARBITRUM]: "MYC",
+    [ARBITRUM_GOERLI]: "MYC_V2",
+  };
+  const ES_MYC_CONTRACT_NAME = {
+    [ARBITRUM]: "MYC",
+    [ARBITRUM_GOERLI]: "MYC_V2",
+  };
+
+  const mycTokenAddress = getContract(chainId, MYC_CONTRACT_NAME[chainId]);
+  const esMycTokenAddress = getContract(chainId, ES_MYC_CONTRACT_NAME[chainId]);
+
   const stakingAddress = getContract(chainId, "MYCStakingRewards");
 
   const { data: userMycBalance } = useSWR(
