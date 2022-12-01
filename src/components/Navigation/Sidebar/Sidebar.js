@@ -93,7 +93,13 @@ const socialLinks = [
   },
 ];
 
-export default function Sidebar({ sidebarVisible, setSidebarVisible, userPosition, leaderboardData }) {
+export default function Sidebar({
+  sidebarVisible,
+  setSidebarVisible,
+  userPosition,
+  leaderboardData,
+  failedFetchingRoundRewards,
+}) {
   const { active } = useWeb3React();
   const location = useLocation();
   const yearRef = useRef(null);
@@ -141,7 +147,7 @@ export default function Sidebar({ sidebarVisible, setSidebarVisible, userPositio
                 </a>
               </MenuItem>
             </NavMenu>
-            {active && userPosition > 0 ? (
+            {active && userPosition > 0 && !failedFetchingRoundRewards ? (
               <LiveLeaderboard userPosition={userPosition} leaderboardData={leaderboardData} />
             ) : (
               <EventBox>

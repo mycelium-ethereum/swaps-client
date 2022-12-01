@@ -2414,7 +2414,6 @@ export default function SwapBox(props) {
                       right of the page after connecting your wallet.
                       <br />
                       <br />
-                      ``
                       <a
                         href="https://swaps.docs.mycelium.xyz/quick-start-guide/2.-how-to-trade"
                         target="_blank"
