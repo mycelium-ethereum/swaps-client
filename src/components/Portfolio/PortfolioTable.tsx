@@ -123,7 +123,7 @@ export const OpenOrderRow: FC<OpenOrderRowProps> = ({
   assetSymbol,
 }) => (
   <Styled.TableRow>
-    <Styled.TableCell>{formatAmount(triggerPrice, USD_DECIMALS, 2, true)}</Styled.TableCell>
+    <Styled.TableCell>${formatAmount(triggerPrice, USD_DECIMALS, 2, true)}</Styled.TableCell>
     <Styled.TableCell>{type}</Styled.TableCell>
     <Styled.TableCell>
       <Styled.SideLabel isShort={side === "Short"}>{side}</Styled.SideLabel>
@@ -135,7 +135,7 @@ export const OpenOrderRow: FC<OpenOrderRowProps> = ({
       <Styled.AssetIcon src={assetIcon || ETH_DEFAULT_ICON} alt={assetSymbol || "ETH"} />
     </Styled.TableCell>
     <Styled.TableCell>
-      <span>{formatAmount(sizeDelta, USD_DECIMALS, 2, true)}</span>
+      <span>${formatAmount(sizeDelta, USD_DECIMALS, 2, true)}</span>
     </Styled.TableCell>
     {/* Empty cell */}
     <Styled.TableCell />

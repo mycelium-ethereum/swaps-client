@@ -10,7 +10,7 @@ const openPositionsTableHeadings = [
   "OPENING LEVERAGE",
   "ASSET",
   "AMOUNT (USD)",
-  "PNL",
+  "PNL (USD)",
 ];
 // Notional and collateral. Entry and liquidation price, pnl
 

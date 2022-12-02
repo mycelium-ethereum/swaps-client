@@ -6,11 +6,10 @@ const closedPositionsTableHeadings = [
   "ENTRY (USD)",
   "EXIT (USD)",
   "SIDE",
-  "LEVERAGE",
+  "OPENING LEVERAGE",
   "ASSET",
-  "NOTIONAL (USD)",
-  "COLLATERAL (USD)",
-  "PNL",
+  "AMOUNT (USD)",
+  "PNL (USD)",
 ];
 
 interface ClosedPositionsTableProps {

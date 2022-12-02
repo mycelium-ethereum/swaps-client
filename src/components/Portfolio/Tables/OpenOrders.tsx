@@ -3,7 +3,7 @@ import { OpenOrderRow, PortfolioTable } from "src/components/Portfolio/Portfolio
 import { Order, SideEnum } from "src/types/portfolio";
 import { Token } from "src/types/tokens";
 
-const openOrdersTableHeadings = ["TRIGGER PRICE", "TYPE", "SIDE", "ASSET", "AMOUNT (USD)", ""];
+const openOrdersTableHeadings = ["TRIGGER PRICE (USD)", "TYPE", "SIDE", "ASSET", "AMOUNT (USD)", ""];
 
 interface OpenOrdersTableProps {
   data: Order[];
