@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo, useCallback } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import cx from "classnames";
 import { widget } from "@mycelium-swaps-interface/charting_library";
 import { dataFeed, supportedResolutions } from "../../../Api/TradingView";
@@ -27,14 +27,6 @@ const convertLightweightChartPeriod = (period) => {
     default:
       return supportedResolutions[4]; // 240
   }
-};
-
-const TIMEFRAME = {
-  "5m": "210",
-  "15m": "840",
-  "1h": "1680",
-  "4h": "7D",
-  "1d": "30D",
 };
 
 const DEFAULT_COLOURS = {
@@ -168,7 +160,6 @@ export default function ExchangeAdvancedTVChart(props) {
     if (tvWidget && priceData && showChart && priceData.length >= 1) {
       if (tvWidget.activeChart().dataReady()) {
         const lastBar = priceData[priceData.length - 1];
-        console.log("emitting update")
         newPriceEmitter.emit('update', lastBar)
       }
     }
