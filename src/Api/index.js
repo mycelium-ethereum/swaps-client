@@ -34,6 +34,7 @@ import {
   ETH_DECIMALS,
   ARBITRUM_GOERLI,
   SECONDS_PER_YEAR,
+  useAccountOrders,
 } from "../Helpers";
 import { getTokenBySymbol } from "../data/Tokens";
 
@@ -514,6 +515,18 @@ export function useOpenPositions(chainId, account) {
   }
 
   return { openPositions, updateOpenPositions };
+}
+
+export function useOpenOrders(account) {
+  let checkSummedAccount = "";
+  if (ethers.utils.isAddress(account)) {
+    checkSummedAccount = ethers.utils.getAddress(account);
+  }
+
+  const flagOrdersEnabled = true;
+  const [orders, updateOrders] = useAccountOrders(flagOrdersEnabled, checkSummedAccount);
+
+  return { openOrders: orders, updateOpenOrders: updateOrders };
 }
 
 export function useHasOutdatedUi() {

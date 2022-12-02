@@ -4,15 +4,15 @@ import { Position, Side } from "src/types/portfolio";
 import { Token } from "src/types/tokens";
 
 const openPositionsTableHeadings = [
-  "ENTRY (USD)",
-  "LIQ. PRICE (USD)",
+  "PRICE (USD)",
+  "CURRENT (USD)",
   "SIDE",
-  "LEVERAGE",
+  "OPENING LEVERAGE",
   "ASSET",
-  "NOTIONAL (USD)",
-  "COLLATERAL (USD)",
+  "AMOUNT (USD)",
   "PNL",
 ];
+// Notional and collateral. Entry and liquidation price, pnl
 
 interface OpenPositionsTableProps {
   data: Position[];

@@ -1,34 +1,29 @@
 import { FC } from "react";
 import { OpenOrderRow, PortfolioTable } from "src/components/Portfolio/PortfolioTable";
-import { OpenOrder, Side } from "src/types/portfolio";
+import { Order, SideEnum } from "src/types/portfolio";
+import { Token } from "src/types/tokens";
 
-const openOrdersTableHeadings = [
-  "TRIGGER PRICE",
-  "TYPE",
-  "SIDE",
-  "LEVERAGE",
-  "ASSET",
-  "NOTIONAL (USD)",
-  "COLLATERAL (USD)",
-  "",
-];
+const openOrdersTableHeadings = ["TRIGGER PRICE", "TYPE", "SIDE", "ASSET", "AMOUNT (USD)", ""];
 
 interface OpenOrdersTableProps {
-  data: OpenOrder[];
+  data: Order[];
+  tokens: Token[];
 }
 
-export const OpenOrdersTable: FC<OpenOrdersTableProps> = ({ data }) => (
+export const OpenOrdersTable: FC<OpenOrdersTableProps> = ({ data, tokens }) => (
   <PortfolioTable headings={openOrdersTableHeadings}>
-    {data.map(({ triggerPrice, type, side, leverage, asset, notionalUsd, collateralUsd }, i) => (
+    {data.map(({ indexToken, collateralDelta, sizeDelta, isLong, triggerPrice, triggerAboveThreshold, type }) => (
       <OpenOrderRow
-        key={i}
+        key={`${sizeDelta.toString()}${collateralDelta}`}
+        indexToken={indexToken}
         triggerPrice={triggerPrice}
+        side={(isLong ? "Long" : "Short") as SideEnum}
+        collateralDelta={collateralDelta}
+        sizeDelta={sizeDelta}
+        triggerAboveThreshold={triggerAboveThreshold}
         type={type}
-        side={side as Side}
-        leverage={leverage}
-        asset={asset}
-        notionalUsd={notionalUsd}
-        collateralUsd={collateralUsd}
+        assetIcon={tokens.find((token) => token.address === indexToken)?.imageUrl}
+        assetSymbol={tokens.find((token) => token.address === indexToken)?.symbol}
       />
     ))}
   </PortfolioTable>

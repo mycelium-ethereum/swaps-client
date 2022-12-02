@@ -15,34 +15,6 @@ export type OrderType = OrderTypeEnum.Increase | OrderTypeEnum.Decrease | OrderT
 
 export type Side = SideEnum.Long | SideEnum.Short;
 
-//   {
-//     "collateralToken": "0xFF970A61A04b1cA14834A43f5dE4533eBDDB5CC8",
-//     "indexToken": "0x82aF49447D8a07e3bd95BD0d56f35241523fBab1",
-//     "isLong": false,
-//     "size": "1010998011968151529984326720000000000",
-//     "collateral": "919089101789228663623014105952000000",
-//     "averageEntryPrice": "1273427000000000000000000000000000",
-//     "entryFundingRate": "29796",
-//     "liquidationPrice": "2418353639090909090910223147825492",
-//     "price": "1275867000000000000000000000000000"
-// }
-
-// Old
-// export type Position = {
-//   entryTime: string;
-//   entryDate: string;
-//   entryPrice: number;
-//   exitTime?: string;
-//   exitDate?: string;
-//   exitPrice?: number;
-//   side: string;
-//   leverage: number;
-//   asset: string;
-//   notionalUsd: number;
-//   collateralUsd: number;
-//   pnl: number;
-// }
-
 export interface Position {
   side: string;
   size: BigNumber;
@@ -54,20 +26,10 @@ export interface Position {
   averageEntryPrice: BigNumber;
   currentPrice: BigNumber;
 }
+
 export interface SizeOrCollateralOrLiquidationPriceOrAverageEntryPriceOrCurrentPrice {
   type: string;
   hex: string;
-}
-
-
-export type OpenOrder = {
-  triggerPrice: number;
-  type: string;
-  side: string;
-  leverage: number;
-  asset: string;
-  notionalUsd: number;
-  collateralUsd: number;
 }
 
 export type OtherStat = {
@@ -85,3 +47,36 @@ export enum PortfolioPeriodEnum {
 }
 
 export type PortfolioPeriod = PortfolioPeriodEnum.Day | PortfolioPeriodEnum.Week | PortfolioPeriodEnum.Month;
+
+export interface Trade {
+  id: string;
+  data: Data;
+}
+export interface Data {
+  id: string;
+  action: string;
+  chainId: string;
+  account: string;
+  timestamp: string;
+  params: string;
+  blockNumber: string;
+  txnHash: string;
+}
+
+export enum TradeActionEnum {
+  CreateDecreaseOrder = "CreateDecreaseOrder",
+  CreateIncreaseOrder = "CreateIncreaseOrder",
+}
+
+export interface Order {
+  collateralToken: string;
+  indexToken: string;
+  collateralDelta: BigNumber;
+  sizeDelta: BigNumber;
+  isLong: boolean;
+  triggerPrice: BigNumber;
+  triggerAboveThreshold: boolean;
+  type: string;
+  index: number;
+  account: string;
+}

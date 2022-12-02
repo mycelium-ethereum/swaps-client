@@ -21,7 +21,7 @@ import OrderEditor from "./OrderEditor";
 
 import "./OrdersList.css";
 
-function getPositionForOrder(account, order, positionsMap) {
+export function getPositionForOrder(account, order, positionsMap) {
   const key = getPositionKey(account, order.collateralToken, order.indexToken, order.isLong);
   const position = positionsMap[key];
   return position && position.size && position.size.gt(0) ? position : null;

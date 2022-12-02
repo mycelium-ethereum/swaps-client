@@ -2,7 +2,7 @@ import { Redirect, useParams } from "react-router-dom";
 import * as Styled from "./Portfolio.styles";
 import { useChainId } from "src/Helpers";
 import { getTokens } from "src/data/Tokens";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { Token } from "src/types/tokens";
 import { PortfolioHeader } from "src/components/Portfolio/PortfolioHeader";
 import { OpenPositionsTable } from "src/components/Portfolio/Tables/OpenPositions";
@@ -17,7 +17,7 @@ import { OpenOrdersTable } from "src/components/Portfolio/Tables/OpenOrders";
 import { OtherStatsTable } from "src/components/Portfolio/Tables/OtherStats";
 import assetPnlPlaceholder from "src/img/temp/asset-pnl-placeholder.png";
 import { PortfolioPeriod, PortfolioPeriodEnum } from "src/types/portfolio";
-import { useOpenPositions } from "src/Api";
+import { useOpenOrders, useOpenPositions } from "src/Api";
 
 enum SectionEnum {
   AssetPnl = "Asset PnL",
@@ -42,9 +42,11 @@ export default function Portfolio() {
   const data: any = useParams();
   const { id: account } = data;
   const { chainId } = useChainId();
-  const tempAccount = "0xaee2Ae13EBf81d38df5a9Ed7013E80EA3f72e39b";
-  const { openPositions } = useOpenPositions(chainId, tempAccount);
-  console.log(openPositions);
+  const tempOpenPositionsAccount = "0xaee2Ae13EBf81d38df5a9Ed7013E80EA3f72e39b";
+  const tempOpenOrdersAccount = "0x75Edc33A78c438CfdAfB0c6d52aA5630fe5cc9FA";
+  const { openPositions } = useOpenPositions(chainId, tempOpenPositionsAccount);
+  const { openOrders, updateOpenOrders } = useOpenOrders(tempOpenOrdersAccount);
+
   const tokens: Token[] = getTokens(chainId);
   const filteredTokens = tokens.filter((token) => !INACTIVE_TOKENS.includes(token.symbol));
 
@@ -61,16 +63,6 @@ export default function Portfolio() {
     const setShowSection = SHOW_SECTIONS_STATE_MAP[SectionType].func;
     setShowSection(!state);
   };
-
-  useEffect(() => {
-    if (filteredTokens?.length && !selectedAssets?.length) {
-      setSelectedAssets([filteredTokens[0]]);
-    }
-  }, [filteredTokens, selectedAssets]);
-
-  if (!account) {
-    return <Redirect to="/" />;
-  }
 
   const handleShowAllAssets = () => {
     setShowAllAssets(true);
@@ -91,6 +83,23 @@ export default function Portfolio() {
   const handlePeriodChange = (period: PortfolioPeriodEnum) => {
     setSelectedPeriod(period);
   };
+
+  useEffect(() => {
+    if (filteredTokens?.length && !selectedAssets?.length) {
+      setSelectedAssets([filteredTokens[0]]);
+    }
+  }, [filteredTokens, selectedAssets]);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      updateOpenOrders(undefined, true);
+    }, 10 * 1000);
+    return () => clearInterval(interval);
+  }, [updateOpenOrders]);
+
+  if (!account) {
+    return <Redirect to="/" />;
+  }
 
   return (
     <Styled.PortfolioContainer>
@@ -114,6 +123,7 @@ export default function Portfolio() {
             </Styled.SectionHeading>
             {showAssetPnlSection && <img src={assetPnlPlaceholder} width="100%" height="100%" alt="temp placeholder" />}
           </Styled.SectionContainer>
+
           <Styled.SectionContainer>
             <Styled.SectionHeading onClick={() => handleToggleSection(SectionEnum.OtherStats)}>
               <Styled.SectionLabel>Other Stats</Styled.SectionLabel>
@@ -151,13 +161,11 @@ export default function Portfolio() {
             <Styled.SectionHeading onClick={() => handleToggleSection(SectionEnum.OpenOrders)}>
               <Styled.FlexRow>
                 <Styled.SectionLabel>Open Orders</Styled.SectionLabel>
-                {openOrdersDummyData?.length && (
-                  <Styled.IndicatorBadge>{openOrdersDummyData.length}</Styled.IndicatorBadge>
-                )}
+                {openOrders?.length && <Styled.IndicatorBadge>{openOrders.length}</Styled.IndicatorBadge>}
               </Styled.FlexRow>
               <Styled.ChevronDown isActive={showOpenOrdersSection} />
             </Styled.SectionHeading>
-            {showOpenOrdersSection && <OpenOrdersTable data={openOrdersDummyData} />}
+            {showOpenOrdersSection && <OpenOrdersTable data={openOrders} tokens={filteredTokens} />}
           </Styled.SectionContainer>
         </Styled.RightSide>
       </Styled.SectionGrid>

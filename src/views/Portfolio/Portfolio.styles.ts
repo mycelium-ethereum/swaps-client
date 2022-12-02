@@ -1,10 +1,12 @@
 import styled from 'styled-components';
 import chevronDownIcon from 'src/img/chevron-down.svg';
 
+const xl = "1500px";
+
 export const PortfolioContainer = styled.div`
   padding: 0 16px;
   margin: 0 auto;
-  max-width: 1400px;
+  max-width: 1460px;
 `;
 
 export const HeaderControls = styled.div`
@@ -29,6 +31,15 @@ export const FlexRow = styled.div<{ margin?: boolean, alignCenter?: boolean, wra
 
 export const FlexRowEnd = styled(FlexRow)`
   justify-content: flex-end;
+`;
+
+export const FlexCol = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+
+export const FlexColEnd = styled(FlexCol)`
+  align-items: flex-end;
 `;
 
 export const UserContainer = styled.div`
@@ -146,6 +157,11 @@ export const SectionGrid = styled.div`
   grid-template-columns: repeat(12, minmax(0, 1fr));
   column-gap: 18px;
   margin-bottom: 40px;
+
+  @media only screen and (max-width: ${xl}) {
+    display: flex;
+    flex-direction: column-reverse;
+  }
 `;
 
 export const SectionContainer = styled.div`
@@ -216,7 +232,15 @@ export const SideLabel = styled.span<{ isShort: boolean }>`
   color: ${({ isShort }) => (isShort ? 'var(--short-active)' : 'var(--long-active)')};
 `;
 
-export const DateTimeLabel = styled.span`
+export const SmallLabel = styled.span`
+  display: inline-block;
+  font-size: 12px;
+  line-height: 18px;
+  color: var(--text-secondary);
+  white-space: nowrap;
+`;
+
+export const DateTimeLabel = styled(SmallLabel)`
   display: inline-block;
   font-size: 12px;
   line-height: 18px;
@@ -235,8 +259,9 @@ export const AssetIcon = styled.img`
   border-radius: 9999px;
 `;
 
-export const PnlCell = styled(TableCell) <{ isDown: boolean }>`
-  color: ${({ isDown }) => (isDown ? 'var(--short-active)' : 'var(--long-active)')};
+export const PnlCell = styled(TableCell) <{ isUp: boolean }>`
+  color: ${({ isUp }) => (isUp ? 'var(--long-active)' : 'var(--short-active)')};
+
   img {
     width: 14px;
     height: 14px;
@@ -247,10 +272,10 @@ export const PnlCell = styled(TableCell) <{ isDown: boolean }>`
     margin-right: 4px;
   }
   .position-up-arrow {
-    display: ${({ isDown }) => (isDown ? 'none' : 'inline')};
+    display: ${({ isUp }) => (isUp ? 'inline' : 'none')};
   }
   .position-down-arrow {
-    display: ${({ isDown }) => (isDown ? 'inline' : 'none')};
+    display: ${({ isUp }) => (isUp ? 'none' : 'inline')};
   }
 `;
 
