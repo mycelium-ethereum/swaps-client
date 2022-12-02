@@ -1,5 +1,4 @@
-import {CHART_PERIODS} from "src/Helpers";
-import { roundUpTime } from "src/utils/common";
+import { CHART_PERIODS } from "src/Helpers";
 import { fillGaps, getChartPrices } from "../prices";
 import { newPriceEmitter } from "./newPriceEmitter";
 
@@ -134,13 +133,14 @@ export const dataFeed = {
           onErrorCallback(error);
       }
     },
-    subscribeBars: (_symbolInfo, resolution, onRealtimeCallback, subscribeUID, _onResetCacheNeededCallback) => {
+    subscribeBars: (_symbolInfo, resolution, onRealtimeCallback, subscribeUID, onResetCacheNeededCallback) => {
       console.debug(`[subscribeBars]: id: ${subscribeUID}, resolution: ${resolution}`);
       activeSubscriptions[subscribeUID] = true;
       newPriceEmitter.on('update', (bar) => {
         if (activeSubscriptions[subscribeUID]) {
           onRealtimeCallback({ ...bar, time: bar.time * 1000 })
         }
+        onResetCacheNeededCallback()
       })
     },
     unsubscribeBars: (subscribeUID) => {
