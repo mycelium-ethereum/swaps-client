@@ -27,7 +27,7 @@ const config = {
   ]
 };
 
-let activeSubscriptions = {};
+let activeSubscription;
 
 const allSymbols = ["ETH/USD", "BTC/USD", "LINK/USD", "CRV/USD", "BAL/USD", "UNI/USD", "FXS/USD"]
 
@@ -135,17 +135,18 @@ export const dataFeed = {
     },
     subscribeBars: (_symbolInfo, resolution, onRealtimeCallback, subscribeUID, onResetCacheNeededCallback) => {
       console.debug(`[subscribeBars]: id: ${subscribeUID}, resolution: ${resolution}`);
-      activeSubscriptions[subscribeUID] = true;
-      newPriceEmitter.on('update', (bar) => {
+      if (activeSubscription) {
+        newPriceEmitter.removeListener('update', activeSubscription)
+      }
+      const onBarUpdate = (bar) => {
         console.debug(`[subscribeBars]: found bar on ${subscribeUID}`);
-        if (activeSubscriptions[subscribeUID]) {
-          onRealtimeCallback({ ...bar, time: bar.time * 1000 })
-        }
+        onRealtimeCallback({ ...bar, time: bar.time * 1000 })
         onResetCacheNeededCallback()
-      })
+      }
+      activeSubscription = onBarUpdate;
+      newPriceEmitter.on('update', onBarUpdate)
     },
     unsubscribeBars: (subscribeUID) => {
       console.debug(`[unsubscribeBars]: id: ${subscribeUID}`);
-      activeSubscriptions[subscribeUID] = false;
     },
   };
