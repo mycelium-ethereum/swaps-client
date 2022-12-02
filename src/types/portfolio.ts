@@ -21,7 +21,7 @@ export interface Position {
   collateral: BigNumber;
   asset: string;
   liquidationPrice: BigNumber;
-  leverage: string;
+  leverage: number;
   assetIcon?: string;
   averageEntryPrice: BigNumber;
   currentPrice: BigNumber;

@@ -507,7 +507,7 @@ export function useOpenPositions(chainId, account) {
       size: bigNumberify(datum.size),
       collateral: bigNumberify(datum.collateral),
       liquidationPrice: bigNumberify(datum.liquidationPrice),
-      leverage: bigNumberify(datum.size).div(datum.collateral).toString(),
+      leverage: parseFloat(ethers.utils.formatUnits(datum.size)) / parseFloat(ethers.utils.formatUnits(datum.collateral)),
       asset: datum.indexToken,
       averageEntryPrice: bigNumberify(datum.averageEntryPrice),
       currentPrice: bigNumberify(datum.price),
