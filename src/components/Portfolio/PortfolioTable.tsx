@@ -93,7 +93,12 @@ export const PositionRow: FC<PositionRowProps> = ({
           <span>{`${isUp ? "+" : "-"}$${formatAmount(amount, USD_DECIMALS, 2, true)}`}</span>
           {collateral && percentageChange && (
             <Styled.SmallLabel>
-              {`${isUp ? "+" : "-"}$${formatAmount(collateral.div(percentageChangeBN), USD_DECIMALS, 2, true)}`}
+              {`${isUp ? "+" : "-"}$${formatAmount(
+                collateral.mul(percentageChangeBN).div(100),
+                USD_DECIMALS,
+                2,
+                true
+              )}`}
             </Styled.SmallLabel>
           )}
         </Styled.FlexColEnd>
