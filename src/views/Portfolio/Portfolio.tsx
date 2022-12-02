@@ -25,6 +25,7 @@ enum SectionEnum {
   OpenPositions = "Open Positions",
   ClosedPositions = "Closed Positions",
   OpenOrders = "Open Orders",
+  ActivityGraph = "Activity Graph",
 }
 
 const INACTIVE_TOKENS = ["USDC", "USDT", "DAI", "FRAX"];
@@ -38,6 +39,7 @@ export default function Portfolio() {
   const [showOpenPositionsSection, setShowOpenPositionsSection] = useState(true);
   const [showClosedPositionsSection, setShowClosedPositionsSection] = useState(true);
   const [showOpenOrdersSection, setShowOpenOrdersSection] = useState(true);
+  const [showActivityGraph, setShowActivityGraph] = useState(true);
 
   const data: any = useParams();
   const { id: account } = data;
@@ -56,6 +58,7 @@ export default function Portfolio() {
     [SectionEnum.OpenPositions]: { state: showOpenPositionsSection, func: setShowOpenPositionsSection },
     [SectionEnum.ClosedPositions]: { state: showClosedPositionsSection, func: setShowClosedPositionsSection },
     [SectionEnum.OpenOrders]: { state: showOpenOrdersSection, func: setShowOpenOrdersSection },
+    [SectionEnum.ActivityGraph]: { state: showActivityGraph, func: setShowActivityGraph },
   };
 
   const handleToggleSection = (SectionType: SectionEnum) => {
@@ -170,7 +173,7 @@ export default function Portfolio() {
         </Styled.RightSide>
       </Styled.SectionGrid>
       <Styled.SectionContainer>
-        <Styled.SectionHeading onClick={() => handleToggleSection(SectionEnum.OpenOrders)}>
+        <Styled.SectionHeading onClick={() => handleToggleSection(SectionEnum.ActivityGraph)}>
           <Styled.FlexRow alignCenter>
             <Styled.SectionLabel>Trading View</Styled.SectionLabel>
             {selectedAssets?.length &&
@@ -182,9 +185,9 @@ export default function Portfolio() {
               ))}
             <Styled.FullScreenButton>Full Screen View</Styled.FullScreenButton>
           </Styled.FlexRow>
-          <Styled.ChevronDown isActive={showOpenOrdersSection} />
+          <Styled.ChevronDown isActive={showActivityGraph} />
         </Styled.SectionHeading>
-        {showOpenOrdersSection && <></>}
+        {showActivityGraph && <></>}
       </Styled.SectionContainer>
     </Styled.PortfolioContainer>
   );
