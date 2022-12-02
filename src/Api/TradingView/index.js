@@ -137,6 +137,7 @@ export const dataFeed = {
       console.debug(`[subscribeBars]: id: ${subscribeUID}, resolution: ${resolution}`);
       activeSubscriptions[subscribeUID] = true;
       newPriceEmitter.on('update', (bar) => {
+        console.debug(`[subscribeBars]: found bar on ${subscribeUID}`);
         if (activeSubscriptions[subscribeUID]) {
           onRealtimeCallback({ ...bar, time: bar.time * 1000 })
         }
