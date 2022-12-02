@@ -116,7 +116,7 @@ async function getChartPricesFromStatsV1(_chainId: ChainId, symbol: TokenSymbol,
   let json = await res.json();
   let prices = json?.prices;
   if (!prices || prices?.length < 10) {
-    throw new Error(`not enough prices data: ${prices?.length}`);
+    // throw new Error(`not enough prices data: ${prices?.length}`);
   }
 
   const OBSOLETE_THRESHOLD = Date.now() / 1000 - 60 * 30; // 30 min ago
@@ -154,12 +154,16 @@ async function getChartPricesFromStats(_chainId: ChainId, symbol: TokenSymbol, p
     symbol = symbol.substr(1);
   }
 
+  const now = Math.floor(Date.now() / 1000);
   const timeDiff = CHART_PERIODS[period] * 3000;
-  const from = range?.from ? range?.from - timeDiff : Math.floor(Date.now() / 1000 - timeDiff);
+  const from = range?.from ? range?.from: now - timeDiff;
+  const to = range?.to ? range?.to : now;
   const pageSize = range?.countBack ? range?.countBack : 1000;
-  const hostname = "https://api.mycelium.xyz";
+
+  // const hostname = "https://api.mycelium.xyz";
+  const hostname = "https://dev.api.mycelium.xyz";
   // const hostname = "http://localhost:3030";
-  const url = `${hostname}/trs/candles?ticker=${symbol}&preferableChainId=42161&period=${period}&from=${from}&pageSize=${pageSize}&preferableSource=fast`;
+  const url = `${hostname}/trs/candles?ticker=${symbol}&preferableChainId=42161&period=${period}&from=${from}&to=${to}&pageSize=${pageSize}&preferableSource=fast`;
   const TIMEOUT = 5000;
   const res: Response = await new Promise(async (resolve, reject) => {
     let done = false;
@@ -189,8 +193,8 @@ async function getChartPricesFromStats(_chainId: ChainId, symbol: TokenSymbol, p
 
   const json = await res.json();
   let prices = json?.rows;
-  const min = range?.countBack ? Math.min(1000, range.countBack) : 10
-  if (!prices || prices?.length < min) {
+  // const min = range?.countBack ? Math.min(1000, range.countBack) : 10
+  if (!prices) {
     throw new Error(`not enough prices data: ${prices?.length}`);
   }
 
@@ -305,7 +309,7 @@ export const getChartPrices = async (chainId: ChainId, symbol: TokenSymbol, peri
     console.warn(ex);
     console.warn("Switching to v1 stats data");
     try {
-      return await getChartPricesFromStatsV1(chainId, symbol, period, range);
+      return await getChartPricesFromStats(chainId, symbol, period, range);
     } catch (ex) {
       console.warn("Switching to graph chainlink data");
       try {

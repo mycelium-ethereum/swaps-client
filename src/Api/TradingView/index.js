@@ -1,4 +1,4 @@
-import { CHART_PERIODS } from "src/Helpers";
+import {CHART_PERIODS} from "src/Helpers";
 import { roundUpTime } from "src/utils/common";
 import { fillGaps, getChartPrices } from "../prices";
 import { newPriceEmitter } from "./newPriceEmitter";
@@ -28,6 +28,7 @@ const config = {
   ]
 };
 
+let activeSubscriptions = {};
 
 const allSymbols = ["ETH/USD", "BTC/USD", "LINK/USD", "CRV/USD", "BAL/USD", "UNI/USD", "FXS/USD"]
 
@@ -76,7 +77,7 @@ export const dataFeed = {
         supported_resolutions: supportedResolutions,
         has_daily: true,
         dailyMultipliers: ['1'],
-        has_empty_bars: true
+        // has_empty_bars: true
       };
 
       if (market.split("/")[1].match(/USD|EUR|JPY|AUD|GBP|KRW|CNY/)) {
@@ -86,54 +87,64 @@ export const dataFeed = {
     },
 
     getBars: async (symbolInfo, resolution, periodParams, onResult, onErrorCallback) => {
-      const { from, to, firstDataRequest, countBack } = periodParams;
+      let { from, to, countBack } = periodParams;
       console.log('[getBars]: Method call', symbolInfo, resolution, periodParams);
       try {
         const symbol = symbolInfo.name.split("/")[0];
         const period = supportedResolutionsToPeriod[resolution];
 
-        if (countBack === 0 || !firstDataRequest) {
-          onResult([], { noData: true });
+        let cumulativePrices = [];
+        let prices = [];
+        const timeDiff = CHART_PERIODS[period] * 1000;
+        let count = 0;
+        while (cumulativePrices.length < countBack) {
+          if (count > 0) {
+            to = from;
+            from = from - (count * timeDiff)
+          }
+          prices = await getChartPrices(42161, symbol, period, { from, to });
+          console.log(`[getBars]: found ${prices.length} more bars, target: ${countBack} bars, cumulative total: ${cumulativePrices.length + prices.length} bars`);
+          if (!prices || prices.length === 0) {
+            break;
+          } else {
+            cumulativePrices = cumulativePrices.concat(prices)
+            count += 1;
+          }
         }
 
-        const prices = await getChartPrices(42161, symbol, period, { from, to });
-
-        if (prices.length === 0) {
-          // "noData" should be set if there is no data in the requested period.
-          onResult([], { noData: true });
-          return;
-        }
-
-        // const prices = fillGaps(prices_, CHART_PERIODS[period])
-
-        const bars = prices.map((el) => {
+        const uniqueBars = {};
+        fillGaps(cumulativePrices, CHART_PERIODS[period]).forEach((el) => {
           let low = el.low;
           if (low === 0) {
             low = el.open * 0.9996;
           }
-          return {
+          uniqueBars[el.time] = {
             ...el,
             low,
             time: el.time * 1000, //TradingView requires bar time in ms
-          };
+          }
         })
+        const bars = Object.values(uniqueBars).sort((a, b) => a.time - b.time);
+        console.log(`[getBars]: returned ${bars.length} bar(s), countBack: ${countBack}`);
 
-        console.log(`[getBars]: returned ${bars.length} bar(s)`);
-        onResult(bars, { noData: false });
+        onResult(bars, { noData: bars.length < countBack });
+
       } catch (error) {
           console.log('[getBars]: Get error', error);
           onErrorCallback(error);
       }
     },
-    subscribeBars: (_symbolInfo, resolution, onRealtimeCallback, _subscribeUID, onResetCacheNeededCallback) => {
-      console.debug("=====subscribeBars runnning");
+    subscribeBars: (_symbolInfo, resolution, onRealtimeCallback, subscribeUID, _onResetCacheNeededCallback) => {
+      console.debug(`[subscribeBars]: id: ${subscribeUID}, resolution: ${resolution}`);
+      activeSubscriptions[subscribeUID] = true;
       newPriceEmitter.on('update', (bar) => {
-        const period = supportedResolutionsToPeriod[resolution]
-        onRealtimeCallback({ ...bar, time: roundUpTime(bar.time, period) * 1000 })
-        // onResetCacheNeededCallback();
+        if (activeSubscriptions[subscribeUID]) {
+          onRealtimeCallback({ ...bar, time: bar.time * 1000 })
+        }
       })
     },
-    unsubscribeBars: (_subscriberUID) => {
-      console.debug("=====unsubscribeBars running");
+    unsubscribeBars: (subscribeUID) => {
+      console.debug(`[unsubscribeBars]: id: ${subscribeUID}`);
+      activeSubscriptions[subscribeUID] = false;
     },
   };
