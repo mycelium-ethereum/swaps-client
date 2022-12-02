@@ -2,7 +2,7 @@ import { Redirect, useParams } from "react-router-dom";
 import * as Styled from "./Portfolio.styles";
 import { useChainId } from "src/Helpers";
 import { getTokens } from "src/data/Tokens";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Token } from "src/types/tokens";
 import { PortfolioHeader } from "src/components/Portfolio/PortfolioHeader";
 import { OpenPositionsTable } from "src/components/Portfolio/Tables/OpenPositions";
@@ -17,6 +17,7 @@ import { OpenOrdersTable } from "src/components/Portfolio/Tables/OpenOrders";
 import { OtherStatsTable } from "src/components/Portfolio/Tables/OtherStats";
 import assetPnlPlaceholder from "src/img/temp/asset-pnl-placeholder.png";
 import { PortfolioPeriod, PortfolioPeriodEnum } from "src/types/portfolio";
+import { useOpenPositions } from "src/Api";
 
 enum SectionEnum {
   AssetPnl = "Asset PnL",
@@ -38,7 +39,12 @@ export default function Portfolio() {
   const [showClosedPositionsSection, setShowClosedPositionsSection] = useState(true);
   const [showOpenOrdersSection, setShowOpenOrdersSection] = useState(true);
 
+  const data: any = useParams();
+  const { id: account } = data;
   const { chainId } = useChainId();
+  const tempAccount = "0xaee2Ae13EBf81d38df5a9Ed7013E80EA3f72e39b";
+  const { openPositions } = useOpenPositions(chainId, tempAccount);
+  console.log(openPositions);
   const tokens: Token[] = getTokens(chainId);
   const filteredTokens = tokens.filter((token) => !INACTIVE_TOKENS.includes(token.symbol));
 
@@ -50,15 +56,19 @@ export default function Portfolio() {
     [SectionEnum.OpenOrders]: { state: showOpenOrdersSection, func: setShowOpenOrdersSection },
   };
 
+  const handleToggleSection = (SectionType: SectionEnum) => {
+    const state = SHOW_SECTIONS_STATE_MAP[SectionType].state;
+    const setShowSection = SHOW_SECTIONS_STATE_MAP[SectionType].func;
+    setShowSection(!state);
+  };
+
   useEffect(() => {
-    if (filteredTokens?.length) {
+    if (filteredTokens?.length && !selectedAssets?.length) {
       setSelectedAssets([filteredTokens[0]]);
     }
-  }, [filteredTokens]);
+  }, [filteredTokens, selectedAssets]);
 
-  const data: any = useParams();
-  const { id: address } = data;
-  if (!address) {
+  if (!account) {
     return <Redirect to="/" />;
   }
 
@@ -78,12 +88,6 @@ export default function Portfolio() {
     }
   };
 
-  const handleToggleSection = (SectionType: SectionEnum) => {
-    const state = SHOW_SECTIONS_STATE_MAP[SectionType].state;
-    const setShowSection = SHOW_SECTIONS_STATE_MAP[SectionType].func;
-    setShowSection(!state);
-  };
-
   const handlePeriodChange = (period: PortfolioPeriodEnum) => {
     setSelectedPeriod(period);
   };
@@ -91,7 +95,7 @@ export default function Portfolio() {
   return (
     <Styled.PortfolioContainer>
       <PortfolioHeader
-        address={address}
+        account={account}
         tokens={filteredTokens}
         selectedAssets={selectedAssets}
         selectedPeriod={selectedPeriod}
@@ -111,7 +115,7 @@ export default function Portfolio() {
             {showAssetPnlSection && <img src={assetPnlPlaceholder} width="100%" height="100%" alt="temp placeholder" />}
           </Styled.SectionContainer>
           <Styled.SectionContainer>
-            <Styled.SectionHeading onClick={() => handleToggleSection(SectionEnum.AssetPnl)}>
+            <Styled.SectionHeading onClick={() => handleToggleSection(SectionEnum.OtherStats)}>
               <Styled.SectionLabel>Other Stats</Styled.SectionLabel>
               <Styled.ChevronDown isActive={showOtherStatsTable} />
             </Styled.SectionHeading>
@@ -123,13 +127,11 @@ export default function Portfolio() {
             <Styled.SectionHeading onClick={() => handleToggleSection(SectionEnum.OpenPositions)}>
               <Styled.FlexRow>
                 <Styled.SectionLabel>Open Positions</Styled.SectionLabel>
-                {openPositionsDummyData?.length && (
-                  <Styled.IndicatorBadge>{openPositionsDummyData.length}</Styled.IndicatorBadge>
-                )}
+                {openPositions?.length && <Styled.IndicatorBadge>{openPositions.length}</Styled.IndicatorBadge>}
               </Styled.FlexRow>
               <Styled.ChevronDown isActive={showOpenPositionsSection} />
             </Styled.SectionHeading>
-            {showOpenPositionsSection && <OpenPositionsTable data={openPositionsDummyData} />}
+            {showOpenPositionsSection && <OpenPositionsTable data={openPositions} tokens={filteredTokens} />}
           </Styled.SectionContainer>
 
           <Styled.SectionContainer>

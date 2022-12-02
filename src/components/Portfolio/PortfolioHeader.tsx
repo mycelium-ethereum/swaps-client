@@ -9,7 +9,7 @@ const INITIAL_VIEWABLE_ASSETS = 3;
 const PORTFOLIO_PERIODS = [PortfolioPeriodEnum.Day, PortfolioPeriodEnum.Week, PortfolioPeriodEnum.Month];
 
 interface PortfolioHeaderProps {
-  address: string;
+  account: string;
   tokens: Token[];
   selectedAssets: Token[];
   selectedPeriod: PortfolioPeriod;
@@ -21,7 +21,7 @@ interface PortfolioHeaderProps {
 }
 
 export const PortfolioHeader: FC<PortfolioHeaderProps> = ({
-  address,
+  account,
   tokens,
   selectedAssets,
   selectedPeriod,
@@ -35,8 +35,8 @@ export const PortfolioHeader: FC<PortfolioHeaderProps> = ({
     <Styled.Label isGrey>User</Styled.Label>
     <Styled.UserContainer>
       <Styled.FlexRow>
-        {address ? <Davatar size={32} address={address} /> : <Styled.EmptyAvatar />}
-        {address && <Styled.UserAddress>{truncateMiddleEthAddress(address)}</Styled.UserAddress>}
+        {account ? <Davatar size={32} address={account} /> : <Styled.EmptyAvatar />}
+        {account && <Styled.UserAddress>{truncateMiddleEthAddress(account)}</Styled.UserAddress>}
       </Styled.FlexRow>
       <Styled.ClaimAccountButton>Claim Account</Styled.ClaimAccountButton>
     </Styled.UserContainer>

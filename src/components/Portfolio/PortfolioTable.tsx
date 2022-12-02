@@ -1,8 +1,12 @@
 import { FC, ReactNode } from "react";
 import * as Styled from "src/views/Portfolio/Portfolio.styles";
-import { OpenOrder, Side } from "src/types/portfolio";
+import { OpenOrder, Position, SideEnum } from "src/types/portfolio";
 import positionUpIcon from "src/img/arrow-circle-up.svg";
 import positionDownIcon from "src/img/arrow-circle-down.svg";
+import { bigNumberify, formatAmount, USD_DECIMALS } from "src/Helpers";
+import { getPnl } from "src/utils/portfolio";
+
+const ETH_DEFAULT_ICON = "https://assets.coingecko.com/coins/images/279/small/ethereum.png?1595348880";
 
 interface PortfolioTableProps {
   noRightAlign?: boolean;
@@ -25,44 +29,34 @@ export const PortfolioTable: FC<PortfolioTableProps> = ({ noRightAlign, headings
   </Styled.PortfolioTable>
 );
 
-interface PositionRowProps {
-  entryTime: string;
-  entryDate: string;
-  entryPrice: number;
-  exitTime?: string;
-  exitDate?: string;
-  exitPrice?: number;
-  side: Side;
-  asset: string;
-  leverage: number;
-  notionalUsd: number;
-  collateralUsd: number;
-  pnl: number;
+interface PositionRowProps extends Omit<Position, "asset"> {
+  assetIcon?: string;
+  assetSymbol?: string;
 }
 
 export const PositionRow: FC<PositionRowProps> = ({
-  entryTime,
-  entryDate,
-  entryPrice,
-  exitTime,
-  exitDate,
-  exitPrice,
   side,
+  size,
+  collateral,
+  liquidationPrice,
   leverage,
-  asset,
-  notionalUsd,
-  collateralUsd,
-  pnl,
-}) => (
-  <Styled.TableRow>
-    <Styled.TableCell>
-      <Styled.FlexRow>
+  assetIcon,
+  assetSymbol,
+  averageEntryPrice,
+  currentPrice,
+}) => {
+  const { isUp, percentage, amount } = getPnl(side === SideEnum.Short, averageEntryPrice, currentPrice, size);
+
+  return (
+    <Styled.TableRow>
+      <Styled.TableCell>
+        {/* <Styled.FlexRow>
         <Styled.DateTimeLabel>{entryTime}</Styled.DateTimeLabel>
         <Styled.DateTimeLabel>{entryDate}</Styled.DateTimeLabel>
-      </Styled.FlexRow>
-      <span>{entryPrice}</span>
-    </Styled.TableCell>
-    {exitTime && exitDate && exitPrice && (
+      </Styled.FlexRow> */}
+        <span>${formatAmount(averageEntryPrice, USD_DECIMALS, 2, true)}</span>
+      </Styled.TableCell>
+      {/* {exitTime && exitDate && exitPrice && (
       <Styled.TableCell>
         <Styled.FlexRow>
           <Styled.DateTimeLabel>{exitTime}</Styled.DateTimeLabel>
@@ -70,33 +64,36 @@ export const PositionRow: FC<PositionRowProps> = ({
         </Styled.FlexRow>
         <span>{exitPrice}</span>
       </Styled.TableCell>
-    )}
-    <Styled.TableCell>
-      <Styled.SideLabel isShort={side === "Short"}>{side}</Styled.SideLabel>
-    </Styled.TableCell>
-    <Styled.TableCell>
-      <span>{leverage}x</span>
-    </Styled.TableCell>
-    <Styled.TableCell>
-      {/* {asset} */}
-      <Styled.AssetIcon src="https://assets.coingecko.com/coins/images/279/small/ethereum.png?1595348880" alt="ETH" />
-    </Styled.TableCell>
-    <Styled.TableCell>
-      <span>{notionalUsd}</span>
-    </Styled.TableCell>
-    <Styled.TableCell>
-      <span>{collateralUsd}</span>
-    </Styled.TableCell>
-    <Styled.PnlCell>
-      <Styled.FlexRowEnd alignCenter wrap>
-        <img src={positionUpIcon} alt="position up" />
-        <span>1.12%</span>
-        <span>{pnl}</span>
-        {/* Change to calculation later */}
-      </Styled.FlexRowEnd>
-    </Styled.PnlCell>
-  </Styled.TableRow>
-);
+    )} */}
+      <Styled.TableCell>
+        <span>${formatAmount(liquidationPrice, USD_DECIMALS, 2, true)}</span>
+      </Styled.TableCell>
+      <Styled.TableCell>
+        <Styled.SideLabel isShort={side === SideEnum.Short}>{side}</Styled.SideLabel>
+      </Styled.TableCell>
+      <Styled.TableCell>
+        <span>{parseFloat(leverage).toFixed(1)}x</span>
+      </Styled.TableCell>
+      <Styled.TableCell>
+        <Styled.AssetIcon src={assetIcon || ETH_DEFAULT_ICON} alt={assetSymbol || "ETH"} />
+      </Styled.TableCell>
+      <Styled.TableCell>
+        <span>${formatAmount(size, USD_DECIMALS, 2, true)}</span>
+      </Styled.TableCell>
+      <Styled.TableCell>
+        <span>${formatAmount(collateral, USD_DECIMALS, 2, true)}</span>
+      </Styled.TableCell>
+      <Styled.PnlCell isDown={isUp}>
+        <Styled.FlexRowEnd alignCenter wrap>
+          <img src={positionUpIcon} alt="position up" className="position-up-arrow" />
+          <img src={positionDownIcon} alt="position up" className="position-down-arrow" />
+          <span>{percentage.toNumber()}%</span>
+          <span>{`${!isUp ? "" : "-"}$${formatAmount(amount, USD_DECIMALS, 2, true)}`}</span>
+        </Styled.FlexRowEnd>
+      </Styled.PnlCell>
+    </Styled.TableRow>
+  );
+};
 
 interface OpenOrderRowProps extends OpenOrder {}
 

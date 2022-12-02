@@ -235,14 +235,22 @@ export const AssetIcon = styled.img`
   border-radius: 9999px;
 `;
 
-export const PnlCell = styled(TableCell) <{ isShort: boolean }>`
-  color: ${({ isShort }) => (isShort ? 'var(--short-active)' : 'var(--long-active)')};
+export const PnlCell = styled(TableCell) <{ isDown: boolean }>`
+  color: ${({ isDown }) => (isDown ? 'var(--short-active)' : 'var(--long-active)')};
   img {
+    width: 14px;
+    height: 14px;
     margin-right: 3px;
   }
   span:first-of-type {
     display: inline-block;
     margin-right: 4px;
+  }
+  .position-up-arrow {
+    display: ${({ isDown }) => (isDown ? 'none' : 'inline')};
+  }
+  .position-down-arrow {
+    display: ${({ isDown }) => (isDown ? 'inline' : 'none')};
   }
 `;
 

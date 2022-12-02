@@ -1,9 +1,11 @@
 import { FC } from "react";
 import { PortfolioTable, PositionRow } from "src/components/Portfolio/PortfolioTable";
 import { Position, Side } from "src/types/portfolio";
+import { Token } from "src/types/tokens";
 
 const openPositionsTableHeadings = [
   "ENTRY (USD)",
+  "LIQ. PRICE (USD)",
   "SIDE",
   "LEVERAGE",
   "ASSET",
@@ -14,22 +16,23 @@ const openPositionsTableHeadings = [
 
 interface OpenPositionsTableProps {
   data: Position[];
+  tokens: Token[];
 }
 
-export const OpenPositionsTable: FC<OpenPositionsTableProps> = ({ data }) => (
+export const OpenPositionsTable: FC<OpenPositionsTableProps> = ({ data, tokens }) => (
   <PortfolioTable headings={openPositionsTableHeadings}>
-    {data.map(({ entryTime, entryDate, entryPrice, side, leverage, asset, notionalUsd, collateralUsd, pnl }, i) => (
+    {data.map(({ side, size, collateral, liquidationPrice, leverage, asset, averageEntryPrice, currentPrice }, i) => (
       <PositionRow
-        key={i}
-        entryTime={entryTime}
-        entryDate={entryDate}
-        entryPrice={entryPrice}
+        key={size.toString()}
         side={side as Side}
+        size={size}
+        collateral={collateral}
+        liquidationPrice={liquidationPrice}
         leverage={leverage}
-        asset={asset}
-        notionalUsd={notionalUsd}
-        collateralUsd={collateralUsd}
-        pnl={pnl}
+        assetIcon={tokens.find((token) => token.address === asset)?.imageUrl}
+        assetSymbol={tokens.find((token) => token.address === asset)?.symbol}
+        averageEntryPrice={averageEntryPrice}
+        currentPrice={currentPrice}
       />
     ))}
   </PortfolioTable>
