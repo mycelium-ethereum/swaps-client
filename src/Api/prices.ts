@@ -60,14 +60,17 @@ export function fillGaps(prices: Price[], periodSeconds: number) {
     }
 
     prevTime = time;
-    
     if (low === 0) {
       newPrices.push({
         ...prices[i],
+        open: newPrices[i - 1].close,
         low: open * 0.9996,
       });
     } else {
-      newPrices.push(prices[i]);
+      newPrices.push(({
+        ...prices[i],
+        open: newPrices[i - 1].close,
+      }));
     }
   }
 
@@ -309,7 +312,7 @@ export const getChartPrices = async (chainId: ChainId, symbol: TokenSymbol, peri
     console.warn(ex);
     console.warn("Switching to v1 stats data");
     try {
-      return await getChartPricesFromStats(chainId, symbol, period, range);
+      return await getChartPricesFromStatsV1(chainId, symbol, period, range);
     } catch (ex) {
       console.warn("Switching to graph chainlink data");
       try {
