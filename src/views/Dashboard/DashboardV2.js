@@ -60,6 +60,7 @@ import SEO from "../../components/Common/SEO";
 import { ADDRESS_ZERO } from "@uniswap/v3-sdk";
 import { useInfoTokens } from "src/hooks/useInfoTokens";
 import { getServerUrl } from "src/lib";
+import { getComposition } from "src/utils/mlp";
 
 const { AddressZero } = ethers.constants;
 
@@ -365,25 +366,11 @@ export default function DashboardV2() {
 
   const totalStatsStartDate = "14 Aug 2022";
 
-  let stableMlp = 0;
-  let totalMlp = 0;
-
-  let mlpPool = tokenList.map((token) => {
-    const tokenInfo = infoTokens[token.address];
-    if (tokenInfo.usdgAmount && adjustedUsdgSupply && !adjustedUsdgSupply.eq(0)) {
-      const currentWeightBps = tokenInfo.usdgAmount.mul(BASIS_POINTS_DIVISOR).div(adjustedUsdgSupply);
-      if (tokenInfo.isStable) {
-        stableMlp += parseFloat(`${formatAmount(currentWeightBps, 2, 2, false)}`);
-      }
-      totalMlp += parseFloat(`${formatAmount(currentWeightBps, 2, 2, false)}`);
-      return {
-        fullname: token.name,
-        name: token.symbol,
-        value: parseFloat(`${formatAmount(currentWeightBps, 2, 2, false)}`),
-      };
-    }
-    return null;
-  });
+  let {
+    stableMlp,
+    totalMlp,
+    mlpPool
+  } = getComposition(tokenList, infoTokens, adjustedUsdgSupply)
 
   let stablePercentage = totalMlp > 0 ? ((stableMlp * 100) / totalMlp).toFixed(2) : "0.0";
 
