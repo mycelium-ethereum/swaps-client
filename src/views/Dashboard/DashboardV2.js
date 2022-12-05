@@ -227,28 +227,26 @@ export default function DashboardV2() {
 
   const tvl = aum?.add(stakingTvl);
 
-  let adjustedUsdgSupply = bigNumberify(0);
-
-  for (let i = 0; i < tokenList.length; i++) {
-    const token = tokenList[i];
+  let totalManagedUsd = tokenList.reduce((sum, token) => {
     const tokenInfo = infoTokens[token.address];
-    if (tokenInfo && tokenInfo.usdgAmount) {
-      adjustedUsdgSupply = adjustedUsdgSupply.add(tokenInfo.usdgAmount);
+    if (tokenInfo && tokenInfo.managedUsd) {
+      return sum.add(tokenInfo.managedUsd);
     }
-  }
+    return sum
+  }, bigNumberify(0))
 
   const getWeightText = (tokenInfo) => {
     if (
       !tokenInfo.weight ||
-      !tokenInfo.usdgAmount ||
-      !adjustedUsdgSupply ||
-      adjustedUsdgSupply.eq(0) ||
+      !tokenInfo.managedUsd ||
+      !totalManagedUsd ||
+      totalManagedUsd.eq(0) ||
       !totalTokenWeights
     ) {
       return "...";
     }
 
-    const currentWeightBps = tokenInfo.usdgAmount.mul(BASIS_POINTS_DIVISOR).div(adjustedUsdgSupply);
+    const currentWeightBps = tokenInfo.managedUsd.mul(BASIS_POINTS_DIVISOR).div(totalManagedUsd);
     const targetWeightBps = tokenInfo.weight.mul(BASIS_POINTS_DIVISOR).div(totalTokenWeights);
 
     const weightText = `${formatAmount(currentWeightBps, 2, 2, false)}% / ${formatAmount(
@@ -370,7 +368,7 @@ export default function DashboardV2() {
     stableMlp,
     totalMlp,
     mlpPool
-  } = getComposition(tokenList, infoTokens, adjustedUsdgSupply)
+  } = getComposition(tokenList, infoTokens, totalManagedUsd)
 
   let stablePercentage = totalMlp > 0 ? ((stableMlp * 100) / totalMlp).toFixed(2) : "0.0";
 
