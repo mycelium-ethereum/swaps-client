@@ -20,7 +20,6 @@ import OrderBook from "./abis/OrderBook.json";
 import { getWhitelistedTokens, isValidToken } from "./data/Tokens";
 import ComingSoonTooltip from "./components/Tooltip/ComingSoon";
 import { isAddress } from "ethers/lib/utils";
-import { copyToClipboard } from './utils/common';
 import {
   REFERRAL_CODE_QUERY_PARAMS,
   CURRENT_PROVIDER_LOCALSTORAGE_KEY,
@@ -58,7 +57,7 @@ const GAS_PRICE_ADJUSTMENT_MAP = {
 
 const MAX_GAS_PRICE_MAP = {};
 
-const alchemyWhitelistedDomains = ["swaps.mycelium.xyz"];
+const alchemyWhitelistedDomains = ["swaps.mycelium.xyz", "localhost:3010"];
 
 export function getFallbackArbitrumRpcUrl(useWebsocket) {
   if (useWebsocket) {
