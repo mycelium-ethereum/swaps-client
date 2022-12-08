@@ -55,7 +55,7 @@ const GAS_PRICE_ADJUSTMENT_MAP = {
 
 const MAX_GAS_PRICE_MAP = {};
 
-const alchemyWhitelistedDomains = ["swaps.mycelium.xyz"];
+const alchemyWhitelistedDomains = ["swaps.mycelium.xyz", "localhost:3010"];
 
 export function getFallbackArbitrumRpcUrl(useWebsocket) {
   if (useWebsocket) {
