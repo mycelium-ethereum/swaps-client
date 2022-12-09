@@ -63,13 +63,11 @@ export function fillGaps(prices: Price[], periodSeconds: number) {
     if (low === 0) {
       newPrices.push({
         ...prices[i],
-        open: newPrices[i - 1].close,
         low: open * 0.9996,
       });
     } else {
       newPrices.push(({
         ...prices[i],
-        open: newPrices[i - 1].close,
       }));
     }
   }
