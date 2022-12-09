@@ -598,6 +598,9 @@ export default function PositionSeller(props) {
     if (isPositionRouterApproving) {
       return false;
     }
+    if (isCollateralPoolCapacityExceeded || isNotEnoughReceiveTokenLiquidity) {
+      return false;
+    }
 
     return true;
   };
@@ -805,7 +808,21 @@ export default function PositionSeller(props) {
     );
   }, [existingOrder, infoTokens]);
 
-  function renderMinProfitWarning() {
+  const renderWarning = () => {
+    if (isNotEnoughReceiveTokenLiquidity) {
+      return (
+        <div className="Confirmation-box-warning">
+          There is not enough available liquidity to receive {receiveToken.symbol}. Choose a different token to receive
+        </div>
+      )
+    } else if (isCollateralPoolCapacityExceeded) {
+      return (
+        <div className="Confirmation-box-warning">
+          Receiving {receiveToken.symbol} will push the {collateralToken.symbol} balance overweight. Must set {collateralToken.symbol} as the receiving token
+        </div>
+      )
+    }
+
     if (MIN_PROFIT_TIME === 0) {
       return null;
     }
@@ -982,7 +999,7 @@ export default function PositionSeller(props) {
               </div>
             </div>
           )}
-          {renderMinProfitWarning()}
+          {renderWarning()}
           {shouldShowExistingOrderWarning && renderExistingOrderWarning()}
           <div className="PositionEditor-info-box">
             <div className="Exchange-info-row PositionSeller-receive-row bottom-line">
@@ -1004,7 +1021,7 @@ export default function PositionSeller(props) {
                     // if it applied on modal inside another modal
                     disableBodyScrollLock={true}
                     className={cx("PositionSeller-token-selector", {
-                      warning: isNotEnoughReceiveTokenLiquidity || isCollateralPoolCapacityExceeded,
+                      error: isNotEnoughReceiveTokenLiquidity || isCollateralPoolCapacityExceeded,
                     })}
                     label={"Receive"}
                     showBalances={false}
