@@ -52,8 +52,8 @@ export function fillGaps(prices: Price[], periodSeconds: number) {
           time: time - j * periodSeconds,
           open,
           close: open,
-          high: open * 1.0003,
-          low: open * 0.9996,
+          high: open, // * 1.0003, 
+          low: open // * 0.9996,
         });
         j--;
       }
