@@ -4,7 +4,7 @@ import Tooltip from "../Tooltip/Tooltip";
 import Modal from "../Modal/Modal";
 
 import useSWR from "swr";
-import { ethers } from "ethers";
+import { BigNumber, ethers } from "ethers";
 
 import { IoMdSwap } from "react-icons/io";
 import { BsArrowRight } from "react-icons/bs";
@@ -58,6 +58,7 @@ import {
   NETWORK_NAME,
   getSpread,
   getUserTokenBalances,
+  limitDecimals,
 } from "../../Helpers";
 import { getConstant } from "../../Constants";
 import * as Api from "../../Api";
@@ -81,6 +82,7 @@ import swapImg from "../../img/swap.svg";
 import { useUserReferralCode } from "../../Api/referrals";
 import { getMaxLeverage, LeverageInput } from "./LeverageInput";
 import { REFERRAL_CODE_KEY } from "../../config/localstorage";
+import { TriggerCreator } from "./TriggerCreator";
 
 const SWAP_ICONS = {
   [LONG]: longImg,
@@ -327,6 +329,24 @@ export default function SwapBox(props) {
   const toTokenInfo = getTokenInfo(infoTokens, toTokenAddress);
 
   const hasMaxAvailableShort = isShort && toTokenInfo.maxAvailableShort && toTokenInfo.maxAvailableShort.gt(0);
+
+  const triggerReferencePrice = isShort ? infoTokens[toTokenAddress].maxPrice : infoTokens[toTokenAddress].minPrice;
+  const [stopLossTriggerPercent, setStopLossTriggerPercent] = React.useState(null); // number or null
+  const [takeProfitTriggerPercent, setTakeProfitTriggerPercent] = React.useState(null); // number or null
+
+  const stopLossTriggerPrice = calculateTriggerPrice(stopLossTriggerPercent, leverageOption, true);
+  const takeProfitTriggerPrice = calculateTriggerPrice(takeProfitTriggerPercent, leverageOption, false);
+
+  function calculateTriggerPrice(pnlPercent, leverage, isStopLoss) {
+    const PERCENT_PRECISION = 10000;
+    if (!pnlPercent) return null;
+    const priceMovePrecision = Math.round((pnlPercent * PERCENT_PRECISION) / leverage);
+    if (isLong ? isStopLoss : !isStopLoss) {
+      return triggerReferencePrice.mul(PERCENT_PRECISION - priceMovePrecision).div(PERCENT_PRECISION);
+    } else {
+      return triggerReferencePrice.mul(PERCENT_PRECISION + priceMovePrecision).div(PERCENT_PRECISION);
+    }
+  }
 
   const renderAvailableLiquidity = () => {
     if (!isLong && hasMaxAvailableShort) {
@@ -1779,6 +1799,7 @@ export default function SwapBox(props) {
   const showSizeSection = orderOption === STOP;
   const showTriggerPriceSection = !isSwap && !isMarketOrder;
   const showTriggerRatioSection = isSwap && !isMarketOrder;
+  const showMultiTriggerMaker = !isSwap && isMarketOrder;
 
   let fees;
   let feesUsd;
@@ -2060,17 +2081,13 @@ export default function SwapBox(props) {
               </div>
             </div>
             <div className="Exchange-swap-ball-container">
-              <div 
-                className={cx("Exchange-swap-ball", 
-                  {
-                    disabled: !isToTokenEnabled,
-                  }
-                )} 
+              <div
+                className={cx("Exchange-swap-ball", {
+                  disabled: !isToTokenEnabled,
+                })}
                 onClick={() => isToTokenEnabled && switchTokens()}
               >
-                <IoMdSwap
-                  className="Exchange-swap-ball-icon"
-                />
+                <IoMdSwap className="Exchange-swap-ball-icon" />
               </div>
             </div>
             <div className="Exchange-swap-section">
@@ -2270,6 +2287,17 @@ export default function SwapBox(props) {
               min={1.1}
               step={0.01}
             />
+            {showMultiTriggerMaker && (
+              <TriggerCreator
+                isLong={isLong}
+                leverage={leverageOption}
+                currentPrice={triggerReferencePrice}
+                stopLossTriggerPercent={stopLossTriggerPercent}
+                setStopLossTriggerPercent={setStopLossTriggerPercent}
+                takeProfitTriggerPercent={takeProfitTriggerPercent}
+                setTakeProfitTriggerPercent={setTakeProfitTriggerPercent}
+              />
+            )}
             {isShort && (
               <div className="Exchange-info-row">
                 <div className="Exchange-info-label">Profits In</div>
@@ -2306,6 +2334,34 @@ export default function SwapBox(props) {
                 {leverage && leverage.eq(0) && `-`}
               </div>
             </div>
+            {showMultiTriggerMaker && (
+              <>
+                <div className="Exchange-info-row">
+                  <div className="Exchange-info-label">Trigger Price Stop Loss</div>
+                  <div className="align-right">
+                    ${stopLossTriggerPrice ? formatAmount(stopLossTriggerPrice, USD_DECIMALS, 2, true) : "-"}
+                  </div>
+                </div>
+                <div className="Exchange-info-row">
+                  <div className="Exchange-info-label">Trigger Price Take Profit</div>
+                  <div className="align-right">
+                    ${takeProfitTriggerPrice ? formatAmount(takeProfitTriggerPrice, USD_DECIMALS, 2, true) : "-"}
+                  </div>
+                </div>
+                <div className="Exchange-info-row">
+                  <div className="Exchange-info-label">Trigger PnL Stop Loss</div>
+                  <div className="align-right">
+                    {stopLossTriggerPercent ? `-${limitDecimals(stopLossTriggerPercent * 100, 2)}%` : "-"}
+                  </div>
+                </div>
+                <div className="Exchange-info-row">
+                  <div className="Exchange-info-label">Trigger PnL Take Profit</div>
+                  <div className="align-right">
+                    {stopLossTriggerPrice ? limitDecimals(takeProfitTriggerPercent * 100, 2) + "%" : "-"}
+                  </div>
+                </div>
+              </>
+            )}
             <div className="Exchange-info-row">
               <div className="Exchange-info-label">Entry Price</div>
               <div className="align-right">
@@ -2582,6 +2638,10 @@ export default function SwapBox(props) {
           chainId={chainId}
           trackAction={trackAction}
           trackTrade={trackTrade}
+          stopLossTriggerPrice={stopLossTriggerPrice}
+          stopLossTriggerPnl={stopLossTriggerPercent}
+          takeProfitTriggerPrice={takeProfitTriggerPrice}
+          takeProfitTriggerPnl={takeProfitTriggerPercent}
         />
       )}
     </div>

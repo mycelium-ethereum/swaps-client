@@ -18,11 +18,10 @@ import {
   formatDateTime,
   calculatePositionDelta,
   getSpread,
+  limitDecimals,
 } from "../../Helpers";
 
-import {
-  SLIPPAGE_BPS_KEY
-} from '../../config/localstorage';
+import { SLIPPAGE_BPS_KEY } from "../../config/localstorage";
 
 import { getConstant } from "../../Constants";
 import { getContract } from "../../Addresses";
@@ -74,7 +73,13 @@ export default function ConfirmationBox(props) {
     orders,
     trackAction,
     trackTrade,
+    stopLossTriggerPrice,
+    stopLossTriggerPnl,
+    takeProfitTriggerPrice,
+    takeProfitTriggerPnl,
   } = props;
+
+  const showTriggerPrices = stopLossTriggerPrice || takeProfitTriggerPrice;
 
   const [savedSlippageAmount] = useLocalStorageSerializeKey([chainId, SLIPPAGE_BPS_KEY], DEFAULT_SLIPPAGE_AMOUNT);
   const [isProfitWarningAccepted, setIsProfitWarningAccepted] = useState(false);
@@ -419,10 +424,28 @@ export default function ConfirmationBox(props) {
             </div>
           )}
           {orderOption === LIMIT && renderAvailableLiquidity()}
-          {isShort && (
-            <ExchangeInfoRow label="Profits In">{getToken(chainId, shortCollateralAddress).symbol}</ExchangeInfoRow>
+          {showTriggerPrices && (
+            <>
+              <ExchangeInfoRow label="Trigger Price Stop Loss">
+                ${formatAmount(stopLossTriggerPrice, USD_DECIMALS, 2, true)}
+              </ExchangeInfoRow>
+              <ExchangeInfoRow label="Trigger PnL Stop Loss">
+                -{limitDecimals(stopLossTriggerPnl * 100, 2)}%
+              </ExchangeInfoRow>
+              <ExchangeInfoRow label="Trigger Price Take Profit">
+                ${formatAmount(takeProfitTriggerPrice, USD_DECIMALS, 2, true)}
+              </ExchangeInfoRow>
+              <ExchangeInfoRow label="Trigger PnL Take Profit">
+                {limitDecimals(takeProfitTriggerPnl * 100, 2)}%
+              </ExchangeInfoRow>
+            </>
           )}
-          {isLong && <ExchangeInfoRow label="Profits In" value={toTokenInfo.symbol} />}
+          {isShort && (
+            <ExchangeInfoRow label="Profits In" isTop={true}>
+              {getToken(chainId, shortCollateralAddress).symbol}
+            </ExchangeInfoRow>
+          )}
+          {isLong && <ExchangeInfoRow label="Profits In" value={toTokenInfo.symbol} isTop={true} />}
           <ExchangeInfoRow label="Leverage">
             {hasExistingPosition && toAmount && toAmount.gt(0) && (
               <div className="inline-block muted">
