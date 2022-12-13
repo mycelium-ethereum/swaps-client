@@ -57,23 +57,6 @@ export const LiveLeaderboard = ({ leaderboardData, userPosition, moveUser }) => 
     return leaderboardData.find((_trader, index) => index + 1 === userPosition)
   }, [userPosition, leaderboardData])
 
-  const moveUp = () => {
-    moveUser(true, false)
-  }
-
-  const moveDown = () => {
-    moveUser(false, false)
-  }
-
-  const moveToTop = () => {
-    moveUser(true, true)
-  }
-
-  const moveToBottom = () => {
-    moveUser(false, true)
-  }
-
-
   return (
     <Styles.LeaderboardContainer>
       <Styles.LeaderboardHeader>
@@ -115,11 +98,6 @@ export const LiveLeaderboard = ({ leaderboardData, userPosition, moveUser }) => 
         <Styles.UserPositionOverlay position={userPosition}/>
         </>
       )}
-      <button onClick={moveUp}>move up</button>
-      <button onClick={moveDown}>move down</button>
-      <button onClick={moveToTop}>move top</button>
-      <button onClick={moveToBottom}>move bottom</button>
-
       {/* <ProgressToTopFive
         userPercentage={
           userPercentage === 0 || leaderboardData.length === 1 || userPercentage > MAX_UI_PERCENTAGE
