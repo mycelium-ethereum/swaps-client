@@ -84,9 +84,9 @@ export const LiveLeaderboard = ({ leaderboardData, userPosition, moveUser }) => 
         </span>
       </Styles.LeaderboardHeader>
       <Styles.LeaderboardBody>
+        {userPosition &&
         <Styles.SlidingLeaderboardBody userPosition={userPosition}>
-          {userPosition &&
-            leaderboardData?.map(({ user_address, volume }, index) => {
+          {leaderboardData?.map(({ user_address, volume }, index) => {
               const position = index + 1;
               const isUserRow = position === userPosition;
               return (
@@ -102,6 +102,7 @@ export const LiveLeaderboard = ({ leaderboardData, userPosition, moveUser }) => 
               );
             })}
         </Styles.SlidingLeaderboardBody>
+        }
       </Styles.LeaderboardBody>
       {userPositionData && (
         <>
@@ -139,41 +140,35 @@ export const LiveLeaderboard = ({ leaderboardData, userPosition, moveUser }) => 
   );
 };
 
-const TableRow = ({ position, opacity, isUserRow, user_address, volume }) => {
-  const ref = useRef(null)
-
-  useEffect(() => {
-    if (isUserRow) {
-      setTimeout(() => {
-          ref.current.className = ref.current.className + " fade-out";
-      }, 1)
-    }
-  }, [])
-
-  return (
-    <Styles.ArbiscanLink href={`${ARBISCAN_URL}${user_address}`} rel="noopener noreferrer" target="_blank">
-      <Styles.UserRow opacity={opacity} isUser={isUserRow} className="table-row">
-        <Styles.Position>#{position}</Styles.Position>
-        <Styles.BorderOutline isUser={isUserRow} ref={ref}>
-          <Styles.UserAddress>
-            <Jazzicon diameter={16} seed={jsNumberForAddress(user_address)} />
-            <Styles.UserDetails>
-              <span>{truncateMiddleEthAddress(user_address)}</span>
-            </Styles.UserDetails>
-          </Styles.UserAddress>
-          <Styles.Volume>${formatAmount(volume, USD_DECIMALS, 2, true)}</Styles.Volume>
-        </Styles.BorderOutline>
-      </Styles.UserRow>
-    </Styles.ArbiscanLink>
-  )
-};
+const TableRow = ({ position, opacity, isUserRow, ensName, user_address, volume }) => (
+  <Styles.ArbiscanLink href={`${ARBISCAN_URL}${user_address}`} rel="noopener noreferrer" target="_blank">
+    <Styles.UserRow opacity={opacity} isUser={isUserRow} className={`table-row`}>
+      <Styles.Position>#{position}</Styles.Position>
+      {!isUserRow &&
+      <Styles.BorderOutline isUser={isUserRow}>
+        <Styles.UserAddress>
+          {isUserRow
+            ? <Davatar size={16} address={user_address} />
+            : <Jazzicon diameter={16} seed={jsNumberForAddress(user_address)} />
+          }
+          <Styles.UserDetails>
+            <span>{truncateMiddleEthAddress(user_address)}</span>
+            {isUserRow && <span>{ensName}</span>}
+          </Styles.UserDetails>
+        </Styles.UserAddress>
+        <Styles.Volume>${formatAmount(volume, USD_DECIMALS, 2, true)}</Styles.Volume>
+      </Styles.BorderOutline>
+      }
+    </Styles.UserRow>
+  </Styles.ArbiscanLink>
+)
 
 const UserTableRow = ({ user_address, volume, ensName, position }) => (
   <Styles.ArbiscanLink href={`${ARBISCAN_URL}${user_address}`} rel="noopener noreferrer" target="_blank">
     <Styles.UserRowOverlay opacity={1} isUser={true} position={position}>
-      <Styles.BorderOutline>
+      <Styles.BorderOutline isUser={true}>
         <Styles.UserAddress>
-          <Davatar size={16} address={user_address} />
+            <Davatar size={16} address={user_address} />
           <Styles.UserDetails>
             <span>{truncateMiddleEthAddress(user_address)}</span>
             <span>{ensName}</span>

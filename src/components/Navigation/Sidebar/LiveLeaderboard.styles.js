@@ -53,7 +53,7 @@ export const LeaderboardBody = styled.div`
 
 
 const getPositionOffeset = (userPosition) => {
-  if (userPosition < 5) {
+  if (userPosition < 3) {
     return 0
   } else {
     return -(userPosition - 3) * (29 + 4) - 1
@@ -88,6 +88,7 @@ export const UserRow = styled.div(
     position: relative;
     display: flex;
     align-items: center;
+    position: relative;
     width: 100%;
     transition: 1s;
     opacity: ${props.opacity};
@@ -101,12 +102,8 @@ export const UserRow = styled.div(
     ${Volume} {
       font-weight: ${props.isUser ? "bold" : "400"};
     }
-    &.table-row > ${BorderOutline} {
-      border-color: transparent;
-    }
-
-    &.fade-out > ${BorderOutline} {
-      opacity: 0;
+    ${BorderOutline} {
+      border-color: ${props.isUser ? "var(--action-active)" : 'transparent'};
     }
     `
 );
@@ -133,7 +130,6 @@ export const BorderOutline = styled.div`
   border-left-width: 0;
   border-style: solid;
   height: 29px;
-  opacity: 1;
 `;
 
 // positions are indexed from 1 in this context
@@ -145,11 +141,12 @@ const getOverlayOffset = (userPosition) => {
   }
 }
 
+// Users position
 export const UserRowOverlay = styled(UserRow)`
   position: absolute;
   top: ${(props) => getOverlayOffset(props.position)};
-  left: 40px;
-  padding-right: 4px;
+  left: 44px;
+  padding-right: 8px;
   width: calc(100% - 40px);
 
   filter: drop-shadow(0px 0px 10px rgba(9, 130, 0, 0.6));
@@ -159,17 +156,19 @@ export const UserRowOverlay = styled(UserRow)`
     border-color: var(--action-active);
   }
 
-  transition: 1s;
+  transition: 0.3s;
 `
 
+// green backround underlay which sits behind the table
 export const UserPositionOverlay = styled(Position)`
   position: absolute;
   top: ${(props) => getOverlayOffset(props.position)};
+  margin-left: 4px;
   padding-right: 4px;
   width: 40px;
   z-index: 1;
   background: var(--action-active);
-  transition: 1s;
+  transition: 0.3s;
 `
 
 

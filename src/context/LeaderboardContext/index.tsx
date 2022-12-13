@@ -4,7 +4,7 @@ import { ethers } from "ethers";
 import useSWR from "swr";
 import { CurrentRewards, RewardsEntity } from "src/types/rewards";
 import { getServerUrl } from "../../lib";
-import { bigNumberify, useChainId } from "../../Helpers";
+import { bigNumberify, expandDecimals, useChainId } from "../../Helpers";
 
 const useValues = () => {
   const { chainId } = useChainId();
@@ -28,8 +28,6 @@ const useValues = () => {
     const leaderBoardIndex = leaderboardData?.findIndex(
       (trader: RewardsEntity) => trader.user_address.toLowerCase() === accountLower
     );
-    console.log("Found index", leaderBoardIndex)
-    console.log(leaderboardData[0], leaderboardData[leaderBoardIndex])
 
     return leaderBoardIndex + 1;
   }, [account, leaderboardData]);
@@ -44,25 +42,26 @@ const useValues = () => {
     const userIndex: any = _leaderboardData.findIndex(
       (trader: any) => trader?.user_address?.toLowerCase() === accountLower
     );
-    if (!userIndex) { 
+    if (userIndex === undefined) { 
       return undefined
     }
     const user = _leaderboardData[userIndex]
+    const ONE = expandDecimals(1, 30)
     if (toExtreme) {
       if (up) {
         const topUser = leaderboardData[0];
-        user.volume = bigNumberify(topUser.volume).add('1000000000000000000').toString()
+        user.volume = bigNumberify(topUser.volume).add(ONE).toString()
       } else {
         const bottomUser = leaderboardData[leaderboardData.length - 1];
-        user.volume = bigNumberify(bottomUser.volume).sub('1000000000000000000').toString()
+        user.volume = bigNumberify(bottomUser.volume).sub(ONE).toString()
       }
     } else {
       if (up) {
         const aboveUser = _leaderboardData[userIndex - 1];
-        user.volume = bigNumberify(aboveUser.volume).add('1000000000000000000').toString()
+        user.volume = bigNumberify(aboveUser.volume).add(ONE).toString()
       } else {
         const belowUser = _leaderboardData[userIndex + 1];
-        user.volume = bigNumberify(belowUser.volume).sub('1000000000000000000').toString()
+        user.volume = bigNumberify(belowUser.volume).sub(ONE).toString()
       }
     }
 
