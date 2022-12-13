@@ -987,6 +987,13 @@ function FullApp() {
         pauseOnHover
       />
       <EventToastContainer />
+      <EventModal
+        isModalVisible={isEventModalVisible}
+        setEventModalVisible={setEventModalVisible}
+        eventKey="seenPopupV3"
+        hideHeader={true}
+        requiresConfirmation={true}
+      />
       <Modal
         className="Connect-wallet-modal"
         isVisible={walletModalVisible}
