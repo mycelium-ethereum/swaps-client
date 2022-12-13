@@ -20,7 +20,7 @@ import OrderBook from "./abis/OrderBook.json";
 import { getWhitelistedTokens, isValidToken } from "./data/Tokens";
 import ComingSoonTooltip from "./components/Tooltip/ComingSoon";
 import { isAddress } from "ethers/lib/utils";
-import { copyToClipboard } from './utils/common';
+import { copyToClipboard } from "./utils/common";
 import {
   REFERRAL_CODE_QUERY_PARAMS,
   CURRENT_PROVIDER_LOCALSTORAGE_KEY,
@@ -58,7 +58,7 @@ const GAS_PRICE_ADJUSTMENT_MAP = {
 
 const MAX_GAS_PRICE_MAP = {};
 
-const alchemyWhitelistedDomains = ["swaps.mycelium.xyz"];
+const alchemyWhitelistedDomains = ["swaps.mycelium.xyz", "localhost"];
 
 export function getFallbackArbitrumRpcUrl(useWebsocket) {
   if (useWebsocket) {
@@ -83,12 +83,11 @@ export function getFallbackArbitrumGoerliRpcUrl(useWebsocket) {
   return "https://goerli-rollup.arbitrum.io/rpc";
 }
 export function getDefaultArbitrumGoerliRpcUrl(useWebsocket) {
-  if (alchemyWhitelistedDomains.includes(window.location.host)) {
-    if (useWebsocket) {
-      return process.env.REACT_APP_ARBITRUM_GOERLI_RPC_WSS;
-    }
-    return process.env.REACT_APP_ARBITRUM_GOERLI_RPC;
+  if (useWebsocket) {
+    return process.env.REACT_APP_ARBITRUM_GOERLI_RPC_WSS;
   }
+  return process.env.REACT_APP_ARBITRUM_GOERLI_RPC;
+
   return getFallbackArbitrumGoerliRpcUrl(useWebsocket);
 }
 
@@ -2415,7 +2414,7 @@ export function getStakingData(stakingInfo) {
   }
 
   // temp hardcode
-  data['stakedMlpTracker'].tokensPerInterval = ethers.utils.parseEther('1')
+  data["stakedMlpTracker"].tokensPerInterval = ethers.utils.parseEther("1");
 
   return data;
 }

@@ -56,6 +56,7 @@ import {
   networkOptions,
   PLACEHOLDER_ACCOUNT,
   getDefaultArbitrumRpcUrl,
+  getDefaultArbitrumGoerliRpcUrl,
 } from "./Helpers";
 import ReaderV2 from "./abis/ReaderV2.json";
 
@@ -147,7 +148,7 @@ function inPreviewMode() {
 }
 
 const arbWsProvider = new ethers.providers.WebSocketProvider(getDefaultArbitrumRpcUrl(true));
-const arbTestnetWsProvider = new ethers.providers.JsonRpcProvider("https://goerli-rollup.arbitrum.io/rpc/");
+const arbTestnetWsProvider = new ethers.providers.JsonRpcProvider(getDefaultArbitrumGoerliRpcUrl(true));
 
 function getWsProvider(active, chainId) {
   if (!active) {
