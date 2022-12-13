@@ -122,7 +122,7 @@ import Sidebar from "./components/Navigation/Sidebar/Sidebar";
 // import EventModal from "./components/EventModal/EventModal";
 import AppDropdown from "./components/AppDropdown/AppDropdown";
 import { useInfoTokens } from "./hooks/useInfoTokens";
-import { LeaderboardContext, LeaderboardProvider } from "./context/LeaderboardContext";
+import { LeaderboardProvider } from "./context/LeaderboardContext";
 // import { Banner, BannerContent } from "./components/Banner/Banner";
 
 if ("ethereum" in window) {
@@ -350,9 +350,6 @@ function AppHeaderUser({
 
 function FullApp() {
   const location = useLocation();
-  const { updateLeaderboardOptimistically, leaderboardData, userPosition, failedFetchingRoundRewards } =
-    useContext(LeaderboardContext);
-
   const [sidebarVisible, setSidebarVisible] = useState(false);
   const [loggedInTracked, setLoggedInTracked] = useState(false);
   const { trackLogin, trackPageWithTraits, trackAction, analytics } = useAnalytics();
@@ -887,7 +884,6 @@ function FullApp() {
                 trackAction={trackAction}
                 analytics={analytics}
                 sidebarVisible={sidebarVisible}
-                updateLeaderboardOptimistically={updateLeaderboardOptimistically}
               />
             </Route>
             <Route exact path="/dashboard">
@@ -980,9 +976,6 @@ function FullApp() {
         <Sidebar
           sidebarVisible={sidebarVisible}
           setSidebarVisible={setSidebarVisible}
-          userPosition={userPosition}
-          leaderboardData={leaderboardData}
-          failedFetchingRoundRewards={failedFetchingRoundRewards}
         />
         {/* <Footer /> */}
       </div>

@@ -45,7 +45,26 @@ export const LeaderboardHeader = styled.div`
 
 export const LeaderboardBody = styled.div`
   padding: 4px 4px 8px;
+  height: 170px;
+  overflow: hidden;
+  z-index: 2;
+  position: relative;
 `;
+
+
+const getPositionOffeset = (userPosition) => {
+  if (userPosition < 5) {
+    return 0
+  } else {
+    return -(userPosition - 3) * (29 + 4) - 1
+  }
+}
+
+export const SlidingLeaderboardBody = styled.div`
+  transition: 1s;
+  transition-timing-function: ease-out;
+  transform: translateY(${(props) => getPositionOffeset(props.userPosition)}px)
+`
 
 export const FlexContainer = styled.div`
   display: flex;
@@ -66,23 +85,28 @@ export const CloseIcon = styled.img`
 
 export const UserRow = styled.div(
   (props) => `
+    position: relative;
     display: flex;
     align-items: center;
     width: 100%;
+    transition: 1s;
     opacity: ${props.opacity};
     min-height: 29px;
-    filter: ${props.isUser ? "drop-shadow(0px 0px 10px rgba(9, 130, 0, 0.6))" : "none"};
-    background: ${props.isUser ? "linear-gradient(111.31deg, #003000 23.74%, rgba(0, 48, 0, 0) 99.29%)" : "none"};
+    z-index: 2;
     ${Position} {
-      background-color: ${props.isUser ? "var(--action-active)" : "transparent"};
+      background-color: transparent;
     }
     ${Position},
     ${UserAddress},
     ${Volume} {
       font-weight: ${props.isUser ? "bold" : "400"};
     }
-    ${BorderOutline} {
-      border-color: ${props.isUser ? "var(--action-active)" : "transparent"};
+    &.table-row > ${BorderOutline} {
+      border-color: transparent;
+    }
+
+    &.fade-out > ${BorderOutline} {
+      opacity: 0;
     }
     `
 );
@@ -97,6 +121,57 @@ export const Position = styled.span`
   border-top-left-radius: 4px;
   border-bottom-left-radius: 4px;
 `;
+
+export const BorderOutline = styled.div`
+  display: flex;
+  align-items: center;
+  width: 100%;
+  justify-content: space-between;
+  border-top-right-radius: 4px;
+  border-bottom-right-radius: 4px;
+  border-width: 1px;
+  border-left-width: 0;
+  border-style: solid;
+  height: 29px;
+  opacity: 1;
+`;
+
+// positions are indexed from 1 in this context
+const getOverlayOffset = (userPosition) => {
+  if (userPosition < 3) {
+    return `${(29 * userPosition) + (4 * (userPosition - 1))}px`
+  } else {
+    return `95px`;
+  }
+}
+
+export const UserRowOverlay = styled(UserRow)`
+  position: absolute;
+  top: ${(props) => getOverlayOffset(props.position)};
+  left: 40px;
+  padding-right: 4px;
+  width: calc(100% - 40px);
+
+  filter: drop-shadow(0px 0px 10px rgba(9, 130, 0, 0.6));
+  background: linear-gradient(111.31deg, #003000 23.74%, rgba(0, 48, 0, 0) 99.29%);
+
+  ${BorderOutline} {
+    border-color: var(--action-active);
+  }
+
+  transition: 1s;
+`
+
+export const UserPositionOverlay = styled(Position)`
+  position: absolute;
+  top: ${(props) => getOverlayOffset(props.position)};
+  padding-right: 4px;
+  width: 40px;
+  z-index: 1;
+  background: var(--action-active);
+  transition: 1s;
+`
+
 
 export const UserAddress = styled.span`
   display: inline-flex;
@@ -123,19 +198,6 @@ export const UserDetails = styled.div`
     line-height: 18px;
     color: var(--text-secondary);
   }
-`;
-
-export const BorderOutline = styled.div`
-  display: flex;
-  align-items: center;
-  width: 100%;
-  justify-content: space-between;
-  border-top-right-radius: 4px;
-  border-bottom-right-radius: 4px;
-  border-width: 1px;
-  border-left-width: 0;
-  border-style: solid;
-  height: 29px;
 `;
 
 export const ProgressBarContainer = styled.div`

@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useContext } from "react";
 import { NavLink, Link, useLocation } from "react-router-dom";
 import { LiveLeaderboard } from "src/components/Navigation/Sidebar/LiveLeaderboard";
 import { useWeb3React } from "@web3-react/core";
@@ -41,6 +41,7 @@ import { ReactComponent as PullTabSvg } from "../../../img/nav/pull-tab.svg";
 import graphic from "../../../img/nav/event-graphic.png";
 import liveIcon from "../../../img/nav/live.svg";
 import logoImg from "../../../img/logo_MYC.svg";
+import { LeaderboardContext } from "src/context/LeaderboardContext";
 
 const navTopLinks = [
   {
@@ -96,12 +97,10 @@ const socialLinks = [
 export default function Sidebar({
   sidebarVisible,
   setSidebarVisible,
-  userPosition,
-  leaderboardData,
-  failedFetchingRoundRewards,
 }) {
   const { active } = useWeb3React();
   const location = useLocation();
+  const { leaderboardData, userPosition, failedFetchingRoundRewards, moveUser } = useContext(LeaderboardContext);
   const yearRef = useRef(null);
 
   const setYear = () => {
@@ -148,7 +147,7 @@ export default function Sidebar({
               </MenuItem>
             </NavMenu>
             {active && userPosition > 0 && !failedFetchingRoundRewards ? (
-              <LiveLeaderboard userPosition={userPosition} leaderboardData={leaderboardData} />
+              <LiveLeaderboard userPosition={userPosition} leaderboardData={leaderboardData} moveUser={moveUser} />
             ) : (
               <EventBox>
                 <EventHeader>

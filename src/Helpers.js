@@ -59,7 +59,8 @@ const alchemyWhitelistedDomains = ["swaps.mycelium.xyz"];
 
 export function getFallbackArbitrumRpcUrl(useWebsocket) {
   if (useWebsocket) {
-    return "wss://arb1.arbitrum.io/ws";
+    // return "wss://arb1.arbitrum.io/ws";
+    return "wss://arb-mainnet.g.alchemy.com/v2/vrzBH_ITmTq-eXsFQvZxxxHFx7iaPb2a"
   }
   return "https://arb1.arbitrum.io/rpc";
 }

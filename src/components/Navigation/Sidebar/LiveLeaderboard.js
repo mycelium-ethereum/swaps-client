@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useMemo, useState, useEffect, useRef } from "react";
 import { ethers } from "ethers";
 import { useWeb3React } from "@web3-react/core";
 import Jazzicon, { jsNumberForAddress } from "react-jazzicon";
@@ -14,29 +14,10 @@ const ARBISCAN_URL = "https://arbiscan.io/address/";
 // const MAX_UI_PERCENTAGE = 91.3;
 const BOTTOM_PERCENT = 95;
 
-export const LiveLeaderboard = ({ leaderboardData, userPosition }) => {
+export const LiveLeaderboard = ({ leaderboardData, userPosition, moveUser }) => {
   const location = useLocation();
   const { account } = useWeb3React();
   const { ensName } = useENS(account);
-
-  const twoAboveTwoBelow = useMemo(() => {
-    if (!leaderboardData || !userPosition) {
-      return undefined;
-    }
-    const twoAbove = userPosition + 2;
-    const twoBelow = userPosition - 2;
-    const twoAboveTwoBelow = leaderboardData
-      ?.map((trader, index) => {
-        if (index + 1 >= twoBelow && index + 1 <= twoAbove) {
-          trader.position = index + 1;
-          return trader;
-        } else {
-          return undefined;
-        }
-      })
-      .filter(Boolean);
-    return twoAboveTwoBelow;
-  }, [leaderboardData, userPosition]);
 
   const userPercentage = useMemo(
     () => 100 - (userPosition / leaderboardData?.length) * 100,
@@ -72,6 +53,27 @@ export const LiveLeaderboard = ({ leaderboardData, userPosition }) => {
     }
   };
 
+  const userPositionData = useMemo(() => {
+    return leaderboardData.find((_trader, index) => index + 1 === userPosition)
+  }, [userPosition, leaderboardData])
+
+  const moveUp = () => {
+    moveUser(true, false)
+  }
+
+  const moveDown = () => {
+    moveUser(false, false)
+  }
+
+  const moveToTop = () => {
+    moveUser(true, true)
+  }
+
+  const moveToBottom = () => {
+    moveUser(false, true)
+  }
+
+
   return (
     <Styles.LeaderboardContainer>
       <Styles.LeaderboardHeader>
@@ -82,23 +84,41 @@ export const LiveLeaderboard = ({ leaderboardData, userPosition }) => {
         </span>
       </Styles.LeaderboardHeader>
       <Styles.LeaderboardBody>
-        {userPosition &&
-          twoAboveTwoBelow?.map(({ user_address, volume, position }, index) => {
-            /* const isUserRow = user_address === account; */
-            const isUserRow = position === userPosition;
-            return (
-              <TableRow
-                key={index}
-                isUserRow={isUserRow}
-                position={position}
-                opacity={getOpacity(position)}
-                user_address={user_address}
-                volume={volume}
-                ensName={ensName}
-              />
-            );
-          })}
+        <Styles.SlidingLeaderboardBody userPosition={userPosition}>
+          {userPosition &&
+            leaderboardData?.map(({ user_address, volume }, index) => {
+              const position = index + 1;
+              const isUserRow = position === userPosition;
+              return (
+                <TableRow
+                  key={user_address}
+                  isUserRow={isUserRow}
+                  position={position}
+                  opacity={getOpacity(position)}
+                  user_address={user_address}
+                  volume={volume}
+                  ensName={ensName}
+                />
+              );
+            })}
+        </Styles.SlidingLeaderboardBody>
       </Styles.LeaderboardBody>
+      {userPositionData && (
+        <>
+        <UserTableRow
+          position={userPosition}
+          user_address={userPositionData.user_address}
+          volume={userPositionData.volume}
+          ensName={ensName}
+        />
+        <Styles.UserPositionOverlay position={userPosition}/>
+        </>
+      )}
+      <button onClick={moveUp}>move up</button>
+      <button onClick={moveDown}>move down</button>
+      <button onClick={moveToTop}>move top</button>
+      <button onClick={moveToBottom}>move bottom</button>
+
       {/* <ProgressToTopFive
         userPercentage={
           userPercentage === 0 || leaderboardData.length === 1 || userPercentage > MAX_UI_PERCENTAGE
@@ -119,17 +139,41 @@ export const LiveLeaderboard = ({ leaderboardData, userPosition }) => {
   );
 };
 
-const TableRow = ({ position, opacity, isUserRow, user_address, volume, ensName }) => (
+const TableRow = ({ position, opacity, isUserRow, user_address, volume }) => {
+  const ref = useRef(null)
+
+  useEffect(() => {
+    if (isUserRow) {
+      setTimeout(() => {
+          ref.current.className = ref.current.className + " fade-out";
+      }, 1)
+    }
+  }, [])
+
+  return (
+    <Styles.ArbiscanLink href={`${ARBISCAN_URL}${user_address}`} rel="noopener noreferrer" target="_blank">
+      <Styles.UserRow opacity={opacity} isUser={isUserRow} className="table-row">
+        <Styles.Position>#{position}</Styles.Position>
+        <Styles.BorderOutline isUser={isUserRow} ref={ref}>
+          <Styles.UserAddress>
+            <Jazzicon diameter={16} seed={jsNumberForAddress(user_address)} />
+            <Styles.UserDetails>
+              <span>{truncateMiddleEthAddress(user_address)}</span>
+            </Styles.UserDetails>
+          </Styles.UserAddress>
+          <Styles.Volume>${formatAmount(volume, USD_DECIMALS, 2, true)}</Styles.Volume>
+        </Styles.BorderOutline>
+      </Styles.UserRow>
+    </Styles.ArbiscanLink>
+  )
+};
+
+const UserTableRow = ({ user_address, volume, ensName, position }) => (
   <Styles.ArbiscanLink href={`${ARBISCAN_URL}${user_address}`} rel="noopener noreferrer" target="_blank">
-    <Styles.UserRow opacity={opacity} isUser={isUserRow}>
-      <Styles.Position>#{position}</Styles.Position>
+    <Styles.UserRowOverlay opacity={1} isUser={true} position={position}>
       <Styles.BorderOutline>
         <Styles.UserAddress>
-          {ensName ? (
-            <Davatar size={16} address={user_address} />
-          ) : (
-            <Jazzicon diameter={16} seed={jsNumberForAddress(user_address)} />
-          )}
+          <Davatar size={16} address={user_address} />
           <Styles.UserDetails>
             <span>{truncateMiddleEthAddress(user_address)}</span>
             <span>{ensName}</span>
@@ -137,7 +181,7 @@ const TableRow = ({ position, opacity, isUserRow, user_address, volume, ensName 
         </Styles.UserAddress>
         <Styles.Volume>${formatAmount(volume, USD_DECIMALS, 2, true)}</Styles.Volume>
       </Styles.BorderOutline>
-    </Styles.UserRow>
+    </Styles.UserRowOverlay>
   </Styles.ArbiscanLink>
 );
 
@@ -168,5 +212,5 @@ const AmountToTopFive = ({ differenceBetweenUserAndTopFive, userPercentage }) =>
         Trade <b>${formatAmount(differenceBetweenUserAndTopFive, USD_DECIMALS, 2, true)}</b> to unlock Top 5% Rewards
       </span>
     )}
-  </Styles.AmountText>
+  </Styles.AmountText> 
 );

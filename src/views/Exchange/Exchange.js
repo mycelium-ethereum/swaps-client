@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo, useCallback, forwardRef, useImperativeHandle } from "react";
+import React, { useEffect, useState, useMemo, useCallback, forwardRef, useImperativeHandle, useContext } from "react";
 
 import { useWeb3React } from "@web3-react/core";
 import useSWR from "swr";
@@ -55,6 +55,7 @@ import Tab from "../../components/Tab/Tab";
 import "./Exchange.css";
 import SEO from "../../components/Common/SEO";
 import { ExchangeHeader } from "../../components/Exchange/ExchangeHeader";
+import { LeaderboardContext } from "src/context/LeaderboardContext";
 
 const { AddressZero } = ethers.constants;
 const PENDING_POSITION_VALID_DURATION = 600 * 1000;
@@ -362,7 +363,6 @@ export const Exchange = forwardRef((props, ref) => {
     trackAction,
     sidebarVisible,
     analytics,
-    updateLeaderboardOptimistically,
   } = props;
 
   const [pendingPositions, setPendingPositions] = useState({});
@@ -375,6 +375,7 @@ export const Exchange = forwardRef((props, ref) => {
   const { active, account, library } = useWeb3React();
   const { chainId } = useChainId();
   const currentAccount = account;
+  const { updateLeaderboardOptimistically } = useContext(LeaderboardContext);
 
   const nativeTokenAddress = getContract(chainId, "NATIVE_TOKEN");
 
@@ -575,6 +576,7 @@ export const Exchange = forwardRef((props, ref) => {
         )} USD.`;
       }
 
+      updateLeaderboardOptimistically(sizeDelta);
       pushSuccessNotification(chainId, message, e);
     },
 
@@ -600,6 +602,7 @@ export const Exchange = forwardRef((props, ref) => {
         )} USD.`;
       }
 
+      updateLeaderboardOptimistically(sizeDelta);
       pushSuccessNotification(chainId, message, e);
     },
 
@@ -1016,7 +1019,6 @@ export const Exchange = forwardRef((props, ref) => {
               totalTokenWeights={totalTokenWeights}
               usdgSupply={usdgSupply}
               trackAction={trackAction}
-              updateLeaderboardOptimistically={updateLeaderboardOptimistically}
             />
             <div className="Exchange-wallet-tokens">
               <div className="Exchange-wallet-tokens-content">

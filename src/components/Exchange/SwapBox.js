@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo, useCallback } from "react";
+import React, { useState, useEffect, useMemo, useCallback, useContext } from "react";
 
 import Tooltip from "../Tooltip/Tooltip";
 import Modal from "../Modal/Modal";
@@ -149,7 +149,6 @@ export default function SwapBox(props) {
     isPluginApproving,
     isPositionRouterApproving,
     trackAction,
-    updateLeaderboardOptimistically,
   } = props;
 
   const [fromValue, setFromValue] = useState("");
@@ -1639,7 +1638,6 @@ export default function SwapBox(props) {
       .finally(() => {
         setIsSubmitting(false);
         setIsPendingConfirmation(false);
-        updateLeaderboardOptimistically(fromUsdMin);
       });
   };
 
