@@ -2414,11 +2414,6 @@ export function getStakingData(stakingInfo) {
     };
   }
 
-  // temp hardcode
-  // the contract value will be the smallest non-zero value
-  // hardcode to 0 so it doesn't show a really small % APR
-  data['stakedMlpTracker'].tokensPerInterval = ethers.utils.parseEther('0')
-
   return data;
 }
 
