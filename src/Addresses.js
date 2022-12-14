@@ -1,3 +1,6 @@
+import { ADDRESS_ZERO } from "@uniswap/v3-sdk";
+import { ARBITRUM_GOERLI } from "./Helpers";
+
 const CONTRACTS = {
   1: {
     UniswapMycEthPool: "0x66dD48889Df1Fc32cBa3aBfA2c453906d527eB2e",
@@ -47,6 +50,7 @@ const CONTRACTS = {
     MlpVester: "0xd3A37697c1B21DdE4F97636E294399e0fab9D235",
 
     OrderBook: "0xB131725c12789064875c9ee126f83c96D771bD90",
+    OldOrderBook: ADDRESS_ZERO, // Update this once deployed
     OrderExecutor: "0x9B12CF1bC134a9eE01DC456fbb13a662C2dcf443",
     OrderBookReader: "0xf2A0764144bEB244cD04356b5b2078E0ef682FF6",
     PositionRouter: "0x2d78AE5147D358d803e6306D96db1AB995a4AAF1",
@@ -90,6 +94,7 @@ const CONTRACTS = {
     MlpVester: "0xCB6ac1EacF498118f4609462c0979fFB3eBD1821",
 
     OrderBook: "0x74F28832cA4337bFC6035400eAB80AFD61cdf35b",
+    OldOrderBook: ADDRESS_ZERO, // Update this once deployed
     // OrderBookV1: "0x2EeEf7852a306a580acF94F7c18C3FF124A59d4f",
     OrderExecutor: "0xC4e695a2ae9fd060E24Cdb87874b684dB7447a18",
     OrderBookReader: "0x1044345924277FD2e9bdF14Edad8C1d1a67a4B8e",
@@ -114,7 +119,7 @@ const CONTRACTS = {
     MerkleDistributorReader: "0xbB097d322D793ecd03721538d906d0C450d3839C",
 
     LentMYC: "0x9B225FF56C48671d4D04786De068Ed8b88b672d6",
-    MYCStakingRewards: "0xF9B003Ee160dA9677115Ad3c5bd6BB6dADcB2F93" // v2 staking
+    MYCStakingRewards: "0xF9B003Ee160dA9677115Ad3c5bd6BB6dADcB2F93", // v2 staking
   },
 };
 

@@ -56,7 +56,7 @@ export default function OrdersList(props) {
         func = cancelDecreaseOrder;
       }
 
-      return func(chainId, library, order.index, {
+      return func(chainId, order.orderBookAddress, library, order.index, {
         successMsg: "Order cancelled.",
         failMsg: "Cancel failed.",
         sentMsg: "Cancel submitted.",

@@ -123,11 +123,20 @@ export default function OrderEditor(props) {
 
     if (order.type === SWAP) {
       func = updateSwapOrder;
-      params = [chainId, library, order.index, toAmount, triggerRatio, order.triggerAboveThreshold];
+      params = [
+        chainId,
+        order.orderBookAddress,
+        library,
+        order.index,
+        toAmount,
+        triggerRatio,
+        order.triggerAboveThreshold,
+      ];
     } else if (order.type === DECREASE) {
       func = updateDecreaseOrder;
       params = [
         chainId,
+        order.orderBookAddress,
         library,
         order.index,
         order.collateralDelta,
@@ -137,7 +146,15 @@ export default function OrderEditor(props) {
       ];
     } else if (order.type === INCREASE) {
       func = updateIncreaseOrder;
-      params = [chainId, library, order.index, order.sizeDelta, triggerPrice, order.triggerAboveThreshold];
+      params = [
+        chainId,
+        order.orderBookAddress,
+        library,
+        order.index,
+        order.sizeDelta,
+        triggerPrice,
+        order.triggerAboveThreshold,
+      ];
     }
 
     params.push({
