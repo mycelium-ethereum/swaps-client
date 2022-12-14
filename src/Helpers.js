@@ -2415,7 +2415,7 @@ export function getStakingData(stakingInfo) {
   }
 
   // temp hardcode
-  data['stakedMlpTracker'].tokensPerInterval = ethers.utils.parseEther('1')
+  data['stakedMlpTracker'].tokensPerInterval = ethers.utils.parseEther('0')
 
   return data;
 }
