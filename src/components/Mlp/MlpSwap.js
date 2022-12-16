@@ -89,9 +89,6 @@ function getStakingData(stakingInfo) {
     };
   }
 
-  // temp hardcode
-  data['stakedMlpTracker'].tokensPerInterval = ethers.utils.parseEther('1')
-
   return data;
 }
 
@@ -842,7 +839,7 @@ export default function MlpSwap(props) {
                           <span>{formatAmount(feeMlpTrackerApr, 2, 2, false)}%</span>
                         </div>
                         <div className="Tooltip-row">
-                          <span className="label">esMYC APR (historical)</span>
+                          <span className="label">esMYC APR</span>
                           <span>{formatAmount(stakedMlpTrackerApr, 2, 2, false)}%</span>
                         </div>
                       </>
