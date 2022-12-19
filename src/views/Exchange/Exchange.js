@@ -56,6 +56,7 @@ import Tab from "../../components/Tab/Tab";
 import "./Exchange.css";
 import SEO from "../../components/Common/SEO";
 import { ExchangeHeader } from "../../components/Exchange/ExchangeHeader";
+import { validateDecreasePositionError, validateIncreasePositionError } from "src/utils/positions";
 
 const { AddressZero } = ethers.constants;
 
@@ -621,12 +622,10 @@ export const Exchange = forwardRef((props, ref) => {
       if (account !== currentAccount) {
         return;
       }
-      const indexTokenItem = getToken(chainId, indexToken);
-      const tokenSymbol = indexTokenItem.isWrapped ? getConstant(chainId, "nativeTokenSymbol") : indexTokenItem.symbol;
+      const indexTokenInfo = getTokenInfo(infoTokens, indexToken);
+      const collateralTokenInfo = getTokenInfo(infoTokens, path[path.length - 1]);
 
-      const message = `Could not increase ${tokenSymbol} ${
-        isLong ? "Long" : "Short"
-      } within the allowed slippage, you can adjust the allowed slippage in the settings on the top right of the page.`;
+      const message = validateIncreasePositionError(collateralTokenInfo, indexTokenInfo, amountIn, sizeDelta, isLong)
 
       pushErrorNotification(chainId, message, e);
 
@@ -653,12 +652,7 @@ export const Exchange = forwardRef((props, ref) => {
       if (account !== currentAccount) {
         return;
       }
-      const indexTokenItem = getToken(chainId, indexToken);
-      const tokenSymbol = indexTokenItem.isWrapped ? getConstant(chainId, "nativeTokenSymbol") : indexTokenItem.symbol;
-
-      const message = `Could not decrease ${tokenSymbol} ${
-        isLong ? "Long" : "Short"
-      } within the allowed slippage, you can adjust the allowed slippage in the settings on the top right of the page.`;
+      const message = validateDecreasePositionError(infoTokens, path, indexToken, collateralDelta, isLong, minOut)
 
       pushErrorNotification(chainId, message, e);
 

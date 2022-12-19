@@ -11,6 +11,10 @@
   color: rgb(247, 147, 26);
 }
 
+.PositionSeller-token-selector.error .TokenSelector-box {
+  color: #fa3c58
+}
+
 .PositionSeller-token-selector .TokenSelector-box {
   display: inline-flex;
 }
