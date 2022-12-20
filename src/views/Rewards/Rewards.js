@@ -1,6 +1,7 @@
 import React, { useState, useMemo, useEffect } from "react";
 
 import useSWR from "swr";
+import { useLocation } from "react-router-dom";
 
 import {
   getPageTitle,
@@ -12,6 +13,7 @@ import {
   ETH_DECIMALS,
   helperToast,
   useLocalStorageSerializeKey,
+  getUrlParameters,
 } from "../../Helpers";
 import { useWeb3React } from "@web3-react/core";
 import { callContract } from "../../Api";
@@ -51,6 +53,7 @@ const LeaderboardHeader = () => (
 );
 
 export default function Rewards(props) {
+  const location = useLocation();
   const { connectWallet, trackPageWithTraits, trackAction, analytics, setPendingTxns, infoTokens } = props;
 
   const { chainId } = useChainId();
@@ -327,6 +330,13 @@ export default function Rewards(props) {
   if (selectedRound !== "latest" && hasClaimed) {
     hasClaimedRound = hasClaimed[selectedRound];
   }
+
+  useEffect(() => {
+    const hash = location.hash;
+    if (hash === "#leaderboard") {
+      setCurrentView("Leaderboard");
+    }
+  }, [location.hash, setCurrentView]);
 
   return (
     <>
