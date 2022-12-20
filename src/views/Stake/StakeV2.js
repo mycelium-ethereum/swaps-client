@@ -39,14 +39,12 @@ import {
   getProcessedData,
   getPageTitle,
   expandDecimals,
-  ARBITRUM_GOERLI,
   ETH_DECIMALS,
 } from "../../Helpers";
 import {
   callContract,
   useMYCPrice,
   useStakingApr,
-  useUserStakingBalances,
   useStakingValues,
   useTotalMYCSupply,
 } from "../../Api";
@@ -68,6 +66,7 @@ import Toggle from "../../components/Toggle/Toggle";
 import MlpPriceChart from "./MlpPriceChart";
 import { TokenIcon } from "src/components/Stake/TokenIcon";
 import { ZERO_BN } from "src/components/Stake/presets";
+import { getMycTokenAddresses, useUserStakingBalances } from "src/hooks/useUserStakingBalances";
 
 const MYC_TOKEN = "MYC";
 const ES_MYC_TOKEN = "esMYC";
@@ -432,13 +431,15 @@ function VesterDepositModal(props) {
 
 function StakingModal(props) {
   const {
-    active,
+    // active,
     stakeAction,
     isVisible,
     setIsVisible,
     chainId,
     mycBalance,
+    mycAllowance,
     esMycBalance,
+    esMycAllowance,
     stakedMyc,
     stakedEsMyc,
     value,
@@ -453,43 +454,29 @@ function StakingModal(props) {
   const [isTransacting, setIsTransacting] = useState(false);
   const { library, account } = useWeb3React();
 
-  const MYC_CONTRACT_NAME = {
-    [ARBITRUM]: "MYC",
-    [ARBITRUM_GOERLI]: "MYC_V2",
-  };
-  const ES_MYC_CONTRACT_NAME = {
-    [ARBITRUM]: "MYC",
-    [ARBITRUM_GOERLI]: "MYC_V2",
-  };
+  const {
+    mycTokenAddress,
+    esMycTokenAddress
+  } = getMycTokenAddresses(chainId);
 
-  const MYC_CONTRACT = getContract(chainId, MYC_CONTRACT_NAME[chainId]);
-  const ES_MYC_CONTRACT = getContract(chainId, ES_MYC_CONTRACT_NAME[chainId]);
+  let balance, needApproval, staked, selectedTokenAddress;
+  if (selectedToken === MYC_TOKEN) {
+    balance = mycBalance || ZERO_BN;
+    staked = stakedMyc || ZERO_BN;
+    needApproval = mycAllowance && !mycAllowance.gt(mycBalance);
+    selectedTokenAddress = mycTokenAddress;
+  } else if (selectedToken === ES_MYC_TOKEN) {
+    balance = esMycBalance || ZERO_BN;
+    staked = stakedEsMyc || ZERO_BN;
+    needApproval = esMycAllowance && !esMycAllowance.gt(mycBalance);
+    selectedTokenAddress = esMycTokenAddress;
+  }
 
-  const STAKABLE_TOKENS = {
-    [MYC_TOKEN]: { balance: mycBalance || ZERO_BN, staked: stakedMyc || ZERO_BN, contract: MYC_CONTRACT[chainId] },
-    [ES_MYC_TOKEN]: {
-      balance: esMycBalance || ZERO_BN,
-      staked: stakedEsMyc || ZERO_BN,
-      contract: ES_MYC_CONTRACT[chainId],
-    },
-  };
-
-  const maxAmount = STAKABLE_TOKENS[selectedToken][stakeAction === STAKE ? "balance" : "staked"];
-
-  const selectedTokenAddress = STAKABLE_TOKENS[selectedToken].contract;
+  const maxAmount = stakeAction === STAKE ? balance : staked;
 
   const { data: ethBalance } = useSWR([library, "getBalance", account, "latest"], {
     fetcher: (library, method, ...params) => library[method](...params),
   });
-
-  const { data: tokenAllowance } = useSWR(
-    active && [active, chainId, selectedTokenAddress, "allowance", account, stakingAddress],
-    {
-      fetcher: fetcher(library, Token),
-    }
-  );
-
-  const needApproval = tokenAllowance && tokenAllowance.eq(0);
 
   let amount = parseValue(value, 18);
 
@@ -498,7 +485,7 @@ function StakingModal(props) {
       return ["Not enough ETH for gas"];
     }
 
-    if (STAKABLE_TOKENS[selectedToken].balance.eq(0)) {
+    if (balance.eq(0)) {
       return `Insufficient ${selectedToken} balance`;
     }
 
@@ -628,7 +615,7 @@ function StakingModal(props) {
             <div className="Exchange-info-label">Currently Staking</div>
             <div className="align-right">
               <span>
-                {formatAmount(STAKABLE_TOKENS[selectedToken].staked, 18, 4, true)} {selectedToken}
+                {formatAmount(staked, 18, 4, true)} {selectedToken}
               </span>
             </div>
           </div>
@@ -988,7 +975,9 @@ export default function StakeV2({
   // const tempAddress = "0xD9CF99Cf1E381703313F65DF16B17e0C1942EAe9";
   const {
     userMycBalance,
+    userMycAllowance,
     userEsMycBalance,
+    userEsMycAllowance,
     userStakedMycBalance,
     userStakedEsMycBalance,
     rewardsEarned,
@@ -1151,7 +1140,9 @@ export default function StakeV2({
         chainId={chainId}
         stakeTokenLabel={vesterDepositStakeTokenLabel}
         mycBalance={userMycBalance}
+        mycAllowance={userMycAllowance}
         esMycBalance={userEsMycBalance}
+        esMycAllowance={userEsMycAllowance}
         stakedMyc={userStakedMycBalance}
         stakedEsMyc={userStakedEsMycBalance}
         selectedToken={tokenToStake}
