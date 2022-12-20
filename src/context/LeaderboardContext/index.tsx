@@ -37,8 +37,8 @@ const useValues = () => {
     );
 
     return ({
-      userPosition: leaderBoardIndex + 1,
-      rewardIndicator: lastRewardsIndex > 0 ? lastRewardsIndex - 1 : 0
+      userPosition: leaderBoardIndex ? leaderBoardIndex + 1: undefined,
+      rewardIndicator: lastRewardsIndex && lastRewardsIndex > 0 ? lastRewardsIndex - 1 : 0
     })
   }, [account, leaderboardData]);
 

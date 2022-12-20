@@ -42,7 +42,7 @@ export const LiveLeaderboard = ({ location, account, leaderboardData, userPositi
   };
 
   const userPositionData = useMemo(() => {
-    return leaderboardData.find((_trader, index) => index + 1 === userPosition)
+    return leaderboardData?.find((_trader, index) => index + 1 === userPosition)
   }, [userPosition, leaderboardData])
 
   return (
