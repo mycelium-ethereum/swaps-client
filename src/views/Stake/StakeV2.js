@@ -485,7 +485,7 @@ function StakingModal(props) {
       return ["Not enough ETH for gas"];
     }
 
-    if (balance.eq(0)) {
+    if (stakeAction === STAKE && balance.eq(0)) {
       return `Insufficient ${selectedToken} balance`;
     }
 
