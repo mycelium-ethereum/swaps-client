@@ -251,6 +251,12 @@ export const Buttons = styled.div`
   > button,
   > a.App-button-option {
     color: var(--action-active);
+    background: transparent;
+  }
+
+  > button:hover, > a.App-button-option:hover {
+    background-color: var(--action-hover);
+    box-shadow: var(--action-shadow);
   }
 `;
 
@@ -369,7 +375,8 @@ export const OutgoingLink = styled.a.attrs({
 export const StakingButton = styled.button(
   (props) => `
   border: 1px solid var(--action-active);
-  background-color: transparent;
+  color: ${props.primary ? "white" : "var(--action-active)"};
+  background: ${props.primary ? "linear-gradient(267.64deg, rgba(0, 48, 0, 0.9) -84.72%, rgba(0, 48, 0, 0) 144.55%)" : "transparent"};
   height: 32px;
   width: ${props.fullWidth ? "100%" : "100px"};
   max-width: 350px;
@@ -378,7 +385,6 @@ export const StakingButton = styled.button(
   display: flex;
   align-items: center;
   justify-content: center;
-  color: ${props.whiteText ? "white" : "var(--action-active)"};
   margin-left: ${props.fullWidth ? "0" : "12px"};
   ${props.marginRight ? `margin-right: 12px;` : ""}
   font-size: 16px;

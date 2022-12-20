@@ -1301,12 +1301,12 @@ export default function StakeV2({
                   </StakeV2Styled.RewardsBannerRow>
                   <StakeV2Styled.FlexRowBetween>
                     {active && (
-                      <StakeV2Styled.StakingButton whiteText onClick={() => showMlpClaimModal()} marginRight fullWidth>
+                      <StakeV2Styled.StakingButton onClick={() => showMlpClaimModal()} marginRight fullWidth>
                         Claim
                       </StakeV2Styled.StakingButton>
                     )}
                     {active && (
-                      <StakeV2Styled.StakingButton whiteText onClick={() => showMlpClaimModal()} fullWidth>
+                      <StakeV2Styled.StakingButton onClick={() => showMlpClaimModal()} fullWidth>
                         Compound
                       </StakeV2Styled.StakingButton>
                     )}
@@ -1415,7 +1415,7 @@ export default function StakeV2({
                       </StakeV2Styled.FlexRowEnd>
                     </StakeV2Styled.FlexRowBetween>
                     <StakeV2Styled.ClaimButtonContainer>
-                      <StakeV2Styled.StakingButton onClick={claimRewards} fullWidth whiteText>
+                      <StakeV2Styled.StakingButton onClick={claimRewards} fullWidth primary>
                         Claim Rewards Now
                       </StakeV2Styled.StakingButton>
                     </StakeV2Styled.ClaimButtonContainer>
