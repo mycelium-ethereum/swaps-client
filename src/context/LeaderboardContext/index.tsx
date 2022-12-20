@@ -4,7 +4,7 @@ import { ethers } from "ethers";
 import useSWR from "swr";
 import { CurrentRewards, RewardsEntity } from "src/types/rewards";
 import { getServerUrl } from "../../lib";
-import { useChainId } from "../../Helpers";
+import { bigNumberify, useChainId } from "../../Helpers";
 
 const useValues = () => {
   const { chainId } = useChainId();
@@ -20,16 +20,26 @@ const useValues = () => {
 
 
   // Get volume, position and reward from user round data
-  const userPosition = useMemo(() => {
+  const { userPosition, rewardIndicator } = useMemo(() => {
     if (!leaderboardData) {
-      return undefined;
+      return ({
+        userPosition: undefined,
+        rewardIndicator: undefined
+      })
     }
     const accountLower = account?.toLowerCase();
     const leaderBoardIndex = leaderboardData?.findIndex(
       (trader: RewardsEntity) => trader.user_address.toLowerCase() === accountLower
     );
 
-    return leaderBoardIndex + 1;
+    const lastRewardsIndex = leaderboardData?.findIndex(
+      (trader: RewardsEntity) => bigNumberify(trader.reward).add(trader.degen_reward).eq(0)
+    );
+
+    return ({
+      userPosition: leaderBoardIndex + 1,
+      rewardIndicator: lastRewardsIndex > 0 ? lastRewardsIndex - 1 : 0
+    })
   }, [account, leaderboardData]);
 
   // testing functions
@@ -123,7 +133,7 @@ const useValues = () => {
     setLeaderboardData(sortedLeaderboard);
   }, [leaderboardData, account]);
 
-  return { updateLeaderboardOptimistically, leaderboardData, userPosition, failedFetchingRoundRewards };
+  return { updateLeaderboardOptimistically, leaderboardData, userPosition, rewardIndicator, failedFetchingRoundRewards };
 };
 
 export const LeaderboardContext = createContext({} as ReturnType<typeof useValues>);

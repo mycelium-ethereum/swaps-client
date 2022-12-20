@@ -1,4 +1,4 @@
-import { useMemo, useState, useEffect, useRef } from "react";
+import { useMemo } from "react";
 import { ethers } from "ethers";
 import { useWeb3React } from "@web3-react/core";
 import Jazzicon, { jsNumberForAddress } from "react-jazzicon";
@@ -14,7 +14,7 @@ const ARBISCAN_URL = "https://arbiscan.io/address/";
 // const MAX_UI_PERCENTAGE = 91.3;
 const BOTTOM_PERCENT = 95;
 
-export const LiveLeaderboard = ({ leaderboardData, userPosition }) => {
+export const LiveLeaderboard = ({ leaderboardData, userPosition, rewardIndicator }) => {
   const location = useLocation();
   const { account } = useWeb3React();
   const { ensName } = useENS(account);
@@ -24,24 +24,16 @@ export const LiveLeaderboard = ({ leaderboardData, userPosition }) => {
     [leaderboardData, userPosition]
   );
 
-  const lastInTopFive = useMemo(() => {
-    if (!leaderboardData || !userPosition) {
-      return undefined;
-    }
-    const topFiveIndex = Math.floor(userPosition / leaderboardData?.length);
-    const topFivePercentUser = leaderboardData[topFiveIndex];
-    return topFivePercentUser;
-  }, [leaderboardData, userPosition]);
-
   const differenceBetweenUserAndTopFive = useMemo(() => {
-    if (!leaderboardData || !userPosition || !lastInTopFive) {
+    if (!leaderboardData || userPosition === undefined || rewardIndicator === undefined) {
       return undefined;
     }
+    const lastInTopFive = leaderboardData[rewardIndicator];
     const difference = ethers.BigNumber.from(lastInTopFive.volume).sub(
       ethers.BigNumber.from(leaderboardData[userPosition - 1].volume)
     );
     return difference;
-  }, [leaderboardData, userPosition, lastInTopFive]);
+  }, [leaderboardData, userPosition, rewardIndicator]);
 
   const getOpacity = (position) => {
     if (position === userPosition) {
