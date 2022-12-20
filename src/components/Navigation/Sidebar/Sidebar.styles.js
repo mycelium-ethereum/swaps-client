@@ -21,11 +21,9 @@ export const SideMenu = styled.aside(
     }
     ${LegalMenu},
     ${EventBox},
-    ${CopyrightYear} {
-     opacity: 1;
-    }
+    ${CopyrightYear},
     ${BottomContainer} {
-      opacity: 1!important;
+     opacity: 1;
     }
   }
   ${LegalMenu},
