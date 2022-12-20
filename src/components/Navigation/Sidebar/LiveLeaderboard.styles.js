@@ -14,19 +14,20 @@ export const ArbiscanLink = styled.a.attrs({
   }
 `;
 
-export const LeaderboardContainer = styled.div`
-  position: relative;
-  margin: 16px;
-  border-radius: 4px;
-  border: 1px solid var(--cell-stroke);
-  overflow: hidden;
-  font-size: 12px;
+export const BottomContainer = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 9px 10px 16px;
+  border-top: 1px solid var(--cell-stroke);
+  transition: 0.3s;
 `;
 
 export const LeaderboardHeader = styled.div`
   position: relative;
   display: flex;
   justify-content: space-between;
+  transition: 0.3s;
   z-index: 1;
   border-top-left-radius: 4px;
   border-top-right-radius: 4px;
@@ -41,6 +42,17 @@ export const LeaderboardHeader = styled.div`
     display: flex;
     align-items: center;
   }
+`;
+
+export const LeaderboardContainer = styled.div`
+  position: relative;
+  margin: 16px;
+  transition: 0.3s;
+  border-radius: 4px;
+  border: 1px solid var(--cell-stroke);
+  overflow: hidden;
+  font-size: 12px;
+
 `;
 
 export const LeaderboardBody = styled.div`
@@ -145,7 +157,7 @@ const getOverlayOffset = (userPosition) => {
 export const UserRowOverlay = styled(UserRow)`
   position: absolute;
   top: ${(props) => getOverlayOffset(props.position)};
-  left: 44px;
+  left: 46px;
   padding-right: 8px;
   width: calc(100% - 40px);
 
@@ -165,7 +177,7 @@ export const UserPositionOverlay = styled(Position)`
   top: ${(props) => getOverlayOffset(props.position)};
   margin-left: 4px;
   padding-right: 4px;
-  width: 40px;
+  width: 42px;
   z-index: 1;
   background: var(--action-active);
   transition: 0.3s;
@@ -281,14 +293,6 @@ export const FivePercentIndicator = styled(Indicator)`
 
 export const BoldPercentage = styled.span`
   font-weight: bold;
-`;
-
-export const BottomContainer = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 8px 9px 10px 16px;
-  border-top: 1px solid var(--cell-stroke);
 `;
 
 export const TradeNowButton = styled(Link)`
