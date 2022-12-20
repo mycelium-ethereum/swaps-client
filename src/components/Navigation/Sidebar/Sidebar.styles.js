@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { LeaderboardContainer, LeaderboardHeader, BottomContainer } from "./LiveLeaderboard.styles";
+import { LeaderboardContainer, BottomContainer } from "./LiveLeaderboard.styles";
 
 export const SideMenu = styled.aside(
   (props) => `
@@ -24,9 +24,6 @@ export const SideMenu = styled.aside(
     ${CopyrightYear} {
      opacity: 1;
     }
-    ${LeaderboardHeader} {
-      padding-left: 8px!important;
-    }
     ${BottomContainer} {
       opacity: 1!important;
     }
@@ -39,9 +36,6 @@ export const SideMenu = styled.aside(
   }
   ${LeaderboardContainer} {
     margin-left: ${props.visible ? '0px' : '16px'};
-  }
-  ${LeaderboardHeader} {
-    padding-left: ${props.visible ? '4px': '8px'};
   }
 `
 );

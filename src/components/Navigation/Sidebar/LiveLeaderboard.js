@@ -60,11 +60,11 @@ export const LiveLeaderboard = ({ leaderboardData, userPosition, moveUser }) => 
   return (
     <Styles.LeaderboardContainer>
       <Styles.LeaderboardHeader>
-        <span>TRADING LEADERBOARD</span>
         <span>
           <img src={liveIcon} alt="live" />
           &nbsp;LIVE
         </span>
+        <span>TRADING LEADERBOARD</span>
       </Styles.LeaderboardHeader>
       <Styles.LeaderboardBody>
         {userPosition &&
