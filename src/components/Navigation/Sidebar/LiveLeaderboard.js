@@ -14,7 +14,7 @@ const ARBISCAN_URL = "https://arbiscan.io/address/";
 // const MAX_UI_PERCENTAGE = 91.3;
 const BOTTOM_PERCENT = 95;
 
-export const LiveLeaderboard = ({ leaderboardData, userPosition, moveUser }) => {
+export const LiveLeaderboard = ({ leaderboardData, userPosition }) => {
   const location = useLocation();
   const { account } = useWeb3React();
   const { ensName } = useENS(account);
