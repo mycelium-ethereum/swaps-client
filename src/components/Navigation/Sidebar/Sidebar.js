@@ -98,7 +98,7 @@ export default function Sidebar({
   sidebarVisible,
   setSidebarVisible,
 }) {
-  const { active } = useWeb3React();
+  const { active, account } = useWeb3React();
   const location = useLocation();
   const { leaderboardData, userPosition, failedFetchingRoundRewards, rewardIndicator } = useContext(LeaderboardContext);
   const yearRef = useRef(null);
@@ -147,7 +147,7 @@ export default function Sidebar({
               </MenuItem>
             </NavMenu>
             {active && userPosition > 0 && !failedFetchingRoundRewards ? (
-              <LiveLeaderboard userPosition={userPosition} leaderboardData={leaderboardData} rewardIndicator={rewardIndicator} />
+              <LiveLeaderboard account={account} location={location} userPosition={userPosition} leaderboardData={leaderboardData} rewardIndicator={rewardIndicator} />
             ) : (
               <EventBox>
                 <EventHeader>

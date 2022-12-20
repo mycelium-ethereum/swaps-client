@@ -1,22 +1,18 @@
 import { useMemo } from "react";
 import { ethers } from "ethers";
-import { useWeb3React } from "@web3-react/core";
 import Jazzicon, { jsNumberForAddress } from "react-jazzicon";
 import Davatar from "@davatar/react";
 import { useENS, truncateMiddleEthAddress, formatAmount, USD_DECIMALS } from "../../../Helpers";
 // import { ReactComponent as PositionIndicator } from "../../../img/position-indicator.svg";
 import * as Styles from "./LiveLeaderboard.styles";
 import liveIcon from "../../../img/nav/live.svg";
-import { useLocation } from "react-router-dom";
 
 const ARBISCAN_URL = "https://arbiscan.io/address/";
 // const MIN_UI_PERCENTAGE = 10;
 // const MAX_UI_PERCENTAGE = 91.3;
 const BOTTOM_PERCENT = 95;
 
-export const LiveLeaderboard = ({ leaderboardData, userPosition, rewardIndicator }) => {
-  const location = useLocation();
-  const { account } = useWeb3React();
+export const LiveLeaderboard = ({ location, account, leaderboardData, userPosition, rewardIndicator }) => {
   const { ensName } = useENS(account);
 
   const userPercentage = useMemo(
