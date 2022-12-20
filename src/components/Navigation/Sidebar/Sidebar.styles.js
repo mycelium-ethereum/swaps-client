@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import { LeaderboardContainer, BottomContainer } from "./LiveLeaderboard.styles";
 
 export const SideMenu = styled.aside(
   (props) => `
@@ -6,7 +7,7 @@ export const SideMenu = styled.aside(
   font-family: "aileron", sans-serif;
   background: var(--background-primary);
   height: 100vh;
-  background: linear-gradient(83.12deg, rgba(9, 130, 0, 0.5) -208.54%, rgba(9, 130, 0, 0) 159.09%), rgba(0, 0, 0, 0.9);
+  background: rgba(0, 0, 0, 0.9);
   border-right: 1px solid var(--action-active);
   overflow: hidden;
   transition: width 0.3s ease, opacity 0.3s ease;
@@ -20,14 +21,19 @@ export const SideMenu = styled.aside(
     }
     ${LegalMenu},
     ${EventBox},
-    ${CopyrightYear} {
+    ${CopyrightYear},
+    ${BottomContainer} {
      opacity: 1;
     }
   }
   ${LegalMenu},
   ${EventBox},
-  ${CopyrightYear} {
+  ${CopyrightYear},
+  ${BottomContainer} {
     opacity: ${props.visible ? "0" : "1"};
+  }
+  ${LeaderboardContainer} {
+    margin-left: ${props.visible ? '0px' : '16px'};
   }
 `
 );
@@ -233,7 +239,6 @@ export const EventBox = styled.div`
   margin: 16px;
   border-radius: 4px;
   border: 1px solid var(--cell-stroke);
-  height: 177px;
   overflow: hidden;
   opacity: 0;
   transition: opacity 0.3s ease;
@@ -241,25 +246,34 @@ export const EventBox = styled.div`
 
 export const EventHeader = styled.div`
   position: relative;
+  display: flex;
+  justify-content: space-between;
   z-index: 1;
   padding: 6px 8px;
   color: var(--background-primary);
   font-size: 8px;
+  border-top-left-radius: 4px;
+  border-top-right-radius: 4px;
   line-height: 12px;
   font-weight: 600;
   font-family: "Inter", sans-serif;
   background-color: var(--light-green);
+  > span {
+    display: flex;
+    align-items: center;
+  }
 `;
 
 export const EventContent = styled.div`
-  padding: 16px 8px 8px;
+  padding: 26px 8px 8px;
+  max-width: 211px;
   background: linear-gradient(0deg, #003000, #003000), linear-gradient(0deg, rgba(0, 49, 0, 0.6), rgba(0, 49, 0, 0.6));
   > a {
     text-decoration: none;
   }
 `;
 
-export const ViewNowButton = styled.button`
+export const TradeNowButton = styled.button`
   display: flex;
   align-items: center;
   justify-content: center;
@@ -287,10 +301,11 @@ export const EventGraphic = styled.img`
 
 export const EventTitle = styled.span`
   display: block;
-  color: var(--action-active);
-  margin-bottom: 10px;
+  margin-bottom: 6px;
 `;
 
 export const EventDescription = styled.p`
-  margin: 0 0 30px;
+  margin: 0 0 20px;
+  font-size: 14px;
+  color: var(--text-secondary);
 `;

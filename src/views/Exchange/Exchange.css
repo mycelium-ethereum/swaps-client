@@ -46,7 +46,7 @@
   display: grid;
   grid-template-columns: 1fr auto;
   grid-gap: 1rem;
-  padding-top: 3rem;
+  padding-top: 1rem;
   color: var(--text-secondary);
   transition: padding-top 0.3s ease;
 }
