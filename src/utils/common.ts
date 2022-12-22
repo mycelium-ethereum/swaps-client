@@ -1,6 +1,7 @@
-import {Period} from "src/types/common";
+import { ethers, BigNumber } from 'ethers';
+import { Period } from "src/types/common";
 
-export function numberToOrdinal (n: number) {
+export function numberToOrdinal(n: number) {
   const s = ["th", "st", "nd", "rd"];
   const v = n % 100;
   return n + (s[(v - 20) % 10] || s[v] || s[0]);
@@ -37,4 +38,3 @@ export function copyToClipboard(item: string) {
 export function shareToTwitter(text: string) {
   window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`, "_blank");
 }
-

@@ -33,7 +33,7 @@ import {
   USD_DECIMALS,
   ETH_DECIMALS,
   ARBITRUM_GOERLI,
-  SECONDS_PER_YEAR
+  SECONDS_PER_YEAR,
 } from "../Helpers";
 import { getTokenBySymbol } from "../data/Tokens";
 
@@ -125,16 +125,22 @@ export function useSpreadCaptureVolume(chainId) {
   const [res, setRes] = useState(undefined);
 
   useEffect(() => {
-    getMycGraphClient(chainId).query({ query }).then((res) => {
-      const totalMMFees = res.data.volumeStats.reduce((sum, stat) => sum
-        .add(MM_FEE_MULTIPLIER.mul(stat.mint))
-        .add(MM_FEE_MULTIPLIER.mul(stat.burn))
-        .add(MM_FEE_MULTIPLIER.mul(stat.margin))
-        .add(MM_FEE_MULTIPLIER.mul(stat.liquidation))
-        .add(MM_SWAPS_FEE_MULTIPLIER.mul(stat.swap))
-      , bigNumberify(0));
-      setRes(totalMMFees.div(expandDecimals(1, FEE_MULTIPLIER_BASIS_POINTS)))
-    }).catch(console.warn);
+    getMycGraphClient(chainId)
+      .query({ query })
+      .then((res) => {
+        const totalMMFees = res.data.volumeStats.reduce(
+          (sum, stat) =>
+            sum
+              .add(MM_FEE_MULTIPLIER.mul(stat.mint))
+              .add(MM_FEE_MULTIPLIER.mul(stat.burn))
+              .add(MM_FEE_MULTIPLIER.mul(stat.margin))
+              .add(MM_FEE_MULTIPLIER.mul(stat.liquidation))
+              .add(MM_SWAPS_FEE_MULTIPLIER.mul(stat.swap)),
+          bigNumberify(0)
+        );
+        setRes(totalMMFees.div(expandDecimals(1, FEE_MULTIPLIER_BASIS_POINTS)));
+      })
+      .catch(console.warn);
   }, [setRes, query, chainId]);
 
   return res;
@@ -1065,31 +1071,45 @@ export function useStakingApr(mycPrice, ethPrice) {
 
   // apr is annualised rewards (USD value) / total staked (USD value) * 100
   const { data: tokensPerInterval } = useSWR(
-    [`useStakingApr:tokensPerInterval:${ARBITRUM}`, ARBITRUM, getContract(ARBITRUM, "MYCStakingRewards"), "tokensPerInterval"],
+    [
+      `useStakingApr:tokensPerInterval:${ARBITRUM}`,
+      ARBITRUM,
+      getContract(ARBITRUM, "MYCStakingRewards"),
+      "tokensPerInterval",
+    ],
     {
       fetcher: fetcher(undefined, RewardsTracker),
     }
   );
 
-  const mycTokenAddress = getContract(ARBITRUM, 'MYC');
+  const mycTokenAddress = getContract(ARBITRUM, "MYC");
   const { data: mycDeposited } = useSWR(
-    [`useStakingApr:totalDepositSupply(MYC):${ARBITRUM}`, ARBITRUM, getContract(ARBITRUM, "MYCStakingRewards"), "totalDepositSupply"],
+    [
+      `useStakingApr:totalDepositSupply(MYC):${ARBITRUM}`,
+      ARBITRUM,
+      getContract(ARBITRUM, "MYCStakingRewards"),
+      "totalDepositSupply",
+    ],
     {
-      fetcher: fetcher(undefined, RewardsTracker, mycTokenAddress)
+      fetcher: fetcher(undefined, RewardsTracker, mycTokenAddress),
     }
   );
 
-  const esMycTokenAddress = getContract(ARBITRUM, 'ES_MYC');
+  const esMycTokenAddress = getContract(ARBITRUM, "ES_MYC");
   const { data: esMycDeposited } = useSWR(
-    [`useStakingApr:totalDepositSupply(esMYC):${ARBITRUM}`, ARBITRUM, getContract(ARBITRUM, "MYCStakingRewards"), "totalDepositSupply"],
+    [
+      `useStakingApr:totalDepositSupply(esMYC):${ARBITRUM}`,
+      ARBITRUM,
+      getContract(ARBITRUM, "MYCStakingRewards"),
+      "totalDepositSupply",
+    ],
     {
-      fetcher: fetcher(undefined, RewardsTracker, esMycTokenAddress)
+      fetcher: fetcher(undefined, RewardsTracker, esMycTokenAddress),
     }
   );
 
   useEffect(() => {
-    if(ethPrice?.gt(0) && mycPrice?.gt(0) && tokensPerInterval && mycDeposited && esMycDeposited) {
-
+    if (ethPrice?.gt(0) && mycPrice?.gt(0) && tokensPerInterval && mycDeposited && esMycDeposited) {
       const tokensPerYear = tokensPerInterval.mul(SECONDS_PER_YEAR);
       const annualRewardsUsd = tokensPerYear.mul(ethPrice);
 
@@ -1099,12 +1119,56 @@ export function useStakingApr(mycPrice, ethPrice) {
       const aprPrecision = 10;
       const apr = annualRewardsUsd.mul(expandDecimals(1, aprPrecision)).div(totalDepositsUsd);
 
-      const formattedApr = apr.toNumber() / (10 ** aprPrecision) * 100;
+      const formattedApr = (apr.toNumber() / 10 ** aprPrecision) * 100;
       setStakingApr(formattedApr.toFixed(2));
     }
   }, [ethPrice, mycPrice, tokensPerInterval, mycDeposited, esMycDeposited]);
 
   return stakingApr;
+}
+
+
+export function useStakingValues(chainId) {
+  // const mycTokenAddress = getContract(chainId, "MYC");
+  // const esMycTokenAddress = getContract(chainId, "ES_MYC");
+  const stakingAddress = getContract(chainId, "MYCStakingRewards");
+
+  const { data: isPaused } = useSWR(
+    [`useStakingValues:inPrivateStakingMode:${chainId}`, chainId, stakingAddress, "inPrivateStakingMode"],
+    {
+      fetcher: fetcher(undefined, RewardsTracker),
+    }
+  );
+
+  const { data: totalStaked } = useSWR(
+    [`useStakingValues:totalSupply:${chainId}`, chainId, stakingAddress, "totalSupply"],
+    {
+      fetcher: fetcher(undefined, RewardsTracker),
+    }
+  );
+
+  const { data: depositCap } = useSWR(
+    [`useStakingValues:depositCap:${chainId}`, chainId, stakingAddress, "depositCap"],
+    {
+      fetcher: fetcher(undefined, RewardsTracker),
+    }
+  );
+
+  // const { data: totalMycDeposited } = useSWR(
+  //   [`useStakingValues:totalDepositSupply(MYC):${chainId}`, chainId, stakingAddress, "totalDepositSupply"],
+  //   {
+  //     fetcher: fetcher(undefined, RewardsTracker, mycTokenAddress),
+  //   }
+  // );
+
+  // const { data: totalEsMycDeposited } = useSWR(
+  //   [`useStakingValues:totalDepositSupply(MYC):${chainId}`, chainId, stakingAddress, "totalDepositSupply"],
+  //   {
+  //     fetcher: fetcher(undefined, RewardsTracker, esMycTokenAddress),
+  //   }
+  // );
+
+  return { isPaused, totalStaked, depositCap };
 }
 
 export function useTotalStaked() {
