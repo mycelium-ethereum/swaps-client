@@ -58,7 +58,7 @@ const GAS_PRICE_ADJUSTMENT_MAP = {
 
 const MAX_GAS_PRICE_MAP = {};
 
-const alchemyWhitelistedDomains = ["swaps.mycelium.xyz", "localhost"];
+const alchemyWhitelistedDomains = ["swaps.mycelium.xyz"];
 
 export function getFallbackArbitrumRpcUrl(useWebsocket) {
   if (useWebsocket) {
@@ -87,8 +87,6 @@ export function getDefaultArbitrumGoerliRpcUrl(useWebsocket) {
     return process.env.REACT_APP_ARBITRUM_GOERLI_RPC_WSS;
   }
   return process.env.REACT_APP_ARBITRUM_GOERLI_RPC;
-
-  return getFallbackArbitrumGoerliRpcUrl(useWebsocket);
 }
 
 const ETHEREUM_RPC_PROVIDERS = ["https://cloudflare-eth.com"];
