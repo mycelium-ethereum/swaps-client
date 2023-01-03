@@ -1,4 +1,3 @@
-import React from "react";
 import useSWR from "swr";
 import { ethers } from "ethers";
 import { useWeb3React } from "@web3-react/core";
@@ -7,10 +6,10 @@ import { useParams } from "react-router-dom";
 import "./Actions.css";
 
 import { getContract } from "../../Addresses";
-import { formatAmount, fetcher, getTokenInfo, useChainId, useAccountOrders } from "../../Helpers";
+import { fetcher, getTokenInfo, useChainId, useAccountOrders } from "../../Helpers";
 
 import { useInfoTokens } from "../../hooks/useInfoTokens";
-import { getToken, getTokens, getWhitelistedTokens } from "../../data/Tokens";
+import { getTokens, getWhitelistedTokens } from "../../data/Tokens";
 import { getPositions, getPositionQuery } from "../Exchange/Exchange";
 
 import PositionsList from "../../components/Exchange/PositionsList";
@@ -18,8 +17,6 @@ import OrdersList from "../../components/Exchange/OrdersList";
 
 import TradeHistory from "../../components/Exchange/TradeHistory";
 import Reader from "../../abis/Reader.json";
-
-const USD_DECIMALS = 30;
 
 export default function Actions(props) {
   const { trackAction } = props;

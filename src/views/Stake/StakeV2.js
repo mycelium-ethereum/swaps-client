@@ -832,7 +832,7 @@ export default function StakeV2({
                                   <span>{formatKeyAmount(processedData, "mlpAprForNativeToken", 2, 2, true)}%</span>
                                 </div>
                                 <div className="Tooltip-row">
-                                  <span className="label">esMYC APR (historical)</span>
+                                  <span className="label">esMYC APR</span>
                                   <span>{formatKeyAmount(processedData, "mlpAprForEsMyc", 2, 2, true)}%</span>
                                 </div>
                               </>

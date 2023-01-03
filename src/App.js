@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { SWRConfig } from "swr";
 import { ethers } from "ethers";
 
@@ -120,9 +120,10 @@ import PageNotFound from "./views/PageNotFound/PageNotFound";
 import useSWR from "swr";
 import LinkDropdown from "./components/Navigation/LinkDropdown/LinkDropdown";
 import Sidebar from "./components/Navigation/Sidebar/Sidebar";
-import EventModal from "./components/EventModal/EventModal";
+// import EventModal from "./components/EventModal/EventModal";
 import AppDropdown from "./components/AppDropdown/AppDropdown";
 import { useInfoTokens } from "./hooks/useInfoTokens";
+import { LeaderboardProvider } from "./context/LeaderboardContext";
 // import { Banner, BannerContent } from "./components/Banner/Banner";
 
 if ("ethereum" in window) {
@@ -451,7 +452,7 @@ function FullApp() {
   };
 
   const [walletModalVisible, setWalletModalVisible] = useState();
-  const [isEventModalVisible, setEventModalVisible] = useState(false);
+  // const [isEventModalVisible, setEventModalVisible] = useState(false);
   const connectWallet = () => setWalletModalVisible(true);
 
   const [isDrawerVisible, setIsDrawerVisible] = useState(undefined);
@@ -973,7 +974,10 @@ function FullApp() {
             </Route>
           </Switch>
         </div>
-        <Sidebar sidebarVisible={sidebarVisible} setSidebarVisible={setSidebarVisible} />
+        <Sidebar
+          sidebarVisible={sidebarVisible}
+          setSidebarVisible={setSidebarVisible}
+        />
         {/* <Footer /> */}
       </div>
       <ToastContainer
@@ -988,13 +992,13 @@ function FullApp() {
         pauseOnHover
       />
       <EventToastContainer />
-      <EventModal
+      {/*<EventModal
         isModalVisible={isEventModalVisible}
         setEventModalVisible={setEventModalVisible}
         eventKey="seenPopupV3"
         hideHeader={true}
         requiresConfirmation={true}
-      />
+      />*/}
       <Modal
         className="Connect-wallet-modal"
         isVisible={walletModalVisible}
@@ -1217,9 +1221,11 @@ function App() {
   if (inPreviewMode()) {
     return (
       <Web3ReactProvider getLibrary={getLibrary}>
-        <ThemeProvider>
-          <PreviewApp />
-        </ThemeProvider>
+        <LeaderboardProvider>
+          <ThemeProvider>
+            <PreviewApp />
+          </ThemeProvider>
+        </LeaderboardProvider>
       </Web3ReactProvider>
     );
   }
@@ -1227,10 +1233,12 @@ function App() {
   return (
     <SWRConfig value={{ refreshInterval: 5000 }}>
       <Web3ReactProvider getLibrary={getLibrary}>
-        <ThemeProvider>
-          <FullApp />
-        </ThemeProvider>
-        <ConsentModal hasConsented={hasConsented} setConsented={setConsented} />
+        <LeaderboardProvider>
+          <ThemeProvider>
+            <FullApp />
+          </ThemeProvider>
+          <ConsentModal hasConsented={hasConsented} setConsented={setConsented} />
+        </LeaderboardProvider>
       </Web3ReactProvider>
     </SWRConfig>
   );
