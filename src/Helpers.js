@@ -80,13 +80,10 @@ export function getFallbackArbitrumGoerliRpcUrl(useWebsocket) {
   return "https://goerli-rollup.arbitrum.io/rpc";
 }
 export function getDefaultArbitrumGoerliRpcUrl(useWebsocket) {
-  if (alchemyWhitelistedDomains.includes(window.location.host)) {
-    if (useWebsocket) {
-      return process.env.REACT_APP_ARBITRUM_GOERLI_RPC_WSS;
-    }
-    return process.env.REACT_APP_ARBITRUM_GOERLI_RPC;
+  if (useWebsocket) {
+    return process.env.REACT_APP_ARBITRUM_GOERLI_RPC_WSS;
   }
-  return getFallbackArbitrumGoerliRpcUrl(useWebsocket);
+  return process.env.REACT_APP_ARBITRUM_GOERLI_RPC;
 }
 
 const ETHEREUM_RPC_PROVIDERS = ["https://cloudflare-eth.com"];
