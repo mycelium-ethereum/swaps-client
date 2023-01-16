@@ -49,12 +49,13 @@ const CONTRACTS = {
     MycVester: "0x59A3640b4C8aCF9D6E6107e9Ba16d8B7d7cC412c",
     MlpVester: "0xd3A37697c1B21DdE4F97636E294399e0fab9D235",
 
-    OrderBook: "0xB131725c12789064875c9ee126f83c96D771bD90",
-    OldOrderBook: ADDRESS_ZERO, // Update this once deployed
+    OrderBook: "0x5351f1EA99999aE1f088415DF3a07638eC951d08",
+    OldOrderBook: "0xB131725c12789064875c9ee126f83c96D771bD90", // Update this once deployed
     OrderExecutor: "0x9B12CF1bC134a9eE01DC456fbb13a662C2dcf443",
     OrderBookReader: "0xf2A0764144bEB244cD04356b5b2078E0ef682FF6",
-    PositionRouter: "0x2d78AE5147D358d803e6306D96db1AB995a4AAF1",
+    PositionRouter: "0x48e715eb6d5a9D2Aab1b4b938790F81919bDf71b",
     PositionManager: "0xb65B42c48DB28e13Cd490f72dDDEEe57eD2072f6",
+    PositionCreator: "0x67cDf2a2f2c1a5FF13dAaF425523e4919bE93993",
 
     ReferralStorage: "0x956BbBe040A2378B63C21011e3c71978d7B75a56",
     ReferralReader: "0x27ec154C4D6e496027FBED863aC7a0186942Cc09",
@@ -101,6 +102,7 @@ const CONTRACTS = {
 
     PositionRouter: "0xE510571cAc76279DADf6c4b6eAcE5370F86e3dC2",
     PositionManager: "0x3892b8cF646b17709C91E653319bA5504a5FEafe",
+    PositionCreator: ADDRESS_ZERO, // Update this once deployed
 
     UniswapMycTcrPool: "0xc9f423c406e690b7f7715f9e048489caafb2266b",
     // TODO this uniswap pool has low liquidity so cant use for pricing
