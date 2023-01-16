@@ -79,8 +79,6 @@ export default function ConfirmationBox(props) {
     takeProfitTriggerPnl,
   } = props;
 
-  const showTriggerPrices = stopLossTriggerPrice || takeProfitTriggerPrice;
-
   const [savedSlippageAmount] = useLocalStorageSerializeKey([chainId, SLIPPAGE_BPS_KEY], DEFAULT_SLIPPAGE_AMOUNT);
   const [isProfitWarningAccepted, setIsProfitWarningAccepted] = useState(false);
 
@@ -424,7 +422,7 @@ export default function ConfirmationBox(props) {
             </div>
           )}
           {orderOption === LIMIT && renderAvailableLiquidity()}
-          {showTriggerPrices && (
+          {stopLossTriggerPrice && (
             <>
               <ExchangeInfoRow label="Trigger Price Stop Loss">
                 ${formatAmount(stopLossTriggerPrice, USD_DECIMALS, 2, true)}
@@ -432,6 +430,10 @@ export default function ConfirmationBox(props) {
               <ExchangeInfoRow label="Trigger PnL Stop Loss">
                 -{limitDecimals(stopLossTriggerPnl * 100, 2)}%
               </ExchangeInfoRow>
+            </>
+          )}
+          {takeProfitTriggerPrice && (
+            <>
               <ExchangeInfoRow label="Trigger Price Take Profit">
                 ${formatAmount(takeProfitTriggerPrice, USD_DECIMALS, 2, true)}
               </ExchangeInfoRow>
