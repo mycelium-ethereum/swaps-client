@@ -72,6 +72,7 @@ import OrdersToa from "./OrdersToa";
 
 import { getTokens, getWhitelistedTokens, getToken, getTokenBySymbol } from "../../data/Tokens";
 import PositionRouter from "../../abis/PositionRouter.json";
+import PositionCreator from "../../abis/PositionCreator.json";
 import Router from "../../abis/Router.json";
 import Token from "../../abis/Token.json";
 import WETH from "../../abis/WETH.json";
@@ -1681,6 +1682,187 @@ export default function SwapBox(props) {
       });
   };
 
+  const INCREASE_POSITION = 0;
+  const DECREASE_ORDER = 2;
+  const orderExecutionFee = getConstant(chainId, "DECREASE_ORDER_EXECUTION_GAS_FEE");
+
+  const createIncreasePositionWithOrders = async () => {
+    setIsSubmitting(true);
+
+    const actions = [];
+    const args = [];
+    const values = [];
+
+    // Increase Position Params
+    const tokenAddress0 = fromTokenAddress === AddressZero ? nativeTokenAddress : fromTokenAddress;
+    const indexTokenAddress = toTokenAddress === AddressZero ? nativeTokenAddress : toTokenAddress;
+    let path = [indexTokenAddress]; // assume long
+    if (toTokenAddress !== fromTokenAddress) {
+      path = [tokenAddress0, indexTokenAddress];
+    }
+
+    if (fromTokenAddress === AddressZero && toTokenAddress === nativeTokenAddress) {
+      path = [nativeTokenAddress];
+    }
+
+    if (fromTokenAddress === nativeTokenAddress && toTokenAddress === AddressZero) {
+      path = [nativeTokenAddress];
+    }
+
+    if (isShort) {
+      path = [shortCollateralAddress];
+      if (tokenAddress0 !== shortCollateralAddress) {
+        path = [tokenAddress0, shortCollateralAddress];
+      }
+    }
+
+    const refPrice = isLong ? toTokenInfo.maxPrice : toTokenInfo.minPrice;
+    const priceBasisPoints = isLong ? BASIS_POINTS_DIVISOR + allowedSlippage : BASIS_POINTS_DIVISOR - allowedSlippage;
+    const priceLimit = refPrice.mul(priceBasisPoints).div(BASIS_POINTS_DIVISOR);
+
+    const boundedFromAmount = fromAmount ? fromAmount : bigNumberify(0);
+
+    if (fromAmount && fromAmount.gt(0) && fromTokenAddress === USDG_ADDRESS && isLong) {
+      const { amount: nextToAmount, path: multiPath } = getNextToAmount(
+        chainId,
+        fromAmount,
+        fromTokenAddress,
+        indexTokenAddress,
+        infoTokens,
+        undefined,
+        undefined,
+        usdgSupply,
+        totalTokenWeights
+      );
+      if (nextToAmount.eq(0)) {
+        helperToast.error("Insufficient liquidity");
+        return;
+      }
+      if (multiPath) {
+        path = replaceNativeTokenAddress(multiPath);
+      }
+    }
+
+    const usingETH = fromTokenAddress === AddressZero;
+    const abiCoder = new ethers.utils.AbiCoder();
+    
+    const encodedIncreasePositionArgs = abiCoder.encode(
+      ["address[]", "address", "uint256", "uint256", "uint256", "bool", "uint256", "uint256", "bytes32", "bool"],
+      [
+        path, // _path
+        indexTokenAddress, // _indexToken
+        boundedFromAmount, // _amountIn
+        0, // _minOut
+        toUsdMax, // _sizeDelta
+        isLong, // _isLong
+        priceLimit, // _acceptablePrice
+        minExecutionFee, // _executionFee
+        referralCode, // _referralCode
+        usingETH, // _wrap
+      ]
+    );  
+
+    actions.push(INCREASE_POSITION);
+    args.push(encodedIncreasePositionArgs);
+    if (usingETH) {
+      values.push(boundedFromAmount.add(minExecutionFee));
+    } else {
+      values.push(minExecutionFee);
+    }
+
+    if (shouldRaiseGasError(getTokenInfo(infoTokens, fromTokenAddress), fromAmount)) {
+      setIsSubmitting(false);
+      setIsPendingConfirmation(false);
+      helperToast.error(
+        `Leave at least ${formatAmount(DUST_BNB, 18, 3)} ${getConstant(chainId, "nativeTokenSymbol")} for gas`
+      );
+      return;
+    }
+
+    if (stopLossTriggerPercent) {
+      actions.push(DECREASE_ORDER);
+      const encodedStopLossArgs = abiCoder.encode(
+        ["address", "uint256", "address", "uint256", "bool", "uint256", "bool"],
+        [
+        indexTokenAddress, // _indexToken
+        toUsdMax, // _sizeDelta
+        isLong ? indexTokenAddress : tokenAddress0, // _collateralToken
+        0, // _collateralDelta
+        isLong, // _isLong
+        stopLossTriggerPrice, // _triggerPrice
+        !isLong, // _triggerAboveThreshold
+      ]);
+      args.push(encodedStopLossArgs);
+      values.push(orderExecutionFee);
+    }
+
+    if (takeProfitTriggerPercent) {
+      actions.push(DECREASE_ORDER);
+      const encodedTakeProfitArgs = abiCoder.encode(
+        ["address", "uint256", "address", "uint256", "bool", "uint256", "bool"],
+        [
+        indexTokenAddress, // _indexToken
+        toUsdMax, // _sizeDelta
+        isLong ? indexTokenAddress : tokenAddress0, // _collateralToken
+        0, // _collateralDelta
+        isLong, // _isLong
+        takeProfitTriggerPrice, // _triggerPrice
+        isLong, // _triggerAboveThreshold
+      ]);
+      args.push(encodedTakeProfitArgs);
+      values.push(orderExecutionFee);
+    }
+
+    const contractAddress = getContract(chainId, "PositionCreator");
+    const contract = new ethers.Contract(contractAddress, PositionCreator.abi, library.getSigner());
+    const indexToken = getTokenInfo(infoTokens, indexTokenAddress);
+    const tokenSymbol = indexToken.isWrapped ? getConstant(chainId, "nativeTokenSymbol") : indexToken.symbol;
+    let successMsg = `Requested increase of ${tokenSymbol} ${isLong ? "Long" : "Short"} by ${formatAmount(
+      toUsdMax,
+      USD_DECIMALS,
+      2
+    )} USD`;
+    if (stopLossTriggerPercent && takeProfitTriggerPercent) {
+      successMsg += ` with stop loss and take profit orders`;
+    } else if (stopLossTriggerPercent) {
+      successMsg += ` with stop loss order`;
+    } else if (takeProfitTriggerPercent) {
+      successMsg += ` with take profit order`;
+    }
+
+    console.log("contractAddress", contractAddress);
+    console.log("contract", contract);
+
+    await Api.callContract(chainId, contract, "executeMultiple", [actions, args, values], {
+      value: values.reduce((a, b) => a.add(b), bigNumberify(0)),
+      setPendingTxns,
+      sentMsg: `Actions submitted.`,
+      failMsg: `Actions failed.`,
+      successMsg,
+    });
+
+    trackTrade(3, `${isLong ? "Long" : "Short"}`);
+    setIsConfirming(false);
+
+    const key = getPositionKey(account, path[path.length - 1], indexTokenAddress, isLong);
+    let nextSize = toUsdMax;
+    if (hasExistingPosition) {
+      nextSize = existingPosition.size.add(toUsdMax);
+    }
+
+    pendingPositions[key] = {
+      updatedAt: Date.now(),
+      pendingChanges: {
+        size: nextSize,
+      },
+    };
+
+    setPendingPositions({ ...pendingPositions });
+
+    setIsSubmitting(false);
+    setIsPendingConfirmation(false);
+  };
+
   const onSwapOptionChange = (opt) => {
     setSwapOption(opt);
     setAnchorOnFromAmount(true);
@@ -1725,6 +1907,11 @@ export default function SwapBox(props) {
 
     if (orderOption === LIMIT) {
       createIncreaseOrder();
+      return;
+    }
+
+    if (takeProfitTriggerPercent || stopLossTriggerPercent) {
+      createIncreasePositionWithOrders();
       return;
     }
 
