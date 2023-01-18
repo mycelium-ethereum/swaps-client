@@ -111,6 +111,7 @@ export default function MlpSwap(props) {
   // const chainName = getChainName(chainId)
   const tokens = getTokens(chainId);
   const whitelistedTokens = getWhitelistedTokens(chainId);
+  const enabledWhitelistedTokens = whitelistedTokens.filter((token) => token.isEnabledForTrading);
   const tokenList = whitelistedTokens.filter((t) => !t.isWrapped);
   const [swapValue, setSwapValue] = useState("");
   const [mlpValue, setMlpValue] = useState("");
@@ -901,7 +902,7 @@ export default function MlpSwap(props) {
                 chainId={chainId}
                 tokenAddress={swapTokenAddress}
                 onSelectToken={onSelectSwapToken}
-                tokens={whitelistedTokens}
+                tokens={enabledWhitelistedTokens}
                 infoTokens={infoTokens}
                 className="MlpSwap-from-token"
                 showSymbolImage={true}

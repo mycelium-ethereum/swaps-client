@@ -87,6 +87,8 @@ const SWAP_ICONS = {
   [SHORT]: shortImg,
   [SWAP]: swapImg,
 };
+const DISABLED_COLLATERAL_TOKENS = ["FXS", "CRV", "UNI", "BAL", "FRAX"];
+
 const { AddressZero } = ethers.constants;
 
 function getNextAveragePrice({ size, sizeDelta, hasProfit, delta, nextPrice, isLong }) {
@@ -244,13 +246,15 @@ export default function SwapBox(props) {
 
   const whitelistedTokens = getWhitelistedTokens(chainId);
   const tokens = getTokens(chainId);
-  const fromTokens = tokens;
+  const enabledTokens = tokens.filter((token) => token.isEnabledForTrading);
+  const fromTokens = enabledTokens;
   const stableTokens = tokens.filter((token) => token.isStable);
   const indexTokens = whitelistedTokens.filter((token) => !token.isStable && !token.isWrapped);
-  const shortableTokens = indexTokens.filter((token) => token.isShortable);
+  const enabledIndexTokens = whitelistedTokens.filter((token) => token.isEnabledForTrading);
+  const shortableTokens = indexTokens.filter((token) => token.isShortable && token.isEnabledForTrading);
   let toTokens = tokens;
   if (isLong) {
-    toTokens = indexTokens;
+    toTokens = enabledIndexTokens;
   }
   if (isShort) {
     toTokens = shortableTokens;
