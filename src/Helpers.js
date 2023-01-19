@@ -28,6 +28,8 @@ import {
 
 const { AddressZero } = ethers.constants;
 
+export const DISABLED_TOKENS = ["FXS", "CRV", "UNI", "BAL", "FRAX"];
+
 export const UI_VERSION = "1.3";
 
 // use a random placeholder account instead of the zero address as the zero address might have tokens

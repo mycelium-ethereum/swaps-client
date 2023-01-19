@@ -22,6 +22,7 @@ import {
   SWAP_ORDER_OPTIONS,
   LEVERAGE_ORDER_OPTIONS,
   DEFAULT_HIGHER_SLIPPAGE_AMOUNT,
+  DISABLED_TOKENS,
   getPositionKey,
   getUsd,
   BASIS_POINTS_DIVISOR,
@@ -87,7 +88,6 @@ const SWAP_ICONS = {
   [SHORT]: shortImg,
   [SWAP]: swapImg,
 };
-const DISABLED_COLLATERAL_TOKENS = ["FXS", "CRV", "UNI", "BAL", "FRAX"];
 
 const { AddressZero } = ethers.constants;
 
@@ -511,9 +511,12 @@ export default function SwapBox(props) {
 
   useEffect(() => {
     if (!toTokens.find((token) => token.address === toTokenAddress)) {
-      setToTokenAddress(swapOption, toTokens[0].address);
-    }
-  }, [swapOption, toTokens, toTokenAddress, setToTokenAddress]);
+      // Do not set toTokenAddress if the current token with toTokenAddress is disabled
+      if(!tokens.find((token) => token.address === toTokenAddress && !token.isEnabledForTrading)) {
+        setToTokenAddress(swapOption, toTokens[0].address);
+      }
+  }
+  }, [swapOption, tokens, toTokens, toTokenAddress, setToTokenAddress]);
 
   useEffect(() => {
     if (swapOption !== SHORT) {
@@ -1812,6 +1815,11 @@ export default function SwapBox(props) {
     feeBps = feeBasisPoints;
   }
 
+  // Only allow toTokenAddress if it is not included as a disabled token
+  const checkedToTokenAddress = useMemo(() => 
+    tokens.find((token) => token.address === toTokenAddress && DISABLED_TOKENS.includes(token.symbol)) ? AddressZero : toTokenAddress, 
+  [tokens, toTokenAddress])
+
   if (!fromToken || !toToken) {
     return null;
   }
@@ -2032,7 +2040,7 @@ export default function SwapBox(props) {
                   <TokenSelector
                     label="Pay"
                     chainId={chainId}
-                    tokenAddress={fromTokenAddress}
+                    tokenAddress={checkedToTokenAddress}
                     onSelectToken={onSelectFromToken}
                     tokens={fromTokens}
                     infoTokens={infoTokens}
@@ -2081,7 +2089,7 @@ export default function SwapBox(props) {
                   <TokenSelector
                     label={getTokenLabel()}
                     chainId={chainId}
-                    tokenAddress={toTokenAddress}
+                    tokenAddress={checkedToTokenAddress}
                     onSelectToken={onSelectToToken}
                     tokens={toTokens}
                     infoTokens={infoTokens}
@@ -2134,7 +2142,7 @@ export default function SwapBox(props) {
                 <TokenSelector
                   label="To"
                   chainId={chainId}
-                  tokenAddress={toTokenAddress}
+                  tokenAddress={checkedToTokenAddress}
                   onSelectToken={onSelectToToken}
                   tokens={toTokens}
                   infoTokens={infoTokens}
