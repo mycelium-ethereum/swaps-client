@@ -120,7 +120,7 @@ import PageNotFound from "./views/PageNotFound/PageNotFound";
 import useSWR from "swr";
 import LinkDropdown from "./components/Navigation/LinkDropdown/LinkDropdown";
 import Sidebar from "./components/Navigation/Sidebar/Sidebar";
-// import EventModal from "./components/EventModal/EventModal";
+import EventModal from "./components/EventModal/EventModal";
 import AppDropdown from "./components/AppDropdown/AppDropdown";
 import { useInfoTokens } from "./hooks/useInfoTokens";
 import { LeaderboardProvider } from "./context/LeaderboardContext";
@@ -452,7 +452,7 @@ function FullApp() {
   };
 
   const [walletModalVisible, setWalletModalVisible] = useState();
-  // const [isEventModalVisible, setEventModalVisible] = useState(false);
+  const [isEventModalVisible, setEventModalVisible] = useState(false);
   const connectWallet = () => setWalletModalVisible(true);
 
   const [isDrawerVisible, setIsDrawerVisible] = useState(undefined);
@@ -974,10 +974,7 @@ function FullApp() {
             </Route>
           </Switch>
         </div>
-        <Sidebar
-          sidebarVisible={sidebarVisible}
-          setSidebarVisible={setSidebarVisible}
-        />
+        <Sidebar sidebarVisible={sidebarVisible} setSidebarVisible={setSidebarVisible} />
         {/* <Footer /> */}
       </div>
       <ToastContainer
@@ -992,13 +989,13 @@ function FullApp() {
         pauseOnHover
       />
       <EventToastContainer />
-      {/*<EventModal
+      <EventModal
         isModalVisible={isEventModalVisible}
         setEventModalVisible={setEventModalVisible}
-        eventKey="seenPopupV3"
+        eventKey="seenPopupV4"
         hideHeader={true}
         requiresConfirmation={true}
-      />*/}
+      />
       <Modal
         className="Connect-wallet-modal"
         isVisible={walletModalVisible}

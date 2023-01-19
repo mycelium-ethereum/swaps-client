@@ -22,7 +22,6 @@ import {
   SWAP_ORDER_OPTIONS,
   LEVERAGE_ORDER_OPTIONS,
   DEFAULT_HIGHER_SLIPPAGE_AMOUNT,
-  DISABLED_TOKENS,
   getPositionKey,
   getUsd,
   BASIS_POINTS_DIVISOR,
@@ -259,6 +258,17 @@ export default function SwapBox(props) {
   if (isShort) {
     toTokens = shortableTokens;
   }
+
+  const isToTokenEnabled = useMemo(
+    () => tokens.find((token) => token.address === toTokenAddress)?.isEnabledForTrading,
+    [tokens, toTokenAddress]
+  );
+
+  // Only allow toTokenAddress if it is not included as a disabled token or if the swapOption is Swap
+  const checkedToTokenAddress = useMemo(
+    () => (swapOption !== SWAP && !isToTokenEnabled ? AddressZero : toTokenAddress),
+    [swapOption, toTokenAddress, isToTokenEnabled]
+  );
 
   const needOrderBookApproval = !isMarketOrder && !orderBookApproved;
   const prevNeedOrderBookApproval = usePrevious(needOrderBookApproval);
@@ -512,11 +522,11 @@ export default function SwapBox(props) {
   useEffect(() => {
     if (!toTokens.find((token) => token.address === toTokenAddress)) {
       // Only set toTokenAddress to ETH if the current token with toTokenAddress is not disabled
-      if (!tokens.find((token) => token.address === toTokenAddress && !token.isEnabledForTrading)) {
+      if (isToTokenEnabled) {
         setToTokenAddress(swapOption, toTokens[0].address);
       }
     }
-  }, [swapOption, tokens, toTokens, toTokenAddress, setToTokenAddress]);
+  }, [swapOption, tokens, toTokens, toTokenAddress, setToTokenAddress, isToTokenEnabled]);
 
   useEffect(() => {
     if (swapOption !== SHORT) {
@@ -886,6 +896,9 @@ export default function SwapBox(props) {
     }
     if (hasOutdatedUi) {
       return ["Page outdated, please refresh"];
+    }
+    if (!isToTokenEnabled) {
+      return ["Token currently disabled"];
     }
 
     if (!toAmount || toAmount.eq(0)) {
@@ -1814,16 +1827,6 @@ export default function SwapBox(props) {
     }
     feeBps = feeBasisPoints;
   }
-
-  // Only allow toTokenAddress if it is not included as a disabled token or if the swapOption is Swap
-  const checkedToTokenAddress = useMemo(
-    () =>
-      swapOption !== SWAP &&
-      tokens.find((token) => token.address === toTokenAddress && DISABLED_TOKENS.includes(token.symbol))
-        ? AddressZero
-        : toTokenAddress,
-    [swapOption, tokens, toTokenAddress]
-  );
 
   if (!fromToken || !toToken) {
     return null;
