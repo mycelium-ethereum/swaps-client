@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo, useCallback } from "react";
-
+import cx from "classnames";
 import Tooltip from "../Tooltip/Tooltip";
 import Modal from "../Modal/Modal";
 
@@ -2060,8 +2060,17 @@ export default function SwapBox(props) {
               </div>
             </div>
             <div className="Exchange-swap-ball-container">
-              <div className="Exchange-swap-ball" onClick={switchTokens}>
-                <IoMdSwap className="Exchange-swap-ball-icon" />
+              <div 
+                className={cx("Exchange-swap-ball", 
+                  {
+                    disabled: !isToTokenEnabled,
+                  }
+                )} 
+                onClick={() => isToTokenEnabled && switchTokens()}
+              >
+                <IoMdSwap
+                  className="Exchange-swap-ball-icon"
+                />
               </div>
             </div>
             <div className="Exchange-swap-section">

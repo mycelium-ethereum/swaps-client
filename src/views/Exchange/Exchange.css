@@ -787,12 +787,19 @@ input.Exchange-swap-input.small {
   align-items: center;
 }
 
-.Exchange-swap-ball:hover {
+.Exchange-swap-ball.disabled,
+.Exchange-swap-ball:not(.disabled):hover {
   background: var(--action-hover);
 }
 
-.Exchange-swap-ball:hover .Exchange-swap-ball-icon {
+.Exchange-swap-ball:not(.disabled):hover .Exchange-swap-ball-icon {
   opacity: 1;
+}
+.Exchange-swap-ball.disabled {
+  cursor: not-allowed;
+}
+.Exchange-swap-ball.disabled .Exchange-swap-ball-icon {
+  opacity: 0.3;
 }
 
 table.Exchange-list-small {
