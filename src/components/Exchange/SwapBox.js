@@ -511,11 +511,11 @@ export default function SwapBox(props) {
 
   useEffect(() => {
     if (!toTokens.find((token) => token.address === toTokenAddress)) {
-      // Do not set toTokenAddress if the current token with toTokenAddress is disabled
-      if(!tokens.find((token) => token.address === toTokenAddress && !token.isEnabledForTrading)) {
+      // Only set toTokenAddress to ETH if the current token with toTokenAddress is not disabled
+      if (!tokens.find((token) => token.address === toTokenAddress && !token.isEnabledForTrading)) {
         setToTokenAddress(swapOption, toTokens[0].address);
       }
-  }
+    }
   }, [swapOption, tokens, toTokens, toTokenAddress, setToTokenAddress]);
 
   useEffect(() => {
@@ -1815,10 +1815,15 @@ export default function SwapBox(props) {
     feeBps = feeBasisPoints;
   }
 
-  // Only allow toTokenAddress if it is not included as a disabled token
-  const checkedToTokenAddress = useMemo(() => 
-    tokens.find((token) => token.address === toTokenAddress && DISABLED_TOKENS.includes(token.symbol)) ? AddressZero : toTokenAddress, 
-  [tokens, toTokenAddress])
+  // Only allow toTokenAddress if it is not included as a disabled token or if the swapOption is Swap
+  const checkedToTokenAddress = useMemo(
+    () =>
+      swapOption !== SWAP &&
+      tokens.find((token) => token.address === toTokenAddress && DISABLED_TOKENS.includes(token.symbol))
+        ? AddressZero
+        : toTokenAddress,
+    [swapOption, tokens, toTokenAddress]
+  );
 
   if (!fromToken || !toToken) {
     return null;
@@ -2040,7 +2045,7 @@ export default function SwapBox(props) {
                   <TokenSelector
                     label="Pay"
                     chainId={chainId}
-                    tokenAddress={checkedToTokenAddress}
+                    tokenAddress={fromTokenAddress}
                     onSelectToken={onSelectFromToken}
                     tokens={fromTokens}
                     infoTokens={infoTokens}
