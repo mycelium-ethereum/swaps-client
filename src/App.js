@@ -124,7 +124,7 @@ import EventModal from "./components/EventModal/EventModal";
 import AppDropdown from "./components/AppDropdown/AppDropdown";
 import { useInfoTokens } from "./hooks/useInfoTokens";
 import { LeaderboardProvider } from "./context/LeaderboardContext";
-import { Banner, BannerTitle, BannerContent } from "./components/Banner/Banner";
+// import { Banner, BannerTitle, BannerContent } from "./components/Banner/Banner";
 
 if ("ethereum" in window) {
   window.ethereum.autoRefreshOnNetworkChange = false;
@@ -858,7 +858,7 @@ function FullApp() {
             />
           </div>
           <div className="default-container">
-            <Banner>
+            {/* <Banner>
               <BannerTitle>MIGRATION IN PROGRESS</BannerTitle>
               <BannerContent>
                 Mycelium Perpetual Swaps is currently undergoing a migration. During this time, trades may not go
@@ -869,7 +869,7 @@ function FullApp() {
                 </a>
                 .
               </BannerContent>
-            </Banner>
+            </Banner> */}
           </div>
           <Switch>
             <Route exact path="/">
