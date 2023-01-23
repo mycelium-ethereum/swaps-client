@@ -273,7 +273,26 @@ export default function SwapBox(props) {
     [swapOption, toTokenAddress, isToTokenEnabled]
   );
 
-  const needOrderBookApproval = !isMarketOrder && !orderBookApproved;
+  const triggerReferencePrice = isShort ? infoTokens[toTokenAddress].maxPrice : infoTokens[toTokenAddress].minPrice;
+  const [stopLossTriggerPercent, setStopLossTriggerPercent] = React.useState(null); // number or null
+  const [takeProfitTriggerPercent, setTakeProfitTriggerPercent] = React.useState(null); // number or null
+
+  const stopLossTriggerPrice = calculateTriggerPrice(stopLossTriggerPercent, leverageOption, true);
+  const takeProfitTriggerPrice = calculateTriggerPrice(takeProfitTriggerPercent, leverageOption, false);
+
+  function calculateTriggerPrice(pnlPercent, leverage, isStopLoss) {
+    const PERCENT_PRECISION = 10000;
+    if (!pnlPercent) return null;
+    const priceMovePrecision = Math.round((pnlPercent * PERCENT_PRECISION) / leverage);
+    if (isLong ? isStopLoss : !isStopLoss) {
+      return triggerReferencePrice.mul(PERCENT_PRECISION - priceMovePrecision).div(PERCENT_PRECISION);
+    } else {
+      return triggerReferencePrice.mul(PERCENT_PRECISION + priceMovePrecision).div(PERCENT_PRECISION);
+    }
+  }
+
+  const needOrderBookApproval =
+    !orderBookApproved && (!isMarketOrder || stopLossTriggerPercent || takeProfitTriggerPercent);
   const prevNeedOrderBookApproval = usePrevious(needOrderBookApproval);
 
   const needPositionRouterApproval = (isLong || isShort) && isMarketOrder && !positionRouterApproved;
@@ -330,24 +349,6 @@ export default function SwapBox(props) {
   const toTokenInfo = getTokenInfo(infoTokens, toTokenAddress);
 
   const hasMaxAvailableShort = isShort && toTokenInfo.maxAvailableShort && toTokenInfo.maxAvailableShort.gt(0);
-
-  const triggerReferencePrice = isShort ? infoTokens[toTokenAddress].maxPrice : infoTokens[toTokenAddress].minPrice;
-  const [stopLossTriggerPercent, setStopLossTriggerPercent] = React.useState(null); // number or null
-  const [takeProfitTriggerPercent, setTakeProfitTriggerPercent] = React.useState(null); // number or null
-
-  const stopLossTriggerPrice = calculateTriggerPrice(stopLossTriggerPercent, leverageOption, true);
-  const takeProfitTriggerPrice = calculateTriggerPrice(takeProfitTriggerPercent, leverageOption, false);
-
-  function calculateTriggerPrice(pnlPercent, leverage, isStopLoss) {
-    const PERCENT_PRECISION = 10000;
-    if (!pnlPercent) return null;
-    const priceMovePrecision = Math.round((pnlPercent * PERCENT_PRECISION) / leverage);
-    if (isLong ? isStopLoss : !isStopLoss) {
-      return triggerReferencePrice.mul(PERCENT_PRECISION - priceMovePrecision).div(PERCENT_PRECISION);
-    } else {
-      return triggerReferencePrice.mul(PERCENT_PRECISION + priceMovePrecision).div(PERCENT_PRECISION);
-    }
-  }
 
   const renderAvailableLiquidity = () => {
     if (!isLong && hasMaxAvailableShort) {
@@ -1745,7 +1746,7 @@ export default function SwapBox(props) {
 
     const usingETH = fromTokenAddress === AddressZero;
     const abiCoder = new ethers.utils.AbiCoder();
-    
+
     const encodedIncreasePositionArgs = abiCoder.encode(
       ["address[]", "address", "uint256", "uint256", "uint256", "bool", "uint256", "uint256", "bytes32", "bool"],
       [
@@ -1760,7 +1761,7 @@ export default function SwapBox(props) {
         referralCode, // _referralCode
         usingETH, // _wrap
       ]
-    );  
+    );
 
     actions.push(INCREASE_POSITION);
     args.push(encodedIncreasePositionArgs);
@@ -1784,14 +1785,15 @@ export default function SwapBox(props) {
       const encodedStopLossArgs = abiCoder.encode(
         ["address", "uint256", "address", "uint256", "bool", "uint256", "bool"],
         [
-        indexTokenAddress, // _indexToken
-        toUsdMax, // _sizeDelta
-        isLong ? indexTokenAddress : tokenAddress0, // _collateralToken
-        0, // _collateralDelta
-        isLong, // _isLong
-        stopLossTriggerPrice, // _triggerPrice
-        !isLong, // _triggerAboveThreshold
-      ]);
+          indexTokenAddress, // _indexToken
+          toUsdMax, // _sizeDelta
+          isLong ? indexTokenAddress : tokenAddress0, // _collateralToken
+          0, // _collateralDelta
+          isLong, // _isLong
+          stopLossTriggerPrice, // _triggerPrice
+          !isLong, // _triggerAboveThreshold
+        ]
+      );
       args.push(encodedStopLossArgs);
       values.push(orderExecutionFee);
     }
@@ -1801,14 +1803,15 @@ export default function SwapBox(props) {
       const encodedTakeProfitArgs = abiCoder.encode(
         ["address", "uint256", "address", "uint256", "bool", "uint256", "bool"],
         [
-        indexTokenAddress, // _indexToken
-        toUsdMax, // _sizeDelta
-        isLong ? indexTokenAddress : tokenAddress0, // _collateralToken
-        0, // _collateralDelta
-        isLong, // _isLong
-        takeProfitTriggerPrice, // _triggerPrice
-        isLong, // _triggerAboveThreshold
-      ]);
+          indexTokenAddress, // _indexToken
+          toUsdMax, // _sizeDelta
+          isLong ? indexTokenAddress : tokenAddress0, // _collateralToken
+          0, // _collateralDelta
+          isLong, // _isLong
+          takeProfitTriggerPrice, // _triggerPrice
+          isLong, // _triggerAboveThreshold
+        ]
+      );
       args.push(encodedTakeProfitArgs);
       values.push(orderExecutionFee);
     }
