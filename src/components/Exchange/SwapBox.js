@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo, useCallback } from "react";
-
+import cx from "classnames";
 import Tooltip from "../Tooltip/Tooltip";
 import Modal from "../Modal/Modal";
 
@@ -79,7 +79,7 @@ import longImg from "../../img/long.svg";
 import shortImg from "../../img/short.svg";
 import swapImg from "../../img/swap.svg";
 import { useUserReferralCode } from "../../Api/referrals";
-import {  getMaxLeverage , LeverageInput } from "./LeverageInput";
+import { getMaxLeverage, LeverageInput } from "./LeverageInput";
 import { REFERRAL_CODE_KEY } from "../../config/localstorage";
 
 const SWAP_ICONS = {
@@ -87,6 +87,7 @@ const SWAP_ICONS = {
   [SHORT]: shortImg,
   [SWAP]: swapImg,
 };
+
 const { AddressZero } = ethers.constants;
 
 function getNextAveragePrice({ size, sizeDelta, hasProfit, delta, nextPrice, isLong }) {
@@ -244,17 +245,30 @@ export default function SwapBox(props) {
 
   const whitelistedTokens = getWhitelistedTokens(chainId);
   const tokens = getTokens(chainId);
-  const fromTokens = tokens;
+  const enabledTokens = tokens.filter((token) => token.isEnabledForTrading);
+  const fromTokens = enabledTokens;
   const stableTokens = tokens.filter((token) => token.isStable);
   const indexTokens = whitelistedTokens.filter((token) => !token.isStable && !token.isWrapped);
-  const shortableTokens = indexTokens.filter((token) => token.isShortable);
+  const enabledIndexTokens = whitelistedTokens.filter((token) => token.isEnabledForTrading);
+  const shortableTokens = indexTokens.filter((token) => token.isShortable && token.isEnabledForTrading);
   let toTokens = tokens;
   if (isLong) {
-    toTokens = indexTokens;
+    toTokens = enabledIndexTokens;
   }
   if (isShort) {
     toTokens = shortableTokens;
   }
+
+  const isToTokenEnabled = useMemo(
+    () => tokens.find((token) => token.address === toTokenAddress)?.isEnabledForTrading,
+    [tokens, toTokenAddress]
+  );
+
+  // Only allow toTokenAddress if it is not included as a disabled token or if the swapOption is Swap
+  const checkedToTokenAddress = useMemo(
+    () => (swapOption !== SWAP && !isToTokenEnabled ? AddressZero : toTokenAddress),
+    [swapOption, toTokenAddress, isToTokenEnabled]
+  );
 
   const needOrderBookApproval = !isMarketOrder && !orderBookApproved;
   const prevNeedOrderBookApproval = usePrevious(needOrderBookApproval);
@@ -339,7 +353,7 @@ export default function SwapBox(props) {
             ></Tooltip>
           </div>
         </div>
-      )
+      );
     } else if (isLong) {
       return (
         <div className="Exchange-info-row">
@@ -377,11 +391,13 @@ export default function SwapBox(props) {
                 return (
                   <>
                     {`Max ${fromTokenInfo.symbol} in: `}
-                    {formatAmount(maxFromTokenIn, fromTokenInfo.decimals, 0, true)} {fromTokenInfo.symbol} (${formatAmount(maxFromTokenInUSD, USD_DECIMALS, 0, true)})
+                    {formatAmount(maxFromTokenIn, fromTokenInfo.decimals, 0, true)} {fromTokenInfo.symbol} ($
+                    {formatAmount(maxFromTokenInUSD, USD_DECIMALS, 0, true)})
                     <br />
                     <br />
                     {`Max ${toTokenInfo.symbol} out: `}
-                    {formatAmount(maxToTokenOut, toTokenInfo.decimals, 0, true)} {toTokenInfo.symbol} (${formatAmount(maxToTokenOutUSD, USD_DECIMALS, 0, true)})
+                    {formatAmount(maxToTokenOut, toTokenInfo.decimals, 0, true)} {toTokenInfo.symbol} ($
+                    {formatAmount(maxToTokenOutUSD, USD_DECIMALS, 0, true)})
                     <br />
                   </>
                 );
@@ -389,11 +405,10 @@ export default function SwapBox(props) {
             />
           </div>
         </div>
-      )
+      );
     } // else
-    return null
+    return null;
   };
-
 
   const fromBalance = fromTokenInfo ? fromTokenInfo.balance : bigNumberify(0);
   const toBalance = toTokenInfo ? toTokenInfo.balance : bigNumberify(0);
@@ -506,9 +521,12 @@ export default function SwapBox(props) {
 
   useEffect(() => {
     if (!toTokens.find((token) => token.address === toTokenAddress)) {
-      setToTokenAddress(swapOption, toTokens[0].address);
+      // Only set toTokenAddress to ETH if the current token with toTokenAddress is not disabled
+      if (isToTokenEnabled) {
+        setToTokenAddress(swapOption, toTokens[0].address);
+      }
     }
-  }, [swapOption, toTokens, toTokenAddress, setToTokenAddress]);
+  }, [swapOption, tokens, toTokens, toTokenAddress, setToTokenAddress, isToTokenEnabled]);
 
   useEffect(() => {
     if (swapOption !== SHORT) {
@@ -850,7 +868,6 @@ export default function SwapBox(props) {
       toTokenInfo.poolAmount &&
       toTokenInfo.bufferAmount.gt(toTokenInfo.poolAmount.sub(toAmount))
     ) {
-      console.log(toTokenInfo.poolAmount.toString(), toTokenInfo.bufferAmount.toString())
       return ["Insufficient liquidity: exceeds buffer"];
     }
 
@@ -879,6 +896,9 @@ export default function SwapBox(props) {
     }
     if (hasOutdatedUi) {
       return ["Page outdated, please refresh"];
+    }
+    if (!isToTokenEnabled) {
+      return ["Token currently disabled"];
     }
 
     if (!toAmount || toAmount.eq(0)) {
@@ -1927,7 +1947,7 @@ export default function SwapBox(props) {
         fromCurrencyToken: fromToken.symbol,
         leverage: parseFloat(leverage),
         feesUsd: parseFloat(formatAmount(feesUsd, 4, 4, false)),
-        feesUsdFormatted: parseFloat(formatAmount(feesUsd, 4, 4, false).toFixed(2)),
+        feesUsdFormatted: parseFloat(formatAmount(feesUsd, 4, 4, false)?.toFixed(2)) || undefined,
         [`fees${fromToken.symbol}`]: parseFloat(formatAmount(fees, fromToken.decimals, 4, false)),
         walletAddress: account,
         network: NETWORK_NAME[chainId],
@@ -2040,8 +2060,17 @@ export default function SwapBox(props) {
               </div>
             </div>
             <div className="Exchange-swap-ball-container">
-              <div className="Exchange-swap-ball" onClick={switchTokens}>
-                <IoMdSwap className="Exchange-swap-ball-icon" />
+              <div 
+                className={cx("Exchange-swap-ball", 
+                  {
+                    disabled: !isToTokenEnabled,
+                  }
+                )} 
+                onClick={() => isToTokenEnabled && switchTokens()}
+              >
+                <IoMdSwap
+                  className="Exchange-swap-ball-icon"
+                />
               </div>
             </div>
             <div className="Exchange-swap-section">
@@ -2077,7 +2106,7 @@ export default function SwapBox(props) {
                   <TokenSelector
                     label={getTokenLabel()}
                     chainId={chainId}
-                    tokenAddress={toTokenAddress}
+                    tokenAddress={checkedToTokenAddress}
                     onSelectToken={onSelectToToken}
                     tokens={toTokens}
                     infoTokens={infoTokens}
@@ -2130,7 +2159,7 @@ export default function SwapBox(props) {
                 <TokenSelector
                   label="To"
                   chainId={chainId}
-                  tokenAddress={toTokenAddress}
+                  tokenAddress={checkedToTokenAddress}
                   onSelectToken={onSelectToToken}
                   tokens={toTokens}
                   infoTokens={infoTokens}
@@ -2234,7 +2263,13 @@ export default function SwapBox(props) {
         )}
         {(isLong || isShort) && (
           <div className="Exchange-leverage-box">
-            <LeverageInput value={leverageOption} onChange={setLeverageOption} max={getMaxLeverage(toToken.symbol)} min={1.1} step={0.01} />
+            <LeverageInput
+              value={leverageOption}
+              onChange={setLeverageOption}
+              max={getMaxLeverage(toToken.symbol)}
+              min={1.1}
+              step={0.01}
+            />
             {isShort && (
               <div className="Exchange-info-row">
                 <div className="Exchange-info-label">Profits In</div>

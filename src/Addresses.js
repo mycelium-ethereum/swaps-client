@@ -1,5 +1,3 @@
-import { ARBITRUM_GOERLI } from "./Helpers";
-
 const CONTRACTS = {
   1: {
     UniswapMycEthPool: "0x66dD48889Df1Fc32cBa3aBfA2c453906d527eB2e",

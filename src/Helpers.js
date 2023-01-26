@@ -18,11 +18,8 @@ import OrderBookReader from "./abis/OrderBookReader.json";
 import OrderBook from "./abis/OrderBook.json";
 
 import { getWhitelistedTokens, isValidToken } from "./data/Tokens";
-import ComingSoonTooltip from "./components/Tooltip/ComingSoon";
 import { isAddress } from "ethers/lib/utils";
-import { copyToClipboard } from './utils/common';
 import {
-  REFERRAL_CODE_QUERY_PARAMS,
   CURRENT_PROVIDER_LOCALSTORAGE_KEY,
   WALLET_CONNECT_LOCALSTORAGE_KEY,
   WALLET_LINK_LOCALSTORAGE_PREFIX,
@@ -83,13 +80,10 @@ export function getFallbackArbitrumGoerliRpcUrl(useWebsocket) {
   return "https://goerli-rollup.arbitrum.io/rpc";
 }
 export function getDefaultArbitrumGoerliRpcUrl(useWebsocket) {
-  if (alchemyWhitelistedDomains.includes(window.location.host)) {
-    if (useWebsocket) {
-      return process.env.REACT_APP_ARBITRUM_GOERLI_RPC_WSS;
-    }
-    return process.env.REACT_APP_ARBITRUM_GOERLI_RPC;
+  if (useWebsocket) {
+    return process.env.REACT_APP_ARBITRUM_GOERLI_RPC_WSS;
   }
-  return getFallbackArbitrumGoerliRpcUrl(useWebsocket);
+  return process.env.REACT_APP_ARBITRUM_GOERLI_RPC;
 }
 
 const ETHEREUM_RPC_PROVIDERS = ["https://cloudflare-eth.com"];
@@ -2413,9 +2407,6 @@ export function getStakingData(stakingInfo) {
       totalSupply: stakingInfo[i * propsLength + 4],
     };
   }
-
-  // temp hardcode
-  data['stakedMlpTracker'].tokensPerInterval = ethers.utils.parseEther('1')
 
   return data;
 }

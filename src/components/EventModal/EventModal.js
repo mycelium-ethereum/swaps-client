@@ -7,7 +7,33 @@ import { Link } from "react-router-dom";
 import { shareToTwitter } from "../../utils/common";
 
 const EVENTS = {
-  "seenPopupV3": {
+  seenPopupV4: {
+    title: (
+      <>
+        <small>Pool Composition Changes</small>
+      </>
+    ),
+    description: (
+      <>
+        <span>
+          Commencing this week, we are deprecating other assets currently supported in the MLP Composition (UNI, FRAX,
+          FXS, BAL and CRV). During this transition period, there will be a gradual reduction in support for these
+          assets. Meaning there will be increasing limits to trading the assets, and full support to swap the assets for
+          USDC, DAI, USDT, ETH, BTC and LINK, both directly and through aggregators like OpenOcean, until they hit zero
+          composition and are removed entirely from MLP.
+        </span>
+        <span>All open positions with these tokens can be closed.</span>
+        <span>
+          Read more about the changes{" "}
+          <a href="https://mycelium.xyz/blog/mlp-composition-is-about-to-change" className="inline-link">
+            here
+          </a>
+          .
+        </span>
+      </>
+    ),
+  },
+  seenPopupV3: {
     title: (
       <>
         <small>Upcoming Changes</small>
@@ -15,12 +41,15 @@ const EVENTS = {
     ),
     description: (
       <>
-      <span>
-        Notice to Australian users of Perpetual Swaps, Perpetual Pools, MYC Staking, and the TCR to MYC Token Migration portals.
-      </span>
-      <span>
-        Please note that from 11:59 pm AEST on 16 December 2022, Australian users will be geo-blocked from accessing these subdomains. It is recommended that Australian users close out any involvement they have with these four products before this time.
-      </span>
+        <span>
+          Notice to Australian users of Perpetual Swaps, Perpetual Pools, MYC Staking, and the TCR to MYC Token
+          Migration portals.
+        </span>
+        <span>
+          Please note that from 11:59 pm AEST on 16 December 2022, Australian users will be geo-blocked from accessing
+          these subdomains. It is recommended that Australian users close out any involvement they have with these four
+          products before this time.
+        </span>
       </>
     ),
   },
@@ -62,7 +91,7 @@ const EVENTS = {
         to be updated.
       </span>
     ),
-  }
+  },
 };
 
 export default function EventModal({
@@ -72,7 +101,7 @@ export default function EventModal({
   twitterText,
   eventKey,
   hideHeader,
-  requiresConfirmation
+  requiresConfirmation,
 }) {
   const event = EVENTS[eventKey];
 
@@ -84,7 +113,7 @@ export default function EventModal({
         window.localStorage.setItem(eventKey, "true");
       }
     }
-  }, [eventKey, setEventModalVisible]);
+  }, [eventKey, setEventModalVisible, requiresConfirmation]);
 
   const onContinue = () => {
     window.localStorage.setItem(eventKey, "true");

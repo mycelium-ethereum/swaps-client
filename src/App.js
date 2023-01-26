@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { SWRConfig } from "swr";
 import { ethers } from "ethers";
 
@@ -56,6 +56,7 @@ import {
   networkOptions,
   PLACEHOLDER_ACCOUNT,
   getDefaultArbitrumRpcUrl,
+  getDefaultArbitrumGoerliRpcUrl,
 } from "./Helpers";
 import ReaderV2 from "./abis/ReaderV2.json";
 
@@ -122,6 +123,7 @@ import Sidebar from "./components/Navigation/Sidebar/Sidebar";
 import EventModal from "./components/EventModal/EventModal";
 import AppDropdown from "./components/AppDropdown/AppDropdown";
 import { useInfoTokens } from "./hooks/useInfoTokens";
+import { LeaderboardProvider } from "./context/LeaderboardContext";
 // import { Banner, BannerContent } from "./components/Banner/Banner";
 
 if ("ethereum" in window) {
@@ -147,7 +149,7 @@ function inPreviewMode() {
 }
 
 const arbWsProvider = new ethers.providers.WebSocketProvider(getDefaultArbitrumRpcUrl(true));
-const arbTestnetWsProvider = new ethers.providers.JsonRpcProvider("https://goerli-rollup.arbitrum.io/rpc/");
+const arbTestnetWsProvider = new ethers.providers.JsonRpcProvider(getDefaultArbitrumGoerliRpcUrl(true));
 
 function getWsProvider(active, chainId) {
   if (!active) {
@@ -990,7 +992,7 @@ function FullApp() {
       <EventModal
         isModalVisible={isEventModalVisible}
         setEventModalVisible={setEventModalVisible}
-        eventKey="seenPopupV3"
+        eventKey="seenPopupV4"
         hideHeader={true}
         requiresConfirmation={true}
       />
@@ -1216,9 +1218,11 @@ function App() {
   if (inPreviewMode()) {
     return (
       <Web3ReactProvider getLibrary={getLibrary}>
-        <ThemeProvider>
-          <PreviewApp />
-        </ThemeProvider>
+        <LeaderboardProvider>
+          <ThemeProvider>
+            <PreviewApp />
+          </ThemeProvider>
+        </LeaderboardProvider>
       </Web3ReactProvider>
     );
   }
@@ -1226,10 +1230,12 @@ function App() {
   return (
     <SWRConfig value={{ refreshInterval: 5000 }}>
       <Web3ReactProvider getLibrary={getLibrary}>
-        <ThemeProvider>
-          <FullApp />
-        </ThemeProvider>
-        <ConsentModal hasConsented={hasConsented} setConsented={setConsented} />
+        <LeaderboardProvider>
+          <ThemeProvider>
+            <FullApp />
+          </ThemeProvider>
+          <ConsentModal hasConsented={hasConsented} setConsented={setConsented} />
+        </LeaderboardProvider>
       </Web3ReactProvider>
     </SWRConfig>
   );

@@ -89,9 +89,6 @@ function getStakingData(stakingInfo) {
     };
   }
 
-  // temp hardcode
-  data['stakedMlpTracker'].tokensPerInterval = ethers.utils.parseEther('1')
-
   return data;
 }
 
@@ -114,6 +111,7 @@ export default function MlpSwap(props) {
   // const chainName = getChainName(chainId)
   const tokens = getTokens(chainId);
   const whitelistedTokens = getWhitelistedTokens(chainId);
+  const enabledWhitelistedTokens = whitelistedTokens.filter((token) => token.isEnabledForTrading);
   const tokenList = whitelistedTokens.filter((t) => !t.isWrapped);
   const [swapValue, setSwapValue] = useState("");
   const [mlpValue, setMlpValue] = useState("");
@@ -842,7 +840,7 @@ export default function MlpSwap(props) {
                           <span>{formatAmount(feeMlpTrackerApr, 2, 2, false)}%</span>
                         </div>
                         <div className="Tooltip-row">
-                          <span className="label">esMYC APR (historical)</span>
+                          <span className="label">esMYC APR</span>
                           <span>{formatAmount(stakedMlpTrackerApr, 2, 2, false)}%</span>
                         </div>
                       </>
@@ -904,7 +902,7 @@ export default function MlpSwap(props) {
                 chainId={chainId}
                 tokenAddress={swapTokenAddress}
                 onSelectToken={onSelectSwapToken}
-                tokens={whitelistedTokens}
+                tokens={enabledWhitelistedTokens}
                 infoTokens={infoTokens}
                 className="MlpSwap-from-token"
                 showSymbolImage={true}
