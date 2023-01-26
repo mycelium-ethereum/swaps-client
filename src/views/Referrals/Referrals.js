@@ -146,6 +146,7 @@ export default function Referral(props) {
     trackAction("Button clicked", {
       buttonName: "Claim referral rewards",
     });
+
     let error;
     if (selectedRound === "latest") {
       helperToast.error("Cannot claim rewards before round has ended");
@@ -156,7 +157,7 @@ export default function Referral(props) {
       error = true;
     }
     if (userProof.amount === "0") {
-      helperToast.error(`No rewards for round: ${selectedRound}`);
+      helperToast.error(`No rewards for round: ${selectedRound + 1}`);
       error = true;
     }
     if (!!userProof?.message) {
@@ -175,7 +176,11 @@ export default function Referral(props) {
       [
         userProof.merkleProof, // proof
         userProof.amount, // amount
-        selectedRound, // round
+        // up until round 13, the round as per the merkle distributor contracts were 0 indexed
+        // this meant that round 12 to a human was round 11 in the contracts
+        // round 13 (to humans) was set as round 13 in the distributor contract
+        // meaning that we need to pass selectedRound + 1 for any round 13 or later
+        selectedRound <= 11 ? selectedRound : selectedRound + 1, // round
       ],
       {
         sentMsg: "Claim submitted!",
