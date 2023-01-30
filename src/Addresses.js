@@ -94,15 +94,15 @@ const CONTRACTS = {
     MycVester: "0x67fF0614F6E4E04362B3b919Adc7371884895Ae8",
     MlpVester: "0xCB6ac1EacF498118f4609462c0979fFB3eBD1821",
 
-    OrderBook: "0x74F28832cA4337bFC6035400eAB80AFD61cdf35b",
-    OldOrderBook: ADDRESS_ZERO, // Update this once deployed
+    OrderBook: "0xd1C685Bb60c036Ee5959f047f24E9663bc49B5fe",
+    OldOrderBook: ADDRESS_ZERO,
     // OrderBookV1: "0x2EeEf7852a306a580acF94F7c18C3FF124A59d4f",
     OrderExecutor: "0xC4e695a2ae9fd060E24Cdb87874b684dB7447a18",
     OrderBookReader: "0x1044345924277FD2e9bdF14Edad8C1d1a67a4B8e",
 
-    PositionRouter: "0xE510571cAc76279DADf6c4b6eAcE5370F86e3dC2",
+    PositionRouter: "0xbB214233C570b8e9b732212974E7baeFFE63F0de",
     PositionManager: "0x3892b8cF646b17709C91E653319bA5504a5FEafe",
-    PositionCreator: ADDRESS_ZERO, // Update this once deployed
+    PositionCreator: "0xCaDCE8cA1c4F233298429BA6352C61568f0e7eD3",
 
     UniswapMycTcrPool: "0xc9f423c406e690b7f7715f9e048489caafb2266b",
     // TODO this uniswap pool has low liquidity so cant use for pricing
