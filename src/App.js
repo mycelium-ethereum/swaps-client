@@ -124,7 +124,7 @@ import EventModal from "./components/EventModal/EventModal";
 import AppDropdown from "./components/AppDropdown/AppDropdown";
 import { useInfoTokens } from "./hooks/useInfoTokens";
 import { LeaderboardProvider } from "./context/LeaderboardContext";
-// import { Banner, BannerContent } from "./components/Banner/Banner";
+import { Banner, BannerTitle, BannerContent } from "./components/Banner/Banner";
 
 if ("ethereum" in window) {
   window.ethereum.autoRefreshOnNetworkChange = false;
@@ -857,16 +857,20 @@ function FullApp() {
               disconnectAccountAndCloseSettings={disconnectAccountAndCloseSettings}
             />
           </div>
-          {/* <div className="default-container">
+          <div className="default-container">
             <Banner>
-              <BannerTitle>
-                ARBITRUM NITRO UPGRADE IN PROGRESS
-              </BannerTitle>
+              <BannerTitle>MIGRATION IN PROGRESS</BannerTitle>
               <BannerContent>
-                The Arbitrum Network is expected to have 2-4 hours of downtime as it makes it's upgrade to Nitro. Trades may not go through during this period.
+                Mycelium Perpetual Swaps is currently undergoing a migration. During this time, trades may not go
+                through as expected. Please be patient as we work to bring you the best experience possible. You can
+                read more about the migration{" "}
+                <a href="#" target="_blank" rel="noreferrer">
+                  here
+                </a>
+                .
               </BannerContent>
             </Banner>
-          </div> */}
+          </div>
           <Switch>
             <Route exact path="/">
               <Exchange
