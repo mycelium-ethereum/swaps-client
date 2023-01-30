@@ -9,6 +9,7 @@ const TOKENS = {
       decimals: 18,
       address: "0x4CC823834038c92CFA66C40C7806959529A3D782",
       isShortable: true,
+      isEnabledForTrading: true,
     },
     {
       name: "Ethereum",
@@ -17,6 +18,7 @@ const TOKENS = {
       address: ethers.constants.AddressZero,
       isShortable: true,
       isNative: true,
+      isEnabledForTrading: true,
     },
     {
       name: "Wrapped Ethereum",
@@ -25,6 +27,7 @@ const TOKENS = {
       address: "0x08466D6683d2A39E3597500c1F17b792555FCAB9",
       isWrapped: true,
       baseSymbol: "ETH",
+      isEnabledForTrading: true,
     },
     {
       name: "DAI",
@@ -32,6 +35,7 @@ const TOKENS = {
       decimals: 18,
       address: "0xE5919a1E8Eabc4E819a485A6115b6606E912620F",
       isStable: false,
+      isEnabledForTrading: true,
     },
     {
       name: "PP USD",
@@ -39,6 +43,7 @@ const TOKENS = {
       decimals: 18,
       address: "0xd02C071f5ac809795a22ba50dFB91000929b75BE",
       isStable: true,
+      isEnabledForTrading: true,
     },
     {
       name: "USD Coin",
@@ -46,6 +51,7 @@ const TOKENS = {
       decimals: 18,
       address: "0x263f90bcA00A6E987334D55501Bd8C0D081CeE62",
       isStable: true,
+      isEnabledForTrading: true,
     },
     {
       name: "Tether",
@@ -53,6 +59,7 @@ const TOKENS = {
       decimals: 18,
       address: "0x43B552A6A5B97f120788A8751547D5D953eFBBcA",
       isStable: true,
+      isEnabledForTrading: true,
     },
     {
       name: "Link",
@@ -60,6 +67,7 @@ const TOKENS = {
       decimals: 18,
       address: "0x6E7155bde03E582e9920421Adf14E10C15dBe890",
       isShortable: true,
+      isEnabledForTrading: true,
     },
     {
       name: "Test Token",
@@ -67,6 +75,7 @@ const TOKENS = {
       decimals: 18,
       address: "0xf76A36092f52Ea0ad1dFdDB5aced4e9f414524F2",
       isShortable: true,
+      isEnabledForTrading: true,
     },
   ],
   42161: [

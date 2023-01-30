@@ -55,7 +55,7 @@ const GAS_PRICE_ADJUSTMENT_MAP = {
 
 const MAX_GAS_PRICE_MAP = {};
 
-const alchemyWhitelistedDomains = ["swaps.mycelium.xyz"];
+const alchemyWhitelistedDomains = ["swaps.mycelium.xyz", "localhost:3010"];
 
 export function getFallbackArbitrumRpcUrl(useWebsocket) {
   if (useWebsocket) {
@@ -1856,72 +1856,85 @@ export function useAccountOrders(flagOrdersEnabled, overrideAccount) {
   const shouldRequest = active && account && flagOrdersEnabled;
 
   const orderBookAddress = getContract(chainId, "OrderBook");
+  const oldOrderBookAddress = getContract(chainId, "OldOrderBook");
   const orderBookReaderAddress = getContract(chainId, "OrderBookReader");
-  const key = shouldRequest ? [active, chainId, orderBookAddress, account] : false;
+  const key = shouldRequest ? [active, chainId, orderBookAddress, oldOrderBookAddress, account] : false;
   const {
     data: orders = [],
     mutate: updateOrders,
     error: ordersError,
   } = useSWR(key, {
     dedupingInterval: 5000,
-    fetcher: async (active, chainId, orderBookAddress, account) => {
+    fetcher: async (active, chainId, orderBookAddress, oldOrderBookAddress, account) => {
       const provider = getProvider(library, chainId);
-      const orderBookContract = new ethers.Contract(orderBookAddress, OrderBook.abi, provider);
       const orderBookReaderContract = new ethers.Contract(orderBookReaderAddress, OrderBookReader.abi, provider);
 
-      const fetchLastIndex = async (type) => {
-        const method = type.toLowerCase() + "OrdersIndex";
-        return await orderBookContract[method](account).then((res) => bigNumberify(res._hex).toNumber());
-      };
-
-      const fetchLastIndexes = async () => {
-        const [swap, increase, decrease] = await Promise.all([
-          fetchLastIndex("swap"),
-          fetchLastIndex("increase"),
-          fetchLastIndex("decrease"),
-        ]);
-
-        return { swap, increase, decrease };
-      };
-
-      const getRange = (to, from) => {
-        const LIMIT = 10;
-        const _indexes = [];
-        from = from || Math.max(to - LIMIT, 0);
-        for (let i = to - 1; i >= from; i--) {
-          _indexes.push(i);
-        }
-        return _indexes;
-      };
-
-      const getIndexes = (knownIndexes, lastIndex) => {
-        if (knownIndexes.length === 0) {
-          return getRange(lastIndex);
-        }
-        return [
-          ...knownIndexes,
-          ...getRange(lastIndex, knownIndexes[knownIndexes.length - 1] + 1).sort((a, b) => b - a),
-        ];
-      };
-
-      const getOrders = async (method, knownIndexes, lastIndex, parseFunc) => {
-        const indexes = getIndexes(knownIndexes, lastIndex);
-        const ordersData = await orderBookReaderContract[method](orderBookAddress, account, indexes);
-        const orders = parseFunc(chainId, ordersData, account, indexes);
-
-        return orders;
-      };
+      const orderBookAddresses = [orderBookAddress, oldOrderBookAddress].filter((address) => address !== AddressZero);
 
       try {
-        const lastIndexes = await fetchLastIndexes();
-        const serverIndexes = { swap: [], increase: [], decrease: [] };
+        const ordersByOrderBook = await Promise.all(
+          orderBookAddresses.map(async (orderBookAddress) => {
+            const orderBookContract = new ethers.Contract(orderBookAddress, OrderBook.abi, provider);
 
-        const [swapOrders = [], increaseOrders = [], decreaseOrders = []] = await Promise.all([
-          getOrders("getSwapOrders", serverIndexes.swap, lastIndexes.swap, parseSwapOrdersData),
-          getOrders("getIncreaseOrders", serverIndexes.increase, lastIndexes.increase, parseIncreaseOrdersData),
-          getOrders("getDecreaseOrders", serverIndexes.decrease, lastIndexes.decrease, parseDecreaseOrdersData),
-        ]);
-        return [...swapOrders, ...increaseOrders, ...decreaseOrders];
+            const fetchLastIndex = async (type) => {
+              const method = type.toLowerCase() + "OrdersIndex";
+              return await orderBookContract[method](account).then((res) => bigNumberify(res._hex).toNumber());
+            };
+
+            const fetchLastIndexes = async () => {
+              const [swap, increase, decrease] = await Promise.all([
+                fetchLastIndex("swap", orderBookContract),
+                fetchLastIndex("increase", orderBookContract),
+                fetchLastIndex("decrease", orderBookContract),
+              ]);
+
+              return { swap, increase, decrease };
+            };
+
+            const getRange = (to, from) => {
+              const LIMIT = 10;
+              const _indexes = [];
+              from = from || Math.max(to - LIMIT, 0);
+              for (let i = to - 1; i >= from; i--) {
+                _indexes.push(i);
+              }
+              return _indexes;
+            };
+
+            const getIndexes = (knownIndexes, lastIndex) => {
+              if (knownIndexes.length === 0) {
+                return getRange(lastIndex);
+              }
+              return [
+                ...knownIndexes,
+                ...getRange(lastIndex, knownIndexes[knownIndexes.length - 1] + 1).sort((a, b) => b - a),
+              ];
+            };
+
+            const getOrders = async (method, knownIndexes, lastIndex, parseFunc) => {
+              const indexes = getIndexes(knownIndexes, lastIndex);
+              const ordersData = await orderBookReaderContract[method](orderBookAddress, account, indexes);
+              const orders = parseFunc(chainId, ordersData, account, indexes);
+
+              return orders;
+            };
+
+            const lastIndexes = await fetchLastIndexes();
+            const serverIndexes = { swap: [], increase: [], decrease: [] };
+
+            const [swapOrders = [], increaseOrders = [], decreaseOrders = []] = await Promise.all([
+              getOrders("getSwapOrders", serverIndexes.swap, lastIndexes.swap, parseSwapOrdersData),
+              getOrders("getIncreaseOrders", serverIndexes.increase, lastIndexes.increase, parseIncreaseOrdersData),
+              getOrders("getDecreaseOrders", serverIndexes.decrease, lastIndexes.decrease, parseDecreaseOrdersData),
+            ]);
+            return [...swapOrders, ...increaseOrders, ...decreaseOrders].map((order) => ({
+              ...order,
+              orderBookAddress,
+            }));
+          })
+        );
+
+        return ordersByOrderBook.flat();
       } catch (ex) {
         console.error(ex);
       }

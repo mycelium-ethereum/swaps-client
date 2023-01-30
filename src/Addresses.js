@@ -1,3 +1,6 @@
+import { ADDRESS_ZERO } from "@uniswap/v3-sdk";
+import { ARBITRUM_GOERLI } from "./Helpers";
+
 const CONTRACTS = {
   1: {
     UniswapMycEthPool: "0x66dD48889Df1Fc32cBa3aBfA2c453906d527eB2e",
@@ -46,11 +49,13 @@ const CONTRACTS = {
     MycVester: "0x59A3640b4C8aCF9D6E6107e9Ba16d8B7d7cC412c",
     MlpVester: "0xd3A37697c1B21DdE4F97636E294399e0fab9D235",
 
-    OrderBook: "0xB131725c12789064875c9ee126f83c96D771bD90",
+    OrderBook: "0x5351f1EA99999aE1f088415DF3a07638eC951d08",
+    OldOrderBook: "0xB131725c12789064875c9ee126f83c96D771bD90", // Update this once deployed
     OrderExecutor: "0x9B12CF1bC134a9eE01DC456fbb13a662C2dcf443",
     OrderBookReader: "0xf2A0764144bEB244cD04356b5b2078E0ef682FF6",
-    PositionRouter: "0x2d78AE5147D358d803e6306D96db1AB995a4AAF1",
+    PositionRouter: "0x48e715eb6d5a9D2Aab1b4b938790F81919bDf71b",
     PositionManager: "0xb65B42c48DB28e13Cd490f72dDDEEe57eD2072f6",
+    PositionCreator: "0x67cDf2a2f2c1a5FF13dAaF425523e4919bE93993",
 
     ReferralStorage: "0x956BbBe040A2378B63C21011e3c71978d7B75a56",
     ReferralReader: "0x27ec154C4D6e496027FBED863aC7a0186942Cc09",
@@ -89,13 +94,15 @@ const CONTRACTS = {
     MycVester: "0x67fF0614F6E4E04362B3b919Adc7371884895Ae8",
     MlpVester: "0xCB6ac1EacF498118f4609462c0979fFB3eBD1821",
 
-    OrderBook: "0x74F28832cA4337bFC6035400eAB80AFD61cdf35b",
+    OrderBook: "0xd1C685Bb60c036Ee5959f047f24E9663bc49B5fe",
+    OldOrderBook: ADDRESS_ZERO,
     // OrderBookV1: "0x2EeEf7852a306a580acF94F7c18C3FF124A59d4f",
     OrderExecutor: "0xC4e695a2ae9fd060E24Cdb87874b684dB7447a18",
     OrderBookReader: "0x1044345924277FD2e9bdF14Edad8C1d1a67a4B8e",
 
-    PositionRouter: "0xE510571cAc76279DADf6c4b6eAcE5370F86e3dC2",
+    PositionRouter: "0xbB214233C570b8e9b732212974E7baeFFE63F0de",
     PositionManager: "0x3892b8cF646b17709C91E653319bA5504a5FEafe",
+    PositionCreator: "0xCaDCE8cA1c4F233298429BA6352C61568f0e7eD3",
 
     UniswapMycTcrPool: "0xc9f423c406e690b7f7715f9e048489caafb2266b",
     // TODO this uniswap pool has low liquidity so cant use for pricing
@@ -114,7 +121,7 @@ const CONTRACTS = {
     MerkleDistributorReader: "0xbB097d322D793ecd03721538d906d0C450d3839C",
 
     LentMYC: "0x9B225FF56C48671d4D04786De068Ed8b88b672d6",
-    MYCStakingRewards: "0xF9B003Ee160dA9677115Ad3c5bd6BB6dADcB2F93" // v2 staking
+    MYCStakingRewards: "0xF9B003Ee160dA9677115Ad3c5bd6BB6dADcB2F93", // v2 staking
   },
 };
 
