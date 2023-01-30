@@ -66,7 +66,7 @@ export const TriggerCreator: React.FC<TriggerCreatorProps> = ({
   return (
     <Container>
       <Header>
-        Trigger
+        Conditional
         {showRemoveButton && (
           <button
             onClick={() => {
