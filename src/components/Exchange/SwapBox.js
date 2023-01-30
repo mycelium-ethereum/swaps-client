@@ -1787,7 +1787,7 @@ export default function SwapBox(props) {
         [
           indexTokenAddress, // _indexToken
           toUsdMax, // _sizeDelta
-          isLong ? indexTokenAddress : tokenAddress0, // _collateralToken
+          isLong ? indexTokenAddress : shortCollateralAddress, // _collateralToken
           0, // _collateralDelta
           isLong, // _isLong
           stopLossTriggerPrice, // _triggerPrice
@@ -1805,7 +1805,7 @@ export default function SwapBox(props) {
         [
           indexTokenAddress, // _indexToken
           toUsdMax, // _sizeDelta
-          isLong ? indexTokenAddress : tokenAddress0, // _collateralToken
+          isLong ? indexTokenAddress : shortCollateralAddress, // _collateralToken
           0, // _collateralDelta
           isLong, // _isLong
           takeProfitTriggerPrice, // _triggerPrice
