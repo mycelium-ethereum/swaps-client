@@ -87,6 +87,12 @@ button.Orders-list-action:hover {
   width: 22rem;
 }
 
+.cancelAllButton {
+  text-decoration: underline;
+  color: var(--action-active);
+  cursor: pointer;
+}
+
 @media (max-width: 1000px) {
   .Orders-list.small {
     display: block;
