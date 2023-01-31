@@ -90,7 +90,13 @@ export const TriggerCreator: React.FC<TriggerCreatorProps> = ({
             {STOP_LOSS_OPTIONS.map((percent) => (
               <button
                 className={stopLossTriggerPercent === percent ? "selected" : ""}
-                onClick={() => setStopLossTriggerPercent(percent)}
+                onClick={() => {
+                  if (stopLossTriggerPercent !== percent) {
+                    setStopLossTriggerPercent(percent);
+                  } else {
+                    setStopLossTriggerPercent(null);
+                  }
+                }}
               >
                 -{percent * 100}%
               </button>
@@ -106,6 +112,7 @@ export const TriggerCreator: React.FC<TriggerCreatorProps> = ({
                     max={100}
                     min={0}
                     step={0.01}
+                    autoFocus
                     onKeyDown={(e) => {
                       if (["e", "E", "+", "-"].includes(e.key)) {
                         e.preventDefault();
@@ -151,7 +158,13 @@ export const TriggerCreator: React.FC<TriggerCreatorProps> = ({
             {TAKE_PROFIT_OPTIONS.map((percent) => (
               <button
                 className={takeProfitTriggerPercent === percent ? "selected" : ""}
-                onClick={() => setTakeProfitTriggerPercent(percent)}
+                onClick={() => {
+                  if (takeProfitTriggerPercent !== percent) {
+                    setTakeProfitTriggerPercent(percent);
+                  } else {
+                    setTakeProfitTriggerPercent(null);
+                  }
+                }}
               >
                 {percent * 100}%
               </button>
@@ -166,6 +179,7 @@ export const TriggerCreator: React.FC<TriggerCreatorProps> = ({
                     type="number"
                     min={0}
                     step={0.01}
+                    autoFocus
                     onKeyDown={(e) => {
                       if (["e", "E", "+", "-"].includes(e.key)) {
                         e.preventDefault();
@@ -204,7 +218,7 @@ export const TriggerCreator: React.FC<TriggerCreatorProps> = ({
 };
 
 const Container = styled.div`
-  border: 1px solid var(--cell-stroke);
+  border: 1px solid var(--cell-highlight);
   border-radius: 4px;
   padding: 16px;
   background: linear-gradient(0deg, rgba(0, 48, 0, 0.2), rgba(0, 48, 0, 0.2));
@@ -242,8 +256,7 @@ const Header = styled.div`
 `;
 
 const TriggerBox = styled.div`
-  border: 1px solid var(--cell-stroke);
-  border-color: ${(props) => (props.selected ? "var(--cell-highlight)" : "var(--cell-stroke)")};
+  border: 1px solid var(--cell-highlight);
   border-radius: 4px;
   padding: 12px 16px;
   background: linear-gradient(0deg, rgba(0, 9, 0, 0.2), rgba(0, 9, 0, 0.2));
