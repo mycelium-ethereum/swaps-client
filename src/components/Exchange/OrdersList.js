@@ -13,7 +13,7 @@ import {
   getExchangeRate,
   getPositionKey,
 } from "../../Helpers.js";
-import { cancelSwapOrder, cancelIncreaseOrder, cancelDecreaseOrder } from "../../Api";
+import { cancelSwapOrder, cancelIncreaseOrder, cancelDecreaseOrder, cancelMultipleOrders } from "../../Api";
 import { getContract } from "../../Addresses";
 
 import Tooltip from "../Tooltip/Tooltip";
@@ -56,7 +56,7 @@ export default function OrdersList(props) {
         func = cancelDecreaseOrder;
       }
 
-      return func(chainId, order.orderBookAddress, library, order.index, {
+      return func(chainId, library, order.index, {
         successMsg: "Order cancelled.",
         failMsg: "Cancel failed.",
         sentMsg: "Cancel submitted.",
@@ -66,6 +66,29 @@ export default function OrdersList(props) {
     },
     [library, pendingTxns, setPendingTxns, chainId]
   );
+
+  const cancelAllOrders = useCallback(() => {
+    let swapIndexes = [];
+    let increaseIndexes = [];
+    let decreaseIndexes = [];
+    orders.forEach((order) => {
+      if (order.type === SWAP) {
+        swapIndexes.push(order.index);
+      } else if (order.type === INCREASE) {
+        increaseIndexes.push(order.index);
+      } else if (order.type === DECREASE) {
+        decreaseIndexes.push(order.index);
+      }
+    });
+
+    return cancelMultipleOrders(chainId, library, swapIndexes, increaseIndexes, decreaseIndexes, {
+      successMsg: "Orders cancelled.",
+      failMsg: "Cancel failed.",
+      sentMsg: "Cancel submitted.",
+      pendingTxns,
+      setPendingTxns,
+    });
+  }, [orders, library, pendingTxns, setPendingTxns, chainId]);
 
   const onEditClick = useCallback(
     (order) => {
@@ -89,10 +112,19 @@ export default function OrdersList(props) {
         <th>
           <div>Mark Price</div>
         </th>
-        <th colSpan="2"></th>
+        <th></th>
+        <th>
+          {orders.length ? (
+            <div className="cancelAllButton" onClick={() => cancelAllOrders()}>
+              Cancel All
+            </div>
+          ) : (
+            " "
+          )}
+        </th>
       </tr>
     );
-  }, []);
+  }, [orders]);
 
   const renderEmptyRow = useCallback(() => {
     if (orders && orders.length) {
@@ -383,8 +415,8 @@ export default function OrdersList(props) {
 
   return (
     <React.Fragment>
-      <div className="App-box large">
-        <table className="Exchange-list Orders large">
+      <div className="App-box">
+        <table className="Exchange-list Orders">
           <tbody>
             {renderHead()}
             {renderEmptyRow()}
@@ -392,12 +424,12 @@ export default function OrdersList(props) {
           </tbody>
         </table>
       </div>
-      <div className="Exchange-list Orders small">
+      {/* <div className="Exchange-list Orders small">
         {(!orders || orders.length === 0) && (
           <div className="Exchange-empty-positions-list-note App-card">No open orders</div>
         )}
         {renderSmallList()}
-      </div>
+      </div> */}
       {editingOrder && (
         <OrderEditor
           account={account}
