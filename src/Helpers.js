@@ -2764,3 +2764,11 @@ export function truncateMiddleEthAddress(address, truncateLength) {
 
   return `${address.slice(0, leadingCharsNum)}...${address.slice(-trailingCharsNum)}`;
 }
+
+// up until round 13, the round as per the merkle distributor contracts were 0 indexed
+// this meant that round 12 to a human was round 11 in the contracts
+// round 13 (to humans) was set as round 13 in the distributor contract
+// meaning that rounds in the contract are the same as human readable from round 13 onwards
+export function getOffsetRewardRound(round) {
+  return round <= 11 ? round : round + 1
+}

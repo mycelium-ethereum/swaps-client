@@ -13,7 +13,7 @@ import {
   ETH_DECIMALS,
   helperToast,
   useLocalStorageSerializeKey,
-  getUrlParameters,
+  getOffsetRewardRound
 } from "../../Helpers";
 import { useWeb3React } from "@web3-react/core";
 import { callContract } from "../../Api";
@@ -124,7 +124,7 @@ export default function Rewards(props) {
           }
           let unclaimedRewards = totals.unclaimedRewards;
           const userReward = ethers.BigNumber.from(trader.reward).add(trader.degen_reward);
-          if (hasClaimed && !hasClaimed[round.round]) {
+          if (hasClaimed && !hasClaimed[getOffsetRewardRound(round.round)]) {
             unclaimedRewards = unclaimedRewards.add(userReward);
           }
           return {
@@ -312,11 +312,7 @@ export default function Rewards(props) {
       [
         userProof.merkleProof, // proof
         userProof.amount, // amount
-        // up until round 13, the round as per the merkle distributor contracts were 0 indexed
-        // this meant that round 12 to a human was round 11 in the contracts
-        // round 13 (to humans) was set as round 13 in the distributor contract
-        // meaning that we need to pass selectedRound + 1 for any round 13 or later
-        selectedRound <= 11 ? selectedRound : selectedRound + 1, // round
+        getOffsetRewardRound(selectedRound)
       ],
       {
         sentMsg: "Claim submitted!",
@@ -332,7 +328,7 @@ export default function Rewards(props) {
   const isLatestRound = selectedRound === "latest";
   let hasClaimedRound;
   if (selectedRound !== "latest" && hasClaimed) {
-    hasClaimedRound = hasClaimed[selectedRound];
+    hasClaimedRound = hasClaimed[getOffsetRewardRound(selectedRound)];
   }
 
   useEffect(() => {
