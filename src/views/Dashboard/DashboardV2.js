@@ -171,9 +171,10 @@ export default function DashboardV2() {
   const totalMMFees = useSpreadCaptureVolume(chainId);
 
   let totalFees;
-  if (totalFeesDistributed && totalMMFees) {
-    totalFees = totalFeesDistributed.add(totalMMFees);
-  }
+  totalFees = totalFeesDistributed
+  // if (totalFeesDistributed && totalMMFees) {
+  //   totalFees = totalFeesDistributed.add(totalMMFees);
+  // }
 
   const { mycPrice, mycPriceFromMainnet, mycPriceFromArbitrum } = useMYCPrice(
     chainId,
@@ -510,20 +511,7 @@ export default function DashboardV2() {
               <div className="App-card-content">
                 <div className="App-card-row">
                   <div className="label">Total Fees</div>
-                  <div>
-                    <TooltipComponent
-                      position="right-bottom"
-                      className="nowrap"
-                      handle={`$${formatAmount(totalFees, USD_DECIMALS, 0, true)}`}
-                      renderContent={() => (
-                        <>
-                          Distributed Fees: ${formatAmount(totalFeesDistributed, USD_DECIMALS, 0, true)}
-                          <br />
-                          Spread Capture: ${formatAmount(totalMMFees, USD_DECIMALS, 0, true)}
-                        </>
-                      )}
-                    />
-                  </div>
+                  <div>${formatAmount(totalFees, USD_DECIMALS, 0, true)}</div>
                 </div>
                 <div className="App-card-row">
                   <div className="label">Total Volume</div>
