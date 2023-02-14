@@ -71,6 +71,7 @@ import BuyMlp from "./views/BuyMlp/BuyMlp";
 import SellMlp from "./views/SellMlp/SellMlp";
 import Rewards from "./views/Rewards/Rewards";
 import Referrals from "./views/Referrals/Referrals";
+import Airdrops from "./views/Airdrops/Referrals";
 // import NftWallet from "./views/NftWallet/NftWallet";
 // import BeginAccountTransfer from "./views/BeginAccountTransfer/BeginAccountTransfer";
 // import CompleteAccountTransfer from "./views/CompleteAccountTransfer/CompleteAccountTransfer";
@@ -933,6 +934,17 @@ function FullApp() {
               />
             </Route>
             <Route exact path="/referrals">
+              <Referrals
+                connectWallet={connectWallet}
+                trackPageWithTraits={trackPageWithTraits}
+                trackAction={trackAction}
+                analytics={analytics}
+                infoTokens={infoTokens}
+                pendingTxns={pendingTxns}
+                setPendingTxns={setPendingTxns}
+              />
+            </Route>
+            <Route exact path="/airdrops">
               <Referrals
                 connectWallet={connectWallet}
                 trackPageWithTraits={trackPageWithTraits}

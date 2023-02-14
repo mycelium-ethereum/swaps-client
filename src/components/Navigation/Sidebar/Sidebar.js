@@ -74,6 +74,11 @@ const navTopLinks = [
     path: "/referrals",
     icon: ReferralsIcon,
   },
+  {
+    name: "Airdrops",
+    path: "/airdrops",
+    icon: RewardsIcon,
+  },
 ];
 
 const socialLinks = [
@@ -94,10 +99,7 @@ const socialLinks = [
   },
 ];
 
-export default function Sidebar({
-  sidebarVisible,
-  setSidebarVisible,
-}) {
+export default function Sidebar({ sidebarVisible, setSidebarVisible }) {
   const { active, account } = useWeb3React();
   const location = useLocation();
   const { leaderboardData, userPosition, failedFetchingRoundRewards, rewardIndicator } = useContext(LeaderboardContext);
@@ -147,7 +149,13 @@ export default function Sidebar({
               </MenuItem>
             </NavMenu>
             {active && userPosition > 0 && !failedFetchingRoundRewards ? (
-              <LiveLeaderboard account={account} location={location} userPosition={userPosition} leaderboardData={leaderboardData} rewardIndicator={rewardIndicator} />
+              <LiveLeaderboard
+                account={account}
+                location={location}
+                userPosition={userPosition}
+                leaderboardData={leaderboardData}
+                rewardIndicator={rewardIndicator}
+              />
             ) : (
               <EventBox>
                 <EventHeader>
