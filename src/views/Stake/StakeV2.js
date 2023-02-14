@@ -964,7 +964,7 @@ export default function StakeV2({
                               </StakeV2Styled.RewardsBannerText>{" "}
                               <StakeV2Styled.RewardsBannerText secondary>
                                 ($
-                                {formatAmount(airdropRewardAmountUSD, USD_DECIMALS, 2, true)} )
+                                {formatAmount(airdropRewardAmountUSD, USD_DECIMALS, 2, true)})
                               </StakeV2Styled.RewardsBannerText>
                             </StakeV2Styled.RewardsBannerTextWrap>
                           </div>
