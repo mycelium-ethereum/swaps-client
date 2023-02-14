@@ -36,6 +36,7 @@ import {
   getStakingData,
   getProcessedData,
   getPageTitle,
+  expandDecimals,
 } from "../../Helpers";
 import { getServerUrl } from "src/lib";
 
@@ -616,6 +617,10 @@ export default function StakeV2({
     fetcher: (url, round, account) => fetch(`${url}&round=${round}&userAddress=${account}`).then((res) => res.json()),
   });
 
+  const airdropRewardAmountBN = airdropRewardProof?.amount && bigNumberify(airdropRewardProof?.amount);
+  const airdropRewardAmountUSD =
+    airdropRewardAmountBN && nativeTokenPrice && airdropRewardAmountBN.mul(nativeTokenPrice).div(expandDecimals(1, 18));
+
   const { mycPrice } = useMYCPrice(chainId, { arbitrum: chainId === ARBITRUM ? library : undefined }, active);
 
   const { total: mycSupply } = useTotalMYCSupply();
@@ -939,17 +944,34 @@ export default function StakeV2({
                       </button>
                     )}
                   </StakeV2Styled.Buttons>
-                  {account && !!airdropRewardProof?.amount && bigNumberify(airdropRewardProof?.amount).gt(0) && (
+                  {account && !!airdropRewardAmountBN && airdropRewardAmountBN.gt(0) && (
                     <>
                       <StakeV2Styled.RewardsBannerRow>
                         <StakeV2Styled.RewardsBannerText large>Airdrop Rewards</StakeV2Styled.RewardsBannerText>
                       </StakeV2Styled.RewardsBannerRow>
+                      <StakeV2Styled.RewardsBannerRow>
+                        <StakeV2Styled.RewardsBannerText secondary title>
+                          Airdrop for LPs affected by the MLP incident. Claim your airdrop below.
+                        </StakeV2Styled.RewardsBannerText>
+                      </StakeV2Styled.RewardsBannerRow>
+                      <StakeV2Styled.RewardsBannerRow>
+                        <div className="App-card-row">
+                          <div className="label">ETH Amount</div>
+                          <div>
+                            <StakeV2Styled.RewardsBannerTextWrap>
+                              <StakeV2Styled.RewardsBannerText large>
+                                {formatAmount(airdropRewardAmountBN, 18, 4, true)} {nativeTokenSymbol}
+                              </StakeV2Styled.RewardsBannerText>{" "}
+                              <StakeV2Styled.RewardsBannerText secondary>
+                                ($
+                                {formatAmount(airdropRewardAmountUSD, USD_DECIMALS, 2, true)} )
+                              </StakeV2Styled.RewardsBannerText>
+                            </StakeV2Styled.RewardsBannerTextWrap>
+                          </div>
+                        </div>
+                      </StakeV2Styled.RewardsBannerRow>
                       <StakeV2Styled.Buttons>
-                        {active && (
-                          <button className="App-button-option App-card-option" onClick={() => showMlpClaimModal()}>
-                            Claim LPs Airdrop
-                          </button>
-                        )}
+                        {active && <button className="App-button-option App-card-option">Claim LPs Airdrop</button>}
                       </StakeV2Styled.Buttons>
                     </>
                   )}
