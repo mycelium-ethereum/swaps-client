@@ -10,6 +10,7 @@ import ReaderV2 from "../../abis/ReaderV2.json";
 import Vester from "../../abis/Vester.json";
 import RewardRouter from "../../abis/RewardRouter.json";
 import RewardReader from "../../abis/RewardReader.json";
+import FeeDistributor from "../../abis/FeeDistributor.json";
 import Token from "../../abis/Token.json";
 import MlpManager from "../../abis/MlpManager.json";
 
@@ -551,6 +552,8 @@ export default function StakeV2({
     feeMlpTrackerAddress,
   ];
 
+  const [isWithdrawing, setIsWithdrawing] = useState(false);
+
   const { data: walletBalances } = useSWR(
     [
       `StakeV2:walletBalances:${active}`,
@@ -618,6 +621,7 @@ export default function StakeV2({
   });
 
   const airdropRewardAmountBN = airdropRewardProof?.amount && bigNumberify(airdropRewardProof?.amount);
+  const airdropRewardProofData = airdropRewardProof?.merkleProof;
   const airdropRewardAmountUSD =
     airdropRewardAmountBN && nativeTokenPrice && airdropRewardAmountBN.mul(nativeTokenPrice).div(expandDecimals(1, 18));
 
@@ -727,6 +731,23 @@ export default function StakeV2({
     setIsVesterWithdrawModalVisible(true);
     setVesterWithdrawTitle("Withdraw from esMYC Vault");
     setVesterWithdrawAddress(mlpVesterAddress);
+  };
+
+  const claimLPAirdrop = () => {
+    // call withdraw on 0x6CFfEC90f2fb63e2b0c03197e75FE919023E727a using proof, correct amount, and round = 0
+    const contract = new ethers.Contract(
+      "0x6CFfEC90f2fb63e2b0c03197e75FE919023E727a",
+      FeeDistributor.abi,
+      library.getSigner()
+    );
+    callContract(chainId, contract, "withdraw", [airdropRewardProofData, airdropRewardAmountBN, AIRDROP_ROUND], {
+      sentMsg: "Airdrop claim submitted.",
+      failMsg: "Airdrop Claim failed.",
+      successMsg: "Claimed!",
+      setPendingTxns,
+    }).finally(() => {
+      setIsWithdrawing(false);
+    });
   };
 
   return (
@@ -971,7 +992,11 @@ export default function StakeV2({
                         </div>
                       </StakeV2Styled.RewardsBannerRow>
                       <StakeV2Styled.Buttons>
-                        {active && <button className="App-button-option App-card-option">Claim LPs Airdrop</button>}
+                        {active && (
+                          <button className="App-button-option App-card-option" onClick={() => claimLPAirdrop()}>
+                            Claim LPs Airdrop
+                          </button>
+                        )}
                       </StakeV2Styled.Buttons>
                     </>
                   )}
