@@ -632,8 +632,8 @@ export default function StakeV2({
       FeeDistributor.abi,
       library.getSigner()
     );
-    let claimedAmount = await contract.functions.claimed(0, account);
-    if (claimedAmount) {
+    let hasClaimed = await contract.functions.claimed(0, account);
+    if (hasClaimed) {
       setHasClaimedAirdrop(true);
     }
   }, [library, account]);
@@ -762,7 +762,7 @@ export default function StakeV2({
   };
 
   useEffect(() => {
-    // Only check for airdrop claim if user has not claimed yet
+    // Only check for airdrop claim if user has an airdrop amount greater than 0
     if (library && !!airdropRewardAmountBN) {
       pullAirdropClaim();
     }
