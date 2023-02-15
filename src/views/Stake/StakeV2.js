@@ -745,8 +745,6 @@ export default function StakeV2({
       failMsg: "Airdrop Claim failed.",
       successMsg: "Claimed!",
       setPendingTxns,
-    }).finally(() => {
-      setIsWithdrawing(false);
     });
   };
 
