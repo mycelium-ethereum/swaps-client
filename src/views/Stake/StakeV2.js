@@ -10,6 +10,7 @@ import ReaderV2 from "../../abis/ReaderV2.json";
 import Vester from "../../abis/Vester.json";
 import RewardRouter from "../../abis/RewardRouter.json";
 import RewardReader from "../../abis/RewardReader.json";
+import FeeDistributor from "../../abis/FeeDistributor.json";
 import Token from "../../abis/Token.json";
 import MlpManager from "../../abis/MlpManager.json";
 
@@ -36,13 +37,11 @@ import {
   getStakingData,
   getProcessedData,
   getPageTitle,
+  expandDecimals,
 } from "../../Helpers";
-import {
-  callContract,
-  useMYCPrice,
-  useStakingApr,
-  useTotalMYCSupply,
-} from "../../Api";
+import { getServerUrl } from "src/lib";
+
+import { callContract, useMYCPrice, useStakingApr, useTotalMYCSupply } from "../../Api";
 import { getConstant } from "../../Constants";
 
 import useSWR from "swr";
@@ -59,6 +58,8 @@ import SEO from "../../components/Common/SEO";
 import ClaimModal from "./ClaimModal";
 import Toggle from "../../components/Toggle/Toggle";
 import MlpPriceChart from "./MlpPriceChart";
+
+const AIRDROP_ROUND = 0;
 
 function CompoundModal(props) {
   const {
@@ -551,6 +552,8 @@ export default function StakeV2({
     feeMlpTrackerAddress,
   ];
 
+  const [isWithdrawing, setIsWithdrawing] = useState(false);
+
   const { data: walletBalances } = useSWR(
     [
       `StakeV2:walletBalances:${active}`,
@@ -612,6 +615,15 @@ export default function StakeV2({
   const { data: ethBalance } = useSWR([library, "getBalance", account, "latest"], {
     fetcher: (library, method, ...params) => library[method](...params),
   });
+
+  const { data: airdropRewardProof } = useSWR([getServerUrl(chainId, "/airdropRewardProof"), AIRDROP_ROUND, account], {
+    fetcher: (url, round, account) => fetch(`${url}&round=${round}&userAddress=${account}`).then((res) => res.json()),
+  });
+
+  const airdropRewardAmountBN = airdropRewardProof?.amount && bigNumberify(airdropRewardProof?.amount);
+  const airdropRewardProofData = airdropRewardProof?.merkleProof;
+  const airdropRewardAmountUSD =
+    airdropRewardAmountBN && nativeTokenPrice && airdropRewardAmountBN.mul(nativeTokenPrice).div(expandDecimals(1, 18));
 
   const { mycPrice } = useMYCPrice(chainId, { arbitrum: chainId === ARBITRUM ? library : undefined }, active);
 
@@ -719,6 +731,21 @@ export default function StakeV2({
     setIsVesterWithdrawModalVisible(true);
     setVesterWithdrawTitle("Withdraw from esMYC Vault");
     setVesterWithdrawAddress(mlpVesterAddress);
+  };
+
+  const claimLPAirdrop = () => {
+    // call withdraw on 0x6CFfEC90f2fb63e2b0c03197e75FE919023E727a using proof, correct amount, and round = 0
+    const contract = new ethers.Contract(
+      "0x6CFfEC90f2fb63e2b0c03197e75FE919023E727a",
+      FeeDistributor.abi,
+      library.getSigner()
+    );
+    callContract(chainId, contract, "withdraw", [airdropRewardProofData, airdropRewardAmountBN, AIRDROP_ROUND], {
+      sentMsg: "Airdrop claim submitted.",
+      failMsg: "Airdrop Claim failed.",
+      successMsg: "Claimed!",
+      setPendingTxns,
+    });
   };
 
   return (
@@ -936,6 +963,41 @@ export default function StakeV2({
                       </button>
                     )}
                   </StakeV2Styled.Buttons>
+                  {account && !!airdropRewardAmountBN && airdropRewardAmountBN.gt(0) && (
+                    <>
+                      <StakeV2Styled.RewardsBannerRow>
+                        <StakeV2Styled.RewardsBannerText large>Airdrop Rewards</StakeV2Styled.RewardsBannerText>
+                      </StakeV2Styled.RewardsBannerRow>
+                      <StakeV2Styled.RewardsBannerRow>
+                        <StakeV2Styled.RewardsBannerText secondary title>
+                          Airdrop for MLP participants. Claim your airdrop below.
+                        </StakeV2Styled.RewardsBannerText>
+                      </StakeV2Styled.RewardsBannerRow>
+                      <StakeV2Styled.RewardsBannerRow>
+                        <div className="App-card-row">
+                          <div className="label">ETH Amount</div>
+                          <div>
+                            <StakeV2Styled.RewardsBannerTextWrap>
+                              <StakeV2Styled.RewardsBannerText large>
+                                {formatAmount(airdropRewardAmountBN, 18, 4, true)} {nativeTokenSymbol}
+                              </StakeV2Styled.RewardsBannerText>{" "}
+                              <StakeV2Styled.RewardsBannerText secondary>
+                                ($
+                                {formatAmount(airdropRewardAmountUSD, USD_DECIMALS, 2, true)})
+                              </StakeV2Styled.RewardsBannerText>
+                            </StakeV2Styled.RewardsBannerTextWrap>
+                          </div>
+                        </div>
+                      </StakeV2Styled.RewardsBannerRow>
+                      <StakeV2Styled.Buttons>
+                        {active && (
+                          <button className="App-button-option App-card-option" onClick={() => claimLPAirdrop()}>
+                            Claim LPs Airdrop
+                          </button>
+                        )}
+                      </StakeV2Styled.Buttons>
+                    </>
+                  )}
                 </StakeV2Styled.RewardsBanner>
               </StakeV2Styled.MlpInfo>
             </StakeV2Styled.Card>
