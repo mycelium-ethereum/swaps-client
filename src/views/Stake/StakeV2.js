@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useWeb3React } from "@web3-react/core";
 
@@ -498,6 +498,7 @@ export default function StakeV2({
 
   const [isCompoundModalVisible, setIsCompoundModalVisible] = useState(false);
   const [isClaimModalVisible, setIsClaimModalVisible] = useState(false);
+  const [hasClaimedAirdrop, setHasClaimedAirdrop] = useState(false);
 
   const rewardRouterAddress = getContract(chainId, "RewardRouter");
   const rewardReaderAddress = getContract(chainId, "RewardReader");
@@ -625,6 +626,18 @@ export default function StakeV2({
   const airdropRewardAmountUSD =
     airdropRewardAmountBN && nativeTokenPrice && airdropRewardAmountBN.mul(nativeTokenPrice).div(expandDecimals(1, 18));
 
+  const pullAirdropClaim = useCallback(async () => {
+    const contract = new ethers.Contract(
+      "0x6CFfEC90f2fb63e2b0c03197e75FE919023E727a",
+      FeeDistributor.abi,
+      library.getSigner()
+    );
+    let hasClaimed = await contract.functions.claimed(0, account);
+    if (hasClaimed) {
+      setHasClaimedAirdrop(true);
+    }
+  }, [library, account]);
+
   const { mycPrice } = useMYCPrice(chainId, { arbitrum: chainId === ARBITRUM ? library : undefined }, active);
 
   const { total: mycSupply } = useTotalMYCSupply();
@@ -747,6 +760,13 @@ export default function StakeV2({
       setPendingTxns,
     });
   };
+
+  useEffect(() => {
+    // Only check for airdrop claim if user has an airdrop amount greater than 0
+    if (library && !!airdropRewardAmountBN) {
+      pullAirdropClaim();
+    }
+  }, [airdropRewardAmountBN, library, pullAirdropClaim]);
 
   return (
     <div className="StakeV2 Page page-layout default-container">
@@ -968,34 +988,42 @@ export default function StakeV2({
                       <StakeV2Styled.RewardsBannerRow>
                         <StakeV2Styled.RewardsBannerText large>Airdrop Rewards</StakeV2Styled.RewardsBannerText>
                       </StakeV2Styled.RewardsBannerRow>
-                      <StakeV2Styled.RewardsBannerRow>
-                        <StakeV2Styled.RewardsBannerText secondary title>
-                          Airdrop for MLP participants. Claim your airdrop below.
+                      {hasClaimedAirdrop ? (
+                        <StakeV2Styled.RewardsBannerText secondary>
+                          You have already claimed this airdrop.
                         </StakeV2Styled.RewardsBannerText>
-                      </StakeV2Styled.RewardsBannerRow>
-                      <StakeV2Styled.RewardsBannerRow>
-                        <div className="App-card-row">
-                          <div className="label">ETH Amount</div>
-                          <div>
-                            <StakeV2Styled.RewardsBannerTextWrap>
-                              <StakeV2Styled.RewardsBannerText large>
-                                {formatAmount(airdropRewardAmountBN, 18, 4, true)} {nativeTokenSymbol}
-                              </StakeV2Styled.RewardsBannerText>{" "}
-                              <StakeV2Styled.RewardsBannerText secondary>
-                                ($
-                                {formatAmount(airdropRewardAmountUSD, USD_DECIMALS, 2, true)})
-                              </StakeV2Styled.RewardsBannerText>
-                            </StakeV2Styled.RewardsBannerTextWrap>
-                          </div>
-                        </div>
-                      </StakeV2Styled.RewardsBannerRow>
-                      <StakeV2Styled.Buttons>
-                        {active && (
-                          <button className="App-button-option App-card-option" onClick={() => claimLPAirdrop()}>
-                            Claim LPs Airdrop
-                          </button>
-                        )}
-                      </StakeV2Styled.Buttons>
+                      ) : (
+                        <>
+                          <StakeV2Styled.RewardsBannerRow>
+                            <StakeV2Styled.RewardsBannerText secondary title>
+                              Airdrop for MLP participants. Claim your airdrop below.
+                            </StakeV2Styled.RewardsBannerText>
+                          </StakeV2Styled.RewardsBannerRow>
+                          <StakeV2Styled.RewardsBannerRow>
+                            <div className="App-card-row">
+                              <div className="label">ETH Amount</div>
+                              <div>
+                                <StakeV2Styled.RewardsBannerTextWrap>
+                                  <StakeV2Styled.RewardsBannerText large>
+                                    {formatAmount(airdropRewardAmountBN, 18, 4, true)} {nativeTokenSymbol}
+                                  </StakeV2Styled.RewardsBannerText>{" "}
+                                  <StakeV2Styled.RewardsBannerText secondary>
+                                    ($
+                                    {formatAmount(airdropRewardAmountUSD, USD_DECIMALS, 2, true)})
+                                  </StakeV2Styled.RewardsBannerText>
+                                </StakeV2Styled.RewardsBannerTextWrap>
+                              </div>
+                            </div>
+                          </StakeV2Styled.RewardsBannerRow>
+                          <StakeV2Styled.Buttons>
+                            {active && (
+                              <button className="App-button-option App-card-option" onClick={() => claimLPAirdrop()}>
+                                Claim LPs Airdrop
+                              </button>
+                            )}
+                          </StakeV2Styled.Buttons>
+                        </>
+                      )}
                     </>
                   )}
                 </StakeV2Styled.RewardsBanner>
