@@ -951,7 +951,7 @@ export default function StakeV2({
                       </StakeV2Styled.RewardsBannerRow>
                       <StakeV2Styled.RewardsBannerRow>
                         <StakeV2Styled.RewardsBannerText secondary title>
-                          Airdrop for LPs affected by the MLP incident. Claim your airdrop below.
+                          Airdrop for MLP participants. Claim your airdrop below.
                         </StakeV2Styled.RewardsBannerText>
                       </StakeV2Styled.RewardsBannerRow>
                       <StakeV2Styled.RewardsBannerRow>
