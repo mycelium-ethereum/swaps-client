@@ -498,6 +498,7 @@ export default function StakeV2({
 
   const [isCompoundModalVisible, setIsCompoundModalVisible] = useState(false);
   const [isClaimModalVisible, setIsClaimModalVisible] = useState(false);
+  const [hasClaimedAirdrop, setHasClaimedAirdrop] = useState(false);
 
   const rewardRouterAddress = getContract(chainId, "RewardRouter");
   const rewardReaderAddress = getContract(chainId, "RewardReader");
@@ -624,6 +625,19 @@ export default function StakeV2({
   const airdropRewardProofData = airdropRewardProof?.merkleProof;
   const airdropRewardAmountUSD =
     airdropRewardAmountBN && nativeTokenPrice && airdropRewardAmountBN.mul(nativeTokenPrice).div(expandDecimals(1, 18));
+
+  const pullAirdropClaim = () => {
+    const contract = new ethers.Contract(
+      "0x6CFfEC90f2fb63e2b0c03197e75FE919023E727a",
+      FeeDistributor.abi,
+      library.getSigner()
+    );
+    let claimedAmount = contract.functions.claimed(0, library.getSigner());
+    if (claimedAmount >= 0) {
+      setHasClaimedAirdrop(true);
+    }
+  };
+  pullAirdropClaim();
 
   const { mycPrice } = useMYCPrice(chainId, { arbitrum: chainId === ARBITRUM ? library : undefined }, active);
 
