@@ -128,7 +128,7 @@ const TableRow = ({ position, opacity, isUserRow, ensName, user_address, volume,
             </Styles.UserDetails>
           </Styles.UserAddress>
           <Styles.UserAddress>
-            {degen_reward && ethers.utils.parseEther(degen_reward.toString()).gte(ethers.utils.parseEther("0")) && (
+            {degen_reward && ethers.utils.parseEther(degen_reward.toString()).gt(ethers.utils.parseEther("0")) && (
               <img src={degenScore} width={"75%"} alt="degen_score_logo" />
             )}
           </Styles.UserAddress>
@@ -151,7 +151,7 @@ const UserTableRow = ({ user_address, volume, ensName, position, degen_reward })
           </Styles.UserDetails>
         </Styles.UserAddress>
         <Styles.UserAddress>
-          {ethers.utils.parseEther(degen_reward.toString()).gte(ethers.utils.parseEther("0")) && (
+          {ethers.utils.parseEther(degen_reward.toString()).gt(ethers.utils.parseEther("0")) && (
             <TooltipComponent
               handle={<img src={degenScore} width={"75%"} alt="degen_score_logo" />}
               renderContent={() => "Rewards boosted by DegenScore"}
