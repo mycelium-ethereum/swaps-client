@@ -1,7 +1,7 @@
 import { ARBITRUM, ARBITRUM_GOERLI } from "src/Helpers";
 import { ChainId } from "src/types/common";
 
-const BASE_API_URL = process.env.REACT_APP_API_URL ?? "https://api.tracer.finance";
+const BASE_API_URL = process.env.REACT_APP_API_URL ?? "https://api.mycelium.xyz";
 
 export function getSupplyUrl(route = "/totalSupply") {
   // same supply across networks
