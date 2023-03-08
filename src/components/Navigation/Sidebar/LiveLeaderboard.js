@@ -6,6 +6,8 @@ import { useENS, truncateMiddleEthAddress, formatAmount, USD_DECIMALS } from "..
 // import { ReactComponent as PositionIndicator } from "../../../img/position-indicator.svg";
 import * as Styles from "./LiveLeaderboard.styles";
 import liveIcon from "../../../img/nav/live.svg";
+import degenScore from "../../../img/ic_degen.svg";
+import TooltipComponent from "../../../components/Tooltip/Tooltip";
 
 const ARBISCAN_URL = "https://arbiscan.io/address/";
 // const MIN_UI_PERCENTAGE = 10;
@@ -42,8 +44,8 @@ export const LiveLeaderboard = ({ location, account, leaderboardData, userPositi
   };
 
   const userPositionData = useMemo(() => {
-    return leaderboardData?.find((_trader, index) => index + 1 === userPosition)
-  }, [userPosition, leaderboardData])
+    return leaderboardData?.find((_trader, index) => index + 1 === userPosition);
+  }, [userPosition, leaderboardData]);
 
   return (
     <Styles.LeaderboardContainer>
@@ -55,9 +57,9 @@ export const LiveLeaderboard = ({ location, account, leaderboardData, userPositi
         <span>TRADING LEADERBOARD</span>
       </Styles.LeaderboardHeader>
       <Styles.LeaderboardBody>
-        {userPosition &&
-        <Styles.SlidingLeaderboardBody userPosition={userPosition}>
-          {leaderboardData?.map(({ user_address, volume }, index) => {
+        {userPosition && (
+          <Styles.SlidingLeaderboardBody userPosition={userPosition}>
+            {leaderboardData?.map(({ user_address, volume, degen_reward }, index) => {
               const position = index + 1;
               const isUserRow = position === userPosition;
               return (
@@ -69,21 +71,23 @@ export const LiveLeaderboard = ({ location, account, leaderboardData, userPositi
                   user_address={user_address}
                   volume={volume}
                   ensName={ensName}
+                  degen_reward={degen_reward}
                 />
               );
             })}
-        </Styles.SlidingLeaderboardBody>
-        }
+          </Styles.SlidingLeaderboardBody>
+        )}
       </Styles.LeaderboardBody>
       {userPositionData && (
         <>
-        <UserTableRow
-          position={userPosition}
-          user_address={userPositionData.user_address}
-          volume={userPositionData.volume}
-          ensName={ensName}
-        />
-        <Styles.UserPositionOverlay position={userPosition}/>
+          <UserTableRow
+            position={userPosition}
+            user_address={userPositionData.user_address}
+            volume={userPositionData.volume}
+            ensName={ensName}
+            degen_reward={userPositionData.degen_reward}
+          />
+          <Styles.UserPositionOverlay position={userPosition} />
         </>
       )}
       {/* <ProgressToTopFive
@@ -106,39 +110,53 @@ export const LiveLeaderboard = ({ location, account, leaderboardData, userPositi
   );
 };
 
-const TableRow = ({ position, opacity, isUserRow, ensName, user_address, volume }) => (
+const TableRow = ({ position, opacity, isUserRow, ensName, user_address, volume, degen_reward }) => (
   <Styles.ArbiscanLink href={`${ARBISCAN_URL}${user_address}`} rel="noopener noreferrer" target="_blank">
     <Styles.UserRow opacity={opacity} isUser={isUserRow} className={`table-row`}>
       <Styles.Position>#{position}</Styles.Position>
-      {!isUserRow &&
-      <Styles.BorderOutline isUser={isUserRow}>
-        <Styles.UserAddress>
-          {isUserRow
-            ? <Davatar size={16} address={user_address} />
-            : <Jazzicon diameter={16} seed={jsNumberForAddress(user_address)} />
-          }
-          <Styles.UserDetails>
-            <span>{truncateMiddleEthAddress(user_address)}</span>
-            {isUserRow && <span>{ensName}</span>}
-          </Styles.UserDetails>
-        </Styles.UserAddress>
-        <Styles.Volume>${formatAmount(volume, USD_DECIMALS, 2, true)}</Styles.Volume>
-      </Styles.BorderOutline>
-      }
+      {!isUserRow && (
+        <Styles.BorderOutline isUser={isUserRow}>
+          <Styles.UserAddress>
+            {isUserRow ? (
+              <Davatar size={16} address={user_address} />
+            ) : (
+              <Jazzicon diameter={16} seed={jsNumberForAddress(user_address)} />
+            )}
+            <Styles.UserDetails>
+              <span>{truncateMiddleEthAddress(user_address)}</span>
+              {isUserRow && <span>{ensName}</span>}
+            </Styles.UserDetails>
+          </Styles.UserAddress>
+          <Styles.UserAddress>
+            {degen_reward && ethers.utils.parseEther(degen_reward.toString()).gt(ethers.utils.parseEther("0")) && (
+              <img src={degenScore} width={"75%"} alt="degen_score_logo" />
+            )}
+          </Styles.UserAddress>
+          <Styles.Volume>${formatAmount(volume, USD_DECIMALS, 2, true)}</Styles.Volume>
+        </Styles.BorderOutline>
+      )}
     </Styles.UserRow>
   </Styles.ArbiscanLink>
-)
+);
 
-const UserTableRow = ({ user_address, volume, ensName, position }) => (
+const UserTableRow = ({ user_address, volume, ensName, position, degen_reward }) => (
   <Styles.ArbiscanLink href={`${ARBISCAN_URL}${user_address}`} rel="noopener noreferrer" target="_blank">
     <Styles.UserRowOverlay opacity={1} isUser={true} position={position}>
       <Styles.BorderOutline isUser={true}>
         <Styles.UserAddress>
-            <Davatar size={16} address={user_address} />
+          <Davatar size={16} address={user_address} /> :
           <Styles.UserDetails>
             <span>{truncateMiddleEthAddress(user_address)}</span>
             <span>{ensName}</span>
           </Styles.UserDetails>
+        </Styles.UserAddress>
+        <Styles.UserAddress>
+          {ethers.utils.parseEther(degen_reward.toString()).gt(ethers.utils.parseEther("0")) && (
+            <TooltipComponent
+              handle={<img src={degenScore} width={"75%"} alt="degen_score_logo" />}
+              renderContent={() => "Rewards boosted by DegenScore"}
+            />
+          )}
         </Styles.UserAddress>
         <Styles.Volume>${formatAmount(volume, USD_DECIMALS, 2, true)}</Styles.Volume>
       </Styles.BorderOutline>
@@ -173,5 +191,5 @@ const AmountToTopFive = ({ differenceBetweenUserAndTopFive, userPercentage }) =>
         Trade <b>${formatAmount(differenceBetweenUserAndTopFive, USD_DECIMALS, 2, true)}</b> to unlock Top 5% Rewards
       </span>
     )}
-  </Styles.AmountText> 
+  </Styles.AmountText>
 );
