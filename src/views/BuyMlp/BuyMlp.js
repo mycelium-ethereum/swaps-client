@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useHistory } from "react-router-dom";
 
 import MlpSwap from "../../components/Mlp/MlpSwap";
@@ -6,8 +6,8 @@ import MlpSwap from "../../components/Mlp/MlpSwap";
 import "./BuyMlp.css";
 
 import { getPageTitle, useChainId } from "../../Helpers";
-import { getNativeToken } from "../../data/Tokens";
 import SEO from "../../components/Common/SEO";
+import { getNativeToken } from "../../data/Tokens";
 
 export default function BuyMlp(props) {
   const { chainId } = useChainId();
@@ -35,7 +35,7 @@ export default function BuyMlp(props) {
             </div>
           */}
           <div className="section-title-content">
-            <div className="Page-title">Buy / Sell MLP</div>
+            <div className="Page-title">Sell MLP</div>
             <div className="Page-description">
               Purchase{" "}
               <a

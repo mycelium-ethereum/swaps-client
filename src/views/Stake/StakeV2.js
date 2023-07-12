@@ -926,9 +926,9 @@ export default function StakeV2({
                     </div>
                   </StakeV2Styled.RewardsBannerRow>
                   <StakeV2Styled.Buttons>
-                    <Link className="App-button-option App-card-option" to="/buy_mlp">
+                    {/* <Link className="App-button-option App-card-option" to="/buy_mlp">
                       Buy MLP
-                    </Link>
+                    </Link> */}
                     <Link className="App-button-option App-card-option" to="/buy_mlp#redeem">
                       Sell MLP
                     </Link>

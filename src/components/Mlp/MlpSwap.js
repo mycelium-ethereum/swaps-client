@@ -103,8 +103,8 @@ export default function MlpSwap(props) {
     analytics,
   } = props;
   const history = useHistory();
-  const swapLabel = isBuying ? "BuyMlp" : "SellMlp";
-  const tabLabel = isBuying ? "Buy MLP" : "Sell MLP";
+  const swapLabel = "SellMlp";
+  const tabLabel = "Sell MLP";
   const { active, library, account } = useWeb3React();
   const { chainId } = useChainId();
   // const chainName = getChainName(chainId)
@@ -876,12 +876,12 @@ export default function MlpSwap(props) {
         </div>
         <div className="MlpSwap-box App-box">
           <Tab
-            options={["Buy MLP", "Sell MLP"]}
+            options={["Sell MLP"]}
             option={tabLabel}
             onChange={onSwapOptionChange}
             className="Exchange-swap-option-tabs"
           />
-          {isBuying && (
+          {/* {isBuying && (
             <BuyInputSection
               topLeftLabel={payLabel}
               topRightLabel={`Balance: `}
@@ -909,26 +909,26 @@ export default function MlpSwap(props) {
                 trackAction={trackAction}
               />
             </BuyInputSection>
-          )}
+          )} */}
 
-          {!isBuying && (
-            <BuyInputSection
-              topLeftLabel={payLabel}
-              topRightLabel={`Available: `}
-              tokenBalance={`${formatAmount(maxSellAmount, MLP_DECIMALS, 4, true)}`}
-              inputValue={mlpValue}
-              onInputValueChange={onMlpValueChange}
-              showMaxButton={mlpValue !== formatAmountFree(maxSellAmount, MLP_DECIMALS, MLP_DECIMALS)}
-              onClickTopRightLabel={fillMaxAmount}
-              onClickMax={fillMaxAmount}
-              balance={payBalance}
-              defaultTokenName={"MLP"}
-            >
-              <div className="selected-token">
-                MLP <img src={tlp24Icon} alt="tlp24Icon" />
-              </div>
-            </BuyInputSection>
-          )}
+          {/* {!isBuying && ( */}
+          <BuyInputSection
+            topLeftLabel={payLabel}
+            topRightLabel={`Available: `}
+            tokenBalance={`${formatAmount(maxSellAmount, MLP_DECIMALS, 4, true)}`}
+            inputValue={mlpValue}
+            onInputValueChange={onMlpValueChange}
+            showMaxButton={mlpValue !== formatAmountFree(maxSellAmount, MLP_DECIMALS, MLP_DECIMALS)}
+            onClickTopRightLabel={fillMaxAmount}
+            onClickMax={fillMaxAmount}
+            balance={payBalance}
+            defaultTokenName={"MLP"}
+          >
+            <div className="selected-token">
+              MLP <img src={tlp24Icon} alt="tlp24Icon" />
+            </div>
+          </BuyInputSection>
+          {/* )} */}
 
           <div className="AppOrder-ball-container">
             <div className="AppOrder-ball">
