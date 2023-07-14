@@ -1,71 +1,70 @@
-import React, { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 
 import { useWeb3React } from "@web3-react/core";
-import useSWR from "swr";
 import { ethers } from "ethers";
+import useSWR from "swr";
 
 import Tab from "../Tab/Tab";
-import cx from "classnames";
 
-import { getToken, getTokens, getWhitelistedTokens, getWrappedToken, getNativeToken } from "../../data/Tokens";
 import { getContract } from "../../Addresses";
 import {
-  helperToast,
-  useLocalStorageByChainId,
-  getTokenInfo,
-  // getChainName,
-  useChainId,
+  ARBITRUM,
+  BASIS_POINTS_DIVISOR,
+  MLP_COOLDOWN_DURATION,
+  MLP_DECIMALS,
+  NETWORK_NAME,
+  PLACEHOLDER_ACCOUNT,
+  SECONDS_PER_YEAR,
+  USDG_DECIMALS,
+  USD_DECIMALS,
+  adjustForDecimals,
+  approveTokens,
+  bigNumberify,
   expandDecimals,
   fetcher,
-  bigNumberify,
   formatAmount,
   formatAmountFree,
   formatKeyAmount,
+  getBuyMlpFromAmount,
   // formatDateTime,
   getBuyMlpToAmount,
-  getBuyMlpFromAmount,
   getSellMlpFromAmount,
   getSellMlpToAmount,
-  parseValue,
-  approveTokens,
+  getTokenInfo,
   getUsd,
-  adjustForDecimals,
   getUserTokenBalances,
-  NETWORK_NAME,
-  MLP_DECIMALS,
-  USD_DECIMALS,
-  BASIS_POINTS_DIVISOR,
-  MLP_COOLDOWN_DURATION,
-  SECONDS_PER_YEAR,
-  USDG_DECIMALS,
-  ARBITRUM,
-  PLACEHOLDER_ACCOUNT,
+  helperToast,
+  parseValue,
+  // getChainName,
+  useChainId,
+  useLocalStorageByChainId,
 } from "../../Helpers";
+import { getNativeToken, getToken, getTokens, getWhitelistedTokens, getWrappedToken } from "../../data/Tokens";
 
 import { callContract, useMYCPrice } from "../../Api";
 
-import TokenSelector from "../Exchange/TokenSelector";
 import BuyInputSection from "../BuyInputSection/BuyInputSection";
+import TokenSelector from "../Exchange/TokenSelector";
 import Tooltip from "../Tooltip/Tooltip";
 
+import MlpManager from "../../abis/MlpManager.json";
 import ReaderV2 from "../../abis/ReaderV2.json";
 import RewardReader from "../../abis/RewardReader.json";
-import VaultV2 from "../../abis/VaultV2.json";
-import MlpManager from "../../abis/MlpManager.json";
-import RewardTracker from "../../abis/RewardTracker.json";
-import Vester from "../../abis/Vester.json";
 import RewardRouter from "../../abis/RewardRouter.json";
+import RewardTracker from "../../abis/RewardTracker.json";
 import Token from "../../abis/Token.json";
+import VaultV2 from "../../abis/VaultV2.json";
+import Vester from "../../abis/Vester.json";
 
+import arrowIcon from "../../img/ic_convert_down.svg";
 import tlp24Icon from "../../img/ic_mlp_24.svg";
 import tlp40Icon from "../../img/ic_mlp_40.svg";
-import arrowIcon from "../../img/ic_convert_down.svg";
 
-import "./MlpSwap.css";
-import AssetDropdown from "../../views/Dashboard/AssetDropdown";
-import { getAnalyticsEventStage } from "../../utils/analytics";
 import { useInfoTokens } from "src/hooks/useInfoTokens";
+import { getAnalyticsEventStage } from "../../utils/analytics";
+import AssetDropdown from "../../views/Dashboard/AssetDropdown";
+import "./MlpSwap.css";
 
 const { AddressZero } = ethers.constants;
 
@@ -104,8 +103,8 @@ export default function MlpSwap(props) {
     analytics,
   } = props;
   const history = useHistory();
-  const swapLabel = isBuying ? "BuyMlp" : "SellMlp";
-  const tabLabel = isBuying ? "Buy MLP" : "Sell MLP";
+  const swapLabel = "SellMlp";
+  const tabLabel = "Sell MLP";
   const { active, library, account } = useWeb3React();
   const { chainId } = useChainId();
   // const chainName = getChainName(chainId)
@@ -856,7 +855,7 @@ export default function MlpSwap(props) {
                 {formatAmount(mlpSupplyUsd, USD_DECIMALS, 2, true)})
               </div>
             </div>
-            <div className="Insurance-btn-container">
+            {/* <div className="Insurance-btn-container">
               <Tooltip
                 handle={
                   <a
@@ -872,17 +871,17 @@ export default function MlpSwap(props) {
                   return <div className="Tooltip-row">Risk Harbor Insurance for fsMLP.</div>;
                 }}
               />
-            </div>
+            </div> */}
           </div>
         </div>
         <div className="MlpSwap-box App-box">
           <Tab
-            options={["Buy MLP", "Sell MLP"]}
+            options={["Sell MLP"]}
             option={tabLabel}
             onChange={onSwapOptionChange}
             className="Exchange-swap-option-tabs"
           />
-          {isBuying && (
+          {/* {isBuying && (
             <BuyInputSection
               topLeftLabel={payLabel}
               topRightLabel={`Balance: `}
@@ -910,26 +909,26 @@ export default function MlpSwap(props) {
                 trackAction={trackAction}
               />
             </BuyInputSection>
-          )}
+          )} */}
 
-          {!isBuying && (
-            <BuyInputSection
-              topLeftLabel={payLabel}
-              topRightLabel={`Available: `}
-              tokenBalance={`${formatAmount(maxSellAmount, MLP_DECIMALS, 4, true)}`}
-              inputValue={mlpValue}
-              onInputValueChange={onMlpValueChange}
-              showMaxButton={mlpValue !== formatAmountFree(maxSellAmount, MLP_DECIMALS, MLP_DECIMALS)}
-              onClickTopRightLabel={fillMaxAmount}
-              onClickMax={fillMaxAmount}
-              balance={payBalance}
-              defaultTokenName={"MLP"}
-            >
-              <div className="selected-token">
-                MLP <img src={tlp24Icon} alt="tlp24Icon" />
-              </div>
-            </BuyInputSection>
-          )}
+          {/* {!isBuying && ( */}
+          <BuyInputSection
+            topLeftLabel={payLabel}
+            topRightLabel={`Available: `}
+            tokenBalance={`${formatAmount(maxSellAmount, MLP_DECIMALS, 4, true)}`}
+            inputValue={mlpValue}
+            onInputValueChange={onMlpValueChange}
+            showMaxButton={mlpValue !== formatAmountFree(maxSellAmount, MLP_DECIMALS, MLP_DECIMALS)}
+            onClickTopRightLabel={fillMaxAmount}
+            onClickMax={fillMaxAmount}
+            balance={payBalance}
+            defaultTokenName={"MLP"}
+          >
+            <div className="selected-token">
+              MLP <img src={tlp24Icon} alt="tlp24Icon" />
+            </div>
+          </BuyInputSection>
+          {/* )} */}
 
           <div className="AppOrder-ball-container">
             <div className="AppOrder-ball">
@@ -1116,7 +1115,7 @@ export default function MlpSwap(props) {
                   }}
                 />
               </th>
-              <th></th>
+              {/* <th></th> */}
             </tr>
           </thead>
           <tbody>
@@ -1261,7 +1260,7 @@ export default function MlpSwap(props) {
                     {formatAmount(balanceUsd, USD_DECIMALS, 2, true)})
                   </td>
                   <td>{renderFees()}</td>
-                  <td>
+                  {/* <td>
                     <button
                       className={cx("App-button-option action-btn", isBuying ? "buying" : "selling")}
                       onClick={() => {
@@ -1274,7 +1273,7 @@ export default function MlpSwap(props) {
                     >
                       {isBuying ? "Buy with " + token.symbol : "Sell for " + token.symbol}
                     </button>
-                  </td>
+                  </td> */}
                 </tr>
               );
             })}

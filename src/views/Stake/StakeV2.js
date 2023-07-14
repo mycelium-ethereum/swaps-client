@@ -1,45 +1,45 @@
-import React, { useCallback, useEffect, useState } from "react";
-import { Link } from "react-router-dom";
 import { useWeb3React } from "@web3-react/core";
+import { useCallback, useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 
 import Modal from "../../components/Modal/Modal";
 import Tooltip from "../../components/Tooltip/Tooltip";
 
-import Vault from "../../abis/Vault.json";
-import ReaderV2 from "../../abis/ReaderV2.json";
-import Vester from "../../abis/Vester.json";
-import RewardRouter from "../../abis/RewardRouter.json";
-import RewardReader from "../../abis/RewardReader.json";
 import FeeDistributor from "../../abis/FeeDistributor.json";
-import Token from "../../abis/Token.json";
 import MlpManager from "../../abis/MlpManager.json";
+import ReaderV2 from "../../abis/ReaderV2.json";
+import RewardReader from "../../abis/RewardReader.json";
+import RewardRouter from "../../abis/RewardRouter.json";
+import Token from "../../abis/Token.json";
+import Vault from "../../abis/Vault.json";
+import Vester from "../../abis/Vester.json";
 
 import { ethers } from "ethers";
+import { getServerUrl } from "src/lib";
 import {
-  helperToast,
+  ARBITRUM,
+  MLP_DECIMALS,
+  PLACEHOLDER_ACCOUNT,
+  USD_DECIMALS,
+  approveTokens,
   bigNumberify,
+  expandDecimals,
   fetcher,
   formatAmount,
-  formatKeyAmount,
   formatAmountFree,
-  getChainName,
-  parseValue,
-  approveTokens,
-  useLocalStorageSerializeKey,
-  useChainId,
-  MLP_DECIMALS,
-  USD_DECIMALS,
-  ARBITRUM,
-  PLACEHOLDER_ACCOUNT,
+  formatKeyAmount,
   getBalanceAndSupplyData,
+  getChainName,
   getDepositBalanceData,
-  getVestingData,
-  getStakingData,
-  getProcessedData,
   getPageTitle,
-  expandDecimals,
+  getProcessedData,
+  getStakingData,
+  getVestingData,
+  helperToast,
+  parseValue,
+  useChainId,
+  useLocalStorageSerializeKey,
 } from "../../Helpers";
-import { getServerUrl } from "src/lib";
 
 import { callContract, useMYCPrice, useStakingApr, useTotalMYCSupply } from "../../Api";
 import { getConstant } from "../../Constants";
@@ -55,8 +55,8 @@ import * as StakeV2Styled from "./StakeV2Styles";
 import "./StakeV2.css";
 
 import SEO from "../../components/Common/SEO";
-import ClaimModal from "./ClaimModal";
 import Toggle from "../../components/Toggle/Toggle";
+import ClaimModal from "./ClaimModal";
 import MlpPriceChart from "./MlpPriceChart";
 
 const AIRDROP_ROUND = 0;
@@ -926,9 +926,9 @@ export default function StakeV2({
                     </div>
                   </StakeV2Styled.RewardsBannerRow>
                   <StakeV2Styled.Buttons>
-                    <Link className="App-button-option App-card-option" to="/buy_mlp">
+                    {/* <Link className="App-button-option App-card-option" to="/buy_mlp">
                       Buy MLP
-                    </Link>
+                    </Link> */}
                     <Link className="App-button-option App-card-option" to="/buy_mlp#redeem">
                       Sell MLP
                     </Link>
@@ -972,11 +972,11 @@ export default function StakeV2({
                         Claim
                       </button>
                     )}
-                    {active && (
+                    {/* {active && (
                       <button className="App-button-option App-card-option" onClick={() => showMlpCompoundModal()}>
                         Compound
                       </button>
-                    )}
+                    )} */}
                     {!active && (
                       <button className="App-button-option App-card-option" onClick={() => connectWallet()}>
                         Connect Wallet
@@ -1119,11 +1119,11 @@ export default function StakeV2({
                         Connect Wallet
                       </button>
                     )}
-                    {active && (
+                    {/* {active && (
                       <button className="App-button-option App-card-option" onClick={() => showMycVesterDepositModal()}>
                         Deposit
                       </button>
-                    )}
+                    )} */}
                     {active && (
                       <button
                         className="App-button-option App-card-option"
@@ -1134,7 +1134,7 @@ export default function StakeV2({
                     )}
                   </StakeV2Styled.Buttons>
                 </StakeV2Styled.StakingBannerRow>
-                <StakeV2Styled.StakingBannerRow borderTop>
+                {/* <StakeV2Styled.StakingBannerRow borderTop>
                   <StakeV2Styled.RewardsBannerText large title>
                     MYC/esMYC Staking
                   </StakeV2Styled.RewardsBannerText>
@@ -1152,7 +1152,7 @@ export default function StakeV2({
                       <button className="App-button-option App-card-option">MYC/esMYC Staking</button>
                     </a>
                   </StakeV2Styled.Buttons>
-                </StakeV2Styled.StakingBannerRow>
+                </StakeV2Styled.StakingBannerRow> */}
               </StakeV2Styled.VestingInfo>
             </StakeV2Styled.Card>
           </StakeV2Styled.StakeV2Card>

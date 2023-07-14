@@ -1,5 +1,4 @@
 import { ADDRESS_ZERO } from "@uniswap/v3-sdk";
-import { ARBITRUM_GOERLI } from "./Helpers";
 
 const CONTRACTS = {
   1: {
@@ -126,6 +125,7 @@ const CONTRACTS = {
 };
 
 export function getContract(chainId, name) {
+  if (!CONTRACTS) throw new Error("CONTRACTS not loaded");
   if (!CONTRACTS[chainId]) {
     throw new Error(`Unknown chainId ${chainId}`);
   }

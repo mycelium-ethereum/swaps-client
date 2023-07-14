@@ -1,88 +1,88 @@
-import React, { useState, useEffect, useMemo, useCallback } from "react";
 import cx from "classnames";
-import Tooltip from "../Tooltip/Tooltip";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import Modal from "../Modal/Modal";
+import Tooltip from "../Tooltip/Tooltip";
 
+import { ethers } from "ethers";
 import useSWR from "swr";
-import { BigNumber, ethers } from "ethers";
 
-import { IoMdSwap } from "react-icons/io";
 import { BsArrowRight } from "react-icons/bs";
+import { IoMdSwap } from "react-icons/io";
 
+import { getContract } from "../../Addresses";
+import * as Api from "../../Api";
+import { getConstant } from "../../Constants";
 import {
-  helperToast,
-  formatAmount,
-  bigNumberify,
-  USD_DECIMALS,
-  USDG_DECIMALS,
-  LONG,
-  SHORT,
-  SWAP,
-  MARKET,
-  SWAP_ORDER_OPTIONS,
-  LEVERAGE_ORDER_OPTIONS,
-  DEFAULT_HIGHER_SLIPPAGE_AMOUNT,
-  getPositionKey,
-  getUsd,
-  BASIS_POINTS_DIVISOR,
-  MARGIN_FEE_BASIS_POINTS,
-  PRECISION,
-  USDG_ADDRESS,
-  STOP,
-  LIMIT,
-  SWAP_OPTIONS,
-  DUST_BNB,
-  isTriggerRatioInverted,
-  usePrevious,
-  formatAmountFree,
-  fetcher,
-  parseValue,
-  expandDecimals,
-  shouldRaiseGasError,
-  getTokenInfo,
-  getLiquidationPrice,
+  adjustForDecimals,
   approveTokens,
-  getLeverage,
-  isSupportedChain,
+  BASIS_POINTS_DIVISOR,
+  bigNumberify,
+  calculatePositionDelta,
+  DEFAULT_HIGHER_SLIPPAGE_AMOUNT,
+  DUST_BNB,
+  expandDecimals,
+  fetcher,
+  formatAmount,
+  formatAmountFree,
   getExchangeRate,
   getExchangeRateDisplay,
-  getNextToAmount,
-  getNextFromAmount,
+  getLeverage,
+  getLiquidationPrice,
   getMostAbundantStableToken,
-  useLocalStorageSerializeKey,
-  useLocalStorageByChainId,
-  calculatePositionDelta,
-  replaceNativeTokenAddress,
-  adjustForDecimals,
-  isHashZero,
-  NETWORK_NAME,
+  getNextFromAmount,
+  getNextToAmount,
+  getPositionKey,
   getSpread,
+  getTokenInfo,
+  getUsd,
   getUserTokenBalances,
+  helperToast,
+  isHashZero,
+  isSupportedChain,
+  isTriggerRatioInverted,
+  LEVERAGE_ORDER_OPTIONS,
+  LIMIT,
   limitDecimals,
+  LONG,
+  MARGIN_FEE_BASIS_POINTS,
+  MARKET,
+  NETWORK_NAME,
+  parseValue,
+  PRECISION,
+  replaceNativeTokenAddress,
+  SHORT,
+  shouldRaiseGasError,
+  STOP,
+  SWAP,
+  SWAP_OPTIONS,
+  SWAP_ORDER_OPTIONS,
+  USD_DECIMALS,
+  USDG_ADDRESS,
+  USDG_DECIMALS,
+  useLocalStorageByChainId,
+  useLocalStorageSerializeKey,
+  usePrevious,
 } from "../../Helpers";
-import { getConstant } from "../../Constants";
-import * as Api from "../../Api";
-import { getContract } from "../../Addresses";
 
 import Tab from "../Tab/Tab";
-import TokenSelector from "./TokenSelector";
-import ExchangeInfoRow from "./ExchangeInfoRow";
 import ConfirmationBox from "./ConfirmationBox";
+import ExchangeInfoRow from "./ExchangeInfoRow";
 import OrdersToa from "./OrdersToa";
+import TokenSelector from "./TokenSelector";
 
-import { getTokens, getWhitelistedTokens, getToken, getTokenBySymbol } from "../../data/Tokens";
-import PositionRouter from "../../abis/PositionRouter.json";
 import PositionCreator from "../../abis/PositionCreator.json";
+import PositionRouter from "../../abis/PositionRouter.json";
 import Router from "../../abis/Router.json";
 import Token from "../../abis/Token.json";
 import WETH from "../../abis/WETH.json";
+import { getToken, getTokenBySymbol, getTokens, getWhitelistedTokens } from "../../data/Tokens";
 
+import { useUserReferralCode } from "../../Api/referrals";
+import { REFERRAL_CODE_KEY } from "../../config/localstorage";
 import longImg from "../../img/long.svg";
 import shortImg from "../../img/short.svg";
 import swapImg from "../../img/swap.svg";
-import { useUserReferralCode } from "../../Api/referrals";
 import { getMaxLeverage, LeverageInput } from "./LeverageInput";
-import { REFERRAL_CODE_KEY } from "../../config/localstorage";
 import { TriggerCreator } from "./TriggerCreator";
 
 const SWAP_ICONS = {
@@ -2261,7 +2261,7 @@ export default function SwapBox(props) {
                     chainId={chainId}
                     tokenAddress={fromTokenAddress}
                     onSelectToken={onSelectFromToken}
-                    tokens={fromTokens}
+                    tokens={[]}
                     infoTokens={infoTokens}
                     showMintingCap={false}
                     showTokenImgInDropdown={true}
@@ -2315,7 +2315,7 @@ export default function SwapBox(props) {
                     chainId={chainId}
                     tokenAddress={checkedToTokenAddress}
                     onSelectToken={onSelectToToken}
-                    tokens={toTokens}
+                    tokens={[]}
                     infoTokens={infoTokens}
                     showTokenImgInDropdown={true}
                     trackAction={trackAction}
@@ -2614,7 +2614,7 @@ export default function SwapBox(props) {
             </ExchangeInfoRow>
           </div>
         )}
-        <div className="Exchange-swap-button-container">
+        {/* <div className="Exchange-swap-button-container">
           <button
             className="App-cta Exchange-swap-button"
             onClick={() => {
@@ -2638,7 +2638,7 @@ export default function SwapBox(props) {
           >
             {getPrimaryText()}
           </button>
-        </div>
+        </div> */}
       </div>
       {isSwap && (
         <div className="Exchange-swap-market-box App-box App-box-border">

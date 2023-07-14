@@ -1,4 +1,3 @@
-import React from "react";
 import styled from "styled-components";
 
 export const Banner = styled.div`
@@ -20,7 +19,8 @@ export const BannerTitle = styled.h2`
 `;
 
 export const BannerContent = styled.div`
-  font-size: 1em;
+  font-size: 1.25em;
+  font-weight: bold;
   text-align: center;
   margin: 4px;
   font-size: 12px;

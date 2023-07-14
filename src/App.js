@@ -1,76 +1,76 @@
-import { useState, useEffect, useCallback, useRef } from "react";
-import { SWRConfig } from "swr";
 import { ethers } from "ethers";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { SWRConfig } from "swr";
 
-import { motion, AnimatePresence } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 
-import { Web3ReactProvider, useWeb3React } from "@web3-react/core";
 import { Web3Provider } from "@ethersproject/providers";
+import { Web3ReactProvider, useWeb3React } from "@web3-react/core";
 
-import { Switch, Route, NavLink, useLocation } from "react-router-dom";
+import { NavLink, Route, Switch, useLocation } from "react-router-dom";
 
 import { ThemeProvider } from "@tracer-protocol/tracer-ui";
-import { useAnalytics } from "./segmentAnalytics";
 import { getTokens, getWhitelistedTokens } from "./data/Tokens";
+import { useAnalytics } from "./segmentAnalytics";
 
 import {
-  SLIPPAGE_BPS_KEY,
+  CURRENT_PROVIDER_LOCALSTORAGE_KEY,
   IS_PNL_IN_LEVERAGE_KEY,
-  SHOW_PNL_AFTER_FEES_KEY,
-  SHOULD_SHOW_POSITION_LINES_KEY,
   REFERRAL_CODE_KEY,
   REFERRAL_CODE_QUERY_PARAMS,
   SHOULD_EAGER_CONNECT_LOCALSTORAGE_KEY,
-  CURRENT_PROVIDER_LOCALSTORAGE_KEY,
+  SHOULD_SHOW_POSITION_LINES_KEY,
+  SHOW_PNL_AFTER_FEES_KEY,
+  SLIPPAGE_BPS_KEY,
 } from "./config/localstorage";
 
 import {
   ARBITRUM,
   ARBITRUM_GOERLI,
-  DEFAULT_SLIPPAGE_AMOUNT,
   BASIS_POINTS_DIVISOR,
-  fetcher,
-  clearWalletConnectData,
-  switchNetwork,
-  helperToast,
-  getChainName,
-  useChainId,
-  getAccountUrl,
-  getInjectedHandler,
-  useEagerConnect,
-  useLocalStorageSerializeKey,
-  useInactiveListener,
-  getExplorerUrl,
-  getWalletConnectHandler,
+  DEFAULT_SLIPPAGE_AMOUNT,
+  PLACEHOLDER_ACCOUNT,
   activateInjectedProvider,
-  hasMetaMaskWalletExtension,
-  hasCoinBaseWalletExtension,
-  isMobileDevice,
+  clearWalletConnectData,
   clearWalletLinkData,
-  getBalanceAndSupplyData,
+  fetcher,
   formatAmount,
   formatTitleCase,
-  getUserTokenBalances,
-  hasChangedAccount,
-  setCurrentAccount,
-  networkOptions,
-  PLACEHOLDER_ACCOUNT,
-  getDefaultArbitrumRpcUrl,
+  getAccountUrl,
+  getBalanceAndSupplyData,
+  getChainName,
   getDefaultArbitrumGoerliRpcUrl,
+  getDefaultArbitrumRpcUrl,
+  getExplorerUrl,
+  getInjectedHandler,
+  getUserTokenBalances,
+  getWalletConnectHandler,
+  hasChangedAccount,
+  hasCoinBaseWalletExtension,
+  hasMetaMaskWalletExtension,
+  helperToast,
+  isMobileDevice,
+  networkOptions,
+  setCurrentAccount,
+  switchNetwork,
+  useChainId,
+  useEagerConnect,
+  useInactiveListener,
+  useLocalStorageSerializeKey,
 } from "./Helpers";
 import ReaderV2 from "./abis/ReaderV2.json";
 
-import Dashboard from "./views/Dashboard/DashboardV2";
-import Stake from "./views/Stake/StakeV2";
-import { Exchange } from "./views/Exchange/Exchange";
 import Actions from "./views/Actions/Actions";
+import Dashboard from "./views/Dashboard/DashboardV2";
+import { Exchange } from "./views/Exchange/Exchange";
 import OrdersOverview from "./views/OrdersOverview/OrdersOverview";
 import PositionsOverview from "./views/PositionsOverview/PositionsOverview";
+import Stake from "./views/Stake/StakeV2";
 // import BuyMYC from "./views/BuyMYC/BuyMYC";
 import BuyMlp from "./views/BuyMlp/BuyMlp";
-import SellMlp from "./views/SellMlp/SellMlp";
-import Rewards from "./views/Rewards/Rewards";
 import Referrals from "./views/Referrals/Referrals";
+import Rewards from "./views/Rewards/Rewards";
+import SellMlp from "./views/SellMlp/SellMlp";
 // import NftWallet from "./views/NftWallet/NftWallet";
 // import BeginAccountTransfer from "./views/BeginAccountTransfer/BeginAccountTransfer";
 // import CompleteAccountTransfer from "./views/CompleteAccountTransfer/CompleteAccountTransfer";
@@ -79,51 +79,51 @@ import ConsentModal from "./components/ConsentModal/ConsentModal";
 import MobileLinks from "./components/Navigation/MobileNav";
 
 import cx from "classnames";
-import { cssTransition, ToastContainer } from "react-toastify";
+import { ToastContainer, cssTransition } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import NetworkSelector from "./components/NetworkSelector/NetworkSelector";
-import Modal from "./components/Modal/Modal";
 import Checkbox from "./components/Checkbox/Checkbox";
+import Modal from "./components/Modal/Modal";
+import NetworkSelector from "./components/NetworkSelector/NetworkSelector";
 // import Footer from "./Footer";
 
-import { RiMenuLine } from "react-icons/ri";
 import { FaTimes } from "react-icons/fa";
 import { FiX } from "react-icons/fi";
+import { RiMenuLine } from "react-icons/ri";
 
-import "./Font.css";
-import "./Shared.css";
 import "./App.css";
-import "./Input.css";
 import "./AppOrder.css";
+import "./Font.css";
+import "./Input.css";
+import "./Shared.css";
 
 import logoImg from "./img/logo_MYC.svg";
 import logoSmallImg from "./img/logo_MYC_small.svg";
 // import poolsSmallImg from "./img/myc_pools_short.svg";
 import connectWalletImg from "./img/ic_wallet_24.svg";
 
-import metamaskImg from "./img/metamask.png";
-import coinbaseImg from "./img/coinbaseWallet.png";
-import walletConnectImg from "./img/walletconnect-circle-blue.svg";
+import { Link } from "react-router-dom";
+import { encodeReferralCode } from "./Api/referrals";
 import AddressDropdown from "./components/AddressDropdown/AddressDropdown";
 import { ConnectWalletButton } from "./components/Common/Button";
-import useEventToast from "./components/EventToast/useEventToast";
-import { Link } from "react-router-dom";
 import EventToastContainer from "./components/EventToast/EventToastContainer";
+import useEventToast from "./components/EventToast/useEventToast";
 import useRouteQuery from "./hooks/useRouteQuery";
-import { encodeReferralCode } from "./Api/referrals";
+import coinbaseImg from "./img/coinbaseWallet.png";
+import metamaskImg from "./img/metamask.png";
+import walletConnectImg from "./img/walletconnect-circle-blue.svg";
 
+import useSWR from "swr";
 import { getContract } from "./Addresses";
+import PositionRouter from "./abis/PositionRouter.json";
 import VaultV2 from "./abis/VaultV2.json";
 import VaultV2b from "./abis/VaultV2b.json";
-import PositionRouter from "./abis/PositionRouter.json";
-import PageNotFound from "./views/PageNotFound/PageNotFound";
-import useSWR from "swr";
+import AppDropdown from "./components/AppDropdown/AppDropdown";
+import EventModal from "./components/EventModal/EventModal";
 import LinkDropdown from "./components/Navigation/LinkDropdown/LinkDropdown";
 import Sidebar from "./components/Navigation/Sidebar/Sidebar";
-import EventModal from "./components/EventModal/EventModal";
-import AppDropdown from "./components/AppDropdown/AppDropdown";
-import { useInfoTokens } from "./hooks/useInfoTokens";
 import { LeaderboardProvider } from "./context/LeaderboardContext";
+import { useInfoTokens } from "./hooks/useInfoTokens";
+import PageNotFound from "./views/PageNotFound/PageNotFound";
 // import { Banner, BannerTitle, BannerContent } from "./components/Banner/Banner";
 
 if ("ethereum" in window) {
@@ -719,6 +719,34 @@ function FullApp() {
           "full-width": sidebarVisible,
         })}
       >
+        <div style={{ height: "56px" }} />
+        <div
+          className="banner"
+          style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            zIndex: 50,
+            paddingTop: "12px",
+            paddingBottom: "12px",
+            width: "100%",
+            textAlign: "center",
+            backgroundColor: "rgba(251, 191, 36)",
+            fontWeight: "bold",
+            color: "black",
+          }}
+        >
+          Please read this blog{" "}
+          <a
+            target="_blank"
+            rel="noopener noreferrer"
+            href="https://mycelium.xyz/blog/the-future-of-mycelium"
+            style={{ color: "black" }}
+          >
+            this blog post
+          </a>
+          , and close your positions.
+        </div>
         {/* <div className="App-background-side-1"></div>
         <div className="App-background-side-2"></div>
         <div className="App-background"></div>
@@ -856,20 +884,6 @@ function FullApp() {
               showNetworkSelectorModal={showNetworkSelectorModal}
               disconnectAccountAndCloseSettings={disconnectAccountAndCloseSettings}
             />
-          </div>
-          <div className="default-container">
-            {/* <Banner>
-              <BannerTitle>MIGRATION IN PROGRESS</BannerTitle>
-              <BannerContent>
-                Mycelium Perpetual Swaps is currently undergoing a migration. During this time, trades may not go
-                through as expected. Please be patient as we work to bring you the best experience possible. You can
-                read more about the migration{" "}
-                <a href="#" target="_blank" rel="noreferrer">
-                  here
-                </a>
-                .
-              </BannerContent>
-            </Banner> */}
           </div>
           <Switch>
             <Route exact path="/">

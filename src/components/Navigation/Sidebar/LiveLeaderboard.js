@@ -1,13 +1,13 @@
-import { useMemo } from "react";
-import { ethers } from "ethers";
-import Jazzicon, { jsNumberForAddress } from "react-jazzicon";
 import Davatar from "@davatar/react";
-import { useENS, truncateMiddleEthAddress, formatAmount, USD_DECIMALS } from "../../../Helpers";
+import { ethers } from "ethers";
+import { useMemo } from "react";
+import Jazzicon, { jsNumberForAddress } from "react-jazzicon";
+import { USD_DECIMALS, formatAmount, truncateMiddleEthAddress, useENS } from "../../../Helpers";
 // import { ReactComponent as PositionIndicator } from "../../../img/position-indicator.svg";
-import * as Styles from "./LiveLeaderboard.styles";
-import liveIcon from "../../../img/nav/live.svg";
-import degenScore from "../../../img/ic_degen.svg";
 import TooltipComponent from "../../../components/Tooltip/Tooltip";
+import degenScore from "../../../img/ic_degen.svg";
+import liveIcon from "../../../img/nav/live.svg";
+import * as Styles from "./LiveLeaderboard.styles";
 
 const ARBISCAN_URL = "https://arbiscan.io/address/";
 // const MIN_UI_PERCENTAGE = 10;
@@ -104,7 +104,7 @@ export const LiveLeaderboard = ({ location, account, leaderboardData, userPositi
             userPercentage={userPercentage}
           />
         )}
-        {location?.pathname !== "/" && <Styles.TradeNowButton to="/">Trade Now</Styles.TradeNowButton>}
+        {/* {location?.pathname !== "/" && <Styles.TradeNowButton to="/">Trade Now</Styles.TradeNowButton>} */}
       </Styles.BottomContainer>
     </Styles.LeaderboardContainer>
   );

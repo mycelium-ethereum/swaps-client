@@ -8,7 +8,7 @@
   background-size: 1440px;
   transition: padding-left 0.5s ease;
   padding-left: 326px;
-  padding-top: 62px;
+  padding-top: 126px;
 }
 .App.full-width {
   padding-left: 0px;
@@ -31,7 +31,7 @@
 
 .App-content nav {
   position: fixed;
-  top: 0;
+  top: 48px;
   left: 0;
   height: 62px;
   width: 100%;
@@ -39,8 +39,13 @@
   padding-left: 310px;
   transition: all 0.5s ease;
 }
+.App .banner {
+  padding-left: 310px;
+  transition: all 0.5s ease;
+}
 
-.App.full-width nav {
+.App.full-width nav,
+.App.full-width .banner {
   padding-left: 0px;
 }
 
@@ -1381,6 +1386,9 @@ button.App-button {
   .App-header a.App-header-link-main,
   .App-header .App-header-link-main {
     display: flex;
+  }
+  .App .banner {
+    padding-left: 0px !important;
   }
 }
 @media (max-width: 1280px) {

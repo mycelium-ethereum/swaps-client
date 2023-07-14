@@ -1,47 +1,46 @@
-import { useEffect, useRef, useContext } from "react";
-import { NavLink, Link, useLocation } from "react-router-dom";
-import { LiveLeaderboard } from "src/components/Navigation/Sidebar/LiveLeaderboard";
 import { useWeb3React } from "@web3-react/core";
+import { useContext, useEffect, useRef } from "react";
+import { NavLink, useLocation } from "react-router-dom";
+import { LiveLeaderboard } from "src/components/Navigation/Sidebar/LiveLeaderboard";
 import {
-  MenuContainer,
-  SideMenu,
-  Logo,
-  NavMenu,
-  MenuItem,
   BottomMenuItem,
-  PullTab,
-  SocialLinksMenu,
   CopyrightYear,
-  LegalMenu,
-  FixedContainer,
   EventBox,
-  EventHeader,
   EventContent,
-  EventGraphic,
-  TradeNowButton,
   EventDescription,
+  EventGraphic,
+  EventHeader,
   EventTitle,
+  FixedContainer,
+  LegalMenu,
+  Logo,
+  MenuContainer,
+  MenuItem,
+  NavMenu,
+  PullTab,
+  SideMenu,
+  SocialLinksMenu,
 } from "./Sidebar.styles";
 
-import { ReactComponent as TradeIcon } from "../../../img/nav/trade.svg";
+import { ReactComponent as BuyIcon } from "../../../img/nav/buy.svg";
 import { ReactComponent as DashboardIcon } from "../../../img/nav/dashboard.svg";
 import { ReactComponent as EarnIcon } from "../../../img/nav/earn.svg";
-import { ReactComponent as BuyIcon } from "../../../img/nav/buy.svg";
-import { ReactComponent as RewardsIcon } from "../../../img/nav/rewards.svg";
-import { ReactComponent as ReferralsIcon } from "../../../img/nav/referrals.svg";
 import { ReactComponent as MycStakingIcon } from "../../../img/nav/myc-staking.svg";
+import { ReactComponent as ReferralsIcon } from "../../../img/nav/referrals.svg";
+import { ReactComponent as RewardsIcon } from "../../../img/nav/rewards.svg";
+import { ReactComponent as TradeIcon } from "../../../img/nav/trade.svg";
 // import { ReactComponent as LeaderboardIcon } from "../../../img/nav/trading-leaderboard.svg";
 import { ReactComponent as AnalyticsIcon } from "../../../img/nav/analytics.svg";
+import { ReactComponent as DiscordIcon } from "../../../img/nav/discord.svg";
 import { ReactComponent as DocsIcon } from "../../../img/nav/docs.svg";
 import { ReactComponent as GithubIcon } from "../../../img/nav/github.svg";
-import { ReactComponent as TwitterIcon } from "../../../img/nav/twitter.svg";
-import { ReactComponent as DiscordIcon } from "../../../img/nav/discord.svg";
 import { ReactComponent as PullTabSvg } from "../../../img/nav/pull-tab.svg";
+import { ReactComponent as TwitterIcon } from "../../../img/nav/twitter.svg";
 // import { ReactComponent as TranslateIcon } from "../../../img/nav/translate.svg";
+import { LeaderboardContext } from "src/context/LeaderboardContext";
+import logoImg from "../../../img/logo_MYC.svg";
 import graphic from "../../../img/nav/event-graphic.png";
 import liveIcon from "../../../img/nav/live.svg";
-import logoImg from "../../../img/logo_MYC.svg";
-import { LeaderboardContext } from "src/context/LeaderboardContext";
 
 const navTopLinks = [
   {
@@ -94,10 +93,7 @@ const socialLinks = [
   },
 ];
 
-export default function Sidebar({
-  sidebarVisible,
-  setSidebarVisible,
-}) {
+export default function Sidebar({ sidebarVisible, setSidebarVisible }) {
   const { active, account } = useWeb3React();
   const location = useLocation();
   const { leaderboardData, userPosition, failedFetchingRoundRewards, rewardIndicator } = useContext(LeaderboardContext);
@@ -147,7 +143,13 @@ export default function Sidebar({
               </MenuItem>
             </NavMenu>
             {active && userPosition > 0 && !failedFetchingRoundRewards ? (
-              <LiveLeaderboard account={account} location={location} userPosition={userPosition} leaderboardData={leaderboardData} rewardIndicator={rewardIndicator} />
+              <LiveLeaderboard
+                account={account}
+                location={location}
+                userPosition={userPosition}
+                leaderboardData={leaderboardData}
+                rewardIndicator={rewardIndicator}
+              />
             ) : (
               <EventBox>
                 <EventHeader>
@@ -161,7 +163,7 @@ export default function Sidebar({
                   <EventGraphic src={graphic} />
                   <EventTitle>Optimising your trades with Mycelium.</EventTitle>
                   <EventDescription>Trade Now to join the Leaderboard</EventDescription>
-                  <Link to="/">{location?.pathname !== "/" && <TradeNowButton>Trade Now</TradeNowButton>}</Link>
+                  {/* <Link to="/">{location?.pathname !== "/" && <TradeNowButton>Trade Now</TradeNowButton>}</Link> */}
                 </EventContent>
               </EventBox>
             )}
