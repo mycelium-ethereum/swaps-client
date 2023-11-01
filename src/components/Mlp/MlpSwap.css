@@ -89,10 +89,10 @@
 }
 
 .MlpSwap-content .MlpSwap-box {
-  max-width: 30.935rem;
+  /* max-width: 30.935rem; */
+  width: 50%;
   border-radius: 4px;
   padding: 1rem;
-  padding-top: 0;
 }
 
 .MlpSwap-box .Exchange-swap-option-tabs {

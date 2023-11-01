@@ -2,10 +2,9 @@ import { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 
 import { useWeb3React } from "@web3-react/core";
-import { ethers } from "ethers";
 import useSWR from "swr";
-
-import Tab from "../Tab/Tab";
+import { BigNumber, ethers } from "ethers";
+import cx from 'classnames';
 
 import { getContract } from "../../Addresses";
 import {
@@ -97,7 +96,6 @@ export default function MlpSwap(props) {
     isBuying,
     setPendingTxns,
     connectWallet,
-    setIsBuying,
     trackPageWithTraits,
     trackAction,
     analytics,
@@ -411,11 +409,6 @@ export default function MlpSwap(props) {
     window.scrollTo(0, 0);
   }, []);
 
-  const switchSwapOption = (hash = "") => {
-    history.push(`${history.location.pathname}#${hash}`);
-    props.setIsBuying(hash === "redeem" ? false : true);
-  };
-
   const fillMaxAmount = () => {
     if (isBuying) {
       setAnchorOnSwapAmount(true);
@@ -668,14 +661,6 @@ export default function MlpSwap(props) {
   const wrappedTokenSymbol = getWrappedToken(chainId).symbol;
   const nativeTokenSymbol = getNativeToken(chainId).symbol;
 
-  const onSwapOptionChange = (opt) => {
-    if (opt === "Sell MLP") {
-      switchSwapOption("redeem");
-    } else {
-      switchSwapOption();
-    }
-  };
-
   const trackMlpTrade = (stage, tradeType) => {
     const eventName = getAnalyticsEventStage(stage);
 
@@ -769,7 +754,7 @@ export default function MlpSwap(props) {
         </div>}
       </div> */}
       <div className="MlpSwap-content">
-        <div className="App-card MlpSwap-stats-card">
+        {/* <div className="App-card MlpSwap-stats-card">
           <div className="App-card-title">
             <div className="App-card-title-mark">
               <div className="App-card-title-mark-icon">
@@ -804,57 +789,13 @@ export default function MlpSwap(props) {
           </div>
           <div className="App-card-divider"></div>
           <div className="App-card-content Totals-section">
-            {!isBuying && (
-              <div className="App-card-row">
-                <div className="label">Reserved</div>
-                <div className="value">
-                  <Tooltip
-                    handle={`${formatAmount(reservedAmount, 18, 4, true)} MLP ($${formatAmount(
-                      reserveAmountUsd,
-                      USD_DECIMALS,
-                      2,
-                      true
-                    )})`}
-                    position="right-bottom"
-                    renderContent={() =>
-                      `${formatAmount(reservedAmount, 18, 4, true)} MLP have been reserved for vesting.`
-                    }
-                  />
-                </div>
-              </div>
-            )}
-            <div className="App-card-row">
-              <div className="label">Total APR</div>
-              <div className="value">
-                <Tooltip
-                  handle={`${formatAmount(totalApr, 2, 2, true)}%`}
-                  position="right-bottom"
-                  renderContent={() => {
-                    return (
-                      <>
-                        <div className="Tooltip-row">
-                          <span className="label">
-                            {nativeTokenSymbol} ({wrappedTokenSymbol}) APR
-                          </span>
-                          <span>{formatAmount(feeMlpTrackerApr, 2, 2, false)}%</span>
-                        </div>
-                        <div className="Tooltip-row">
-                          <span className="label">esMYC APR</span>
-                          <span>{formatAmount(stakedMlpTrackerApr, 2, 2, false)}%</span>
-                        </div>
-                      </>
-                    );
-                  }}
-                />
-              </div>
-            </div>
             <div className="App-card-row">
               <div className="label">Total Supply</div>
               <div className="value">
                 {formatAmount(mlpSupply, MLP_DECIMALS, 4, true)} MLP ($
                 {formatAmount(mlpSupplyUsd, USD_DECIMALS, 2, true)})
               </div>
-            </div>
+            </div> */}
             {/* <div className="Insurance-btn-container">
               <Tooltip
                 handle={
@@ -872,16 +813,10 @@ export default function MlpSwap(props) {
                 }}
               />
             </div> */}
-          </div>
-        </div>
+          {/* </div>
+        </div> */}
         <div className="MlpSwap-box App-box">
-          <Tab
-            options={["Sell MLP"]}
-            option={tabLabel}
-            onChange={onSwapOptionChange}
-            className="Exchange-swap-option-tabs"
-          />
-          {/* {isBuying && (
+          {isBuying && (
             <BuyInputSection
               topLeftLabel={payLabel}
               topRightLabel={`Balance: `}
@@ -909,7 +844,7 @@ export default function MlpSwap(props) {
                 trackAction={trackAction}
               />
             </BuyInputSection>
-          )} */}
+          )}
 
           {/* {!isBuying && ( */}
           <BuyInputSection
@@ -936,8 +871,6 @@ export default function MlpSwap(props) {
                 src={arrowIcon}
                 alt="arrowIcon"
                 onClick={() => {
-                  setIsBuying(!isBuying);
-                  switchSwapOption(isBuying ? "redeem" : "");
                   trackAction &&
                     trackAction("Button clicked", {
                       buttonName: `Swap action - ${isBuying ? "Sell MLP" : "Buy MLP"}`,
@@ -1055,19 +988,7 @@ export default function MlpSwap(props) {
         </div>
       </div>
       <div className="Tab-title-section">
-        <div className="Page-title">Save on Fees</div>
-        {isBuying && (
-          <div className="Page-description">
-            Fees may vary depending on which asset you use to buy MLP.
-            <br /> Enter the amount of MLP you want to purchase in the order form, then check here to compare fees.
-          </div>
-        )}
-        {!isBuying && (
-          <div className="Page-description">
-            Fees may vary depending on which asset you sell MLP for.
-            <br /> Enter the amount of MLP you want to redeem in the order form, then check here to compare fees.
-          </div>
-        )}
+        <div className="Page-title">Available Assets</div>
       </div>
       <div className="MlpSwap-token-list">
         {/* <div className="MlpSwap-token-list-content"> */}
@@ -1119,164 +1040,177 @@ export default function MlpSwap(props) {
             </tr>
           </thead>
           <tbody>
-            {tokenList.map((token) => {
-              let tokenFeeBps;
-              if (isBuying) {
-                const { feeBasisPoints: feeBps } = getBuyMlpFromAmount(
-                  mlpAmount,
-                  token.address,
-                  infoTokens,
-                  mlpPrice,
-                  usdgSupply,
-                  totalTokenWeights
-                );
-                tokenFeeBps = feeBps;
-              } else {
-                const { feeBasisPoints: feeBps } = getSellMlpToAmount(
-                  mlpAmount,
-                  token.address,
-                  infoTokens,
-                  mlpPrice,
-                  usdgSupply,
-                  totalTokenWeights
-                );
-                tokenFeeBps = feeBps;
-              }
-              const tokenInfo = getTokenInfo(infoTokens, token.address);
-              let managedUsd;
-              if (tokenInfo && tokenInfo.managedUsd) {
-                managedUsd = tokenInfo.managedUsd;
-              }
-              let availableAmountUsd;
-              if (tokenInfo && tokenInfo.minPrice && tokenInfo.availableAmount) {
-                availableAmountUsd = tokenInfo.availableAmount
-                  .mul(tokenInfo.minPrice)
-                  .div(expandDecimals(1, token.decimals));
-              }
-              let balanceUsd;
-              if (tokenInfo && tokenInfo.minPrice && tokenInfo.balance) {
-                balanceUsd = tokenInfo.balance.mul(tokenInfo.minPrice).div(expandDecimals(1, token.decimals));
-              }
-
-              var tokenImage = null;
-
-              try {
-                tokenImage = require("../../img/ic_" + token.symbol.toLowerCase() + "_40.svg");
-              } catch (error) {
-                console.error(error);
-              }
-              let isCapReached = tokenInfo.managedAmount?.gt(tokenInfo.maxUsdgAmount);
-
-              let amountLeftToDeposit;
-              if (tokenInfo.maxUsdgAmount && tokenInfo.maxUsdgAmount.gt(0)) {
-                amountLeftToDeposit = adjustForDecimals(tokenInfo.maxUsdgAmount, USDG_DECIMALS, USD_DECIMALS).sub(
-                  tokenInfo.managedUsd
-                );
-              }
-              function renderFees() {
-                const swapUrl = `https://app.uniswap.org/#/swap?inputCurrency=${token.address}&chain=arbitrum`;
-                switch (true) {
-                  case (isBuying && isCapReached) || (!isBuying && managedUsd?.lt(1)):
-                    return (
-                      <Tooltip
-                        handle="NA"
-                        position="right-bottom"
-                        renderContent={() => (
-                          <div>
-                            Max pool capacity reached for {tokenInfo.symbol}
-                            <br />
-                            <br />
-                            Please mint MLP using another token
-                            <br />
-                            <p>
-                              <a href={swapUrl} target="_blank" rel="noreferrer">
-                                Swap on {chainId === ARBITRUM ? "Uniswap" : "Trader Joe"}
-                              </a>
-                            </p>
-                          </div>
-                        )}
-                      />
-                    );
-                  case (isBuying && !isCapReached) || (!isBuying && managedUsd?.gt(0)):
-                    return `${formatAmount(tokenFeeBps, 2, 2, true, "-")}${
-                      tokenFeeBps !== undefined && tokenFeeBps.toString().length > 0 ? "%" : ""
-                    }`;
-                  default:
-                    return "";
+            {tokenList
+              .filter(token => {
+                const tokenInfo = getTokenInfo(infoTokens, token.address);
+                let availableAmountUsd;
+                if (tokenInfo && tokenInfo.minPrice && tokenInfo.availableAmount) {
+                  availableAmountUsd = tokenInfo.availableAmount
+                    .mul(tokenInfo.minPrice)
+                    .div(expandDecimals(1, token.decimals));
                 }
-              }
 
-              return (
-                <tr key={token.symbol}>
-                  <td>
-                    <div className="App-card-title-info">
-                      <div className="App-card-title-info-icon">
-                        <img src={tokenImage && tokenImage.default} alt={token.symbol} width="40px" />
-                      </div>
-                      <div className="App-card-title-info-text">
-                        <div className="App-card-info-title">{token.name}</div>
-                        <div className="App-card-info-subtitle">{token.symbol}</div>
-                      </div>
-                      <div>
-                        <AssetDropdown assetSymbol={token.symbol} assetInfo={token} trackAction={trackAction} />
-                      </div>
-                    </div>
-                  </td>
-                  <td>${formatKeyAmount(tokenInfo, "minPrice", USD_DECIMALS, 2, true)}</td>
-                  <td>
-                    {isBuying && (
-                      <div>
+                console.log('TOKEN USD AVAILABLE AMOUNT', availableAmountUsd ? availableAmountUsd.toString() : 0)
+                // 1 dollar with 30 decimal places
+                return availableAmountUsd && availableAmountUsd.gt(BigNumber.from(10).pow(USD_DECIMALS))
+              })
+              .map((token) => {
+                let tokenFeeBps;
+                if (isBuying) {
+                  const { feeBasisPoints: feeBps } = getBuyMlpFromAmount(
+                    mlpAmount,
+                    token.address,
+                    infoTokens,
+                    mlpPrice,
+                    usdgSupply,
+                    totalTokenWeights
+                  );
+                  tokenFeeBps = feeBps;
+                } else {
+                  const { feeBasisPoints: feeBps } = getSellMlpToAmount(
+                    mlpAmount,
+                    token.address,
+                    infoTokens,
+                    mlpPrice,
+                    usdgSupply,
+                    totalTokenWeights
+                  );
+                  tokenFeeBps = feeBps;
+                }
+                const tokenInfo = getTokenInfo(infoTokens, token.address);
+                let managedUsd;
+                if (tokenInfo && tokenInfo.managedUsd) {
+                  managedUsd = tokenInfo.managedUsd;
+                }
+                let availableAmountUsd;
+                if (tokenInfo && tokenInfo.minPrice && tokenInfo.availableAmount) {
+                  availableAmountUsd = tokenInfo.availableAmount
+                    .mul(tokenInfo.minPrice)
+                    .div(expandDecimals(1, token.decimals));
+                }
+                let balanceUsd;
+                if (tokenInfo && tokenInfo.minPrice && tokenInfo.balance) {
+                  balanceUsd = tokenInfo.balance.mul(tokenInfo.minPrice).div(expandDecimals(1, token.decimals));
+                }
+
+                var tokenImage = null;
+
+                try {
+                  tokenImage = require("../../img/ic_" + token.symbol.toLowerCase() + "_40.svg");
+                } catch (error) {
+                  console.error(error);
+                }
+                let isCapReached = tokenInfo.managedAmount?.gt(tokenInfo.maxUsdgAmount);
+
+                let amountLeftToDeposit;
+                if (tokenInfo.maxUsdgAmount && tokenInfo.maxUsdgAmount.gt(0)) {
+                  amountLeftToDeposit = adjustForDecimals(tokenInfo.maxUsdgAmount, USDG_DECIMALS, USD_DECIMALS).sub(
+                    tokenInfo.managedUsd
+                  );
+                }
+                function renderFees() {
+                  const swapUrl = `https://app.uniswap.org/#/swap?inputCurrency=${token.address}&chain=arbitrum`;
+                  switch (true) {
+                    case (isBuying && isCapReached) || (!isBuying && managedUsd?.lt(1)):
+                      return (
                         <Tooltip
-                          handle={
-                            amountLeftToDeposit && amountLeftToDeposit.lt(0)
-                              ? "$0.00"
-                              : `$${formatAmount(amountLeftToDeposit, USD_DECIMALS, 2, true)}`
-                          }
+                          handle="NA"
                           position="right-bottom"
-                          tooltipIconPosition="right"
-                          renderContent={() => {
-                            return (
-                              <>
-                                Current Pool Amount: ${formatAmount(managedUsd, USD_DECIMALS, 2, true)} (
-                                {formatKeyAmount(tokenInfo, "poolAmount", token.decimals, 2, true)} {token.symbol})
-                                <br />
-                                <br />
-                                Max Pool Capacity: ${formatAmount(tokenInfo.maxUsdgAmount, 18, 0, true)}
-                              </>
-                            );
-                          }}
+                          renderContent={() => (
+                            <div>
+                              Max pool capacity reached for {tokenInfo.symbol}
+                              <br />
+                              <br />
+                              Please mint MLP using another token
+                              <br />
+                              <p>
+                                <a href={swapUrl} target="_blank" rel="noreferrer">
+                                  Swap on {chainId === ARBITRUM ? "Uniswap" : "Trader Joe"}
+                                </a>
+                              </p>
+                            </div>
+                          )}
                         />
+                      );
+                    case (isBuying && !isCapReached) || (!isBuying && managedUsd?.gt(0)):
+                      return `${formatAmount(tokenFeeBps, 2, 2, true, "-")}${tokenFeeBps !== undefined && tokenFeeBps.toString().length > 0 ? "%" : ""
+                        }`;
+                    default:
+                      return "";
+                  }
+                }
+
+                return (
+                  <tr key={token.symbol}>
+                    <td>
+                      <div className="App-card-title-info">
+                        <div className="App-card-title-info-icon">
+                          <img src={tokenImage && tokenImage.default} alt={token.symbol} width="40px" />
+                        </div>
+                        <div className="App-card-title-info-text">
+                          <div className="App-card-info-title">{token.name}</div>
+                          <div className="App-card-info-subtitle">{token.symbol}</div>
+                        </div>
+                        <div>
+                          <AssetDropdown assetSymbol={token.symbol} assetInfo={token} trackAction={trackAction} />
+                        </div>
                       </div>
-                    )}
-                    {!isBuying && (
-                      <div>
-                        {formatKeyAmount(tokenInfo, "availableAmount", token.decimals, 2, true)} {token.symbol} ($
-                        {formatAmount(availableAmountUsd, USD_DECIMALS, 2, true)})
-                      </div>
-                    )}
-                  </td>
-                  <td>
-                    {formatKeyAmount(tokenInfo, "balance", tokenInfo.decimals, 2, true)} {tokenInfo.symbol} ($
-                    {formatAmount(balanceUsd, USD_DECIMALS, 2, true)})
-                  </td>
-                  <td>{renderFees()}</td>
-                  {/* <td>
-                    <button
-                      className={cx("App-button-option action-btn", isBuying ? "buying" : "selling")}
-                      onClick={() => {
-                        selectToken(token);
-                        trackAction &&
-                          trackAction("Button clicked", {
-                            buttonName: isBuying ? "Buy with " + token.symbol : "Sell for " + token.symbol,
-                          });
-                      }}
-                    >
-                      {isBuying ? "Buy with " + token.symbol : "Sell for " + token.symbol}
-                    </button>
-                  </td> */}
-                </tr>
-              );
-            })}
+                    </td>
+                    <td>${formatKeyAmount(tokenInfo, "minPrice", USD_DECIMALS, 2, true)}</td>
+                    <td>
+                      {isBuying && (
+                        <div>
+                          <Tooltip
+                            handle={
+                              amountLeftToDeposit && amountLeftToDeposit.lt(0)
+                                ? "$0.00"
+                                : `$${formatAmount(amountLeftToDeposit, USD_DECIMALS, 2, true)}`
+                            }
+                            position="right-bottom"
+                            tooltipIconPosition="right"
+                            renderContent={() => {
+                              return (
+                                <>
+                                  Current Pool Amount: ${formatAmount(managedUsd, USD_DECIMALS, 2, true)} (
+                                  {formatKeyAmount(tokenInfo, "poolAmount", token.decimals, 2, true)} {token.symbol})
+                                  <br />
+                                  <br />
+                                  Max Pool Capacity: ${formatAmount(tokenInfo.maxUsdgAmount, 18, 0, true)}
+                                </>
+                              );
+                            }}
+                          />
+                        </div>
+                      )}
+                      {!isBuying && (
+                        <div>
+                          {formatKeyAmount(tokenInfo, "availableAmount", token.decimals, 2, true)} {token.symbol} ($
+                          {formatAmount(availableAmountUsd, USD_DECIMALS, 2, true)})
+                        </div>
+                      )}
+                    </td>
+                    <td>
+                      {formatKeyAmount(tokenInfo, "balance", tokenInfo.decimals, 2, true)} {tokenInfo.symbol} ($
+                      {formatAmount(balanceUsd, USD_DECIMALS, 2, true)})
+                    </td>
+                    <td>{renderFees()}</td>
+                    <td>
+                      <button
+                        className={cx("App-button-option action-btn", isBuying ? "buying" : "selling")}
+                        onClick={() => {
+                          selectToken(token);
+                          trackAction &&
+                            trackAction("Button clicked", {
+                              buttonName: isBuying ? "Buy with " + token.symbol : "Sell for " + token.symbol,
+                            });
+                        }}
+                      >
+                        {isBuying ? "Buy with " + token.symbol : "Sell for " + token.symbol}
+                      </button>
+                    </td>
+                  </tr>
+                );
+              })}
           </tbody>
         </table>
         <div className="token-grid">
@@ -1340,9 +1274,8 @@ export default function MlpSwap(props) {
                     />
                   );
                 case (isBuying && !isCapReached) || (!isBuying && managedUsd?.gt(0)):
-                  return `${formatAmount(tokenFeeBps, 2, 2, true, "-")}${
-                    tokenFeeBps !== undefined && tokenFeeBps.toString().length > 0 ? "%" : ""
-                  }`;
+                  return `${formatAmount(tokenFeeBps, 2, 2, true, "-")}${tokenFeeBps !== undefined && tokenFeeBps.toString().length > 0 ? "%" : ""
+                    }`;
                 default:
                   return "";
               }

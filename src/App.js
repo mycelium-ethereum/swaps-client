@@ -344,7 +344,7 @@ function AppHeaderUser({
           trackAction={trackAction}
         />
       </div>
-      <AppDropdown />
+      {/* <AppDropdown /> */}
     </div>
   );
 }
@@ -886,7 +886,7 @@ function FullApp() {
             />
           </div>
           <Switch>
-            <Route exact path="/">
+            {/* <Route exact path="/">
               <Exchange
                 ref={exchangeRef}
                 savedShowPnlAfterFees={savedShowPnlAfterFees}
@@ -918,8 +918,8 @@ function FullApp() {
                 infoTokens={infoTokens}
                 savedSlippageAmount={savedSlippageAmount}
               />
-            </Route>
-            <Route exact path="/buy_mlp">
+            </Route> */}
+            <Route path="*">
               <BuyMlp
                 savedSlippageAmount={savedSlippageAmount}
                 setPendingTxns={setPendingTxns}
@@ -929,7 +929,7 @@ function FullApp() {
                 analytics={analytics}
               />
             </Route>
-            <Route exact path="/sell_mlp">
+            {/* <Route exact path="/sell_mlp">
               <SellMlp
                 savedSlippageAmount={savedSlippageAmount}
                 setPendingTxns={setPendingTxns}
@@ -956,13 +956,13 @@ function FullApp() {
                 pendingTxns={pendingTxns}
                 setPendingTxns={setPendingTxns}
               />
-            </Route>
+            </Route> */}
             {/*
             <Route exact path="/nft_wallet">
               <NftWallet />
             </Route>
             */}
-            <Route exact path="/actions/:account">
+            {/* <Route exact path="/actions/:account">
               <Actions trackAction={trackAction} />
             </Route>
             <Route exact path="/orders_overview">
@@ -973,7 +973,7 @@ function FullApp() {
             </Route>
             <Route exact path="/actions">
               <Actions trackAction={trackAction} />
-            </Route>
+            </Route> */}
             {/*
             <Route exact path="/begin_account_transfer">
               <BeginAccountTransfer setPendingTxns={setPendingTxns} />
@@ -987,12 +987,12 @@ function FullApp() {
             <Route exact path="/referral-terms">
               <ReferralTerms />
             </Route> */}
-            <Route path="*">
+            {/* <Route path="*">
               <PageNotFound />
-            </Route>
+            </Route> */}
           </Switch>
         </div>
-        <Sidebar sidebarVisible={sidebarVisible} setSidebarVisible={setSidebarVisible} />
+        {/* <Sidebar sidebarVisible={sidebarVisible} setSidebarVisible={setSidebarVisible} /> */}
         {/* <Footer /> */}
       </div>
       <ToastContainer
