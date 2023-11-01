@@ -7,6 +7,7 @@ import { BigNumber, ethers } from "ethers";
 import cx from 'classnames';
 
 import { getContract } from "../../Addresses";
+import Modal from "../../components/Modal/Modal";
 import {
   ARBITRUM,
   BASIS_POINTS_DIVISOR,
@@ -37,6 +38,7 @@ import {
   parseValue,
   // getChainName,
   useChainId,
+  getVestingData,
   useLocalStorageByChainId,
 } from "../../Helpers";
 import { getNativeToken, getToken, getTokens, getWhitelistedTokens, getWrappedToken } from "../../data/Tokens";
@@ -58,11 +60,12 @@ import Vester from "../../abis/Vester.json";
 
 import arrowIcon from "../../img/ic_convert_down.svg";
 import tlp24Icon from "../../img/ic_mlp_24.svg";
-import tlp40Icon from "../../img/ic_mlp_40.svg";
+import myc40Icon from "../../img/ic_myc_40.svg";
 
 import { useInfoTokens } from "src/hooks/useInfoTokens";
 import { getAnalyticsEventStage } from "../../utils/analytics";
 import AssetDropdown from "../../views/Dashboard/AssetDropdown";
+import * as StakeV2Styled from "../../views/Stake/StakeV2Styles";
 import "./MlpSwap.css";
 
 const { AddressZero } = ethers.constants;
@@ -90,6 +93,53 @@ function getStakingData(stakingInfo) {
   return data;
 }
 
+function VesterWithdrawModal(props) {
+  const { isVisible, setIsVisible, chainId, title, library, vesterAddress, setPendingTxns } = props;
+  const [isWithdrawing, setIsWithdrawing] = useState(false);
+
+  const onClickPrimary = () => {
+    setIsWithdrawing(true);
+    const contract = new ethers.Contract(vesterAddress, Vester.abi, library.getSigner());
+
+    callContract(chainId, contract, "withdraw", [], {
+      sentMsg: "Withdraw submitted.",
+      failMsg: "Withdraw failed.",
+      successMsg: "Withdrawn!",
+      setPendingTxns,
+    })
+      .then(async (res) => {
+        setIsVisible(false);
+      })
+      .finally(() => {
+        setIsWithdrawing(false);
+      });
+  };
+
+  return (
+    <div className="StakeModal">
+      <Modal isVisible={isVisible} setIsVisible={setIsVisible} label={title}>
+        <div>
+          This will withdraw and unreserve all tokens as well as pause vesting.
+          <br />
+          <br />
+          esMYC tokens that have been converted to MYC will remain as MYC tokens.
+          <br />
+          <br />
+          To claim MYC tokens without withdrawing, use the "Claim" button under the Total Rewards section.
+          <br />
+          <br />
+        </div>
+        <div className="Exchange-swap-button-container">
+          <button className="App-cta Exchange-swap-button" onClick={onClickPrimary} disabled={isWithdrawing}>
+            {!isWithdrawing && "Confirm Withdraw"}
+            {isWithdrawing && "Confirming..."}
+          </button>
+        </div>
+      </Modal>
+    </div>
+  );
+}
+
 export default function MlpSwap(props) {
   const {
     savedSlippageAmount,
@@ -102,7 +152,7 @@ export default function MlpSwap(props) {
   } = props;
   const history = useHistory();
   const swapLabel = "SellMlp";
-  const tabLabel = "Sell MLP";
+  const tabLabel = "Burn MLP";
   const { active, library, account } = useWeb3React();
   const { chainId } = useChainId();
   // const chainName = getChainName(chainId)
@@ -137,6 +187,30 @@ export default function MlpSwap(props) {
   const mlpManagerAddress = getContract(chainId, "MlpManager");
   const rewardRouterAddress = getContract(chainId, "RewardRouter");
   const tokensForBalanceAndSupplyQuery = [stakedMlpTrackerAddress, usdgAddress];
+
+  const [isVesterWithdrawModalVisible, setIsVesterWithdrawModalVisible] = useState(false);
+  const [vesterWithdrawTitle, setVesterWithdrawTitle] = useState(false);
+  const [vesterWithdrawAddress, setVesterWithdrawAddress] = useState("");
+
+  const mycVesterAddress = getContract(chainId, "MycVester");
+  const mlpVesterAddress = getContract(chainId, "MlpVester");
+
+  const vesterAddresses = [mycVesterAddress, mlpVesterAddress];
+
+  const { data: reservedAmount } = useSWR(
+    [`MlpSwap:reservedAmount:${active}`, chainId, mlpVesterAddress, "pairAmounts", account || PLACEHOLDER_ACCOUNT],
+    {
+      fetcher: fetcher(library, Vester),
+    }
+  );
+  const { data: vestingInfo } = useSWR(
+    [`StakeV2:vestingInfo:${active}`, chainId, readerAddress, "getVestingInfo", account || PLACEHOLDER_ACCOUNT],
+    {
+      fetcher: fetcher(library, ReaderV2, [vesterAddresses]),
+    }
+  );
+  
+  const vestingData = getVestingData(vestingInfo);
 
   const tokenAddresses = tokens.map((token) => token.address);
   const { data: tokenBalances } = useSWR(
@@ -192,13 +266,9 @@ export default function MlpSwap(props) {
     }
   );
 
-  const mlpVesterAddress = getContract(chainId, "MlpVester");
-  const { data: reservedAmount } = useSWR(
-    [`MlpSwap:reservedAmount:${active}`, chainId, mlpVesterAddress, "pairAmounts", account || PLACEHOLDER_ACCOUNT],
-    {
-      fetcher: fetcher(library, Vester),
-    }
-  );
+  const { data: ethBalance } = useSWR([library, "getBalance", account, "latest"], {
+    fetcher: (library, method, ...params) => library[method](...params),
+  });
 
   const { mycPrice } = useMYCPrice(chainId, { arbitrum: chainId === ARBITRUM ? library : undefined }, active);
 
@@ -315,6 +385,20 @@ export default function MlpSwap(props) {
   if (stakedMlpTrackerApr && feeMlpTrackerApr) {
     totalApr = totalApr.add(feeMlpTrackerApr).add(stakedMlpTrackerApr);
   }
+
+  const showMycVesterWithdrawModal = () => {
+    if (ethBalance?.eq(0)) {
+      helperToast.error("You don't have any ETH to pay for gas");
+      return;
+    } else if (!vestingData || !vestingData.mlpVesterVestedAmount || vestingData.mlpVesterVestedAmount.eq(0)) {
+      helperToast.error("You have not deposited any tokens for vesting.");
+      return;
+    }
+
+    setIsVesterWithdrawModalVisible(true);
+    setVesterWithdrawTitle("Withdraw from esMYC Vault");
+    setVesterWithdrawAddress(mlpVesterAddress);
+  };
 
   useEffect(() => {
     const updateSwapAmounts = () => {
@@ -591,7 +675,7 @@ export default function MlpSwap(props) {
       setPendingTxns,
     })
       .then(async () => {
-        trackMlpTrade(3, "Sell MLP");
+        trackMlpTrade(3, "Burn MLP");
       })
       .finally(() => {
         setIsSubmitting(false);
@@ -737,85 +821,27 @@ export default function MlpSwap(props) {
 
   return (
     <div className="MlpSwap">
-      {/* <div className="Page-title-section">
-        <div className="Page-title">{isBuying ? "Buy MLP" : "Sell MLP"}</div>
-        {isBuying && <div className="Page-description">
-          Purchase <a href="https://swaps.docs.mycelium.xyz/protocol-design/shared-liquidity-pool/tlp-token-pricing" target="_blank" rel="noopener noreferrer">MLP tokens</a> to earn {nativeTokenSymbol} fees from swaps and leverage trading.<br/>
-          Note that there is a minimum holding time of 15 minutes after a purchase.<br/>
-          <div>View <Link to="/earn">staking</Link> page.</div>
-        </div>}
-        {!isBuying && <div className="Page-description">
-          Redeem your MLP tokens for any supported asset.
-          {inCooldownWindow && <div>
-            MLP tokens can only be redeemed 15 minutes after your most recent purchase.<br/>
-            Your last purchase was at {formatDateTime(lastPurchaseTime)}, you can redeem MLP tokens after {formatDateTime(redemptionTime)}.<br/>
-          </div>}
-          <div>View <Link to="/earn">staking</Link> page.</div>
-        </div>}
-      </div> */}
       <div className="MlpSwap-content">
-        {/* <div className="App-card MlpSwap-stats-card">
-          <div className="App-card-title">
-            <div className="App-card-title-mark">
-              <div className="App-card-title-mark-icon">
-                <img src={tlp40Icon} alt="tlp40Icon" />
-              </div>
-              <div className="App-card-title-mark-info">
-                <div className="App-card-title-mark-title">MLP</div>
-                <div className="App-card-title-mark-subtitle">MLP</div>
-              </div>
-            </div>
-          </div>
-          <div className="App-card-divider"></div>
-          <div className="App-card-content">
-            <div className="App-card-row">
-              <div className="label">Price</div>
-              <div className="value">${formatAmount(mlpPrice, USD_DECIMALS, 3, true)}</div>
-            </div>
-            <div className="App-card-row">
-              <div className="label">Wallet</div>
-              <div className="value">
-                {formatAmount(mlpBalance, MLP_DECIMALS, 4, true)} MLP ($
-                {formatAmount(mlpBalanceUsd, USD_DECIMALS, 2, true)})
-              </div>
-            </div>
-            <div className="App-card-row">
-              <div className="label">Staked</div>
-              <div className="value">
-                {formatAmount(mlpBalance, MLP_DECIMALS, 4, true)} MLP ($
-                {formatAmount(mlpBalanceUsd, USD_DECIMALS, 2, true)})
-              </div>
-            </div>
-          </div>
-          <div className="App-card-divider"></div>
-          <div className="App-card-content Totals-section">
-            <div className="App-card-row">
-              <div className="label">Total Supply</div>
-              <div className="value">
-                {formatAmount(mlpSupply, MLP_DECIMALS, 4, true)} MLP ($
-                {formatAmount(mlpSupplyUsd, USD_DECIMALS, 2, true)})
-              </div>
-            </div> */}
-            {/* <div className="Insurance-btn-container">
-              <Tooltip
-                handle={
-                  <a
-                    href="https://core.riskharbor.com/pool/arbitrum/0xc2680C751898403950794648d2ed3D8b8f6544d2/1"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    <button className="App-button-option App-card-option Insurance-btn">MLP Insurance</button>
-                  </a>
-                }
-                position="left-top"
-                renderContent={() => {
-                  return <div className="Tooltip-row">Risk Harbor Insurance for fsMLP.</div>;
-                }}
-              />
-            </div> */}
-          {/* </div>
-        </div> */}
         <div className="MlpSwap-box App-box">
+          <div className="section-title-block">
+            {/*
+              <div className="section-title-icon">
+                <img src={buyMLPIcon} alt="buyMLPIcon" />
+              </div>
+            */}
+            <div className="section-title-content">
+              <div className="Page-title">Burn MLP</div>
+              <div className="Page-description">
+                Burn your MLP for available pool assets
+                <br />
+                Read the Terms of Use{" "}
+                <a href="https://mycelium.xyz/rewards-terms-of-use" target="_blank" rel="noopener noreferrer">
+                  here
+                </a>
+                .
+              </div>
+            </div>
+          </div>
           {isBuying && (
             <BuyInputSection
               topLeftLabel={payLabel}
@@ -880,22 +906,6 @@ export default function MlpSwap(props) {
             </div>
           </div>
 
-          {isBuying && (
-            <BuyInputSection
-              topLeftLabel={receiveLabel}
-              topRightLabel={`Balance: `}
-              tokenBalance={`${formatAmount(mlpBalance, MLP_DECIMALS, 4, true)}`}
-              inputValue={mlpValue}
-              onInputValueChange={onMlpValueChange}
-              balance={receiveBalance}
-              defaultTokenName={"MLP"}
-            >
-              <div className="selected-token">
-                MLP <img src={tlp24Icon} alt="tlp24Icon" />
-              </div>
-            </BuyInputSection>
-          )}
-
           {!isBuying && (
             <BuyInputSection
               topLeftLabel={receiveLabel}
@@ -926,20 +936,6 @@ export default function MlpSwap(props) {
             <div className="Exchange-info-row">
               <div className="Exchange-info-label">{feeBasisPoints > 50 ? "WARNING: High Fees" : "Fees"}</div>
               <div className="align-right fee-block">
-                {isBuying && (
-                  <Tooltip
-                    handle={isBuying && isSwapTokenCapReached ? "NA" : feePercentageText}
-                    position="right-bottom"
-                    renderContent={() => {
-                      return (
-                        <>
-                          {feeBasisPoints > 50 && <div>To reduce fees, select a different asset to pay with.</div>}
-                          Check the "Save on Fees" section below to get the lowest fee percentages.
-                        </>
-                      );
-                    }}
-                  />
-                )}
                 {!isBuying && (
                   <Tooltip
                     handle={feePercentageText}
@@ -986,9 +982,109 @@ export default function MlpSwap(props) {
             </button>
           </div>
         </div>
+        <div className="EsMyc-box App-box">
+          <div>
+            <div className="Page-title">Withdraw Vesting</div>
+            <div className="Page-description">
+              Withdraw your vested esMYC (converted to MYC).
+              <br />
+              Please read the{" "}
+              <a
+                href="https://swaps.docs.mycelium.xyz/protocol-design/mycelium-liquidity-pool-mlp/mlp-rewards/esmyc-escrowed-myc"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                vesting details
+              </a>{" "}
+              before using the vaults.
+            </div>
+          </div>
+          {/* <StakeV2Styled.Card> */}
+            <div>
+              <StakeV2Styled.VestingInfo>
+                <StakeV2Styled.StakedTokens>
+                  <StakeV2Styled.RewardsBannerText secondary large>
+                    Vesting Tokens
+                  </StakeV2Styled.RewardsBannerText>
+                  <div>
+                    <StakeV2Styled.RewardsBannerTextWrap>
+                      <StakeV2Styled.RewardsBannerText large inline>
+                        {formatKeyAmount(vestingData, "mlpVesterVestedAmount", 18, 4, true)} esMYC
+                      </StakeV2Styled.RewardsBannerText>{" "}
+                      {/* <StakeV2Styled.RewardsBannerText inline>
+                        ($
+                        {formatKeyAmount(processedData, "mlpVesterVestedAmountUsd", USD_DECIMALS, 2, true)})
+                      </StakeV2Styled.RewardsBannerText> */}
+                    </StakeV2Styled.RewardsBannerTextWrap>
+                  </div>
+                </StakeV2Styled.StakedTokens>
+                <StakeV2Styled.StakingBannerRow>
+                  <div className="App-card-row">
+                    <div className="label">Vesting Status</div>
+                    <div>
+                      <Tooltip
+                        handle={`${formatKeyAmount(vestingData, "mlpVesterClaimSum", 18, 4, true)} / ${formatKeyAmount(
+                          vestingData,
+                          "mlpVesterVestedAmount",
+                          18,
+                          4,
+                          true
+                        )}`}
+                        position="right-bottom"
+                        renderContent={() => {
+                          return (
+                            <>
+                              {formatKeyAmount(vestingData, "mlpVesterClaimSum", 18, 4, true)} tokens have been
+                              converted to MYC from the&nbsp;
+                              {formatKeyAmount(vestingData, "mlpVesterVestedAmount", 18, 4, true)} esMYC deposited for
+                              vesting.
+                            </>
+                          );
+                        }}
+                      />
+                    </div>
+                  </div>
+                  <div className="App-card-row">
+                    <div className="label">Claimable</div>
+                    <div>
+                      <Tooltip
+                        handle={`${formatKeyAmount(vestingData, "mlpVesterClaimable", 18, 4, true)} MYC`}
+                        position="right-bottom"
+                        renderContent={() =>
+                          `${formatKeyAmount(
+                            vestingData,
+                            "mlpVesterClaimable",
+                            18,
+                            4,
+                            true
+                          )} MYC tokens can be claimed, use the options under the Earn section to claim them.`
+                        }
+                      />
+                    </div>
+                  </div>
+                  <StakeV2Styled.Buttons>
+                    {!active && (
+                      <button className="App-button-option App-card-option" onClick={() => connectWallet()}>
+                        Connect Wallet
+                      </button>
+                    )}
+                    {active && (
+                      <button
+                        className="App-button-option App-card-option"
+                        onClick={() => showMycVesterWithdrawModal()}
+                      >
+                        Withdraw
+                      </button>
+                    )}
+                  </StakeV2Styled.Buttons>
+                </StakeV2Styled.StakingBannerRow>
+              </StakeV2Styled.VestingInfo>
+            </div>
+          {/* </StakeV2Styled.Card> */}
+        </div>
       </div>
       <div className="Tab-title-section">
-        <div className="Page-title">Available Assets</div>
+        <div className="Page-title">Redeemable Assets</div>
       </div>
       <div className="MlpSwap-token-list">
         {/* <div className="MlpSwap-token-list-content"> */}
@@ -1201,11 +1297,11 @@ export default function MlpSwap(props) {
                           selectToken(token);
                           trackAction &&
                             trackAction("Button clicked", {
-                              buttonName: isBuying ? "Buy with " + token.symbol : "Sell for " + token.symbol,
+                              buttonName: isBuying ? "Buy with " + token.symbol : "Burn for " + token.symbol,
                             });
                         }}
                       >
-                        {isBuying ? "Buy with " + token.symbol : "Sell for " + token.symbol}
+                        {isBuying ? "Buy with " + token.symbol : "Burn for " + token.symbol}
                       </button>
                     </td>
                   </tr>

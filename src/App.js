@@ -837,7 +837,7 @@ function FullApp() {
                 </div>
                 <div>
                   <div className="App-header-container-right">
-                    <AppHeaderLinks trackAction={trackAction} />
+                    {/* <AppHeaderLinks trackAction={trackAction} /> */}
                     <LinkDropdown />
                     <AppHeaderUser
                       disconnectAccountAndCloseSettings={disconnectAccountAndCloseSettings}
@@ -857,7 +857,7 @@ function FullApp() {
                       </NavLink>
                     </div>
                   )}
-                  <AppDropdown isMobile />
+                  {/* <AppDropdown isMobile /> */}
                   {/* Hamburger menu */}
                   <button className="App-header-menu-icon-block" onClick={() => setIsDrawerVisible(!isDrawerVisible)}>
                     <span />
@@ -1179,9 +1179,6 @@ function PreviewApp() {
                   <img src={logoImg} alt="Mycelium Swaps Logo" />
                   MYC
                 </NavLink>
-              </div>
-              <div className="App-header-container-right">
-                <AppHeaderLinks />
               </div>
             </div>
             <div className={cx("App-header", "small", { active: isDrawerVisible })}>
