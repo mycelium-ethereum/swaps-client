@@ -312,7 +312,7 @@ function AppHeaderUser({
         >
           {small ? "Connect" : "Connect Wallet"}
         </ConnectWalletButton>
-        <AppDropdown />
+        {/* <AppDropdown /> */}
       </div>
     );
   }
@@ -719,7 +719,7 @@ function FullApp() {
           "full-width": sidebarVisible,
         })}
       >
-        <div style={{ height: "56px" }} />
+        {/* <div style={{ height: "56px" }} />
         <div
           className="banner"
           style={{
@@ -746,7 +746,7 @@ function FullApp() {
             this blog post
           </a>
           , and close your positions.
-        </div>
+        </div> */}
         {/* <div className="App-background-side-1"></div>
         <div className="App-background-side-2"></div>
         <div className="App-background"></div>
@@ -787,7 +787,7 @@ function FullApp() {
           <nav>
             <div className="App-header large default-container">
               <div className="App-header-container-left">
-                <Link
+                {/* <Link
                   className="App-header-link-main"
                   to="/"
                   onClick={() =>
@@ -799,10 +799,11 @@ function FullApp() {
                 >
                   <img src={logoImg} className="big" alt="Mycelium Swaps Logo" />
                   <img src={logoSmallImg} className="small" alt="Mycelium Swaps Logo" />
-                </Link>
+                </Link> */}
               </div>
               <div className="App-header-container-right">
                 {/* <AppHeaderLinks trackAction={trackAction} /> */}
+                <a style={{ marginRight: "16px" }} href="https://mycelium.xyz">Mycelium Home</a>
                 <AppHeaderUser
                   disconnectAccountAndCloseSettings={disconnectAccountAndCloseSettings}
                   openSettings={openSettings}
@@ -821,7 +822,7 @@ function FullApp() {
                 })}
               >
                 <div className="App-header-container-left">
-                  <Link
+                  {/* <Link
                     className="App-header-link-main clickable"
                     to="/"
                     onClick={() => {
@@ -833,12 +834,13 @@ function FullApp() {
                   >
                     <img src={logoSmallImg} className="small" alt="Mycelium Swaps Logo" />
                     <img src={logoImg} className="big" alt="Mycelium Swaps Logo" />
-                  </Link>
+                  </Link> */}
                 </div>
                 <div>
                   <div className="App-header-container-right">
                     {/* <AppHeaderLinks trackAction={trackAction} /> */}
-                    <LinkDropdown />
+                    {/* <LinkDropdown /> */}
+                    <Link style={{ marginRight: "16px" }} href="https://mycelium.xyz">Mycelium Home</Link>
                     <AppHeaderUser
                       disconnectAccountAndCloseSettings={disconnectAccountAndCloseSettings}
                       openSettings={openSettings}
@@ -1007,13 +1009,13 @@ function FullApp() {
         pauseOnHover
       />
       <EventToastContainer />
-      <EventModal
-        isModalVisible={isEventModalVisible}
+      {/* <EventModal
+        isModalVisible={isEventModalVisible
         setEventModalVisible={setEventModalVisible}
         eventKey="seenPopupV4"
         hideHeader={true}
         requiresConfirmation={true}
-      />
+      /> */}
       <Modal
         className="Connect-wallet-modal"
         isVisible={walletModalVisible}

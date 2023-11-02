@@ -101,17 +101,6 @@ export default function AppHeaderLinks({
               <img src={navClose} className="close-icon" alt="Close icon" />
             </HeaderClose>
           </Header>
-          <a
-            href="https://pools.mycelium.xyz"
-            rel="noopener noreferrer"
-            target="_blank"
-            className="pools-link"
-            onClick={() => trackAction && trackAction("Button clicked", { buttonName: "Switch to Perpetual Pools" })}
-          >
-            <SwitchButton className="default-btn switch-link">
-              Switch to <img src={poolsSmallImg} alt="Perpetual Pools" />
-            </SwitchButton>
-          </a>
           <FlexContainer>
             <AccountDropdownContainer>
               {active ? (
@@ -131,7 +120,7 @@ export default function AppHeaderLinks({
                   }}
                   imgSrc={connectWalletImg}
                 >
-                  Connect Wallet
+                  Connect
                 </ConnectWalletButton>
               )}
             </AccountDropdownContainer>
@@ -152,43 +141,16 @@ export default function AppHeaderLinks({
           </FlexContainer>
         </div>
         <div>
-          {navLinks.map((navLink) => (
+          {/* {navLinks.map((navLink) => (
             <AppHeaderLinkContainer key={navLink.name}>
               <NavLink activeClassName="active" to={navLink.path} onClick={clickCloseIcon}>
                 {navLink.name}
               </NavLink>
             </AppHeaderLinkContainer>
-          ))}
+          ))} */}
           <AppHeaderLinkContainer>
-            <a href="https://stake.mycelium.xyz" target="_blank" rel="noopener noreferrer">
-              MYC Staking
-            </a>
-          </AppHeaderLinkContainer>
-          <AppHeaderLinkContainer>
-            <a href="https://analytics.mycelium.xyz" target="_blank" rel="noopener noreferrer">
-              Analytics
-            </a>
-          </AppHeaderLinkContainer>
-          <AppHeaderLinkContainer>
-            <a
-              href="https://swaps.docs.mycelium.xyz/perpetual-swaps/mycelium-perpetual-swaps"
-              target="_blank"
-              rel="noopener noreferrer"
-              onClick={clickCloseIcon}
-            >
-              Docs
-            </a>
-          </AppHeaderLinkContainer>
-          <AppHeaderLinkContainer>
-            {/* eslint-disable-next-line */}
-            <a
-              href="#"
-              onClick={() => {
-                openSettings();
-                clickCloseIcon();
-              }}
-            >
-              Settings
+            <a href="https://mycelium.xyz">
+              Mycelium Home
             </a>
           </AppHeaderLinkContainer>
           <MyceliumCopy>

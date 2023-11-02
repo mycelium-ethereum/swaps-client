@@ -833,12 +833,6 @@ export default function MlpSwap(props) {
               <div className="Page-title">Burn MLP</div>
               <div className="Page-description">
                 Burn your MLP for available pool assets
-                <br />
-                Read the Terms of Use{" "}
-                <a href="https://mycelium.xyz/rewards-terms-of-use" target="_blank" rel="noopener noreferrer">
-                  here
-                </a>
-                .
               </div>
             </div>
           </div>
@@ -987,16 +981,6 @@ export default function MlpSwap(props) {
             <div className="Page-title">Withdraw Vesting</div>
             <div className="Page-description">
               Withdraw your vested esMYC (converted to MYC).
-              <br />
-              Please read the{" "}
-              <a
-                href="https://swaps.docs.mycelium.xyz/protocol-design/mycelium-liquidity-pool-mlp/mlp-rewards/esmyc-escrowed-myc"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                vesting details
-              </a>{" "}
-              before using the vaults.
             </div>
           </div>
           {/* <StakeV2Styled.Card> */}
