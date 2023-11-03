@@ -983,7 +983,7 @@ export default function StakeV2({
                       </button>
                     )}
                   </StakeV2Styled.Buttons>
-                  {account && !!airdropRewardAmountBN && airdropRewardAmountBN.gt(0) && (
+                  {account && airdropRewardAmountBN && airdropRewardAmountBN.gt(0) && (
                     <>
                       <StakeV2Styled.RewardsBannerRow>
                         <StakeV2Styled.RewardsBannerText large>Airdrop Rewards</StakeV2Styled.RewardsBannerText>
