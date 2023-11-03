@@ -52,7 +52,7 @@ function AddressDropdown({ account, accountUrl, disconnectAccountAndCloseSetting
             </a>
           </Menu.Item>
 
-          <Menu.Item>
+          {/* <Menu.Item>
             <div
               className="menu-item"
               onClick={() => {
@@ -63,7 +63,7 @@ function AddressDropdown({ account, accountUrl, disconnectAccountAndCloseSetting
               <img src={settings} alt="Open settings" />
               <p>Settings</p>
             </div>
-          </Menu.Item>
+          </Menu.Item> */}
           <Menu.Item>
             <div
               className="menu-item"

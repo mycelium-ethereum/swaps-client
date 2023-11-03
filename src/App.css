@@ -7,8 +7,8 @@
   background-image: url("./img/background_mesh.png");
   background-size: 1440px;
   transition: padding-left 0.5s ease;
-  padding-left: 326px;
-  padding-top: 126px;
+  /* padding-left: 326px; */
+  padding-top: 12px;
 }
 .App.full-width {
   padding-left: 0px;
@@ -30,13 +30,12 @@
 }
 
 .App-content nav {
-  position: fixed;
+  /* position: fixed; */
   top: 48px;
   left: 0;
   height: 62px;
   width: 100%;
   z-index: 800;
-  padding-left: 310px;
   transition: all 0.5s ease;
 }
 .App .banner {
@@ -1440,9 +1439,9 @@ button.App-button {
     padding-left: 16px;
     padding-right: 16px;
   }
-  .App {
+  /* .App {
     padding-top: 80px;
-  }
+  } */
 }
 
 @media (max-width: 670px) {

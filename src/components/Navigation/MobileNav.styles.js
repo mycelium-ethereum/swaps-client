@@ -3,7 +3,6 @@ import styled from "styled-components";
 export const MobileNavMenu = styled.menu`
   padding: 0;
   margin: 0;
-  height: 100vh;
   overflow: hidden;
 
   .pools-link {
@@ -30,7 +29,6 @@ export const ScrollContainer = styled.div`
   flex-direction: column;
   justify-content: space-between;
   overflow: hidden;
-  height: 100vh;
   @media (max-height: 957px) {
     overflow-y: auto;
     overflow-x: hidden;

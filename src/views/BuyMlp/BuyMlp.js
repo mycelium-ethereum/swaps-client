@@ -12,14 +12,8 @@ import { getNativeToken } from "../../data/Tokens";
 export default function BuyMlp(props) {
   const { chainId } = useChainId();
   const history = useHistory();
-  const [isBuying, setIsBuying] = useState(true);
+  const isBuying = false;
   const nativeTokenSymbol = getNativeToken(chainId).symbol;
-
-  useEffect(() => {
-    const hash = history.location.hash.replace("#", "");
-    const buying = hash === "redeem" ? false : true;
-    setIsBuying(buying);
-  }, [history.location.hash]);
 
   return (
     <>
@@ -28,42 +22,8 @@ export default function BuyMlp(props) {
         description="Buy MLP tokens to provide liquidity to Mycelium’s Perpetual Swaps. MLP tokens represent a share in a yield bearing diversified pool of blue-chip crypto assets."
       />
       <div className="default-container buy-tlp-content page-layout">
-        <div className="section-title-block">
-          {/*
-            <div className="section-title-icon">
-              <img src={buyMLPIcon} alt="buyMLPIcon" />
-            </div>
-          */}
-          <div className="section-title-content">
-            <div className="Page-title">Sell MLP</div>
-            <div className="Page-description">
-              Purchase{" "}
-              <a
-                href="https://swaps.docs.mycelium.xyz/protocol-design/mycelium-liquidity-pool-mlp/mlp-token"
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={() =>
-                  props.trackAction &&
-                  props.trackAction("Button clicked", {
-                    buttonName: "MLP tokens link",
-                  })
-                }
-              >
-                MLP tokens
-              </a>{" "}
-              to earn {nativeTokenSymbol} fees from swaps and leverages trading.
-              <br />
-              Note that there is a minimum holding time of 15 minutes after a purchase.
-              <br />
-              View <Link to="/earn">staking</Link> page. Read the Terms of Use{" "}
-              <a href="https://mycelium.xyz/rewards-terms-of-use" target="_blank" rel="noopener noreferrer">
-                here
-              </a>
-              .
-            </div>
-          </div>
-        </div>
-        <MlpSwap {...props} isBuying={isBuying} setIsBuying={setIsBuying} />
+
+        <MlpSwap {...props} isBuying={isBuying}/>
       </div>
     </>
   );

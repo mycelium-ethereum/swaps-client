@@ -930,7 +930,7 @@ export default function StakeV2({
                       Buy MLP
                     </Link> */}
                     <Link className="App-button-option App-card-option" to="/buy_mlp#redeem">
-                      Sell MLP
+                      Burn MLP
                     </Link>
                   </StakeV2Styled.Buttons>
                 </StakeV2Styled.RewardsBanner>

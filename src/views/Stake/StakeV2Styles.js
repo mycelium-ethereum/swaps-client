@@ -40,7 +40,7 @@ export const Card = styled.div`
 `
 
 export const CardTitle = styled.div`
-  padding: 0.75rem 1rem;
+  padding: 0.75rem 0rem;
   font-size: 1rem;
   margin-bottom: 0;
   border-bottom: 1px solid var(--cell-stroke);
@@ -65,18 +65,17 @@ export const MlpInfo = styled.div`
 export const VestingInfo = styled.div`
   color: var(--text-primary);
   font-size: 16px;
+  padding-top: 16px;
 `
 
 export const StakedTokens = styled.div`
   display: flex;
   border-bottom: 1px solid var(--cell-stroke);
-  background: var(--cell-gradient);
   justify-content: space-between;
-  padding: 1rem;
+  padding: 1rem 0rem;
 `
 
 export const RewardsBanner = styled.div`
-  background: var(--cell-gradient);
   font-size: 16px;
   padding: 0 1rem;
   padding-bottom: 1rem;
@@ -108,7 +107,7 @@ export const RewardsBannerRow = styled.div`
 `
 
 export const StakingBannerRow = styled(RewardsBannerRow)`
-  padding: 1rem;
+  padding: 1rem 0rem;
 
   &:last-child {
     border-bottom: none;

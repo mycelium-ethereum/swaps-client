@@ -312,7 +312,7 @@ function AppHeaderUser({
         >
           {small ? "Connect" : "Connect Wallet"}
         </ConnectWalletButton>
-        <AppDropdown />
+        {/* <AppDropdown /> */}
       </div>
     );
   }
@@ -344,7 +344,7 @@ function AppHeaderUser({
           trackAction={trackAction}
         />
       </div>
-      <AppDropdown />
+      {/* <AppDropdown /> */}
     </div>
   );
 }
@@ -719,7 +719,7 @@ function FullApp() {
           "full-width": sidebarVisible,
         })}
       >
-        <div style={{ height: "56px" }} />
+        {/* <div style={{ height: "56px" }} />
         <div
           className="banner"
           style={{
@@ -746,7 +746,7 @@ function FullApp() {
             this blog post
           </a>
           , and close your positions.
-        </div>
+        </div> */}
         {/* <div className="App-background-side-1"></div>
         <div className="App-background-side-2"></div>
         <div className="App-background"></div>
@@ -787,7 +787,7 @@ function FullApp() {
           <nav>
             <div className="App-header large default-container">
               <div className="App-header-container-left">
-                <Link
+                {/* <Link
                   className="App-header-link-main"
                   to="/"
                   onClick={() =>
@@ -799,10 +799,11 @@ function FullApp() {
                 >
                   <img src={logoImg} className="big" alt="Mycelium Swaps Logo" />
                   <img src={logoSmallImg} className="small" alt="Mycelium Swaps Logo" />
-                </Link>
+                </Link> */}
               </div>
               <div className="App-header-container-right">
                 {/* <AppHeaderLinks trackAction={trackAction} /> */}
+                <a style={{ marginRight: "16px" }} href="https://mycelium.xyz">Mycelium Home</a>
                 <AppHeaderUser
                   disconnectAccountAndCloseSettings={disconnectAccountAndCloseSettings}
                   openSettings={openSettings}
@@ -821,7 +822,7 @@ function FullApp() {
                 })}
               >
                 <div className="App-header-container-left">
-                  <Link
+                  {/* <Link
                     className="App-header-link-main clickable"
                     to="/"
                     onClick={() => {
@@ -833,12 +834,13 @@ function FullApp() {
                   >
                     <img src={logoSmallImg} className="small" alt="Mycelium Swaps Logo" />
                     <img src={logoImg} className="big" alt="Mycelium Swaps Logo" />
-                  </Link>
+                  </Link> */}
                 </div>
                 <div>
                   <div className="App-header-container-right">
-                    <AppHeaderLinks trackAction={trackAction} />
-                    <LinkDropdown />
+                    {/* <AppHeaderLinks trackAction={trackAction} /> */}
+                    {/* <LinkDropdown /> */}
+                    <Link style={{ marginRight: "16px" }} href="https://mycelium.xyz">Mycelium Home</Link>
                     <AppHeaderUser
                       disconnectAccountAndCloseSettings={disconnectAccountAndCloseSettings}
                       openSettings={openSettings}
@@ -857,7 +859,7 @@ function FullApp() {
                       </NavLink>
                     </div>
                   )}
-                  <AppDropdown isMobile />
+                  {/* <AppDropdown isMobile /> */}
                   {/* Hamburger menu */}
                   <button className="App-header-menu-icon-block" onClick={() => setIsDrawerVisible(!isDrawerVisible)}>
                     <span />
@@ -886,7 +888,7 @@ function FullApp() {
             />
           </div>
           <Switch>
-            <Route exact path="/">
+            {/* <Route exact path="/">
               <Exchange
                 ref={exchangeRef}
                 savedShowPnlAfterFees={savedShowPnlAfterFees}
@@ -918,8 +920,8 @@ function FullApp() {
                 infoTokens={infoTokens}
                 savedSlippageAmount={savedSlippageAmount}
               />
-            </Route>
-            <Route exact path="/buy_mlp">
+            </Route> */}
+            <Route path="*">
               <BuyMlp
                 savedSlippageAmount={savedSlippageAmount}
                 setPendingTxns={setPendingTxns}
@@ -929,7 +931,7 @@ function FullApp() {
                 analytics={analytics}
               />
             </Route>
-            <Route exact path="/sell_mlp">
+            {/* <Route exact path="/sell_mlp">
               <SellMlp
                 savedSlippageAmount={savedSlippageAmount}
                 setPendingTxns={setPendingTxns}
@@ -956,13 +958,13 @@ function FullApp() {
                 pendingTxns={pendingTxns}
                 setPendingTxns={setPendingTxns}
               />
-            </Route>
+            </Route> */}
             {/*
             <Route exact path="/nft_wallet">
               <NftWallet />
             </Route>
             */}
-            <Route exact path="/actions/:account">
+            {/* <Route exact path="/actions/:account">
               <Actions trackAction={trackAction} />
             </Route>
             <Route exact path="/orders_overview">
@@ -973,7 +975,7 @@ function FullApp() {
             </Route>
             <Route exact path="/actions">
               <Actions trackAction={trackAction} />
-            </Route>
+            </Route> */}
             {/*
             <Route exact path="/begin_account_transfer">
               <BeginAccountTransfer setPendingTxns={setPendingTxns} />
@@ -987,12 +989,12 @@ function FullApp() {
             <Route exact path="/referral-terms">
               <ReferralTerms />
             </Route> */}
-            <Route path="*">
+            {/* <Route path="*">
               <PageNotFound />
-            </Route>
+            </Route> */}
           </Switch>
         </div>
-        <Sidebar sidebarVisible={sidebarVisible} setSidebarVisible={setSidebarVisible} />
+        {/* <Sidebar sidebarVisible={sidebarVisible} setSidebarVisible={setSidebarVisible} /> */}
         {/* <Footer /> */}
       </div>
       <ToastContainer
@@ -1007,13 +1009,13 @@ function FullApp() {
         pauseOnHover
       />
       <EventToastContainer />
-      <EventModal
-        isModalVisible={isEventModalVisible}
+      {/* <EventModal
+        isModalVisible={isEventModalVisible
         setEventModalVisible={setEventModalVisible}
         eventKey="seenPopupV4"
         hideHeader={true}
         requiresConfirmation={true}
-      />
+      /> */}
       <Modal
         className="Connect-wallet-modal"
         isVisible={walletModalVisible}
@@ -1179,9 +1181,6 @@ function PreviewApp() {
                   <img src={logoImg} alt="Mycelium Swaps Logo" />
                   MYC
                 </NavLink>
-              </div>
-              <div className="App-header-container-right">
-                <AppHeaderLinks />
               </div>
             </div>
             <div className={cx("App-header", "small", { active: isDrawerVisible })}>

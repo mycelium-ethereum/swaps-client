@@ -89,10 +89,19 @@
 }
 
 .MlpSwap-content .MlpSwap-box {
-  max-width: 30.935rem;
+  /* max-width: 30.935rem; */
+  width: 50%;
+  margin-right: 4px;
   border-radius: 4px;
   padding: 1rem;
-  padding-top: 0;
+}
+
+.MlpSwap-content .EsMyc-box {
+  /* max-width: 30.935rem; */
+  width: 50%;
+  border-radius: 4px;
+  margin-left: 4px;
+  padding: 1rem;
 }
 
 .MlpSwap-box .Exchange-swap-option-tabs {
@@ -327,5 +336,18 @@
     grid-template-columns: 1fr;
     grid-gap: 1rem;
     margin-top: 0.5rem;
+  }
+
+  .MlpSwap-content .MlpSwap-box {
+    /* max-width: 30.935rem; */
+    width: 100%;
+    margin-right: 0px;
+    margin-bottom: 8px;
+  }
+  
+  .MlpSwap-content .EsMyc-box {
+    /* max-width: 30.935rem; */
+    width: 100%;
+    margin-left: 0px;
   }
 }
